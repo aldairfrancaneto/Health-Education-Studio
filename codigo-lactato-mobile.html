@@ -1557,7 +1557,7 @@
   <div class="vital"><span class="label">FC</span><span class="value crit" id="vFC">110</span></div>
   <div class="vital"><span class="label">PA</span><span class="value crit" id="vPA">70/40</span></div>
   <div class="vital"><span class="label">SpO2</span><span class="value crit" id="vSpO2">81%</span></div>
-  <div class="vital"><span class="label">Temp</span><span class="value crit" id="vTemp">35,5°</span></div>
+  <div class="vital"><span class="label">Temp</span><span class="value crit" id="vTemp">38,2°</span></div>
   <div class="vital"><span class="label">pH</span><span class="value unk" id="vPH">--</span></div>
   <div class="vital"><span class="label">pCO2</span><span class="value unk" id="vPCO2">--</span></div>
 </div>
@@ -2500,7 +2500,7 @@
 
   setVitals({
     FC:{text:'110',cls:'crit'}, PA:{text:'70/40',cls:'crit'}, SpO2:{text:'81%',cls:'crit'},
-    Temp:{text:'35,5°',cls:'crit'}, PH:{text:'--',cls:'unk'}, PCO2:{text:'--',cls:'unk'}
+    Temp:{text:'38,2°',cls:'crit'}, PH:{text:'--',cls:'unk'}, PCO2:{text:'--',cls:'unk'}
   });
 
   function markDot(n, cls){
@@ -2802,7 +2802,7 @@
       narrate(playerName + '. Novo paciente. Leito quatro. Nível de consciência reduzido.');
     }
     document.getElementById('chartFab').style.display = 'flex';
-    addChartSection('vitals', 'Sinais vitais — admissão', [['FC','110 bpm','flag'],['PA','70/40 mmHg','flag'],['SpO2','81%','flag'],['Temp periférica','35,5 °C','flag'],['FR','25 ipm','flag']]);
+    addChartSection('vitals', 'Sinais vitais — admissão', [['FC','110 bpm','flag'],['PA','70/40 mmHg','flag'],['SpO2','81%','flag'],['Temp periférica','38,2 °C','flag'],['FR','25 ipm','flag']]);
   });
   document.getElementById('gameoverRestart').addEventListener('click', function(){ location.reload(); });
 
