@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Atividade Presencial — Aldair de França Neto</title>
+<meta name="description" content="Atividades interativas usadas em sala de aula por Aldair de França Neto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     COMO ADICIONAR UMA ATIVIDADE NOVA (guia para quem não programa)
+     ============================================================
+     1. Suba o arquivo HTML da atividade no mesmo repositório.
+     2. Lá embaixo, dentro de <div class="grid">, copie um bloco
+        inteiro <article class="card"> ... </article>, cole abaixo
+        e troque a tag, o título, a descrição e o link do botão.
+
+     COMO TROCAR A SENHA
+     -------------------
+     Procure mais abaixo a linha que começa com  const SENHA =
+     e troque a palavra entre aspas.
+     ATENÇÃO: esta senha impede o acesso casual, mas NÃO é uma
+     proteção forte — quem souber ver o código-fonte da página
+     consegue descobri-la. Serve para uso em sala, não para
+     guardar conteúdo sigiloso.
+     ============================================================ */
+
+  :root{
+    --sky-top:#4A90E2; --sky-bottom:#8FD3F4;
+    --brick:#C9642B; --coin:#FFD23F; --coin-dark:#C99A1E;
+    --red:#E53935; --red-dark:#A82420;
+    --green:#4CAF50; --green-dark:#2E7D32;
+    --blue:#2E86DE; --blue-dark:#1B4F8C;
+    --ink:#2B1B0E; --paper:#FFF8E7; --paper-2:#FFEFC7;
+    --outline:#2B1B0E;
+    --font-pixel:'Press Start 2P',monospace;
+    --font-body:'Baloo 2',sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 55%,var(--sky-bottom) 100%);
+    background-attachment:fixed; color:var(--ink);
+    font-family:var(--font-body); font-weight:600; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+
+  .cloud{
+    position:absolute; z-index:0; pointer-events:none; background:#FFFFFF;
+    box-shadow:20px 0 0 #fff,40px 0 0 #fff,60px 0 0 #fff,
+      10px -14px 0 #fff,30px -14px 0 #fff,50px -14px 0 #fff,
+      20px -28px 0 #fff,40px -28px 0 #fff;
+    width:12px; height:12px; opacity:.8;
+  }
+  .cloud.c1{ top:60px; left:6%; transform:scale(1.3); }
+  .cloud.c2{ top:200px; right:8%; transform:scale(1.05); opacity:.7; }
+  .cloud.c3{ top:700px; left:10%; transform:scale(.95); opacity:.6; }
+
+  a{ color:var(--red-dark); text-decoration:none; }
+  ::selection{ background:var(--coin); color:var(--ink); }
+  .wrap{ max-width:880px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+
+  header{
+    padding:18px 0; background:var(--paper);
+    border-bottom:4px solid var(--outline); box-shadow:0 4px 0 rgba(0,0,0,.15);
+    position:relative; z-index:2;
+  }
+  .nav-inner{
+    max-width:880px; margin:0 auto; padding:0 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .brand{ font-family:var(--font-pixel); font-size:12px; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .brand .coin-icon{
+    width:18px; height:18px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#FFF2A8,var(--coin) 60%,var(--coin-dark));
+    border:2px solid var(--outline); display:inline-block;
+  }
+  nav.links{ display:flex; gap:18px; font-family:var(--font-pixel); font-size:10px; flex-wrap:wrap; }
+  nav.links a{ color:var(--ink); padding:6px 4px; }
+  nav.links a:hover, nav.links a.active{ color:var(--red); }
+
+  .level-tag{ display:flex; align-items:center; gap:12px; margin:50px 0 18px; flex-wrap:wrap; }
+  .level-num{
+    font-family:var(--font-pixel); font-size:12px; color:#fff;
+    background:var(--red); border:3px solid var(--outline);
+    padding:8px 10px; border-radius:5px; box-shadow:3px 3px 0 var(--outline);
+  }
+  .level-label{
+    font-family:var(--font-pixel); font-size:11px; color:var(--ink);
+    background:var(--paper); border:3px solid var(--outline);
+    padding:8px 12px; border-radius:5px; box-shadow:3px 3px 0 var(--outline);
+  }
+
+  h1{
+    font-family:var(--font-pixel); font-size:clamp(17px,3.4vw,26px); line-height:1.5;
+    margin:0 0 16px; color:#fff;
+    text-shadow:3px 3px 0 var(--outline),-1px -1px 0 var(--outline),1px -1px 0 var(--outline),-1px 1px 0 var(--outline);
+  }
+  .page-lede{
+    color:var(--ink); font-weight:600; font-size:17px;
+    background:var(--paper); border:3px solid var(--outline); border-radius:10px;
+    box-shadow:5px 5px 0 var(--outline);
+    padding:16px 20px; max-width:60ch; margin:0 0 40px; text-align:justify;
+  }
+
+  /* ---------- tela de senha ---------- */
+  #portao{ padding:10px 0 70px; }
+  .cofre{
+    background:var(--paper); border:4px solid var(--outline); border-radius:12px;
+    box-shadow:7px 7px 0 var(--outline); padding:30px 26px; max-width:520px;
+  }
+  .cofre .cadeado{ font-size:44px; line-height:1; margin-bottom:12px; }
+  .cofre h2{
+    font-family:var(--font-pixel); font-size:14px; margin:0 0 12px; color:var(--ink);
+  }
+  .cofre p{ margin:0 0 20px; font-size:16px; }
+  .campo-senha{
+    display:flex; gap:12px; flex-wrap:wrap; align-items:stretch;
+  }
+  #inputSenha{
+    flex:1; min-width:180px;
+    font-family:var(--font-body); font-weight:700; font-size:17px;
+    padding:13px 15px; border:3px solid var(--outline); border-radius:6px;
+    background:#fff; color:var(--ink);
+  }
+  #inputSenha:focus{ outline:none; border-color:var(--blue); }
+  #erroSenha{
+    display:none; margin:14px 0 0; color:var(--red-dark); font-size:15.5px;
+  }
+  #erroSenha.on{ display:block; }
+
+  .btn{
+    font-family:var(--font-pixel); font-size:11px;
+    padding:13px 20px; border-radius:6px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:9px;
+    border:3px solid var(--outline); box-shadow:0 5px 0 var(--outline);
+    background:var(--blue); color:#fff; text-decoration:none;
+    transition:transform .1s, box-shadow .1s;
+    max-width:100%; word-break:break-word; text-align:center;
+  }
+  .btn:hover{ background:var(--blue-dark); text-decoration:none; }
+  .btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--outline); }
+  .btn.coin{ background:var(--coin); color:var(--ink); }
+  .btn.coin:hover{ background:var(--coin-dark); }
+
+  /* ---------- conteúdo protegido ---------- */
+  #conteudo{ display:none; }
+  #conteudo.on{ display:block; }
+
+  .grid{ display:grid; grid-template-columns:1fr; gap:26px; padding-bottom:70px; }
+  .card{
+    background:var(--paper); border:4px solid var(--outline); border-radius:12px;
+    box-shadow:7px 7px 0 var(--outline);
+    transition:transform .15s, box-shadow .15s; padding:24px 26px 28px;
+  }
+  .card:hover{ transform:translate(-3px,-3px); box-shadow:10px 10px 0 var(--blue-dark); }
+  .card-tag{ font-family:var(--font-pixel); font-size:9.5px; color:var(--red-dark); margin-bottom:8px; }
+  .card h2{ font-family:var(--font-pixel); font-size:15px; margin:4px 0 14px; color:var(--ink); line-height:1.5; }
+  .card p{ color:var(--ink); font-weight:600; margin:0 0 6px; font-size:15.5px; text-align:justify; }
+  .stat-row{ display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 22px; }
+  .stat{
+    font-family:var(--font-pixel); font-size:9px; color:var(--ink);
+    background:var(--paper-2); border:2px solid var(--outline);
+    padding:7px 10px; border-radius:18px; max-width:100%; word-break:break-word;
+  }
+  .card.soon{ box-shadow:none; opacity:.65; border-style:dashed; }
+  .card.soon:hover{ transform:none; box-shadow:none; }
+
+  footer{
+    margin-top:30px; padding:26px 0 40px; background:var(--paper);
+    border-top:4px solid var(--outline);
+    font-family:var(--font-pixel); font-size:9.5px; color:var(--ink);
+  }
+  .footer-inner{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  footer a{ color:var(--ink); }
+  footer a:hover{ color:var(--red); }
+
+  @media (max-width:600px){
+    .footer-inner{ flex-direction:column; }
+    .btn{ font-size:9.5px; padding:12px 14px; }
+    .stat{ font-size:8.5px; }
+    .cofre{ padding:24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand"><span class="coin-icon"></span>AFN Health Education Studio</div>
+    <nav class="links">
+      <a href="index.html">Início</a>
+      <a href="projetos.html">Projetos</a>
+      <a href="atividades.html" class="active">Atividade Presencial</a>
+      <a href="index.html#contato">Contato</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="level-tag">
+    <span class="level-num">01</span>
+    <span class="level-label">SALA DE AULA</span>
+  </div>
+  <h1>Atividade Presencial</h1>
+
+  <!-- ======================= TELA DE SENHA ======================= -->
+  <div id="portao">
+    <div class="cofre">
+      <div class="cadeado">🔒</div>
+      <h2>Área restrita</h2>
+      <p>
+        Esta seção reúne as atividades aplicadas presencialmente em sala de aula.
+        Digite a senha informada pelo professor para acessar.
+      </p>
+      <div class="campo-senha">
+        <input type="password" id="inputSenha" placeholder="Digite a senha" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn" type="button" id="btnEntrar">▶ ENTRAR</button>
+      </div>
+      <p id="erroSenha">Senha incorreta. Confira com o professor e tente novamente.</p>
+    </div>
+  </div>
+
+  <!-- =================== CONTEÚDO PROTEGIDO =================== -->
+  <div id="conteudo">
+
+    <p class="page-lede">
+      Atividades e materiais interativos desenvolvidos para uso direto em sala
+      de aula — um espaço complementar aos jogos completos, pensado para
+      exercícios rápidos e pontuais com os estudantes.
+    </p>
+
+    <div class="grid">
+
+      <!-- ============ INÍCIO DO CARTÃO DE ATIVIDADE ============
+           Copie do <article> até o </article> para criar outra. -->
+      <article class="card">
+        <div class="card-tag">ASSOCIAÇÃO DE CARTAS · GERONTOLOGIA</div>
+        <h2>Hallmarks do Envelhecimento</h2>
+        <p>
+          Atividade de associação em que o estudante relaciona cada categoria
+          de hallmark do envelhecimento à sua definição correspondente,
+          usando cartas ilustradas. Inclui ampliação das cartas para leitura,
+          contagem de tentativas e correção imediata.
+        </p>
+        <div class="stat-row">
+          <span class="stat">🃏 CARTAS ILUSTRADAS</span>
+          <span class="stat">⏱ 10-15 MIN</span>
+          <span class="stat">📱 CELULAR OU COMPUTADOR</span>
+        </div>
+        <a class="btn" href="atividade-hallmarks.html">▶ ABRIR ATIVIDADE</a>
+      </article>
+      <!-- ============ FIM DO CARTÃO DE ATIVIDADE ============ -->
+
+      <!-- Cartão "em breve" — pode apagar quando publicar outra atividade -->
+      <article class="card soon">
+        <div class="card-tag">EM DESENVOLVIMENTO</div>
+        <h2 style="margin-top:4px;">Próxima atividade</h2>
+        <p style="margin:0;">Novas atividades serão publicadas aqui em breve.</p>
+      </article>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 ALDAIR DE FRANÇA NETO</span>
+    <span><a href="index.html">← VOLTAR AO INÍCIO</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ===== SENHA DE ACESSO — troque a palavra entre aspas se precisar =====
+  const SENHA = "envelhecimento";
+
+  const portao   = document.getElementById('portao');
+  const conteudo = document.getElementById('conteudo');
+  const input    = document.getElementById('inputSenha');
+  const erro     = document.getElementById('erroSenha');
+
+  function liberar(){
+    portao.style.display = 'none';
+    conteudo.classList.add('on');
+  }
+
+  function tentar(){
+    const digitada = input.value.trim().toLowerCase();
+    if (digitada === SENHA.toLowerCase()){
+      erro.classList.remove('on');
+      liberar();
+    } else {
+      erro.classList.add('on');
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  document.getElementById('btnEntrar').addEventListener('click', tentar);
+  input.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); tentar(); }
+  });
+})();
+</script>
+
+</body>
+</html>
