@@ -241,6 +241,38 @@
     .nav-inner{ padding:0 14px; gap:10px; }
     .btn.email{ font-size:8px; }
   }
+  /* ============================================================
+     CABEÇALHO À PROVA DE ESTOURO NO CELULAR
+     No celular o menu passa a ocupar a linha inteira, abaixo do
+     nome, e quebra em várias linhas se precisar. Assim ele nunca
+     escapa do fundo claro do cabeçalho — nem quando o aparelho
+     está com a fonte do sistema aumentada.
+     ============================================================ */
+  header{ overflow:hidden; }              /* trava qualquer vazamento */
+  .nav-inner{ min-width:0; }
+  .brand{ min-width:0; max-width:100%; overflow-wrap:break-word; }
+  nav.links{ min-width:0; max-width:100%; flex-wrap:wrap; }
+  nav.links a{ white-space:nowrap; }
+
+  @media (max-width:640px){
+    .nav-inner{
+      flex-direction:column; align-items:flex-start; gap:10px;
+      padding-left:16px; padding-right:16px;
+    }
+    nav.links{
+      width:100%; justify-content:flex-start;
+      gap:8px 14px; font-size:9px;
+    }
+    nav.links a{ padding:4px 0; }
+    .brand{ font-size:10.5px; }
+  }
+  @media (max-width:360px){
+    nav.links{ font-size:8.5px; gap:7px 11px; }
+    .brand{ font-size:9.5px; }
+    /* em telas muito estreitas, rótulos longos podem quebrar em 2 linhas
+       em vez de escapar do cabeçalho */
+    nav.links a{ white-space:normal; overflow-wrap:break-word; }
+  }
 </style>
 </head>
 <body>
