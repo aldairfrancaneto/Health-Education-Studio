@@ -229,6 +229,18 @@
     }
     .stat{ max-width: 100%; word-break: break-word; }
   }
+  /* e-mail de contato: fonte menor, pois o endereço é longo */
+  .btn.email{ font-size:9.5px; letter-spacing:0; }
+
+  /* cabeçalho: folga extra em telas bem estreitas (abaixo de 380px) */
+  @media (max-width:380px){
+    .brand{ font-size:10px; gap:6px; }
+    .brand .coin-icon{ width:15px; height:15px; }
+    nav.links{ gap:11px; font-size:8.5px; }
+    nav.links a{ padding:5px 2px; }
+    .nav-inner{ padding:0 14px; gap:10px; }
+    .btn.email{ font-size:8px; }
+  }
 </style>
 </head>
 <body>
@@ -364,7 +376,7 @@
       </p>
       <div class="hero-cta" style="margin-bottom:0;">
         <!-- Troque o e-mail abaixo pelo seu e-mail de contato preferido -->
-        <a class="btn primary" href="mailto:prof.aldair.franca@gmail.com">✉ PROF.ALDAIR.FRANCA@GMAIL.COM</a>
+        <a class="btn primary email" href="mailto:prof.aldair.franca@gmail.com">✉ PROF.ALDAIR.FRANCA@GMAIL.COM</a>
       </div>
     </div>
   </section>
