@@ -303,6 +303,200 @@
   #resultado.falha{ background:rgba(180,30,26,.25); border-color:var(--red); color:#FFC9C9; }
   #resultado .grande{ display:block; font-size:19px; margin-bottom:6px; color:#fff; }
 
+  /* ================================================================
+     ATIVIDADE 2 — LABORATÓRIO DE EVIDÊNCIAS (paleta biomédica)
+     Todas as classes começam com "lab-" para não conflitar com o
+     resto do site.
+     ================================================================ */
+  #ativ-fatores{
+    --petroleo:#0F4C5C; --petroleo-2:#14657A; --petroleo-3:#0A3844;
+    --verde:#2A9D8F; --verde-2:#21867B; --verde-luz:#E3F5F2;
+    --cinza:#F1F5F7; --cinza-2:#DCE6EA; --texto:#233B42; --texto-fraco:#5C767E;
+    --amb:#E9A23B; --erro:#D8544F;
+  }
+  .lab-painel{
+    background:#fff; border:1px solid var(--cinza-2); border-radius:18px;
+    box-shadow:0 10px 30px rgba(15,76,92,.13); padding:26px 26px 30px; margin:0 0 20px;
+    color:var(--texto); font-family:var(--font-body);
+  }
+  .lab-tela{ display:none; }
+  .lab-tela.on{ display:block; animation:labEntra .4s ease; }
+  @keyframes labEntra{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+
+  .lab-topo{ display:flex; align-items:center; gap:14px; margin:0 0 16px; }
+  .lab-ico{
+    width:46px; height:46px; border-radius:13px; flex:0 0 46px;
+    background:linear-gradient(140deg,var(--petroleo-2),var(--petroleo));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lab-ico svg{ width:26px; height:26px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .lab-h{ font-size:clamp(19px,2.6vw,25px); font-weight:800; color:var(--petroleo); margin:0; line-height:1.25; }
+  .lab-sub{ color:var(--texto-fraco); font-size:15px; margin:2px 0 0; }
+  .lab-p{ font-size:16.5px; line-height:1.65; margin:0 0 14px; text-align:justify; }
+  .lab-p b{ color:var(--petroleo); }
+
+  .lab-btn{
+    font-family:var(--font-body); font-weight:700; font-size:16px;
+    padding:15px 26px; border-radius:12px; cursor:pointer; border:none;
+    background:linear-gradient(140deg,var(--verde),var(--verde-2)); color:#fff;
+    box-shadow:0 6px 16px rgba(42,157,143,.35);
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    transition:transform .15s, box-shadow .15s, filter .15s;
+  }
+  .lab-btn:hover{ filter:brightness(1.07); transform:translateY(-2px); box-shadow:0 9px 22px rgba(42,157,143,.42); }
+  .lab-btn:active{ transform:translateY(0); }
+  .lab-btn.sec{
+    background:#fff; color:var(--petroleo); border:2px solid var(--cinza-2);
+    box-shadow:0 4px 12px rgba(15,76,92,.10);
+  }
+  .lab-btn.sec:hover{ border-color:var(--petroleo-2); }
+  .lab-btn.azul{ background:linear-gradient(140deg,var(--petroleo-2),var(--petroleo)); box-shadow:0 6px 16px rgba(15,76,92,.32); }
+  .lab-btn[disabled]{ opacity:.5; cursor:not-allowed; filter:grayscale(.4); transform:none; }
+  .lab-btn svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .lab-acoes{ display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; }
+
+  .lab-campo{ margin:0 0 16px; }
+  .lab-campo label{ display:block; font-weight:700; font-size:14.5px; color:var(--petroleo); margin:0 0 7px; }
+  .lab-campo input{
+    width:100%; font-family:var(--font-body); font-weight:600; font-size:17px;
+    padding:14px 16px; border:2px solid var(--cinza-2); border-radius:12px;
+    background:var(--cinza); color:var(--texto);
+  }
+  .lab-campo input:focus{ outline:none; border-color:var(--verde); background:#fff; }
+
+  /* --------- barra de progresso --------- */
+  .lab-prog-topo{ display:flex; justify-content:space-between; align-items:baseline; margin:0 0 8px; }
+  .lab-prog-txt{ font-weight:700; font-size:14px; color:var(--petroleo); }
+  .lab-prog-pct{ font-size:13px; color:var(--texto-fraco); }
+  .lab-prog{ height:11px; background:var(--cinza-2); border-radius:99px; overflow:hidden; margin:0 0 20px; }
+  .lab-prog i{
+    display:block; height:100%; width:0;
+    background:linear-gradient(90deg,var(--verde),var(--petroleo-2));
+    border-radius:99px; transition:width .5s cubic-bezier(.2,.8,.3,1);
+  }
+
+  /* --------- placar --------- */
+  .lab-placar{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 20px; }
+  .lab-jog{
+    background:var(--cinza); border:2px solid var(--cinza-2); border-radius:14px;
+    padding:13px 15px; transition:border-color .25s, background .25s, transform .2s;
+  }
+  .lab-jog.lider{ border-color:var(--verde); background:var(--verde-luz); }
+  .lab-jog.lider .lab-jog-pts{ color:var(--verde-2); }
+  .lab-jog-nome{
+    font-weight:700; font-size:14.5px; color:var(--texto); display:flex; align-items:center; gap:7px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .lab-jog-pts{ font-size:27px; font-weight:800; color:var(--petroleo); line-height:1.2; }
+  .lab-jog-pts small{ font-size:13px; font-weight:600; color:var(--texto-fraco); }
+  .lab-coroa{ font-size:15px; }
+
+  /* --------- papéis da rodada --------- */
+  .lab-papeis{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 20px; }
+  .lab-papel{
+    border-radius:14px; padding:13px 15px; border:2px solid transparent;
+  }
+  .lab-papel.leitor{ background:linear-gradient(140deg,var(--petroleo-2),var(--petroleo)); color:#fff; }
+  .lab-papel.resp{ background:var(--verde-luz); border-color:var(--verde); color:var(--texto); }
+  .lab-papel-rot{
+    font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    opacity:.85; display:flex; align-items:center; gap:6px; margin-bottom:3px;
+  }
+  .lab-papel-nome{ font-size:17px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lab-papel svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.2; }
+
+  /* --------- afirmativa --------- */
+  .lab-afirm{
+    background:var(--cinza); border-left:6px solid var(--petroleo-2); border-radius:12px;
+    padding:20px 22px; margin:0 0 18px;
+  }
+  .lab-afirm-rot{
+    font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--petroleo-2); margin:0 0 8px;
+  }
+  .lab-afirm-txt{ font-size:clamp(16px,2.1vw,19px); line-height:1.6; text-align:justify; margin:0; font-weight:600; }
+
+  /* --------- painel do leitor --------- */
+  .lab-leitor{ border:2px dashed var(--amb); border-radius:14px; margin:0 0 18px; overflow:hidden; background:#FFFCF5; }
+  .lab-leitor > summary{
+    cursor:pointer; list-style:none; padding:13px 16px;
+    font-weight:700; font-size:14px; color:#9A6510;
+    display:flex; align-items:center; gap:9px;
+  }
+  .lab-leitor > summary::-webkit-details-marker{ display:none; }
+  .lab-leitor > summary::after{ content:"▸"; margin-left:auto; transition:transform .2s; }
+  .lab-leitor[open] > summary::after{ transform:rotate(90deg); }
+  .lab-leitor > summary:hover{ background:#FFF6E6; }
+  .lab-leitor svg{ width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.2; }
+  .lab-leitor:not([open]) .lab-leitor-int{ display:none; }
+  .lab-leitor-int{ padding:4px 16px 18px; border-top:1px dashed rgba(233,162,59,.5); }
+  .lab-aviso{ font-size:12.5px; color:#9A6510; margin:10px 0 12px; font-weight:600; }
+  .lab-codigos{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 0 12px; }
+  .lab-cod{
+    border-radius:11px; padding:11px 12px; text-align:center; border:2px solid;
+  }
+  .lab-cod.v{ background:#EAF7F4; border-color:var(--verde); }
+  .lab-cod.f{ background:#FDEEED; border-color:var(--erro); }
+  .lab-cod-rot{ font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--texto-fraco); }
+  .lab-cod-val{ font-family:var(--font-pixel); font-size:15px; margin-top:5px; letter-spacing:.04em; }
+  .lab-cod.v .lab-cod-val{ color:var(--verde-2); }
+  .lab-cod.f .lab-cod-val{ color:var(--erro); }
+  .lab-gab{ font-size:14.5px; line-height:1.6; text-align:justify; color:var(--texto); }
+  .lab-gab b{ color:var(--petroleo); }
+
+  /* --------- entrada do código --------- */
+  .lab-entrada{ display:flex; gap:12px; flex-wrap:wrap; align-items:stretch; }
+  .lab-entrada input{
+    flex:1; min-width:150px; font-family:var(--font-pixel); font-size:15px; letter-spacing:.08em;
+    text-transform:uppercase; text-align:center;
+    padding:15px 14px; border:2px solid var(--cinza-2); border-radius:12px; background:var(--cinza); color:var(--petroleo);
+  }
+  .lab-entrada input:focus{ outline:none; border-color:var(--verde); background:#fff; }
+  .lab-dica{ font-size:13.5px; color:var(--texto-fraco); margin:10px 0 0; }
+
+  /* --------- feedback --------- */
+  .lab-fb{ display:none; border-radius:14px; padding:20px 22px; margin:18px 0 0; }
+  .lab-fb.on{ display:block; animation:labPop .45s cubic-bezier(.2,1.3,.4,1); }
+  @keyframes labPop{ from{opacity:0; transform:scale(.94);} to{opacity:1; transform:scale(1);} }
+  .lab-fb.acerto{ background:var(--verde-luz); border:2px solid var(--verde); }
+  .lab-fb.erro{ background:#FDEEED; border:2px solid var(--erro); }
+  .lab-fb-cab{ display:flex; align-items:center; gap:12px; margin:0 0 12px; }
+  .lab-fb-sel{
+    width:44px; height:44px; border-radius:50%; flex:0 0 44px;
+    display:flex; align-items:center; justify-content:center; font-size:24px; color:#fff;
+  }
+  .lab-fb.acerto .lab-fb-sel{ background:var(--verde); animation:labSelo .5s cubic-bezier(.2,1.4,.4,1); }
+  .lab-fb.erro .lab-fb-sel{ background:var(--erro); animation:labTrema .5s; }
+  @keyframes labSelo{ 0%{transform:scale(0) rotate(-90deg);} 100%{transform:scale(1) rotate(0);} }
+  @keyframes labTrema{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-7px);} 75%{transform:translateX(7px);} }
+  .lab-fb-tit{ font-size:19px; font-weight:800; margin:0; }
+  .lab-fb.acerto .lab-fb-tit{ color:var(--verde-2); }
+  .lab-fb.erro .lab-fb-tit{ color:var(--erro); }
+  .lab-fb-resp{ font-size:15px; font-weight:700; margin:0 0 10px; color:var(--texto); }
+  .lab-fb-just{ font-size:15px; line-height:1.65; text-align:justify; margin:0 0 18px; color:var(--texto); }
+
+  /* --------- final --------- */
+  .lab-medalha{ font-size:60px; text-align:center; line-height:1; margin:0 0 6px; }
+  .lab-campeao{
+    background:linear-gradient(140deg,var(--verde-luz),#fff); border:2px solid var(--verde);
+    border-radius:16px; padding:20px; text-align:center; margin:0 0 18px;
+  }
+  .lab-campeao-rot{ font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--texto-fraco); }
+  .lab-campeao-nome{ font-size:clamp(20px,3vw,27px); font-weight:800; color:var(--petroleo); margin:4px 0 0; }
+  .lab-stats{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 20px; }
+  .lab-stat{ background:var(--cinza); border-radius:14px; padding:15px; text-align:center; }
+  .lab-stat-n{ font-size:25px; font-weight:800; color:var(--petroleo); }
+  .lab-stat-r{ font-size:12.5px; color:var(--texto-fraco); font-weight:600; margin-top:2px; }
+
+  @media (max-width:600px){
+    .lab-painel{ padding:20px 17px 24px; border-radius:15px; }
+    .lab-placar, .lab-papeis, .lab-codigos, .lab-stats{ grid-template-columns:1fr; }
+    .lab-afirm{ padding:16px 16px; }
+    .lab-btn{ width:100%; font-size:15px; padding:14px 18px; }
+    .lab-entrada input{ min-width:0; }
+    .lab-ico{ width:40px; height:40px; flex:0 0 40px; }
+  }
+
   /* --------- lightbox --------- */
   #lightbox{
     position:fixed; inset:0; z-index:100; display:none;
@@ -379,6 +573,15 @@
     .hud-item{ font-size:11px; padding:8px 10px; }
     .btn-board{ font-size:11px; padding:10px 13px; }
     .slot.errado::after, .slot.certo::after{ font-size:30px; }
+  }
+  /* cabeçalho: folga extra em telas bem estreitas (abaixo de 380px) */
+  @media (max-width:380px){
+    .brand{ font-size:10px; gap:6px; }
+    .brand .coin-icon{ width:15px; height:15px; }
+    nav.links{ gap:11px; font-size:8.5px; }
+    nav.links a{ padding:5px 2px; }
+    .nav-inner{ padding:0 14px; gap:10px; }
+    .btn.email{ font-size:8px; }
   }
 </style>
 </head>
@@ -479,6 +682,198 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 2 — FATORES MODIFICÁVEIS E NÃO MODIFICÁVEIS
+       senha: fatores
+       ============================================================ -->
+  <section class="atividade" id="ativ-fatores">
+
+    <!-- ---------- TELA 1: MISSÃO ---------- -->
+    <div class="lab-tela on" id="labIntro">
+      <div class="lab-painel">
+        <div class="lab-topo">
+          <div class="lab-ico">
+            <svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7.5 15h9"/></svg>
+          </div>
+          <div>
+            <h2 class="lab-h">Laboratório de Evidências</h2>
+            <p class="lab-sub">Fatores modificáveis e não modificáveis no envelhecimento</p>
+          </div>
+        </div>
+
+        <p class="lab-p">
+          <b>Missão:</b> vocês são pesquisadores analisando evidências científicas.
+          Cada afirmativa deve ser julgada como <b>VERDADEIRA</b> ou <b>FALSA</b>.
+          O aluno que lê não deve revelar a resposta correta — para registrar a
+          resposta do colega, utilizem o <b>código secreto</b> gerado automaticamente
+          pelo sistema a cada rodada.
+        </p>
+        <p class="lab-p">
+          A atividade é feita <b>em dupla</b> e os papéis se invertem sozinhos a cada
+          rodada: quem leu passa a responder, e vice-versa.
+        </p>
+
+        <div class="lab-acoes">
+          <button class="lab-btn" type="button" id="labIrCadastro">
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Iniciar Missão
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 2: CADASTRO ---------- -->
+    <div class="lab-tela" id="labCadastro">
+      <div class="lab-painel">
+        <div class="lab-topo">
+          <div class="lab-ico">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <h2 class="lab-h">Identificação da dupla</h2>
+            <p class="lab-sub">Informe o nome dos dois pesquisadores</p>
+          </div>
+        </div>
+
+        <div class="lab-campo">
+          <label for="labN1">Jogador 1</label>
+          <input type="text" id="labN1" maxlength="24" placeholder="Nome do jogador 1" autocomplete="off">
+        </div>
+        <div class="lab-campo">
+          <label for="labN2">Jogador 2</label>
+          <input type="text" id="labN2" maxlength="24" placeholder="Nome do jogador 2" autocomplete="off">
+        </div>
+        <p class="lab-dica" id="labErroNome" style="display:none; color:#D8544F; font-weight:700;">
+          Preencha o nome dos dois jogadores para começar.
+        </p>
+
+        <div class="lab-acoes">
+          <button class="lab-btn" type="button" id="labComecar">
+            <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Começar partida
+          </button>
+          <button class="lab-btn sec" type="button" id="labVoltarIntro">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 3: RODADA ---------- -->
+    <div class="lab-tela" id="labJogo">
+      <div class="lab-painel">
+        <div class="lab-prog-topo">
+          <span class="lab-prog-txt" id="labProgTxt">Afirmativa 1 de 10</span>
+          <span class="lab-prog-pct" id="labProgPct">0%</span>
+        </div>
+        <div class="lab-prog"><i id="labProgBar"></i></div>
+
+        <div class="lab-placar">
+          <div class="lab-jog" id="labJog1">
+            <div class="lab-jog-nome"><span id="labNome1">Jogador 1</span><span class="lab-coroa" id="labCoroa1"></span></div>
+            <div class="lab-jog-pts"><span id="labPts1">0</span> <small>ponto(s)</small></div>
+          </div>
+          <div class="lab-jog" id="labJog2">
+            <div class="lab-jog-nome"><span id="labNome2">Jogador 2</span><span class="lab-coroa" id="labCoroa2"></span></div>
+            <div class="lab-jog-pts"><span id="labPts2">0</span> <small>ponto(s)</small></div>
+          </div>
+        </div>
+
+        <div class="lab-papeis">
+          <div class="lab-papel leitor">
+            <div class="lab-papel-rot">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Leitor
+            </div>
+            <div class="lab-papel-nome" id="labLeitor">—</div>
+          </div>
+          <div class="lab-papel resp">
+            <div class="lab-papel-rot">
+              <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              Respondedor
+            </div>
+            <div class="lab-papel-nome" id="labResp">—</div>
+          </div>
+        </div>
+
+        <div class="lab-afirm">
+          <p class="lab-afirm-rot">Afirmativa para análise</p>
+          <p class="lab-afirm-txt" id="labAfirm">—</p>
+        </div>
+
+        <!-- painel reservado ao leitor -->
+        <details class="lab-leitor" id="labPainelLeitor">
+          <summary>
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Mostrar painel do leitor
+          </summary>
+          <div class="lab-leitor-int">
+            <p class="lab-aviso">⚠ Área exclusiva do leitor — não mostre esta parte ao colega.</p>
+            <div class="lab-codigos">
+              <div class="lab-cod v">
+                <div class="lab-cod-rot">Verdadeiro</div>
+                <div class="lab-cod-val" id="labCodV">—</div>
+              </div>
+              <div class="lab-cod f">
+                <div class="lab-cod-rot">Falso</div>
+                <div class="lab-cod-val" id="labCodF">—</div>
+              </div>
+            </div>
+            <p class="lab-gab"><b>Resposta correta:</b> <span id="labGabResp">—</span></p>
+            <p class="lab-gab" style="margin-top:8px;"><b>Justificativa:</b> <span id="labGabJust">—</span></p>
+          </div>
+        </details>
+
+        <div class="lab-entrada">
+          <input type="text" id="labCodigo" maxlength="4" placeholder="CÓDIGO DO COLEGA" autocomplete="off" spellcheck="false">
+          <button class="lab-btn azul" type="button" id="labConfirmar">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            Confirmar
+          </button>
+        </div>
+        <p class="lab-dica" id="labDica">
+          O respondedor diz apenas o código correspondente à sua resposta — o leitor digita aqui.
+        </p>
+
+        <div class="lab-fb" id="labFb">
+          <div class="lab-fb-cab">
+            <div class="lab-fb-sel" id="labFbSel">✓</div>
+            <p class="lab-fb-tit" id="labFbTit">Correto!</p>
+          </div>
+          <p class="lab-fb-resp" id="labFbResp"></p>
+          <p class="lab-fb-just" id="labFbJust"></p>
+          <button class="lab-btn" type="button" id="labProxima">
+            Próxima rodada
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 4: FINAL ---------- -->
+    <div class="lab-tela" id="labFinal">
+      <div class="lab-painel">
+        <div class="lab-medalha">🏅</div>
+        <h2 class="lab-h" style="text-align:center;">Missão concluída</h2>
+        <p class="lab-sub" style="text-align:center; margin-bottom:20px;">Resultados da investigação</p>
+
+        <div class="lab-campeao" id="labCampeao">
+          <div class="lab-campeao-rot" id="labCampeaoRot">Campeão da partida</div>
+          <div class="lab-campeao-nome" id="labCampeaoNome">—</div>
+        </div>
+
+        <div class="lab-stats" id="labStats"></div>
+
+        <div class="lab-acoes">
+          <button class="lab-btn" type="button" id="labDeNovo">
+            <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            Jogar novamente
+          </button>
+          <button class="lab-btn sec" type="button" id="labNovaPartida">Nova partida (trocar dupla)</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -512,7 +907,8 @@
      ligando a senha ao id do <section class="atividade">.
      ============================================================== */
   const SENHAS = {
-    "envelhecimento": "ativ-hallmarks"
+    "envelhecimento": "ativ-hallmarks",
+    "fatores": "ativ-fatores"
   };
 
   const portao = document.getElementById('portao');
@@ -526,6 +922,7 @@
     if (alvo){
       alvo.classList.add('on');
       if (id === 'ativ-hallmarks') iniciarHallmarks();
+      if (id === 'ativ-fatores') iniciarFatores();
     }
   }
   function tentarSenha(){
@@ -796,6 +1193,306 @@
     if (iniciado) return;
     iniciado = true;
     montar();
+  }
+
+  /* ==============================================================
+     ATIVIDADE 2 — LABORATÓRIO DE EVIDÊNCIAS
+     Fatores modificáveis e não modificáveis no envelhecimento
+     ============================================================== */
+
+  /* --------------------------------------------------------------
+     BANCO DE AFIRMATIVAS
+     Para acrescentar outra, copie um bloco { ... } e cole no final,
+     mantendo a vírgula entre eles. O jogo se ajusta sozinho ao
+     número de afirmativas.
+     -------------------------------------------------------------- */
+  const AFIRMATIVAS = [
+    {
+      afirmativa: "A restrição calórica moderada e sem desnutrição atua como um estímulo benéfico que desacelera o envelhecimento, por promover a ativação da autofagia e de mecanismos de defesa contra o estresse celular.",
+      resposta: true,
+      justificativa: "A restrição calórica reduz os sinais proliferativos e de crescimento celular. Isso faz com que as células redirecionem seus recursos energéticos da proliferação para atividades de reparo celular e estabilidade genômica, além de estimular fortemente a autofagia."
+    },
+    {
+      afirmativa: "O encurtamento dos telômeros, estruturas localizadas nas extremidades dos cromossomos, pode limitar a capacidade de divisão das células e contribuir para a senescência celular.",
+      resposta: true,
+      justificativa: "Os telômeros funcionam como protetores das extremidades dos cromossomos. Com as divisões celulares, eles podem se encurtar e levar a célula a interromper sua multiplicação — processo chamado senescência celular."
+    },
+    {
+      afirmativa: "A herança genética influencia a longevidade, mas o envelhecimento também é afetado pelo estilo de vida, pelo ambiente e pelas condições sociais.",
+      resposta: true,
+      justificativa: "A genética participa da determinação da longevidade, mas não define sozinha como uma pessoa envelhecerá. Alimentação, atividade física, sono, estresse, condições de trabalho, renda e acesso à saúde também influenciam esse processo."
+    },
+    {
+      afirmativa: "O declínio fisiológico de GH e IGF-1 na somatopause reduz a longevidade de mamíferos, sendo a reposição de GH uma terapia comprovada para prolongar a expectativa de vida máxima.",
+      resposta: false,
+      justificativa: "A redução de GH e IGF-1 ocorre com o envelhecimento, mas isso não significa que a reposição de GH aumente a longevidade. O uso de GH em pessoas idosas saudáveis é controverso, pode causar efeitos adversos e não demonstrou aumentar sistematicamente a longevidade humana. Benefícios observados em alguns animais não podem ser automaticamente aplicados às pessoas."
+    },
+    {
+      afirmativa: "A exposição a desreguladores endócrinos (EDCs) na juventude pode causar alterações epigenéticas permanentes, elevando o risco de desenvolver obesidade e diabetes tipo 2 ao longo do tempo.",
+      resposta: true,
+      justificativa: "Algumas substâncias ambientais podem interferir na ação dos hormônios e no metabolismo. A exposição durante períodos importantes do desenvolvimento pode aumentar a suscetibilidade à obesidade e ao diabetes, embora o risco dependa da dose, do tempo de exposição e de outros fatores individuais."
+    },
+    {
+      afirmativa: "Células senescentes deixam de se dividir, mas continuam metabolicamente ativas e podem liberar substâncias que aumentam a inflamação nos tecidos.",
+      resposta: true,
+      justificativa: "Células senescentes não são necessariamente células mortas. Elas param de se dividir e podem liberar substâncias inflamatórias, conhecidas em conjunto como SASP, que alteram o ambiente ao redor e podem prejudicar a regeneração dos tecidos."
+    },
+    {
+      afirmativa: "O envelhecimento ocorre em uma única direção, sem interação entre danos celulares, alterações dos tecidos e funcionamento dos órgãos.",
+      resposta: false,
+      justificativa: "O envelhecimento não é uma sequência isolada e linear. Existe uma relação de mão dupla: danos celulares podem prejudicar os tecidos e órgãos, enquanto a disfunção dos órgãos, da circulação e do sistema imune pode gerar novos danos celulares."
+    },
+    {
+      afirmativa: "A redução do estrogênio após a menopausa pode contribuir para perda óssea, alterações metabólicas e aumento de processos inflamatórios.",
+      resposta: true,
+      justificativa: "A redução do estrogênio na menopausa está associada à maior perda de massa óssea e pode influenciar a inflamação e a saúde cardiovascular. A intensidade desses efeitos varia entre as pessoas e pode ser influenciada por atividade física, alimentação, composição corporal e acompanhamento clínico."
+    },
+    {
+      afirmativa: "Com o envelhecimento, a célula pode perder parte da capacidade de eliminar componentes danificados, favorecendo o acúmulo de resíduos celulares.",
+      resposta: true,
+      justificativa: "A autofagia é um dos mecanismos de limpeza das células. Com o envelhecimento, sua eficiência pode diminuir, dificultando a remoção de organelas e proteínas danificadas e contribuindo para a disfunção celular."
+    },
+    {
+      afirmativa: "Os produtos finais de glicação avançada produzidos na Diabetes Mellitus, na hiperglicemia crônica e no envelhecimento são sempre completamente eliminados pelo organismo e não provocam inflamação.",
+      resposta: false,
+      justificativa: "Os produtos finais de glicação avançada (AGEs) não são eliminados de forma totalmente eficiente. Seu acúmulo pode contribuir para estresse oxidativo, inflamação e alterações nos vasos sanguíneos e nos tecidos. A formação de AGEs ocorre tanto no organismo quanto em alimentos submetidos a determinadas condições de processamento e cocção."
+    }
+  ];
+
+  // ---- elementos ----
+  const $ = function(id){ return document.getElementById(id); };
+  const telas = ['labIntro','labCadastro','labJogo','labFinal'];
+
+  let jogadores = ['Jogador 1','Jogador 2'];
+  let pontos = [0,0];
+  let baralho = [];        // afirmativas embaralhadas
+  let indice = 0;          // rodada atual
+  let codigosUsados = null;// códigos já sorteados na partida
+  let codV = '', codF = '';
+  let respondendo = 1;     // índice (0 ou 1) de quem responde nesta rodada
+  let travado = false;
+  let fatoresIniciado = false;
+
+  function mostrarTela(id){
+    telas.forEach(function(t){ $(t).classList.toggle('on', t === id); });
+  }
+
+  /* ---- geração de código sem caracteres ambíguos (sem O,0,I,1,S,5) ---- */
+  const LETRAS  = 'ABCDEFGHJKLMNPQRTUVWXYZ';
+  const NUMEROS = '234678 9'.replace(' ','');
+  function sortear(str){ return str.charAt(Math.floor(Math.random()*str.length)); }
+  function gerarCodigo(){
+    const tam = Math.random() < 0.5 ? 3 : 4;
+    let c = '';
+    for (let i = 0; i < tam; i++){
+      // alterna letra/número para ficar fácil de ler e falar
+      c += (i % 2 === 0) ? sortear(LETRAS) : sortear(NUMEROS);
+    }
+    return c;
+  }
+  function gerarCodigoUnico(){
+    let c, tentativas = 0;
+    do {
+      c = gerarCodigo();
+      tentativas++;
+    } while (codigosUsados.has(c) && tentativas < 400);
+    codigosUsados.add(c);
+    return c;
+  }
+
+  function embaralharLista(a){
+    const c = a.slice();
+    for (let i = c.length-1; i > 0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      const t = c[i]; c[i] = c[j]; c[j] = t;
+    }
+    return c;
+  }
+
+  function novaPartida(manterNomes){
+    if (!manterNomes){
+      jogadores = ['Jogador 1','Jogador 2'];
+      $('labN1').value = '';
+      $('labN2').value = '';
+    }
+    pontos = [0,0];
+    baralho = embaralharLista(AFIRMATIVAS);   // ordem aleatória, sem repetir
+    indice = 0;
+    codigosUsados = new Set();
+    travado = false;
+    $('labNome1').textContent = jogadores[0];
+    $('labNome2').textContent = jogadores[1];
+    atualizarPlacar();
+    montarRodada();
+    mostrarTela('labJogo');
+  }
+
+  function atualizarPlacar(){
+    $('labPts1').textContent = pontos[0];
+    $('labPts2').textContent = pontos[1];
+    const lider1 = pontos[0] > pontos[1];
+    const lider2 = pontos[1] > pontos[0];
+    $('labJog1').classList.toggle('lider', lider1);
+    $('labJog2').classList.toggle('lider', lider2);
+    $('labCoroa1').textContent = lider1 ? '👑' : '';
+    $('labCoroa2').textContent = lider2 ? '👑' : '';
+  }
+
+  function montarRodada(){
+    const q = baralho[indice];
+
+    // papéis alternam a cada rodada: rodada 1 -> J1 lê, J2 responde
+    const leitor = indice % 2;            // 0, 1, 0, 1...
+    respondendo = 1 - leitor;
+    $('labLeitor').textContent = jogadores[leitor];
+    $('labResp').textContent   = jogadores[respondendo];
+
+    $('labAfirm').textContent = q.afirmativa;
+
+    // dois códigos novos e inéditos nesta partida
+    codV = gerarCodigoUnico();
+    codF = gerarCodigoUnico();
+    $('labCodV').textContent = codV;
+    $('labCodF').textContent = codF;
+    $('labGabResp').textContent = q.resposta ? 'VERDADEIRA' : 'FALSA';
+    $('labGabJust').textContent = q.justificativa;
+
+    // painel do leitor sempre fechado ao iniciar a rodada
+    $('labPainelLeitor').open = false;
+
+    // progresso
+    const total = baralho.length;
+    $('labProgTxt').textContent = 'Afirmativa ' + (indice+1) + ' de ' + total;
+    const pct = Math.round((indice/total)*100);
+    $('labProgPct').textContent = pct + '%';
+    $('labProgBar').style.width = pct + '%';
+
+    // limpar entrada e feedback
+    $('labCodigo').value = '';
+    $('labCodigo').disabled = false;
+    $('labConfirmar').disabled = false;
+    $('labFb').className = 'lab-fb';
+    $('labDica').textContent = 'O respondedor diz apenas o código correspondente à sua resposta — o leitor digita aqui.';
+    $('labDica').style.color = '';
+    travado = false;
+  }
+
+  function confirmar(){
+    if (travado) return;
+    const digitado = $('labCodigo').value.trim().toUpperCase();
+    if (!digitado){
+      $('labDica').textContent = 'Digite o código informado pelo colega.';
+      $('labDica').style.color = '#D8544F';
+      return;
+    }
+    if (digitado !== codV && digitado !== codF){
+      $('labDica').textContent = 'Código não reconhecido nesta rodada. Confira com o colega e tente de novo.';
+      $('labDica').style.color = '#D8544F';
+      return;
+    }
+
+    travado = true;
+    $('labCodigo').disabled = true;
+    $('labConfirmar').disabled = true;
+
+    const q = baralho[indice];
+    const respondeuVerdadeiro = (digitado === codV);
+    const acertou = (respondeuVerdadeiro === q.resposta);
+
+    if (acertou){
+      pontos[respondendo]++;
+      atualizarPlacar();
+    }
+
+    const fb = $('labFb');
+    fb.className = 'lab-fb on ' + (acertou ? 'acerto' : 'erro');
+    $('labFbSel').textContent = acertou ? '✓' : '✕';
+    $('labFbTit').textContent = acertou ? 'Correto!' : 'Incorreto!';
+    $('labFbResp').textContent =
+      'Resposta correta: ' + (q.resposta ? 'VERDADEIRA' : 'FALSA') +
+      '  ·  ' + jogadores[respondendo] + ' respondeu: ' + (respondeuVerdadeiro ? 'VERDADEIRA' : 'FALSA');
+    $('labFbJust').textContent = q.justificativa;
+
+    // abre o painel para a dupla conferir junto o gabarito
+    $('labPainelLeitor').open = true;
+
+    if (acertou) somVitoria(); else somErro();
+
+    $('labProxima').textContent = (indice + 1 >= baralho.length) ? 'Ver resultado final' : 'Próxima rodada';
+    fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function proxima(){
+    indice++;
+    if (indice >= baralho.length){ finalizar(); return; }
+    montarRodada();
+    $('labJogo').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function finalizar(){
+    $('labProgTxt').textContent = 'Afirmativa ' + baralho.length + ' de ' + baralho.length;
+    $('labProgPct').textContent = '100%';
+    $('labProgBar').style.width = '100%';
+
+    const total = baralho.length;
+    const rodadas = [Math.floor(total/2) + (total % 2), Math.floor(total/2)]; // J2 responde nas ímpares
+    // rodada 0: leitor=J1, responde J2 ; rodada 1: responde J1 ...
+    let respJ1 = 0, respJ2 = 0;
+    for (let i = 0; i < total; i++){ if ((1 - (i % 2)) === 0) respJ1++; else respJ2++; }
+
+    const pct1 = respJ1 ? Math.round(pontos[0]/respJ1*100) : 0;
+    const pct2 = respJ2 ? Math.round(pontos[1]/respJ2*100) : 0;
+
+    if (pontos[0] === pontos[1]){
+      $('labCampeaoRot').textContent = 'Resultado';
+      $('labCampeaoNome').textContent = 'Empate! ' + pontos[0] + ' × ' + pontos[1];
+    } else {
+      const vencedor = pontos[0] > pontos[1] ? 0 : 1;
+      $('labCampeaoRot').textContent = 'Campeão da partida';
+      $('labCampeaoNome').textContent = '🏆 ' + jogadores[vencedor];
+    }
+
+    $('labStats').innerHTML =
+      '<div class="lab-stat"><div class="lab-stat-n">' + pontos[0] + '/' + respJ1 + '</div>' +
+        '<div class="lab-stat-r">' + jogadores[0] + ' — ' + pct1 + '% de acerto</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + pontos[1] + '/' + respJ2 + '</div>' +
+        '<div class="lab-stat-r">' + jogadores[1] + ' — ' + pct2 + '% de acerto</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + (pontos[0]+pontos[1]) + '/' + total + '</div>' +
+        '<div class="lab-stat-r">Acertos da dupla</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + Math.round((pontos[0]+pontos[1])/total*100) + '%</div>' +
+        '<div class="lab-stat-r">Aproveitamento conjunto</div></div>';
+
+    somVitoria();
+    mostrarTela('labFinal');
+    $('labFinal').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function iniciarFatores(){
+    if (fatoresIniciado) return;
+    fatoresIniciado = true;
+
+    $('labIrCadastro').addEventListener('click', function(){ mostrarTela('labCadastro'); });
+    $('labVoltarIntro').addEventListener('click', function(){ mostrarTela('labIntro'); });
+
+    $('labComecar').addEventListener('click', function(){
+      const n1 = $('labN1').value.trim();
+      const n2 = $('labN2').value.trim();
+      if (!n1 || !n2){ $('labErroNome').style.display = 'block'; return; }
+      $('labErroNome').style.display = 'none';
+      jogadores = [n1, n2];
+      novaPartida(true);
+    });
+
+    $('labConfirmar').addEventListener('click', confirmar);
+    $('labCodigo').addEventListener('keydown', function(e){
+      if (e.key === 'Enter'){ e.preventDefault(); confirmar(); }
+    });
+    $('labProxima').addEventListener('click', proxima);
+    $('labDeNovo').addEventListener('click', function(){ novaPartida(true); });
+    $('labNovaPartida').addEventListener('click', function(){
+      novaPartida(false);
+      mostrarTela('labCadastro');
+    });
   }
 
   /* ------------------ lightbox ------------------ */
