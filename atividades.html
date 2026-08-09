@@ -309,8 +309,10 @@
      Todas as classes começam com "lab-" para não conflitar com o
      resto do site.
      ================================================================ */
-  #ativ-fatores{
-    /* ---- paleta da aventura ---- */
+  #ativ-fatores,
+  #ativ-nervoso{
+  /* ---- paleta da aventura ---- */
+  /* céu de crepúsculo sobre o mar — base fria e profunda */
     /* céu de crepúsculo sobre o mar — base fria e profunda */
     --noite:#123A4E;      --noite-2:#1B5C74;   --noite-3:#0A2534;
     --turq:#26A9AF;       --turq-claro:#6FDCDA; --turq-esc:#13727A;
@@ -1117,6 +1119,770 @@
 
   </section>
 
+   <!-- ============================================================
+     ATIVIDADE 3 — SENESCÊNCIA DO SISTEMA NERVOSO
+     senha: nervoso
+     ============================================================ -->
+
+<section class="atividade" id="ativ-nervoso">
+
+  <!-- ---------- TELA 1: MISSÃO ---------- -->
+  <div class="lab-tela on" id="nervosoIntro">
+
+    <div class="lab-mundo">
+      <div class="lab-painel">
+
+        <h2 class="lab-h">
+          A Trilha das Evidências
+        </h2>
+
+        <p class="lab-sub">
+          Envelhecimento do sistema nervoso
+        </p>
+
+        <p class="lab-p">
+          <b>Missão:</b> vocês são pesquisadores analisando
+          evidências científicas sobre o envelhecimento do
+          sistema nervoso.
+        </p>
+
+        <p class="lab-p">
+          Em cada rodada, um jogador lê a afirmativa em voz alta
+          e o outro deve julgá-la como
+          <b>VERDADEIRA</b> ou <b>FALSA</b>.
+        </p>
+
+        <p class="lab-p">
+          Para evitar que as outras duplas escutem a resposta,
+          quem responde não deve dizer "verdadeiro" ou "falso".
+          Deve dizer apenas o <b>código</b> correspondente
+          à sua escolha.
+        </p>
+
+        <p class="lab-p">
+          A cada rodada os papéis se alternam.
+        </p>
+
+        <div class="lab-acoes">
+
+          <button
+            class="lab-btn"
+            type="button"
+            id="nervosoIrCadastro">
+
+            ▶ Iniciar missão
+
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ---------- TELA 2: CADASTRO ---------- -->
+
+  <div class="lab-tela" id="nervosoCadastro">
+
+    <div class="lab-mundo">
+      <div class="lab-painel">
+
+        <h2 class="lab-h">
+          A dupla
+        </h2>
+
+        <p class="lab-sub">
+          Quem vai investigar hoje?
+        </p>
+
+
+        <div class="lab-campo">
+
+          <label for="nervosoN1">
+            Jogador 1
+          </label>
+
+          <input
+            type="text"
+            id="nervosoN1"
+            maxlength="20"
+            placeholder="Nome"
+            autocomplete="off">
+
+        </div>
+
+
+        <div class="lab-campo">
+
+          <label for="nervosoN2">
+            Jogador 2
+          </label>
+
+          <input
+            type="text"
+            id="nervosoN2"
+            maxlength="20"
+            placeholder="Nome"
+            autocomplete="off">
+
+        </div>
+
+
+        <div class="lab-campo">
+
+          <label for="nervosoSemente">
+
+            Código da partida
+
+            <span style="font-weight:600;opacity:.75;">
+              (opcional)
+            </span>
+
+          </label>
+
+          <input
+            type="text"
+            id="nervosoSemente"
+            maxlength="8"
+            placeholder="Ex.: TURMA3"
+            autocomplete="off"
+            spellcheck="false">
+
+          <p
+            class="lab-dica"
+            style="margin-top:7px;">
+
+            Se dois aparelhos digitarem o
+            <b>mesmo código</b>, as afirmativas aparecerão
+            na mesma ordem nos dois aparelhos.
+
+            Em branco = ordem sorteada.
+
+          </p>
+
+        </div>
+
+
+        <div class="lab-campo">
+
+          <label>
+            Este aparelho é de quem?
+          </label>
+
+
+          <div
+            class="lab-opcoes"
+            id="nervosoDono">
+
+
+            <button
+              type="button"
+              class="lab-op sel"
+              data-dono="ambos">
+
+              Um aparelho<br>
+
+              <small>
+                para a dupla
+              </small>
+
+            </button>
+
+
+            <button
+              type="button"
+              class="lab-op"
+              data-dono="0">
+
+              Só do<br>
+
+              <small id="nervosoOpN1">
+                Jogador 1
+              </small>
+
+            </button>
+
+
+            <button
+              type="button"
+              class="lab-op"
+              data-dono="1">
+
+              Só do<br>
+
+              <small id="nervosoOpN2">
+                Jogador 2
+              </small>
+
+            </button>
+
+
+          </div>
+
+
+          <p
+            class="lab-dica"
+            style="margin-top:7px;">
+
+            Com <b>um aparelho por aluno</b>,
+            quem está respondendo não consegue digitar
+            nenhum código — apenas registra se acertou
+            ou errou.
+
+          </p>
+
+        </div>
+
+
+        <p
+          class="lab-erro"
+          id="nervosoErroNome"
+          style="display:none;">
+
+          Preencha o nome dos dois jogadores para começar.
+
+        </p>
+
+
+        <div class="lab-acoes">
+
+          <button
+            class="lab-btn"
+            type="button"
+            id="nervosoComecar">
+
+            ▶ Começar
+
+          </button>
+
+
+          <button
+            class="lab-btn sec"
+            type="button"
+            id="nervosoVoltarIntro">
+
+            Voltar
+
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ---------- TELA 3: JOGO ---------- -->
+
+  <div class="lab-tela" id="nervosoJogo">
+
+    <div class="lab-mundo">
+
+
+      <!-- VEZ -->
+
+      <div
+        class="lab-vez"
+        id="nervosoVez">
+
+        <div class="lab-vez-linha">
+
+          <span class="lab-vez-rot">
+            RESPONDE AGORA
+          </span>
+
+          <span
+            class="lab-vez-nome"
+            id="nervosoVezNome">
+
+            —
+
+          </span>
+
+        </div>
+
+
+        <div class="lab-vez-sub">
+
+          <span id="nervosoVezLeitor">
+            —
+          </span>
+
+          lê a afirmativa em voz alta e digita o código.
+
+        </div>
+
+      </div>
+
+
+      <div class="lab-painel">
+
+
+        <!-- PROGRESSO -->
+
+        <div class="lab-prog-topo">
+
+          <span
+            class="lab-prog-txt"
+            id="nervosoProgTxt">
+
+            Afirmativa 1 de 6
+
+          </span>
+
+
+          <span
+            class="lab-prog-pct"
+            id="nervosoProgPct">
+
+            0%
+
+          </span>
+
+        </div>
+
+
+        <div class="lab-prog">
+
+          <i id="nervosoProgBar"></i>
+
+        </div>
+
+
+        <!-- PLACAR -->
+
+        <div class="lab-placar">
+
+
+          <div
+            class="lab-jog"
+            id="nervosoJog1">
+
+            <div class="lab-jog-nome">
+
+              <span id="nervosoNome1">
+                Jogador 1
+              </span>
+
+              <span
+                class="lab-coroa"
+                id="nervosoCoroa1">
+              </span>
+
+            </div>
+
+
+            <div class="lab-jog-pts">
+
+              <span id="nervosoPts1">
+                0
+              </span>
+
+              <small>
+                ponto(s)
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="lab-jog"
+            id="nervosoJog2">
+
+            <div class="lab-jog-nome">
+
+              <span id="nervosoNome2">
+                Jogador 2
+              </span>
+
+              <span
+                class="lab-coroa"
+                id="nervosoCoroa2">
+              </span>
+
+            </div>
+
+
+            <div class="lab-jog-pts">
+
+              <span id="nervosoPts2">
+                0
+              </span>
+
+              <small>
+                ponto(s)
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- AFIRMATIVA -->
+
+        <div
+          class="lab-afirm"
+          id="nervosoAfirmBox">
+
+          <p class="lab-afirm-rot">
+            Afirmativa para análise
+          </p>
+
+
+          <p
+            class="lab-afirm-txt"
+            id="nervosoAfirm">
+
+            —
+
+          </p>
+
+        </div>
+
+
+        <!-- AVISO PARA QUEM RESPONDE -->
+
+        <div
+          class="lab-ouvir"
+          id="nervosoOuvir"
+          style="display:none;">
+
+          <div class="lab-ouvir-ico">
+            👂
+          </div>
+
+
+          <p class="lab-ouvir-tit">
+            Ouça com atenção
+          </p>
+
+
+          <p class="lab-ouvir-txt">
+
+            <span id="nervosoOuvirLeitor">
+              —
+            </span>
+
+            vai ler a afirmativa em voz alta.
+
+            O texto não aparece aqui de propósito.
+            Julgue pelo que ouvir.
+
+          </p>
+
+        </div>
+
+
+        <!-- CÓDIGOS -->
+
+        <div
+          class="lab-codigos"
+          id="nervosoCodigos">
+
+
+          <div class="lab-cod v">
+
+            <div class="lab-cod-rot">
+              Se achar VERDADEIRA, diga
+            </div>
+
+
+            <div
+              class="lab-cod-val"
+              id="nervosoCodV">
+
+              —
+
+            </div>
+
+          </div>
+
+
+          <div class="lab-cod f">
+
+            <div class="lab-cod-rot">
+              Se achar FALSA, diga
+            </div>
+
+
+            <div
+              class="lab-cod-val"
+              id="nervosoCodF">
+
+              —
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- QUEM LÊ -->
+
+        <div id="nervosoBlocoLeitor">
+
+
+          <div class="lab-entrada">
+
+            <input
+              type="text"
+              id="nervosoCodigo"
+              maxlength="4"
+              placeholder="CÓDIGO DITO"
+              autocomplete="off"
+              spellcheck="false">
+
+
+            <button
+              class="lab-btn azul"
+              type="button"
+              id="nervosoConfirmar">
+
+              ✔ Confirmar
+
+            </button>
+
+          </div>
+
+
+          <p
+            class="lab-dica"
+            id="nervosoDica">
+
+            <span id="nervosoDicaNome">
+              —
+            </span>
+
+            diz o código em voz alta ·
+
+            <span id="nervosoDicaLeitor">
+              —
+            </span>
+
+            digita aqui e confirma.
+
+          </p>
+
+        </div>
+
+
+        <!-- QUEM RESPONDE -->
+
+        <div
+          id="nervosoBlocoResp"
+          style="display:none;">
+
+
+          <div class="lab-espera">
+
+            <p class="lab-espera-tit">
+              É a sua vez de responder
+            </p>
+
+
+            <p class="lab-espera-txt">
+
+              Diga em voz alta apenas o
+              <b>código</b> da sua escolha.
+
+              Depois que
+
+              <span id="nervosoEsperaLeitor">
+                —
+              </span>
+
+              disser o resultado, registre aqui:
+
+            </p>
+
+
+            <div class="lab-registro">
+
+
+              <button
+                class="lab-btn verde"
+                type="button"
+                id="nervosoAcertei">
+
+                ✓ Acertei
+
+              </button>
+
+
+              <button
+                class="lab-btn vermelho"
+                type="button"
+                id="nervosoErrei">
+
+                ✕ Errei
+
+              </button>
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <div
+          class="lab-fb"
+          id="nervosoFb">
+
+
+          <div class="lab-fb-cab">
+
+            <div
+              class="lab-fb-sel"
+              id="nervosoFbSel">
+
+              ✓
+
+            </div>
+
+
+            <p
+              class="lab-fb-tit"
+              id="nervosoFbTit">
+
+              Correto!
+
+            </p>
+
+          </div>
+
+
+          <p
+            class="lab-fb-resp"
+            id="nervosoFbResp">
+          </p>
+
+
+          <p
+            class="lab-fb-just"
+            id="nervosoFbJust">
+          </p>
+
+
+          <button
+            class="lab-btn"
+            type="button"
+            id="nervosoProxima">
+
+            Próxima rodada ▶
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ---------- TELA 4: RESULTADO FINAL ---------- -->
+
+  <div
+    class="lab-tela"
+    id="nervosoFinal">
+
+    <div class="lab-mundo">
+
+      <div class="lab-painel">
+
+
+        <div class="lab-medalha">
+          🏅
+        </div>
+
+
+        <h2
+          class="lab-h"
+          style="text-align:center;">
+
+          Missão concluída
+
+        </h2>
+
+
+        <div class="lab-campeao">
+
+
+          <div
+            class="lab-campeao-rot"
+            id="nervosoCampeaoRot">
+
+            Campeão da partida
+
+          </div>
+
+
+          <div
+            class="lab-campeao-nome"
+            id="nervosoCampeaoNome">
+
+            —
+
+          </div>
+
+
+        </div>
+
+
+        <div
+          class="lab-stats"
+          id="nervosoStats">
+        </div>
+
+
+        <div class="lab-acoes">
+
+
+          <button
+            class="lab-btn"
+            type="button"
+            id="nervosoDeNovo">
+
+            ↻ Jogar novamente
+
+          </button>
+
+
+          <button
+            class="lab-btn sec"
+            type="button"
+            id="nervosoNovaPartida">
+
+            Nova dupla
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
   <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
@@ -1152,7 +1918,8 @@
      ============================================================== */
   const SENHAS = {
     "envelhecimento": "ativ-hallmarks",
-    "fatores": "ativ-fatores"
+    "fatores": "ativ-fatores",
+    "nervoso": "ativ-nervoso"
   };
 
   const portao = document.getElementById('portao');
@@ -1167,6 +1934,7 @@
       alvo.classList.add('on');
       if (id === 'ativ-hallmarks') iniciarHallmarks();
       if (id === 'ativ-fatores') iniciarFatores();
+      if (id === 'ativ-nervoso') iniciarNervoso();
     }
   }
   function tentarSenha(){
@@ -1809,6 +2577,1258 @@
     });
   }
 
+  /* ==============================================================
+   ATIVIDADE 3 — SENESCÊNCIA DO S. NERVOSO
+   ============================================================= */
+
+const AFIRMATIVAS_NERVOSO = [
+
+  {
+    afirmativa:
+      "Ao contrário da crença popular, o envelhecimento saudável não é caracterizado por uma perda massiva de neurônios no neocórtex; estudos histológicos mostram que a diferença no número total de neurônios entre os 20 e os 90 anos de idade é inferior a 10%, sendo o declínio cognitivo associado principalmente a alterações morfológicas sutis, como perda de sinapses, redução de dendríticas e desmielinização axonal.",
+
+    resposta: true,
+
+    justificativa:
+      "A perda de neurônios no envelhecimento saudável é sutil, sendo inferior a 10%. As principais alterações relacionadas ao declínio cognitivo envolvem perda de complexidade estrutural, como redução de sinapses, alterações dendríticas e modificações da mielina."
+  },
+
+
+  {
+    afirmativa:
+      "A perda de integridade da substância branca no cérebro idoso saudável ocorre de maneira homogênea por todo o encéfalo, afetando de forma idêntica as vias de associação posteriores (occipitais) e anteriores (frontais), o que resulta em um comprometimento uniforme de todas as redes neurais.",
+
+    resposta: false,
+
+    justificativa:
+      "A degeneração da substância branca é heterogênea. No envelhecimento normal, as áreas frontais apresentam maior vulnerabilidade, enquanto regiões posteriores são relativamente poupadas."
+  },
+
+
+  {
+    afirmativa:
+      "A hipótese da conectividade seletiva afirma que o envelhecimento cognitivo saudável depende de duas condições: forte comunicação entre as áreas do cérebro envolvidas em uma mesma tarefa e pouca comunicação com áreas que não participam dela.",
+
+    resposta: true,
+
+    justificativa:
+      "O cérebro envelhecido tende a apresentar melhor desempenho quando consegue manter conectividade seletiva: forte comunicação dentro das redes envolvidas na tarefa e menor interferência de áreas externas àquela rede."
+  },
+
+
+  {
+    afirmativa:
+      "Em tarefas cognitivas altamente lateralizadas, como a linguagem e o controle motor, o aumento das conexões funcionais entre o hemisfério esquerdo e direito em idosos atua como um mecanismo compensatório altamente eficaz, promovendo sistematicamente um melhor desempenho e menor tempo de reação na execução dessas tarefas.",
+
+    resposta: false,
+
+    justificativa:
+      "Em tarefas altamente lateralizadas, o aumento da conectividade entre os hemisférios pode ser prejudicial. Em idosos, maior conectividade inter-hemisférica nessas tarefas pode estar associada a maior tempo de reação e menor precisão."
+  },
+
+
+  {
+    afirmativa:
+      "O fenômeno da dediferenciação neural no envelhecimento decorre do comprometimento de processos fisiológicos inibitórios cerebrais, fazendo com que as redes funcionais percam sua especificidade e passem a recrutar áreas de forma mais difusa, menos coordenada e menos especializada.",
+
+    resposta: true,
+
+    justificativa:
+      "A dediferenciação neural corresponde à perda de especialização funcional. Alterações na regulação dos circuitos excitatórios e inibitórios favorecem o recrutamento mais difuso de áreas cerebrais, reduzindo a especificidade das redes."
+  },
+
+
+  {
+    afirmativa:
+      "O processo de envelhecimento patológico do cérebro (senilidade) é exacerbado pelo estado de neuroinflamação de baixo grau, sustentado pela ativação crônica de células da glia, como micróglia e astrócitos, que adquirem um fenótipo secretor associado à senescência (SASP), liberando citocinas inflamatórias que prejudicam a plasticidade sináptica e a sobrevivência neuronal.",
+
+    resposta: true,
+
+    justificativa:
+      "Na senilidade, como em doenças neurodegenerativas, a ativação crônica de micróglias e astrócitos pode contribuir para um estado persistente de neuroinflamação. Esses processos comprometem a homeostase cerebral, a plasticidade sináptica e o suporte aos neurônios."
+  }
+
+];
+
+
+/* --------------------------------------------------------------
+   CÓDIGOS FIXOS DAS AFIRMATIVAS DA ATIVIDADE 3
+   -------------------------------------------------------------- */
+
+const NERVOSO_LETRAS  = 'ABCDEFGHJKLMNPQRTUVWXYZ';
+const NERVOSO_NUMEROS = '2346789';
+
+
+function nervosoHashTexto(txt){
+
+  let h = 2166136261;
+
+  for (let i = 0; i < txt.length; i++){
+
+    h ^= txt.charCodeAt(i);
+
+    h = Math.imul(h, 16777619);
+
+  }
+
+  return h >>> 0;
+}
+
+
+function nervosoPrng(semente){
+
+  let a = semente >>> 0;
+
+  return function(){
+
+    a += 0x6D2B79F5;
+
+    let t = a;
+
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+
+  };
+
+}
+
+
+function nervosoCodigoDe(semente){
+
+  const r = nervosoPrng(semente);
+
+  const tam = r() < 0.5 ? 3 : 4;
+
+  let c = '';
+
+  for (let i = 0; i < tam; i++){
+
+    c += (i % 2 === 0)
+
+      ? NERVOSO_LETRAS.charAt(
+          Math.floor(r() * NERVOSO_LETRAS.length)
+        )
+
+      : NERVOSO_NUMEROS.charAt(
+          Math.floor(r() * NERVOSO_NUMEROS.length)
+        );
+
+  }
+
+  return c;
+}
+
+
+/* Cria códigos únicos para as 6 afirmativas */
+
+(function definirCodigosNervoso(){
+
+  const usados = new Set();
+
+  AFIRMATIVAS_NERVOSO.forEach(function(q, i){
+
+    ['codV','codF'].forEach(function(campo, k){
+
+      let tentativa = 0;
+      let cod;
+
+      do {
+
+        cod = nervosoCodigoDe(
+          nervosoHashTexto(q.afirmativa)
+          + i * 7919
+          + k * 104729
+          + tentativa * 31
+        );
+
+        tentativa++;
+
+      } while (
+        usados.has(cod)
+        && tentativa < 500
+      );
+
+      usados.add(cod);
+
+      q[campo] = cod;
+
+    });
+
+  });
+
+})();
+
+
+/* --------------------------------------------------------------
+   ESTADO DA ATIVIDADE 3
+   -------------------------------------------------------------- */
+
+let nervosoJogadores = ['Jogador 1','Jogador 2'];
+
+let nervosoPontos = [0,0];
+
+let nervosoBaralho = [];
+
+let nervosoIndice = 0;
+
+let nervosoRespondendo = 1;
+
+let nervosoTravado = false;
+
+let nervosoIniciado = false;
+
+let nervosoDono = 'ambos';
+
+
+/* --------------------------------------------------------------
+   EMBARALHAMENTO
+   -------------------------------------------------------------- */
+
+function nervosoEmbaralharCom(lista, sementeTxt){
+
+  const c = lista.slice();
+
+  const r = sementeTxt
+    ? nervosoPrng(nervosoHashTexto(sementeTxt))
+    : Math.random;
+
+  for (let i = c.length - 1; i > 0; i--){
+
+    const j = Math.floor(r() * (i + 1));
+
+    const t = c[i];
+
+    c[i] = c[j];
+
+    c[j] = t;
+
+  }
+
+  return c;
+}
+
+
+/* --------------------------------------------------------------
+   MOSTRAR TELA
+   -------------------------------------------------------------- */
+
+function nervosoMostrarTela(id){
+
+  [
+    'nervosoIntro',
+    'nervosoCadastro',
+    'nervosoJogo',
+    'nervosoFinal'
+  ].forEach(function(t){
+
+    document
+      .getElementById(t)
+      .classList.toggle('on', t === id);
+
+  });
+
+}
+
+
+/* --------------------------------------------------------------
+   NOVA PARTIDA
+   -------------------------------------------------------------- */
+
+function nervosoNovaPartida(manterNomes){
+
+  if (!manterNomes){
+
+    nervosoJogadores = [
+      'Jogador 1',
+      'Jogador 2'
+    ];
+
+    document.getElementById('nervosoN1').value = '';
+
+    document.getElementById('nervosoN2').value = '';
+
+    document.getElementById('nervosoSemente').value = '';
+
+  }
+
+
+  nervosoPontos = [0,0];
+
+
+  const semente =
+    document
+      .getElementById('nervosoSemente')
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  nervosoBaralho =
+    nervosoEmbaralharCom(
+      AFIRMATIVAS_NERVOSO,
+      semente
+    );
+
+
+  nervosoIndice = 0;
+
+  nervosoTravado = false;
+
+
+  document.getElementById('nervosoNome1')
+    .textContent = nervosoJogadores[0];
+
+  document.getElementById('nervosoNome2')
+    .textContent = nervosoJogadores[1];
+
+
+  nervosoAtualizarPlacar();
+
+  nervosoMontarRodada();
+
+  nervosoMostrarTela('nervosoJogo');
+
+}
+
+
+/* --------------------------------------------------------------
+   PLACAR
+   -------------------------------------------------------------- */
+
+function nervosoAtualizarPlacar(){
+
+  document.getElementById('nervosoPts1')
+    .textContent = nervosoPontos[0];
+
+  document.getElementById('nervosoPts2')
+    .textContent = nervosoPontos[1];
+
+
+  const l1 =
+    nervosoPontos[0] > nervosoPontos[1];
+
+  const l2 =
+    nervosoPontos[1] > nervosoPontos[0];
+
+
+  document.getElementById('nervosoJog1')
+    .classList.toggle('lider', l1);
+
+  document.getElementById('nervosoJog2')
+    .classList.toggle('lider', l2);
+
+
+  document.getElementById('nervosoCoroa1')
+    .textContent = l1 ? '👑' : '';
+
+  document.getElementById('nervosoCoroa2')
+    .textContent = l2 ? '👑' : '';
+
+}
+
+
+/* --------------------------------------------------------------
+   MONTAR RODADA
+   -------------------------------------------------------------- */
+
+function nervosoMontarRodada(){
+
+  const q =
+    nervosoBaralho[nervosoIndice];
+
+
+  const leitor =
+    nervosoIndice % 2;
+
+
+  nervosoRespondendo =
+    1 - leitor;
+
+
+  document.getElementById('nervosoVezNome')
+    .textContent =
+    nervosoJogadores[nervosoRespondendo];
+
+
+  document.getElementById('nervosoVezLeitor')
+    .textContent =
+    nervosoJogadores[leitor];
+
+
+  document.getElementById('nervosoDicaNome')
+    .textContent =
+    nervosoJogadores[nervosoRespondendo];
+
+
+  document.getElementById('nervosoDicaLeitor')
+    .textContent =
+    nervosoJogadores[leitor];
+
+
+  document.getElementById('nervosoVez')
+    .classList.toggle(
+      'vez-b',
+      nervosoRespondendo === 1
+    );
+
+
+  document.getElementById('nervosoAfirm')
+    .textContent =
+    q.afirmativa;
+
+
+  document.getElementById('nervosoCodV')
+    .textContent =
+    q.codV;
+
+
+  document.getElementById('nervosoCodF')
+    .textContent =
+    q.codF;
+
+
+  const total =
+    nervosoBaralho.length;
+
+
+  document.getElementById('nervosoProgTxt')
+    .textContent =
+    'Afirmativa '
+    + (nervosoIndice + 1)
+    + ' de '
+    + total;
+
+
+  const pct =
+    Math.round(
+      (nervosoIndice / total) * 100
+    );
+
+
+  document.getElementById('nervosoProgPct')
+    .textContent =
+    pct + '%';
+
+
+  document.getElementById('nervosoProgBar')
+    .style.width =
+    pct + '%';
+
+
+  document.getElementById('nervosoCodigo')
+    .value = '';
+
+
+  document.getElementById('nervosoCodigo')
+    .disabled = false;
+
+
+  document.getElementById('nervosoConfirmar')
+    .disabled = false;
+
+
+  document.getElementById('nervosoFb')
+    .className = 'lab-fb';
+
+
+  document.getElementById('nervosoDica')
+    .classList.remove('erro');
+
+
+  const souRespondedor =
+    (nervosoDono !== 'ambos')
+    &&
+    (Number(nervosoDono) === nervosoRespondendo);
+
+
+  const aparelhoUnico =
+    nervosoDono === 'ambos';
+
+
+  document.getElementById('nervosoCodigos')
+    .style.display =
+    (aparelhoUnico || souRespondedor)
+      ? ''
+      : 'none';
+
+
+  document.getElementById('nervosoBlocoLeitor')
+    .style.display =
+    souRespondedor
+      ? 'none'
+      : '';
+
+
+  document.getElementById('nervosoBlocoResp')
+    .style.display =
+    souRespondedor
+      ? ''
+      : 'none';
+
+
+  document.getElementById('nervosoAfirmBox')
+    .style.display =
+    souRespondedor
+      ? 'none'
+      : '';
+
+
+  document.getElementById('nervosoOuvir')
+    .style.display =
+    souRespondedor
+      ? ''
+      : 'none';
+
+
+  document.getElementById('nervosoOuvirLeitor')
+    .textContent =
+    nervosoJogadores[leitor];
+
+
+  document.getElementById('nervosoEsperaLeitor')
+    .textContent =
+    nervosoJogadores[leitor];
+
+
+  document.getElementById('nervosoAcertei')
+    .disabled = false;
+
+
+  document.getElementById('nervosoErrei')
+    .disabled = false;
+
+
+  nervosoTravado = false;
+
+
+  somVirada();
+
+}
+
+
+/* --------------------------------------------------------------
+   CONFIRMAR CÓDIGO
+   -------------------------------------------------------------- */
+
+function nervosoConfirmar(){
+
+  if (nervosoTravado) return;
+
+
+  const q =
+    nervosoBaralho[nervosoIndice];
+
+
+  const digitado =
+    document
+      .getElementById('nervosoCodigo')
+      .value
+      .trim()
+      .toUpperCase();
+
+
+  const dica =
+    document.getElementById('nervosoDica');
+
+
+  if (!digitado){
+
+    dica.textContent =
+      'Digite o código que o colega disse.';
+
+    dica.classList.add('erro');
+
+    return;
+
+  }
+
+
+  if (
+    digitado !== q.codV
+    &&
+    digitado !== q.codF
+  ){
+
+    dica.textContent =
+      'Esse código não é de nenhuma das duas opções desta afirmativa. Confira e digite de novo.';
+
+    dica.classList.add('erro');
+
+    return;
+
+  }
+
+
+  nervosoTravado = true;
+
+
+  document.getElementById('nervosoCodigo')
+    .disabled = true;
+
+
+  document.getElementById('nervosoConfirmar')
+    .disabled = true;
+
+
+  const respondeuVerdadeiro =
+    digitado === q.codV;
+
+
+  const acertou =
+    respondeuVerdadeiro === q.resposta;
+
+
+  if (acertou){
+
+    nervosoPontos[nervosoRespondendo]++;
+
+    nervosoAtualizarPlacar();
+
+  }
+
+
+  const fb =
+    document.getElementById('nervosoFb');
+
+
+  fb.className =
+    'lab-fb on '
+    + (acertou ? 'acerto' : 'erro');
+
+
+  document.getElementById('nervosoFbSel')
+    .textContent =
+    acertou ? '✓' : '✕';
+
+
+  document.getElementById('nervosoFbTit')
+    .textContent =
+    acertou
+      ? 'Correto!'
+      : 'Incorreto!';
+
+
+  document.getElementById('nervosoFbResp')
+    .textContent =
+    nervosoJogadores[nervosoRespondendo]
+    + ' respondeu '
+    + (
+        respondeuVerdadeiro
+          ? 'VERDADEIRA'
+          : 'FALSA'
+      )
+    + ' · Resposta correta: '
+    + (
+        q.resposta
+          ? 'VERDADEIRA'
+          : 'FALSA'
+      );
+
+
+  document.getElementById('nervosoFbJust')
+    .textContent =
+    q.justificativa;
+
+
+  if (acertou)
+    somAcerto();
+  else
+    somErrou();
+
+
+  document.getElementById('nervosoProxima')
+    .textContent =
+    (
+      nervosoIndice + 1
+      >= nervosoBaralho.length
+    )
+      ? 'Ver resultado ▶'
+      : 'Próxima rodada ▶';
+
+
+  fb.scrollIntoView({
+    behavior:'smooth',
+    block:'nearest'
+  });
+
+}
+
+
+/* --------------------------------------------------------------
+   REGISTRO DO PRÓPRIO RESPONDEDOR
+   -------------------------------------------------------------- */
+
+function nervosoRegistrar(acertou){
+
+  if (nervosoTravado) return;
+
+
+  nervosoTravado = true;
+
+
+  document.getElementById('nervosoAcertei')
+    .disabled = true;
+
+  document.getElementById('nervosoErrei')
+    .disabled = true;
+
+
+  const q =
+    nervosoBaralho[nervosoIndice];
+
+
+  if (acertou){
+
+    nervosoPontos[nervosoRespondendo]++;
+
+    nervosoAtualizarPlacar();
+
+  }
+
+
+  const fb =
+    document.getElementById('nervosoFb');
+
+
+  fb.className =
+    'lab-fb on '
+    + (acertou ? 'acerto' : 'erro');
+
+
+  document.getElementById('nervosoFbSel')
+    .textContent =
+    acertou ? '✓' : '✕';
+
+
+  document.getElementById('nervosoFbTit')
+    .textContent =
+    acertou
+      ? 'Acertou!'
+      : 'Não foi dessa vez';
+
+
+  document.getElementById('nervosoFbResp')
+    .textContent =
+    'Resposta correta: '
+    + (
+        q.resposta
+          ? 'VERDADEIRA'
+          : 'FALSA'
+      );
+
+
+  document.getElementById('nervosoFbJust')
+    .textContent =
+    q.justificativa;
+
+
+  if (acertou)
+    somAcerto();
+  else
+    somErrou();
+
+
+  document.getElementById('nervosoProxima')
+    .textContent =
+    (
+      nervosoIndice + 1
+      >= nervosoBaralho.length
+    )
+      ? 'Ver resultado ▶'
+      : 'Próxima rodada ▶';
+
+
+  fb.scrollIntoView({
+    behavior:'smooth',
+    block:'nearest'
+  });
+
+}
+
+
+/* --------------------------------------------------------------
+   PRÓXIMA RODADA
+   -------------------------------------------------------------- */
+
+function nervosoProxima(){
+
+  nervosoIndice++;
+
+
+  if (
+    nervosoIndice
+    >= nervosoBaralho.length
+  ){
+
+    nervosoFinalizar();
+
+    return;
+
+  }
+
+
+  nervosoMontarRodada();
+
+
+  document.getElementById('nervosoVez')
+    .scrollIntoView({
+      behavior:'smooth',
+      block:'center'
+    });
+
+}
+
+
+/* --------------------------------------------------------------
+   FINAL
+   -------------------------------------------------------------- */
+
+function nervosoFinalizar(){
+
+  document.getElementById('nervosoProgPct')
+    .textContent = '100%';
+
+
+  document.getElementById('nervosoProgBar')
+    .style.width = '100%';
+
+
+  const total =
+    nervosoBaralho.length;
+
+
+  let respJ1 = 0;
+
+  let respJ2 = 0;
+
+
+  for (
+    let i = 0;
+    i < total;
+    i++
+  ){
+
+    if (
+      (1 - (i % 2)) === 0
+    )
+
+      respJ1++;
+
+    else
+
+      respJ2++;
+
+  }
+
+
+  const pct1 =
+    respJ1
+      ? Math.round(
+          nervosoPontos[0]
+          / respJ1
+          * 100
+        )
+      : 0;
+
+
+  const pct2 =
+    respJ2
+      ? Math.round(
+          nervosoPontos[1]
+          / respJ2
+          * 100
+        )
+      : 0;
+
+
+  if (
+    nervosoPontos[0]
+    ===
+    nervosoPontos[1]
+  ){
+
+    document.getElementById(
+      'nervosoCampeaoRot'
+    ).textContent =
+      'Resultado';
+
+
+    document.getElementById(
+      'nervosoCampeaoNome'
+    ).textContent =
+      'Empate! '
+      + nervosoPontos[0]
+      + ' × '
+      + nervosoPontos[1];
+
+  }
+
+  else {
+
+    const vencedor =
+      nervosoPontos[0]
+      >
+      nervosoPontos[1]
+        ? 0
+        : 1;
+
+
+    document.getElementById(
+      'nervosoCampeaoRot'
+    ).textContent =
+      'Campeão da partida';
+
+
+    document.getElementById(
+      'nervosoCampeaoNome'
+    ).textContent =
+      '🏆 '
+      + nervosoJogadores[vencedor];
+
+  }
+
+
+  document.getElementById(
+    'nervosoStats'
+  ).innerHTML =
+
+    '<div class="lab-stat">' +
+
+      '<div class="lab-stat-n">' +
+        nervosoPontos[0]
+        + '/'
+        + respJ1 +
+      '</div>' +
+
+      '<div class="lab-stat-r">' +
+        nervosoJogadores[0]
+        + ' — '
+        + pct1
+        + '%' +
+      '</div>' +
+
+    '</div>' +
+
+
+    '<div class="lab-stat">' +
+
+      '<div class="lab-stat-n">' +
+        nervosoPontos[1]
+        + '/'
+        + respJ2 +
+      '</div>' +
+
+      '<div class="lab-stat-r">' +
+        nervosoJogadores[1]
+        + ' — '
+        + pct2
+        + '%' +
+      '</div>' +
+
+    '</div>' +
+
+
+    '<div class="lab-stat">' +
+
+      '<div class="lab-stat-n">' +
+        (
+          nervosoPontos[0]
+          +
+          nervosoPontos[1]
+        )
+        + '/'
+        + total +
+      '</div>' +
+
+      '<div class="lab-stat-r">' +
+        'Acertos da dupla' +
+      '</div>' +
+
+    '</div>' +
+
+
+    '<div class="lab-stat">' +
+
+      '<div class="lab-stat-n">' +
+        Math.round(
+          (
+            nervosoPontos[0]
+            +
+            nervosoPontos[1]
+          )
+          /
+          total
+          *
+          100
+        )
+        + '%' +
+      '</div>' +
+
+      '<div class="lab-stat-r">' +
+        'Aproveitamento' +
+      '</div>' +
+
+    '</div>';
+
+
+  somVitoria();
+
+
+  nervosoMostrarTela(
+    'nervosoFinal'
+  );
+
+
+  document.getElementById(
+    'nervosoFinal'
+  ).scrollIntoView({
+    behavior:'smooth',
+    block:'start'
+  });
+
+}
+
+
+/* --------------------------------------------------------------
+   INICIALIZAÇÃO DA ATIVIDADE 3
+   -------------------------------------------------------------- */
+
+function iniciarNervoso(){
+
+  if (nervosoIniciado)
+    return;
+
+
+  nervosoIniciado = true;
+
+
+  document.getElementById(
+    'nervosoIrCadastro'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoMostrarTela(
+        'nervosoCadastro'
+      );
+
+      somVirada();
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoVoltarIntro'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoMostrarTela(
+        'nervosoIntro'
+      );
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoComecar'
+  ).addEventListener(
+    'click',
+    function(){
+
+      const n1 =
+        document.getElementById(
+          'nervosoN1'
+        ).value.trim();
+
+
+      const n2 =
+        document.getElementById(
+          'nervosoN2'
+        ).value.trim();
+
+
+      if (!n1 || !n2){
+
+        document.getElementById(
+          'nervosoErroNome'
+        ).style.display = 'block';
+
+        return;
+
+      }
+
+
+      document.getElementById(
+        'nervosoErroNome'
+      ).style.display = 'none';
+
+
+      nervosoJogadores = [
+        n1,
+        n2
+      ];
+
+
+      nervosoNovaPartida(true);
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoDono'
+  ).addEventListener(
+    'click',
+    function(e){
+
+      const b =
+        e.target.closest('.lab-op');
+
+
+      if (!b) return;
+
+
+      document
+        .getElementById('nervosoDono')
+        .querySelectorAll('.lab-op')
+        .forEach(function(x){
+
+          x.classList.remove('sel');
+
+        });
+
+
+      b.classList.add('sel');
+
+
+      nervosoDono =
+        b.dataset.dono === 'ambos'
+          ? 'ambos'
+          : Number(b.dataset.dono);
+
+
+      somVirada();
+
+    }
+  );
+
+
+  ['nervosoN1','nervosoN2']
+    .forEach(function(idc,k){
+
+      document.getElementById(idc)
+        .addEventListener(
+          'input',
+          function(){
+
+            document.getElementById(
+              k === 0
+                ? 'nervosoOpN1'
+                : 'nervosoOpN2'
+            ).textContent =
+              document.getElementById(idc)
+                .value.trim()
+              ||
+              ('Jogador ' + (k+1));
+
+          }
+        );
+
+    });
+
+
+  document.getElementById(
+    'nervosoAcertei'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoRegistrar(true);
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoErrei'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoRegistrar(false);
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoConfirmar'
+  ).addEventListener(
+    'click',
+    nervosoConfirmar
+  );
+
+
+  document.getElementById(
+    'nervosoCodigo'
+  ).addEventListener(
+    'keydown',
+    function(e){
+
+      if (e.key === 'Enter'){
+
+        e.preventDefault();
+
+        nervosoConfirmar();
+
+      }
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoProxima'
+  ).addEventListener(
+    'click',
+    nervosoProxima
+  );
+
+
+  document.getElementById(
+    'nervosoDeNovo'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoNovaPartida(true);
+
+    }
+  );
+
+
+  document.getElementById(
+    'nervosoNovaPartida'
+  ).addEventListener(
+    'click',
+    function(){
+
+      nervosoNovaPartida(false);
+
+      nervosoMostrarTela(
+        'nervosoCadastro'
+      );
+
+    }
+  );
+
+}
   /* ------------------ lightbox ------------------ */
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lbImg');
