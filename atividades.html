@@ -1045,7 +1045,7 @@
             </p>
           </div>
 
-          <!-- códigos abertos: os mesmos em qualquer aparelho -->
+          <!-- códigos (ocultos apenas para o leitor, no modo de 2 aparelhos) -->
           <div class="lab-codigos" id="labCodigos">
             <div class="lab-cod v">
               <div class="lab-cod-rot">Se achar VERDADEIRA, diga</div>
@@ -1642,7 +1642,8 @@
     $('labCodigo').value = '';
     $('labCodigo').disabled = false;
     $('labConfirmar').disabled = false;
-    $('labCodigos').style.display = '';
+    // CÓDIGOS: só quem RESPONDE pode vê-los. Se o leitor os visse, descobriria
+    // a escolha do colega no instante em que ouvisse o código.
     $('labFb').className = 'lab-fb';
     $('labDica').classList.remove('erro');
 
@@ -1650,6 +1651,11 @@
     // Quem responde NÃO recebe campo de código (senão descobriria a resposta
     // testando os códigos antes de se comprometer).
     const souRespondedor = (dono !== 'ambos') && (Number(dono) === respondendo);
+    const aparelhoUnico  = (dono === 'ambos');
+    // Códigos: aparecem no aparelho único (tela compartilhada pela dupla) e no
+    // aparelho de quem responde. Ficam ocultos só para o LEITOR quando cada um
+    // usa o próprio aparelho — assim ele não descobre a escolha do colega.
+    $('labCodigos').style.display = (aparelhoUnico || souRespondedor) ? '' : 'none';
     $('labBlocoLeitor').style.display = souRespondedor ? 'none' : '';
     $('labBlocoResp').style.display   = souRespondedor ? '' : 'none';
     // o texto da afirmativa fica oculto para quem responde — ele deve OUVIR
