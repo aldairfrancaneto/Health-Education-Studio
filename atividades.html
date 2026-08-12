@@ -712,6 +712,32 @@
     .nav-inner{ padding:0 14px; gap:10px; }
     .btn.email{ font-size:8px; }
   }
+  /* ============================================================
+     CABEÇALHO À PROVA DE ESTOURO NO CELULAR (padronizado com index.html)
+     ============================================================ */
+  header{ overflow:hidden; }
+  .nav-inner{ min-width:0; }
+  .brand{ min-width:0; max-width:100%; overflow-wrap:break-word; }
+  nav.links{ min-width:0; max-width:100%; flex-wrap:wrap; }
+  nav.links a{ white-space:nowrap; }
+
+  @media (max-width:640px){
+    .nav-inner{
+      flex-direction:column; align-items:flex-start; gap:10px;
+      padding-left:16px; padding-right:16px;
+    }
+    nav.links{
+      width:100%; justify-content:flex-start;
+      gap:8px 14px; font-size:9px;
+    }
+    nav.links a{ padding:4px 0; }
+    .brand{ font-size:10.5px; }
+  }
+  @media (max-width:360px){
+    nav.links{ font-size:8.5px; gap:7px 11px; }
+    .brand{ font-size:9.5px; }
+    nav.links a{ white-space:normal; overflow-wrap:break-word; }
+  }
   /* ---------- faixa de VEZ (bem destacada, só com nomes) ---------- */
   .lab-vez{
     position:relative; border-radius:14px; margin:0 0 18px; padding:16px 20px;
@@ -1035,6 +1061,309 @@
     .apo-mao{ grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:9px; }
     .apo-convergencia{ gap:6px; }
     .apo-convergencia .juncao{ font-size:10px; padding:5px 9px; letter-spacing:.05em; }
+  }
+  /* ============================================================
+     ATIVIDADE 8 — O DESTINO DA CÉLULA (fusão necrose + apoptose)
+     Tabuleiro em tons de ROXO. Reaproveita a ideia das vias
+     paralelas da apoptose e acrescenta a trilha da necrose
+     correndo em paralelo, no campo ao lado. Prefixo "mor-".
+     ============================================================ */
+  /* ---------- tela de seleção de percurso ---------- */
+  .mor-selecao{
+    display:none; border:3px solid #8B5CF6; border-radius:16px;
+    padding:24px 20px 26px; margin:0 0 26px;
+    background:linear-gradient(180deg, rgba(70,32,110,.45), rgba(18,8,32,.60));
+    box-shadow:inset 0 0 70px rgba(139,92,246,.14);
+  }
+  .mor-selecao.on{ display:block; }
+  .mor-sel-cab{
+    display:flex; flex-direction:column; gap:6px; margin:0 0 20px; text-align:center;
+  }
+  .mor-sel-titulo{
+    font-family:var(--font-pixel); font-size:15px; letter-spacing:.04em; color:#E4D2F5;
+    line-height:1.7;
+  }
+  .mor-sel-sub{
+    font-family:var(--font-serif); font-weight:700; font-size:13.5px;
+    letter-spacing:.07em; text-transform:uppercase; color:rgba(232,238,247,.62);
+  }
+  .mor-sel-opcoes{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));
+    align-items:stretch;
+  }
+  .mor-sel-card{
+    display:flex; flex-direction:column; gap:9px; text-align:left;
+    border:3px solid var(--gold-dim); border-radius:13px; padding:16px 15px 15px;
+    background:linear-gradient(180deg, rgba(64,30,100,.42), rgba(14,6,26,.55));
+    color:#E8EEF7; cursor:pointer; font:inherit;
+    transition:transform .12s, box-shadow .15s, border-color .15s;
+  }
+  .mor-sel-card:hover{ transform:translateY(-3px); }
+  .mor-sel-apo{ border-color:#E07B39; }
+  .mor-sel-apo:hover{ box-shadow:0 0 0 2px rgba(224,123,57,.30), inset 0 0 40px rgba(224,123,57,.18); }
+  .mor-sel-nec{ border-color:#D9A521; }
+  .mor-sel-nec:hover{ box-shadow:0 0 0 2px rgba(217,165,33,.30), inset 0 0 40px rgba(217,165,33,.18); }
+  .mor-sel-ambas{ border-color:#3E9E5E; }
+  .mor-sel-ambas:hover{ box-shadow:0 0 0 2px rgba(62,158,94,.30), inset 0 0 40px rgba(62,158,94,.18); }
+  .mor-sel-nome{
+    font-family:var(--font-pixel); font-size:11px; letter-spacing:.03em; line-height:1.7;
+  }
+  .mor-sel-apo   .mor-sel-nome{ color:#F5B784; }
+  .mor-sel-nec   .mor-sel-nome{ color:#F5DC8A; }
+  .mor-sel-ambas .mor-sel-nome{ color:#9BE0B0; }
+  .mor-sel-desc{
+    font-family:var(--font-serif); font-size:14px; line-height:1.5;
+    color:rgba(232,238,247,.85);
+  }
+  .mor-sel-trilhas{
+    display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:auto;
+    font-family:var(--font-serif); font-weight:700; font-size:12px;
+    letter-spacing:.05em; color:rgba(232,238,247,.70);
+  }
+  .mor-sel-trilhas i{
+    width:12px; height:12px; border-radius:3px; display:inline-block; flex:0 0 auto;
+    border:1px solid rgba(0,0,0,.4);
+  }
+  .mor-sel-trilhas .c-int{ background:#E07B39; }
+  .mor-sel-trilhas .c-ext{ background:#9B5CD4; }
+  .mor-sel-trilhas .c-com{ background:#3E9E5E; }
+  .mor-sel-trilhas .c-nec{ background:#D9A521; }
+  .mor-sel-tag{
+    font-family:var(--font-pixel); font-size:8.5px; letter-spacing:.05em; line-height:1.8;
+    color:#1B0A2C; background:linear-gradient(180deg,#E0C6FA,#8B5CF6);
+    border:2px solid #EFE0FC; border-radius:20px; padding:5px 10px;
+    align-self:flex-start;
+  }
+  .mor-sel-apo   .mor-sel-tag{ background:linear-gradient(180deg,#F5B784,#C25E20); border-color:#FBDCC4; color:#2B1204; }
+  .mor-sel-nec   .mor-sel-tag{ background:linear-gradient(180deg,#F5DC8A,#B58715); border-color:#FBEFC4; color:#2B2004; }
+  .mor-sel-ambas .mor-sel-tag{ background:linear-gradient(180deg,#9BE0B0,#2E7E4A); border-color:#C9F0D6; color:#08210F; }
+
+  /* elementos que somem conforme o percurso escolhido */
+  #morInstrucoes.oculto, #morTabuleiro.oculto,
+  .mor-campo.oculto, .mor-monte.oculto, .mor-legenda span.oculto,
+  .mor-via.oculto, .mor-comum.oculto, .mor-convergencia.oculto{ display:none; }
+
+  @media (max-width:600px){
+    .mor-selecao{ padding:18px 13px 20px; }
+    .mor-sel-titulo{ font-size:12.5px; }
+    .mor-sel-card{ padding:13px 12px 12px; }
+  }
+
+  .mor-campos{
+    display:grid; gap:20px; margin:0 0 8px;
+    grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));
+    align-items:start;
+  }
+  .mor-campo{
+    border:3px solid #8B5CF6; border-radius:14px; padding:15px 13px 17px;
+    background:linear-gradient(180deg, rgba(70,32,110,.42), rgba(24,10,40,.55));
+    box-shadow:inset 0 0 60px rgba(139,92,246,.12);
+  }
+  .mor-campo-apo{ border-color:#8B5CF6; }
+  .mor-campo-nec{ border-color:#D9A521; box-shadow:inset 0 0 60px rgba(217,165,33,.14); }
+
+  .mor-campo-cab{
+    display:flex; flex-direction:column; gap:3px; margin:0 0 14px;
+    padding:0 0 10px; border-bottom:2px dashed rgba(201,168,232,.35);
+  }
+  .mor-campo-nome{
+    font-family:var(--font-pixel); font-size:12px; letter-spacing:.04em; color:#D6BCF5;
+  }
+  .mor-campo-nec .mor-campo-nome{ color:#F5DC8A; }
+  .mor-campo-sub{
+    font-family:var(--font-serif); font-weight:700; font-size:12.5px;
+    letter-spacing:.05em; text-transform:uppercase; color:rgba(232,238,247,.62);
+  }
+
+  .mor-vias{
+    display:grid; gap:14px; margin:0 0 4px;
+    grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));
+    align-items:start;
+  }
+  .mor-via{
+    border:2px solid #8B5CF6; border-radius:11px; padding:11px 10px 13px;
+    background:linear-gradient(180deg, rgba(90,45,140,.32), rgba(18,8,32,.35));
+  }
+  .mor-via-intr{ border-color:#E07B39; box-shadow:inset 0 0 34px rgba(224,123,57,.12); }
+  .mor-via-extr{ border-color:#9B5CD4; box-shadow:inset 0 0 34px rgba(155,92,212,.12); }
+  .mor-via-intr .zona-nome{ color:#F5B784; }
+  .mor-via-extr .zona-nome{ color:#D3B0F0; }
+
+  .mor-comum{
+    border:2px solid #3E9E5E; border-radius:11px; padding:11px 10px 13px;
+    background:linear-gradient(180deg, rgba(62,158,94,.18), rgba(18,8,32,.42));
+    box-shadow:inset 0 0 40px rgba(62,158,94,.14);
+  }
+  .mor-comum .zona-nome{ color:#9BE0B0; }
+
+  .mor-convergencia{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    gap:9px; margin:13px 0 14px; color:#9BE0B0;
+  }
+  .mor-convergencia .ramo{
+    height:3px; border-radius:2px;
+    background:linear-gradient(90deg, rgba(224,123,57,.95), rgba(62,158,94,.95));
+  }
+  .mor-convergencia .ramo.dir{
+    background:linear-gradient(90deg, rgba(62,158,94,.95), rgba(155,92,212,.95));
+  }
+  .mor-convergencia .juncao{
+    font-family:var(--font-serif); font-weight:900; font-size:11.5px;
+    letter-spacing:.09em; text-transform:uppercase; text-align:center;
+    color:#0C2214; background:linear-gradient(180deg,#9BE0B0,#3E9E5E);
+    border:2px solid #C9F0D6; border-radius:20px; padding:6px 13px; white-space:nowrap;
+  }
+
+  .mor-trilha{
+    display:grid; gap:11px;
+    grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  }
+  .mor-comum .mor-trilha{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  /* a necrose corre na VERTICAL, numa coluna só, ficando paralela às
+     duas vias da apoptose ao lado */
+  .mor-campo-nec .mor-trilha{
+    grid-template-columns:minmax(0,190px);
+    justify-content:center;
+  }
+  /* quando a necrose é jogada sozinha, ela não precisa mais ficar
+     paralela a nada: espalha em várias colunas e ocupa o campo */
+  .mor-campos.mor-so-nec .mor-campo-nec .mor-trilha{
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    justify-content:stretch;
+  }
+
+  /* cada bloco de encaixe usa a cor do seu conjunto:
+     intrínseca = laranja · extrínseca = roxo · comum = verde · necrose = amarelo */
+  .mor-posicao{
+    background:linear-gradient(180deg, rgba(64,30,100,.60), rgba(14,6,26,.60));
+    border:2px solid rgba(201,168,232,.45); border-radius:11px; padding:8px;
+    display:flex; flex-direction:column; gap:7px;
+  }
+  .mor-via-intr .mor-posicao{
+    border-color:#E07B39;
+    background:linear-gradient(180deg, rgba(224,123,57,.24), rgba(30,12,6,.62));
+    box-shadow:inset 0 0 22px rgba(224,123,57,.16);
+  }
+  .mor-via-extr .mor-posicao{
+    border-color:#9B5CD4;
+    background:linear-gradient(180deg, rgba(155,92,212,.24), rgba(20,8,34,.62));
+    box-shadow:inset 0 0 22px rgba(155,92,212,.16);
+  }
+  .mor-comum .mor-posicao{
+    border-color:#3E9E5E;
+    background:linear-gradient(180deg, rgba(62,158,94,.22), rgba(8,26,16,.62));
+    box-shadow:inset 0 0 22px rgba(62,158,94,.16);
+  }
+  .mor-campo-nec .mor-posicao{
+    border-color:#D9A521;
+    background:linear-gradient(180deg, rgba(217,165,33,.22), rgba(32,24,4,.62));
+    box-shadow:inset 0 0 22px rgba(217,165,33,.16);
+  }
+  /* moldura tracejada do espaço vazio, no tom do conjunto */
+  .mor-via-intr .mor-slot{ border-color:rgba(245,183,132,.60); }
+  .mor-via-extr .mor-slot{ border-color:rgba(211,176,240,.60); }
+  .mor-comum    .mor-slot{ border-color:rgba(155,224,176,.60); }
+  .mor-campo-nec .mor-slot{ border-color:rgba(245,220,138,.60); }
+  .mor-via-intr .mor-slot .vazio{ color:#F5B784; }
+  .mor-via-extr .mor-slot .vazio{ color:#D3B0F0; }
+  .mor-comum    .mor-slot .vazio{ color:#9BE0B0; }
+  .mor-campo-nec .mor-slot .vazio{ color:#F5DC8A; }
+  .mor-ordem{
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-serif); font-weight:900; font-size:13px;
+    letter-spacing:.05em; color:#1B0A2C; border-radius:6px; padding:4px 0;
+    background:linear-gradient(180deg,#E0C6FA,#8B5CF6); border:2px solid #EFE0FC;
+  }
+  .mor-via-intr  .mor-ordem{ background:linear-gradient(180deg,#F5B784,#C25E20); border-color:#FBDCC4; color:#2B1204; }
+  .mor-via-extr  .mor-ordem{ background:linear-gradient(180deg,#D3B0F0,#7A3FB0); border-color:#EEE0FA; color:#1B0A2C; }
+  .mor-comum     .mor-ordem{ background:linear-gradient(180deg,#9BE0B0,#2E7E4A); border-color:#C9F0D6; color:#08210F; }
+  .mor-campo-nec .mor-ordem{ background:linear-gradient(180deg,#F5DC8A,#B58715); border-color:#FBEFC4; color:#2B2004; }
+
+  /* as duas famílias de cartas têm proporções diferentes */
+  .mor-slot-apo,  .mor-carta-apo{ aspect-ratio:900/1260; }
+  .mor-slot-nec,  .mor-carta-nec{ aspect-ratio:1536/2304; }
+  .mor-slot img, .mor-carta img{ object-fit:contain; background:var(--slot); }
+
+  /* acervo dividido em quatro montes, um por trilha */
+  .mor-montes{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));
+    align-items:start;
+  }
+  .mor-monte{
+    border:2px solid rgba(201,168,232,.45); border-radius:11px; padding:11px 10px 12px;
+    background:linear-gradient(180deg, rgba(70,32,110,.28), rgba(18,8,32,.32));
+  }
+  .mor-monte-int{ border-color:#E07B39; box-shadow:inset 0 0 30px rgba(224,123,57,.12); }
+  .mor-monte-ext{ border-color:#9B5CD4; box-shadow:inset 0 0 30px rgba(155,92,212,.12); }
+  .mor-monte-com{ border-color:#3E9E5E; box-shadow:inset 0 0 30px rgba(62,158,94,.12); }
+  .mor-monte-nec{ border-color:#D9A521; box-shadow:inset 0 0 30px rgba(217,165,33,.12); }
+  .mor-monte-int .mor-monte-cab{ color:#F5B784; }
+  .mor-monte-ext .mor-monte-cab{ color:#D3B0F0; }
+  .mor-monte-com .mor-monte-cab{ color:#9BE0B0; }
+  .mor-monte-nec .mor-monte-cab{ color:#F5DC8A; }
+  .mor-monte-cab{
+    display:flex; align-items:center; gap:8px; margin:0 0 10px;
+    padding:0 0 8px; border-bottom:2px dashed rgba(201,168,232,.30);
+    font-family:var(--font-serif); font-weight:900; font-size:12.5px;
+    letter-spacing:.07em; text-transform:uppercase; color:#E4D2F5;
+  }
+  .mor-monte-cab i{
+    width:13px; height:13px; border-radius:4px; display:inline-block; flex:0 0 auto;
+    border:1px solid rgba(0,0,0,.4);
+  }
+  .mor-monte-cab .c-int{ background:#E07B39; }
+  .mor-monte-cab .c-ext{ background:#9B5CD4; }
+  .mor-monte-cab .c-com{ background:#3E9E5E; }
+  .mor-monte-cab .c-nec{ background:#D9A521; }
+
+  .mor-mao{
+    display:grid; gap:11px;
+    grid-template-columns:repeat(auto-fill,minmax(108px,1fr));
+    align-items:start;
+  }
+  .mor-mao:empty{ display:block; }
+  .mor-mao:empty::after{
+    content:"Monte vazio.";
+    font-family:var(--font-serif); font-size:12.5px; color:#D6BCF5;
+    opacity:.7; display:block; padding:14px 6px; text-align:center;
+  }
+
+  .mor-legenda{
+    display:flex; gap:16px; flex-wrap:wrap; margin:0 0 18px;
+    font-family:var(--font-serif); font-weight:700; font-size:12px;
+    letter-spacing:.05em; color:rgba(232,238,247,.75);
+  }
+  .mor-legenda span{ display:flex; align-items:center; gap:7px; }
+  .mor-legenda i{ width:14px; height:14px; border-radius:4px; display:inline-block; border:1px solid rgba(0,0,0,.4); }
+  .mor-legenda .c-int{ background:#E07B39; }
+  .mor-legenda .c-ext{ background:#9B5CD4; }
+  .mor-legenda .c-com{ background:#3E9E5E; }
+  .mor-legenda .c-nec{ background:#D9A521; }
+
+  #morResultado{
+    display:none; border:2px solid #B57BE0; border-radius:10px;
+    padding:18px 20px; margin:0 0 22px;
+    font-family:var(--font-serif); font-weight:700; font-size:15px; letter-spacing:.03em;
+  }
+  #morResultado.on{ display:block; }
+  #morResultado.vitoria{ background:rgba(30,110,45,.28); border-color:var(--green); color:#B7F0C1; }
+  #morResultado.falha{ background:rgba(180,30,26,.25); border-color:var(--red); color:#FFC9C9; }
+  #morResultado .grande{ display:block; font-size:19px; margin-bottom:6px; color:#fff; }
+
+  @media (max-width:600px){
+    .mor-campo{ padding:12px 9px 13px; }
+    .mor-via, .mor-comum{ padding:9px 8px 11px; }
+    .mor-trilha{ grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:9px; }
+    .mor-comum .mor-trilha{ grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); }
+    .mor-campo-nec .mor-trilha{ grid-template-columns:minmax(0,150px); gap:9px; }
+    .mor-monte{ padding:9px 8px 10px; }
+    .mor-mao{ grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:9px; }
+    .mor-convergencia{ gap:6px; }
+    .mor-convergencia .juncao{ font-size:10px; padding:5px 9px; letter-spacing:.05em; }
   }
   /* ============================================================
      ATIVIDADE 7 — EXPEDIÇÃO CELULAR (trios de cartas)
@@ -1370,6 +1699,12 @@
         <span class="sum-nome">Expedição Celular</span>
         <span class="sum-desc">Biologia celular em trios: cada organela reúne a sua estrutura, a sua função molecular e a correlação médica correspondente, ligando a célula à clínica.</span>
         <span class="sum-tipo">associação de trios</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num">08</span>
+        <span class="sum-nome">O Destino da Célula</span>
+        <span class="sum-desc">Os dois desfechos da lesão irreversível reconstruídos lado a lado: as duas vias da apoptose convergindo na execução comum e, correndo em paralelo, o curso temporal da necrose.</span>
+        <span class="sum-tipo">ordenação em quatro trilhas</span>
       </div>
     </div>
   </div>
@@ -2750,6 +3085,207 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 8 — O DESTINO DA CÉLULA
+       senha: irreversivel
+       Fusão das atividades 5 (necrose) e 6 (apoptose): o tabuleiro
+       de vias paralelas da apoptose ganha, ao lado, a trilha da
+       necrose correndo em paralelo. Tabuleiro em tons de roxo.
+       ============================================================ -->
+  <section class="atividade" id="ativ-morte">
+
+    <!-- ---------- TELA DE SELEÇÃO DE MODO ---------- -->
+    <div class="mor-selecao" id="morSelecao">
+
+      <div class="mor-sel-cab">
+        <span class="mor-sel-titulo">O Destino da Célula</span>
+        <span class="mor-sel-sub">Escolha o percurso desta partida</span>
+      </div>
+
+      <div class="mor-sel-opcoes">
+
+        <button class="mor-sel-card mor-sel-apo" type="button" data-modo="apoptose">
+          <span class="mor-sel-nome">Só a Apoptose</span>
+          <span class="mor-sel-desc">
+            As duas vias — intrínseca e extrínseca — convergindo na fase de execução comum.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-int"></i>Intrínseca
+            <i class="c-ext"></i>Extrínseca
+            <i class="c-com"></i>Comum
+          </span>
+          <span class="mor-sel-tag">3 trilhas · 14 cartas</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-nec" type="button" data-modo="necrose">
+          <span class="mor-sel-nome">Só a Necrose</span>
+          <span class="mor-sel-desc">
+            O curso temporal da morte acidental, do colapso energético ao alarme inflamatório.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-nec"></i>Necrose
+          </span>
+          <span class="mor-sel-tag">1 trilha · 6 cartas</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-ambas" type="button" data-modo="ambas">
+          <span class="mor-sel-nome">Os Dois Destinos</span>
+          <span class="mor-sel-desc">
+            O tabuleiro completo: apoptose e necrose lado a lado, para comparar os dois desfechos
+            da lesão irreversível.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-int"></i><i class="c-ext"></i><i class="c-com"></i><i class="c-nec"></i>
+            Todas
+          </span>
+          <span class="mor-sel-tag">4 trilhas · 20 cartas</span>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="instrucoes" id="morInstrucoes">
+      <b>Como jogar:</b> o Acervo está dividido em <b>montes</b>, um para cada trilha do
+      tabuleiro. Cada monte já indica a qual trilha as suas cartas pertencem; o desafio é
+      descobrir <b>em que momento</b> cada evento acontece dentro dela. Toque na carta e depois
+      no <b>espaço vazio</b> da posição desejada; toque numa carta já posicionada para devolvê-la
+      ao seu monte. Com todas no lugar, toque em <b>CONFIRMAR ORDEM</b>: as certas ficam
+      <b>verdes</b> e as fora de lugar, <b>vermelhas</b>. Use a <b>🔍 lupa</b> para ler qualquer
+      carta.
+    </div>
+
+    <div class="tabuleiro" id="morTabuleiro">
+
+      <div class="hud">
+        <span class="hud-item" id="morPos">POSICIONADAS: <b>0/20</b></span>
+        <span class="hud-item" id="morRod">RODADA: <b>1</b></span>
+        <button class="btn-board principal" id="morSelar" type="button" disabled>⏳ Confirmar ordem</button>
+        <button class="btn-board" id="morLimpar" type="button">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board" id="morTrocar" type="button">⇄ Trocar percurso</button>
+      </div>
+
+      <div id="morResultado"></div>
+
+      <div class="mor-legenda">
+        <span data-leg="apo"><i class="c-int"></i> Apoptose — via intrínseca (mitocondrial)</span>
+        <span data-leg="apo"><i class="c-ext"></i> Apoptose — via extrínseca (receptores de morte)</span>
+        <span data-leg="apo"><i class="c-com"></i> Apoptose — fase de execução comum</span>
+        <span data-leg="nec"><i class="c-nec"></i> Necrose — curso temporal</span>
+      </div>
+
+      <!-- ---------- OS DOIS DESTINOS, LADO A LADO ---------- -->
+      <div class="mor-campos" id="morCampos">
+
+        <!-- CAMPO ESQUERDO: APOPTOSE -->
+        <div class="mor-campo mor-campo-apo" id="morCampoApo">
+
+          <div class="mor-campo-cab">
+            <span class="mor-campo-nome">APOPTOSE</span>
+            <span class="mor-campo-sub">Silenciosa · dependente de energia</span>
+          </div>
+
+          <div class="mor-vias">
+
+            <div class="mor-via mor-via-intr">
+              <div class="zona-cab">
+                <span class="zona-nome">Via Intrínseca</span>
+                <span class="zona-sub">Mitocondrial</span>
+              </div>
+              <div class="mor-trilha" id="morTrilhaInt"></div>
+            </div>
+
+            <div class="mor-via mor-via-extr">
+              <div class="zona-cab">
+                <span class="zona-nome">Via Extrínseca</span>
+                <span class="zona-sub">Receptores de morte</span>
+              </div>
+              <div class="mor-trilha" id="morTrilhaExt"></div>
+            </div>
+
+          </div>
+
+          <div class="mor-convergencia" aria-hidden="true">
+            <span class="ramo"></span>
+            <span class="juncao">▼ as duas vias convergem ▼</span>
+            <span class="ramo dir"></span>
+          </div>
+
+          <div class="mor-comum">
+            <div class="zona-cab">
+              <span class="zona-nome">Fase de Execução Comum</span>
+              <span class="zona-sub">Desfecho compartilhado</span>
+            </div>
+            <div class="mor-trilha" id="morTrilhaCom"></div>
+          </div>
+
+        </div>
+
+        <!-- CAMPO DIREITO: NECROSE -->
+        <div class="mor-campo mor-campo-nec" id="morCampoNec">
+
+          <div class="mor-campo-cab">
+            <span class="mor-campo-nome">NECROSE</span>
+            <span class="mor-campo-sub">Inflamatória · por falência energética</span>
+          </div>
+
+          <div class="zona-cab">
+            <span class="zona-nome">Linha do Tempo da Necrose</span>
+            <span class="zona-sub">Da 1ª à 6ª etapa</span>
+          </div>
+          <div class="mor-trilha" id="morTrilhaNec"></div>
+
+        </div>
+
+      </div>
+
+      <div class="faixa">
+        <span class="faixa-titulo">Acervo dos Eventos — um monte por trilha</span>
+        <span class="linha-ouro"></span>
+      </div>
+      <div class="grimorio">
+        <div class="mor-montes">
+
+          <div class="mor-monte mor-monte-int">
+            <div class="mor-monte-cab"><i class="c-int"></i>Via Intrínseca</div>
+            <div class="mor-mao" id="morMaoInt"></div>
+          </div>
+
+          <div class="mor-monte mor-monte-ext">
+            <div class="mor-monte-cab"><i class="c-ext"></i>Via Extrínseca</div>
+            <div class="mor-mao" id="morMaoExt"></div>
+          </div>
+
+          <div class="mor-monte mor-monte-com">
+            <div class="mor-monte-cab"><i class="c-com"></i>Fase de Execução Comum</div>
+            <div class="mor-mao" id="morMaoCom"></div>
+          </div>
+
+          <div class="mor-monte mor-monte-nec">
+            <div class="mor-monte-cab"><i class="c-nec"></i>Necrose</div>
+            <div class="mor-mao" id="morMaoNec"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <details class="biblio">
+      <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
+      <div class="conteudo">
+        <p>
+          KUMAR, Vinay; ABBAS, Abul K.; ASTER, Jon C. <em>Robbins &amp; Cotran Patologia: Bases
+          Patológicas das Doenças.</em> 10. ed. Rio de Janeiro: GEN Guanabara Koogan, 2023.
+          E-book. ISBN 9788595159174.
+        </p>
+        <p style="margin-top:10px;">
+          FILHO, Geraldo B. <em>Bogliolo - Patologia.</em> 10. ed. Rio de Janeiro:
+          Guanabara Koogan, 2021. E-book. ISBN 9788527738378.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -2789,7 +3325,8 @@
     "lesoes": "ativ-lesoes",
     "necrose": "ativ-necrose",
     "apoptose": "ativ-apoptose",
-    "organelas": "ativ-organelas"
+    "organelas": "ativ-organelas",
+    "irreversivel": "ativ-morte"
   };
 
   const portao = document.getElementById('portao');
@@ -2810,6 +3347,7 @@
       if (id === 'ativ-necrose') iniciarNecrose();
       if (id === 'ativ-apoptose') iniciarApoptose();
       if (id === 'ativ-organelas') iniciarOrganelas();
+      if (id === 'ativ-morte') iniciarMorte();
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -5669,6 +6207,371 @@ function iniciarNervoso(){
   orgBtnLimpar.addEventListener('click', function(){ orgMontar(); somClique(); });
 
   function iniciarOrganelas(){ orgMontar(); }
+
+  /* ==============================================================
+     ATIVIDADE 8 — O DESTINO DA CÉLULA
+     Fusão das atividades 5 e 6. Reutiliza as MESMAS imagens já
+     embutidas (NEC_CARTAS e APO_CARTAS) — nenhuma carta nova é
+     carregada. Quatro trilhas: as duas vias da apoptose, a fase
+     comum e, em paralelo, a linha do tempo da necrose.
+     ============================================================== */
+
+  /* baralho único: junta os dois acervos de imagens já existentes */
+  const MOR_CARTAS = Object.assign({}, APO_CARTAS, NEC_CARTAS);
+
+  /* [id da carta, "Nome do evento"] — o índice é a posição na trilha */
+  const MOR_TRILHAS = [
+    { id:'morTrilhaInt', familia:'apo', rotulo:'VIA INTRÍNSECA', cartas:[
+      ['int_1','O Sinal de Estresse Celular'],
+      ['int_2','A Permeabilização da Comporta'],
+      ['int_3','O Vazamento Crítico'],
+      ['int_4','A Montagem da Plataforma'],
+      ['int_5','O Primeiro Gatilho Enzimático'],
+      ['int_6','A Ativação dos Executores']
+    ]},
+    { id:'morTrilhaExt', familia:'apo', rotulo:'VIA EXTRÍNSECA', cartas:[
+      ['ext_1','O Beijo da Morte'],
+      ['ext_2','O Recrutamento do Adaptador'],
+      ['ext_3','O Gatilho Externo'],
+      ['ext_4','A Ponte de Amplificação'],
+      ['ext_5','O Despertar Comum']
+    ]},
+    { id:'morTrilhaCom', familia:'apo', rotulo:'FASE COMUM', cartas:[
+      ['com_1','A Desintegração Estrutural'],
+      ['com_2','A Tesoura Genômica'],
+      ['com_3','A Limpeza Silenciosa']
+    ]},
+    { id:'morTrilhaNec', familia:'nec', rotulo:'NECROSE', cartas:[
+      ['nec_1','O Colapso Energético'],
+      ['nec_2','A Instabilidade Lisossômica'],
+      ['nec_3','O Vazamento Enzimático'],
+      ['nec_4','A Autodigestão Celular (Autólise)'],
+      ['nec_5','A Ruptura da Membrana Plasmática'],
+      ['nec_6','O Alarme Inflamatório']
+    ]}
+  ];
+  const MOR_TODAS = MOR_TRILHAS.reduce(function(a,t){ return a.concat(t.cartas); }, []);
+  const MOR_TOTAL = MOR_TODAS.length;
+  const MOR_ORDINAIS = ['1ª','2ª','3ª','4ª','5ª','6ª','7ª','8ª'];
+
+  /* um monte por trilha: o prefixo do id da carta diz onde ela mora */
+  const MOR_MONTES = {
+    int: document.getElementById('morMaoInt'),
+    ext: document.getElementById('morMaoExt'),
+    com: document.getElementById('morMaoCom'),
+    nec: document.getElementById('morMaoNec')
+  };
+  function morMonte(id){ return MOR_MONTES[morPrefixo(id)]; }
+
+  /* quais trilhas entram em cada percurso */
+  const MOR_MODOS = {
+    apoptose: ['int','ext','com'],
+    necrose:  ['nec'],
+    ambas:    ['int','ext','com','nec']
+  };
+  let morModo = 'ambas';
+  function morAtivas(){
+    const permitidas = MOR_MODOS[morModo];
+    return MOR_TRILHAS.filter(function(t){
+      return permitidas.indexOf(morPrefixo(t.cartas[0][0])) !== -1;
+    });
+  }
+  function morTotal(){
+    return morAtivas().reduce(function(n,t){ return n + t.cartas.length; }, 0);
+  }
+  const morHudPos    = document.getElementById('morPos');
+  const morHudRod    = document.getElementById('morRod');
+  const morBtnSelar  = document.getElementById('morSelar');
+  const morBtnLimpar = document.getElementById('morLimpar');
+  const morResultado = document.getElementById('morResultado');
+
+  let morSelecionada = null;
+  let morRodada = 1;
+
+  function morArquivo(id){ return MOR_CARTAS[id] || ''; }
+  function morNome(id){
+    const c = MOR_TODAS.find(function(x){ return x[0] === id; });
+    return c ? c[1] : '';
+  }
+  /* prefixo do id identifica a trilha de destino: int_, ext_, com_, nec_ */
+  function morPrefixo(id){ return String(id).slice(0,3); }
+  /* cartas de necrose e de apoptose têm proporções diferentes */
+  function morTipo(id){ return morPrefixo(id) === 'nec' ? 'nec' : 'apo'; }
+
+  function morLupa(src){
+    const l = document.createElement('div');
+    l.className = 'lupa'; l.textContent = '🔍'; l.title = 'Ampliar';
+    l.addEventListener('click', function(e){ e.stopPropagation(); abrirLightbox(src); });
+    return l;
+  }
+
+  /* ---------- carta solta no acervo ---------- */
+  function morCriarCarta(carta){
+    const id = carta[0], nome = carta[1];
+    const src = morArquivo(id);
+    const d = document.createElement('div');
+    d.className = 'carta-def mor-carta mor-carta-' + morTipo(id);
+    d.dataset.id = id;
+    const img = document.createElement('img');
+    img.src = src; img.alt = 'Evento: ' + nome; img.loading = 'lazy';
+    d.appendChild(img);
+    d.appendChild(morLupa(src));
+    d.addEventListener('click', function(){ morSelecionar(d); });
+    return d;
+  }
+
+  function morSelecionar(d){
+    if (morSelecionada === d){ d.classList.remove('sel'); morSelecionada = null; return; }
+    if (morSelecionada) morSelecionada.classList.remove('sel');
+    morSelecionada = d; d.classList.add('sel');
+    somClique();
+  }
+
+  /* ---------- posição de uma trilha ---------- */
+  function morCriarPosicao(trilha, indice){
+    const alvo = trilha.cartas[indice][0];
+
+    const pos = document.createElement('div');
+    pos.className = 'mor-posicao';
+
+    const ord = document.createElement('div');
+    ord.className = 'mor-ordem';
+    ord.textContent = MOR_ORDINAIS[indice];
+    pos.appendChild(ord);
+
+    const slot = document.createElement('div');
+    slot.className = 'slot mor-slot mor-slot-' + trilha.familia;
+    slot.dataset.alvo = alvo;
+    slot.innerHTML = '<span class="vazio">ESPAÇO<br>VAZIO</span>';
+    slot.addEventListener('click', function(){ morClicarSlot(slot); });
+    pos.appendChild(slot);
+
+    return pos;
+  }
+
+  function morSlots(){
+    return document.querySelectorAll('#ativ-morte .mor-slot');
+  }
+
+  function morClicarSlot(slot){
+    /* slot ocupado → devolve a carta ao acervo */
+    if (slot.dataset.posto){
+      const id = slot.dataset.posto;
+      const carta = MOR_TODAS.find(function(c){ return c[0] === id; });
+      slot.dataset.posto = '';
+      slot.classList.remove('cheio','certo','errado');
+      slot.innerHTML = '<span class="vazio">ESPAÇO<br>VAZIO</span>';
+      morMonte(id).appendChild(morCriarCarta(carta));
+      morAtualizar();
+      somClique();
+      return;
+    }
+    if (!morSelecionada) return;
+    const id = morSelecionada.dataset.id;
+    slot.dataset.posto = id;
+    slot.classList.remove('certo','errado');
+    slot.classList.add('cheio');
+    slot.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = morArquivo(id);
+    img.alt = 'Evento posicionado: ' + morNome(id);
+    slot.appendChild(img);
+    slot.appendChild(morLupa(img.src));
+    morSelecionada.remove();
+    morSelecionada = null;
+    morAtualizar();
+    somEncaixe();
+  }
+
+  function morAtualizar(){
+    let n = 0;
+    morSlots().forEach(function(s){ if (s.dataset.posto) n++; });
+    const total = morTotal();
+    morHudPos.innerHTML = 'POSICIONADAS: <b>' + n + '/' + total + '</b>';
+    morHudPos.className = 'hud-item' + (n === total ? ' ok' : '');
+    morBtnSelar.disabled = (n !== total);
+  }
+
+  function morLimparResultado(){
+    morResultado.className = '';
+    morResultado.innerHTML = '';
+    morSlots().forEach(function(s){ s.classList.remove('certo','errado','travado'); });
+  }
+
+  function morConfirmarOrdem(){
+    document.querySelectorAll('#ativ-morte .mor-slot:not(.travado)').forEach(function(s){
+      s.classList.remove('certo','errado');
+    });
+
+    let acertos = 0;      /* posição exata */
+    let destinoErrado = 0; /* trocou apoptose por necrose (ou vice-versa) */
+    let viaErrada = 0;     /* dentro da apoptose, errou a via */
+    const errados = [];
+
+    morSlots().forEach(function(s){
+      if (s.dataset.posto === s.dataset.alvo){
+        s.classList.add('certo','travado'); acertos++;
+      } else {
+        s.classList.add('errado'); errados.push(s);
+        const pPosto = morPrefixo(s.dataset.posto);
+        const pAlvo  = morPrefixo(s.dataset.alvo);
+        if (pPosto !== pAlvo){
+          const tPosto = morTipo(s.dataset.posto);
+          const tAlvo  = morTipo(s.dataset.alvo);
+          if (tPosto !== tAlvo) destinoErrado++;
+          else viaErrada++;
+        }
+      }
+    });
+
+    if (errados.length === 0){
+      morResultado.className = 'on vitoria';
+      const fechos = {
+        apoptose:
+          '<span class="grande">🏆 As duas vias da apoptose reconstruídas corretamente!</span>' +
+          'Você concluiu o percurso na rodada ' + morRodada + '. ' +
+          'Note o ponto central: a via intrínseca parte de um estresse interno e passa pela ' +
+          'mitocôndria, a extrínseca parte de um sinal externo em receptores de morte — e ambas ' +
+          'desembocam nas mesmas caspases executoras, com a tBID servindo de ponte entre elas. ' +
+          'Do começo ao fim, a membrana plasmática permanece íntegra e o processo consome ATP.',
+        necrose:
+          '<span class="grande">🏆 Linha do tempo da necrose reconstruída corretamente!</span>' +
+          'Você concluiu o percurso na rodada ' + morRodada + '. ' +
+          'Perceba o encadeamento: tudo começa na falência do ATP, que desestabiliza os ' +
+          'lisossomos; as enzimas liberadas digerem a própria célula de dentro para fora, a ' +
+          'membrana se rompe e o conteúdo extravasado (DAMPs) dispara a resposta inflamatória. ' +
+          'Ao contrário da apoptose, aqui não há programa nem gasto de energia.',
+        ambas:
+          '<span class="grande">🏆 Os dois destinos reconstruídos corretamente!</span>' +
+          'Você concluiu o percurso na rodada ' + morRodada + '. ' +
+          'Compare as duas colunas: na <b>apoptose</b> tudo acontece com a membrana plasmática ' +
+          'íntegra e com gasto de ATP — as vias intrínseca e extrínseca convergem nas caspases ' +
+          'executoras e a célula é fagocitada em silêncio, sem inflamação. Na <b>necrose</b> o ' +
+          'ponto de partida é justamente a falência do ATP: os lisossomos se rompem, as enzimas ' +
+          'digerem a própria célula de dentro para fora, a membrana se rompe e o conteúdo ' +
+          'extravasado dispara a resposta inflamatória. Mesma lesão irreversível, dois desfechos.'
+      };
+      morResultado.innerHTML = fechos[morModo];
+      morBtnSelar.disabled = true;
+      somVitoria();
+    } else {
+      let dica = '';
+      if (destinoErrado > 0){
+        dica = ' — e <b>' + destinoErrado + '</b> dela(s) está(ão) no <b>destino errado</b>, ' +
+               'trocando apoptose por necrose ou o contrário. ';
+        if (viaErrada > 0){
+          dica += 'Outras <b>' + viaErrada + '</b> estão no destino certo, mas na <b>via errada</b>. ';
+        }
+      } else if (viaErrada > 0){
+        dica = ' — e <b>' + viaErrada + '</b> dela(s) está(ão) na <b>via errada</b> dentro da ' +
+               'apoptose. Confira a tarja no alto da carta. ';
+      } else {
+        dica = ' — todas estão na trilha certa, mas fora de ordem. ';
+      }
+      morResultado.className = 'on falha';
+      morResultado.innerHTML = '<span class="grande">✗ ' + errados.length +
+        ' carta(s) fora de lugar</span>' +
+        'As cartas em <b>vermelho</b> estão erradas' + dica +
+        'Toque nelas para devolvê-las ao Acervo. As <b>verdes</b> já estão travadas. ' +
+        '(' + acertos + ' de ' + morTotal() + ' corretas)';
+      somErro();
+      morRodada++;
+      morHudRod.innerHTML = 'RODADA: <b>' + morRodada + '</b>';
+    }
+    morResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function morEmbaralhar(a){
+    const c2 = a.slice();
+    for (let i = c2.length-1; i > 0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      const t = c2[i]; c2[i] = c2[j]; c2[j] = t;
+    }
+    return c2;
+  }
+
+  function morMontar(){
+    const permitidas = MOR_MODOS[morModo];
+
+    /* trilhas: só as do percurso escolhido ganham posições; as demais
+       ficam vazias e escondidas, saindo do jogo por completo */
+    MOR_TRILHAS.forEach(function(trilha){
+      const pref = morPrefixo(trilha.cartas[0][0]);
+      const ativa = permitidas.indexOf(pref) !== -1;
+      const el = document.getElementById(trilha.id);
+      el.innerHTML = '';
+      MOR_MONTES[pref].innerHTML = '';
+      if (ativa){
+        trilha.cartas.forEach(function(_, i){ el.appendChild(morCriarPosicao(trilha, i)); });
+      }
+      MOR_MONTES[pref].closest('.mor-monte').classList.toggle('oculto', !ativa);
+    });
+
+    /* campos, legenda e faixa de convergência acompanham o percurso */
+    const temApo = permitidas.indexOf('int') !== -1;
+    const temNec = permitidas.indexOf('nec') !== -1;
+    document.getElementById('morCampoApo').classList.toggle('oculto', !temApo);
+    document.getElementById('morCampoNec').classList.toggle('oculto', !temNec);
+    document.getElementById('morCampos').classList.toggle('mor-so-nec', temNec && !temApo);
+    document.querySelectorAll('#ativ-morte .mor-legenda span').forEach(function(sp){
+      const alvo = sp.dataset.leg;
+      sp.classList.toggle('oculto', alvo === 'apo' ? !temApo : !temNec);
+    });
+
+    /* acervo: cada trilha tem o seu próprio monte, embaralhado por dentro.
+       O aluno já sabe a QUAL trilha a carta pertence — o desafio passa a
+       ser exclusivamente a ORDEM dos eventos dentro dela. */
+    morAtivas().forEach(function(trilha){
+      const monte = MOR_MONTES[morPrefixo(trilha.cartas[0][0])];
+      let baralho = morEmbaralhar(trilha.cartas);
+      let tentativas = 0;
+      while (tentativas < 20 && baralho.every(function(c,i){ return c[0] === trilha.cartas[i][0]; })){
+        baralho = morEmbaralhar(trilha.cartas); tentativas++;
+      }
+      baralho.forEach(function(c){ monte.appendChild(morCriarCarta(c)); });
+    });
+
+    morSelecionada = null;
+    morRodada = 1;
+    morHudRod.innerHTML = 'RODADA: <b>1</b>';
+    morLimparResultado();
+    morAtualizar();
+  }
+
+  morBtnSelar.addEventListener('click', morConfirmarOrdem);
+  morBtnLimpar.addEventListener('click', function(){ morMontar(); somClique(); });
+
+  /* ---------- tela de seleção de percurso ---------- */
+  const morSelecao    = document.getElementById('morSelecao');
+  const morInstrucoes = document.getElementById('morInstrucoes');
+  const morTabuleiro  = document.getElementById('morTabuleiro');
+
+  function morMostrarSelecao(){
+    morSelecao.classList.add('on');
+    morInstrucoes.classList.add('oculto');
+    morTabuleiro.classList.add('oculto');
+  }
+
+  function morEscolher(modo){
+    morModo = modo;
+    morSelecao.classList.remove('on');
+    morInstrucoes.classList.remove('oculto');
+    morTabuleiro.classList.remove('oculto');
+    morMontar();
+    somClique();
+    morTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  document.querySelectorAll('#morSelecao .mor-sel-card').forEach(function(b){
+    b.addEventListener('click', function(){ morEscolher(b.dataset.modo); });
+  });
+  document.getElementById('morTrocar').addEventListener('click', function(){
+    morMostrarSelecao();
+    somClique();
+    morSelecao.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  function iniciarMorte(){ morMostrarSelecao(); }
 
   /* ------------------ lightbox ------------------ */
   const lb = document.getElementById('lightbox');
