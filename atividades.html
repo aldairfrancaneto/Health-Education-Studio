@@ -1213,6 +1213,55 @@
   @media (max-width:600px){
     .sum-grade{ grid-template-columns:1fr; gap:13px; }
   }
+  /* ============================================================
+     ACERVO SEPARADO EM DECKS
+     O acervo deixa de ser uma pilha unica: cada grupo de cartas
+     fica no seu proprio "monte", com cabecalho identificando-o.
+     Usado nos jogos de ASSOCIACAO (lesoes e organelas); os jogos
+     de ordenacao cronologica seguem com acervo unico.
+     ============================================================ */
+  .decks{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  }
+  .deck{
+    border:2px solid var(--gold-dim); border-radius:11px; padding:11px 11px 13px;
+    background:linear-gradient(180deg, rgba(30,53,87,.30), rgba(10,20,36,.30));
+  }
+  .deck-cab{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    margin:0 0 10px; padding:0 0 8px;
+    border-bottom:1px solid var(--gold-dim);
+  }
+  .deck-nome{
+    font-family:var(--font-serif); font-weight:900; font-size:11.5px;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--gold-soft);
+  }
+  .deck-conta{
+    font-family:var(--font-pixel); font-size:8px; white-space:nowrap;
+    color:#1A1206; background:linear-gradient(180deg,#E8CE7A,#C9A227);
+    border:2px solid var(--gold-soft); border-radius:5px; padding:4px 6px;
+  }
+  .deck .mao:empty::after,
+  .deck .org-mao:empty::after{
+    content:"Monte vazio."; padding:12px 6px;
+  }
+  /* cores de cada monte, espelhando as das cartas */
+  .deck.d-rev  { border-color:#4E8FB0; }
+  .deck.d-rev   .deck-nome{ color:#A8D6EE; }
+  .deck.d-irrev{ border-color:#B4553C; }
+  .deck.d-irrev .deck-nome{ color:#F0A88F; }
+  .deck.d-nec  { border-color:#8E5BB0; }
+  .deck.d-nec   .deck-nome{ color:#D9B6EE; }
+  .deck.d-azul { border-color:#3E86C4; }
+  .deck.d-azul  .deck-nome{ color:#A0D7F5; }
+  .deck.d-verm { border-color:#C9524C; }
+  .deck.d-verm  .deck-nome{ color:#F5B4B0; }
+
+  @media (max-width:600px){
+    .decks{ grid-template-columns:1fr; gap:12px; }
+    .deck{ padding:9px 8px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -2359,7 +2408,7 @@
 
     <div class="instrucoes">
       Associe cada <b>categoria</b> de lesão celular à sua <b>definição</b> correspondente.
-      Toque em uma carta do Acervo e depois no <b>espaço vazio</b> abaixo da categoria
+      O Acervo está dividido em <b>três montes</b> (reversíveis, irreversíveis e padrões de necrose), o que já indica a família de cada definição. Toque em uma carta do monte e depois no <b>espaço vazio</b> abaixo da categoria
       certa. O tabuleiro está dividido em <b>Lesões Reversíveis</b>, <b>Lesões Irreversíveis</b>
       e, dentro desta, os <b>Padrões Morfológicos de Necrose</b> — use essa organização como
       pista. Quando as 12 estiverem posicionadas, toque em <b>SELAR RESPOSTAS</b>.
@@ -2407,7 +2456,33 @@
         <span class="linha-ouro"></span>
       </div>
       <div class="grimorio">
-        <div class="mao" id="lesMao"></div>
+        <div class="decks">
+
+          <div class="deck d-rev">
+            <div class="deck-cab">
+              <span class="deck-nome">Lesões Reversíveis</span>
+              <span class="deck-conta" id="lesContaRev">0</span>
+            </div>
+            <div class="mao" id="lesMaoRev"></div>
+          </div>
+
+          <div class="deck d-irrev">
+            <div class="deck-cab">
+              <span class="deck-nome">Lesões Irreversíveis</span>
+              <span class="deck-conta" id="lesContaIrrev">0</span>
+            </div>
+            <div class="mao" id="lesMaoIrrev"></div>
+          </div>
+
+          <div class="deck d-nec">
+            <div class="deck-cab">
+              <span class="deck-nome">Padrões de Necrose</span>
+              <span class="deck-conta" id="lesContaNec">0</span>
+            </div>
+            <div class="mao" id="lesMaoNec"></div>
+          </div>
+
+        </div>
       </div>
 
     </div>
@@ -2594,7 +2669,7 @@
     <div class="instrucoes">
       <b>Como jogar:</b> cada estação já traz a carta <b>verde</b> (a estrutura celular)
       encaixada no leque. Faltam as outras duas: a <b>azul</b> (definição e função molecular)
-      e a <b>vermelha</b> (correlação médica). Toque numa carta do Acervo e depois no
+      e a <b>vermelha</b> (correlação médica). O Acervo tem <b>dois montes separados</b>: um só de cartas azuis e outro só de vermelhas. Toque numa carta do monte e depois no
       <b>encaixe vazio</b> da estação certa — o encaixe da esquerda só aceita azuis e o da
       direita só aceita vermelhas. Para trocar, toque na carta já encaixada. Com os
       <b>22 encaixes</b> preenchidos, toque em <b>FECHAR OS TRIOS</b>: os acertos ficam
@@ -2630,7 +2705,25 @@
         <span class="linha-ouro"></span>
       </div>
       <div class="grimorio">
-        <div class="org-mao" id="orgMao"></div>
+        <div class="decks">
+
+          <div class="deck d-azul">
+            <div class="deck-cab">
+              <span class="deck-nome">Definição e Função</span>
+              <span class="deck-conta" id="orgContaAzul">0</span>
+            </div>
+            <div class="org-mao" id="orgMaoAzul"></div>
+          </div>
+
+          <div class="deck d-verm">
+            <div class="deck-cab">
+              <span class="deck-nome">Correlação Médica</span>
+              <span class="deck-conta" id="orgContaVerm">0</span>
+            </div>
+            <div class="org-mao" id="orgMaoVerm"></div>
+          </div>
+
+        </div>
       </div>
 
     </div>
@@ -4646,7 +4739,31 @@ function iniciarNervoso(){
   ];
   const LES_PARES = LES_AREAS.reduce(function(a,z){ return a.concat(z.pares); }, []);
 
-  const lesMao = document.getElementById('lesMao');
+  /* ------------------------------------------------------------
+     ACERVO EM TRES MONTES
+     Cada area do tabuleiro tem o seu monte correspondente; a carta
+     devolvida volta sempre para o monte de origem.
+     ------------------------------------------------------------ */
+  const LES_MONTES = [
+    { campo:'lesCampoRev',   mao:'lesMaoRev',   conta:'lesContaRev'   },
+    { campo:'lesCampoIrrev', mao:'lesMaoIrrev', conta:'lesContaIrrev' },
+    { campo:'lesCampoNec',   mao:'lesMaoNec',   conta:'lesContaNec'   }
+  ];
+  /* mapa numero-da-carta -> monte a que pertence */
+  const LES_MONTE_DE = {};
+  LES_AREAS.forEach(function(z, i){
+    z.pares.forEach(function(p){ LES_MONTE_DE[p[0]] = LES_MONTES[i]; });
+  });
+  function lesMonte(num){ return LES_MONTE_DE[num]; }
+  function lesMaoDe(num){ return document.getElementById(lesMonte(num).mao); }
+  /* atualiza o contador de cada monte */
+  function lesContarMontes(){
+    LES_MONTES.forEach(function(m){
+      const el = document.getElementById(m.mao);
+      document.getElementById(m.conta).textContent =
+        el.querySelectorAll('.carta-def').length;
+    });
+  }
   const lesHudPos = document.getElementById('lesPos');
   const lesHudRod = document.getElementById('lesRod');
   const lesBtnSelar = document.getElementById('lesSelar');
@@ -4731,7 +4848,8 @@ function iniciarNervoso(){
       slot.dataset.posto = '';
       slot.classList.remove('cheio','certo','errado');
       slot.innerHTML = '<span class="vazio">ESPAÇO<br>VAZIO</span>';
-      lesMao.appendChild(lesCriarDef(par));
+      lesMaoDe(num).appendChild(lesCriarDef(par));
+      lesContarMontes();
       lesAtualizar();
       somClique();
       return;
@@ -4748,6 +4866,7 @@ function iniciarNervoso(){
     slot.appendChild(img);
     slot.appendChild(lesLupa(img.src));
     lesSelecionada.remove();
+    lesContarMontes();
     lesSelecionada = null;
     lesAtualizar();
     somEncaixe();
@@ -4813,9 +4932,14 @@ function iniciarNervoso(){
       el.innerHTML = '';
       z.pares.forEach(function(p){ el.appendChild(lesCriarEstacao(p)); });
     });
-    // acervo embaralhado com TODAS as definições misturadas
-    lesMao.innerHTML = '';
-    lesEmbaralhar(LES_PARES).forEach(function(p){ lesMao.appendChild(lesCriarDef(p)); });
+    /* cada monte recebe apenas as suas definicoes, embaralhadas
+       entre si (a separacao por familia e proposital) */
+    LES_AREAS.forEach(function(z, i){
+      const el = document.getElementById(LES_MONTES[i].mao);
+      el.innerHTML = '';
+      lesEmbaralhar(z.pares).forEach(function(p){ el.appendChild(lesCriarDef(p)); });
+    });
+    lesContarMontes();
 
     lesSelecionada = null;
     lesRodada = 1;
@@ -5320,7 +5444,20 @@ function iniciarNervoso(){
   const ORG_TOTAL = ORG_TRIOS.length * 2;   /* 2 encaixes por estação */
 
   const orgCampo     = document.getElementById('orgCampo');
-  const orgMao       = document.getElementById('orgMao');
+  /* ------------------------------------------------------------
+     ACERVO EM DOIS MONTES: azuis (definicao) e vermelhas (clinica)
+     ------------------------------------------------------------ */
+  const ORG_MONTES = {
+    azul: { mao:'orgMaoAzul', conta:'orgContaAzul' },
+    verm: { mao:'orgMaoVerm', conta:'orgContaVerm' }
+  };
+  function orgMaoDe(tipo){ return document.getElementById(ORG_MONTES[tipo].mao); }
+  function orgContarMontes(){
+    Object.keys(ORG_MONTES).forEach(function(t){
+      document.getElementById(ORG_MONTES[t].conta).textContent =
+        orgMaoDe(t).querySelectorAll('.org-carta').length;
+    });
+  }
   const orgHudPos    = document.getElementById('orgPos');
   const orgHudRod    = document.getElementById('orgRod');
   const orgBtnSelar  = document.getElementById('orgSelar');
@@ -5418,7 +5555,8 @@ function iniciarNervoso(){
       slot.classList.remove('cheio','certo','errado');
       slot.innerHTML = '<span class="vazio">' +
         (tipo === 'azul' ? 'DEFINIÇÃO<br>E FUNÇÃO' : 'CORRELAÇÃO<br>MÉDICA') + '</span>';
-      orgMao.appendChild(orgCriarCarta(tipo, chave));
+      orgMaoDe(tipo).appendChild(orgCriarCarta(tipo, chave));
+      orgContarMontes();
       orgAtualizar();
       somClique();
       return;
@@ -5442,6 +5580,7 @@ function iniciarNervoso(){
     slot.appendChild(img);
     slot.appendChild(orgLupa(img.src));
     orgSelecionada.remove();
+    orgContarMontes();
     orgSelecionada = null;
     orgAtualizar();
     somEncaixe();
@@ -5508,14 +5647,16 @@ function iniciarNervoso(){
     orgCampo.innerHTML = '';
     ORG_TRIOS.forEach(function(t){ orgCampo.appendChild(orgCriarEstacao(t)); });
 
-    /* acervo: 22 cartas (11 azuis + 11 vermelhas) totalmente misturadas */
-    const baralho = [];
-    ORG_TRIOS.forEach(function(t){
-      baralho.push(['azul', t[0]]);
-      baralho.push(['verm', t[0]]);
+    /* cada monte recebe as suas 11 cartas, embaralhadas dentro do monte */
+    ['azul','verm'].forEach(function(tipo){
+      const el = orgMaoDe(tipo);
+      el.innerHTML = '';
+      const baralho = ORG_TRIOS.map(function(t){ return [tipo, t[0]]; });
+      orgEmbaralhar(baralho).forEach(function(c){
+        el.appendChild(orgCriarCarta(c[0], c[1]));
+      });
     });
-    orgMao.innerHTML = '';
-    orgEmbaralhar(baralho).forEach(function(c){ orgMao.appendChild(orgCriarCarta(c[0], c[1])); });
+    orgContarMontes();
 
     orgSelecionada = null;
     orgRodada = 1;
