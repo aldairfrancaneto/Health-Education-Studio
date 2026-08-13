@@ -972,7 +972,20 @@
   .mor-sel-nec   .mor-sel-tag{ background:linear-gradient(180deg,#F5DC8A,#B58715); border-color:#FBEFC4; color:#2B2004; }
   .mor-sel-ambas .mor-sel-tag{ background:linear-gradient(180deg,#9BE0B0,#2E7E4A); border-color:#C9F0D6; color:#08210F; }
 
-  /* elementos que somem conforme o percurso escolhido */
+  /* cores das areas da atividade de lesoes, na tela de selecao */
+  .mor-sel-trilhas .c-rev  { background:#4E8FB0; }
+  .mor-sel-trilhas .c-irrev{ background:#B4553C; }
+  .mor-sel-trilhas .c-nec2 { background:#8E5BB0; }
+
+  /* cores das familias de cartas da expedicao celular */
+  .mor-sel-trilhas .c-v{ background:#4FA97A; }
+  .mor-sel-trilhas .c-a{ background:#3E86C4; }
+  .mor-sel-trilhas .c-r{ background:#C9524C; }
+
+  /* elementos que somem conforme o percurso/conjunto escolhido */
+  #orgInstrucoes.oculto, #orgTabuleiro.oculto, .org-legenda span.oculto,
+  #lesInstrucoes.oculto, #lesTabuleiro.oculto,
+  .zona.oculto, .subzona.oculto, .deck.oculto,
   #morInstrucoes.oculto, #morTabuleiro.oculto,
   .mor-campo.oculto, .mor-monte.oculto, .mor-legenda span.oculto,
   .mor-via.oculto, .mor-comum.oculto, .mor-convergencia.oculto{ display:none; }
@@ -1240,6 +1253,13 @@
   .org-leque > *:nth-child(1){ transform:rotate(-13deg) translateX(14%); z-index:3; }
   .org-leque > *:nth-child(2){ transform:translateY(-9px); z-index:2; }
   .org-leque > *:nth-child(3){ transform:rotate(13deg) translateX(-14%); z-index:1; }
+  /* leque de DUAS pecas (conjunto so verde + azul) */
+  .org-leque.duo > *{ width:42%; }
+  .org-leque.duo > *:nth-child(1){ transform:rotate(-9deg) translateX(9%); z-index:2; }
+  .org-leque.duo > *:nth-child(2){ transform:rotate(9deg) translateX(-9%); z-index:1; }
+  .org-leque.duo > *:nth-child(1):hover{ transform:rotate(-9deg) translateX(9%) translateY(-9px); z-index:6; }
+  .org-leque.duo > *:nth-child(2):hover{ transform:rotate(9deg) translateX(-9%) translateY(-9px); z-index:6; }
+
   .org-leque > *:nth-child(1):hover{ transform:rotate(-13deg) translateX(14%) translateY(-9px); z-index:6; }
   .org-leque > *:nth-child(2):hover{ transform:translateY(-18px); z-index:6; }
   .org-leque > *:nth-child(3):hover{ transform:rotate(13deg) translateX(-14%) translateY(-9px); z-index:6; }
@@ -2562,28 +2582,83 @@
        ============================================================ -->
   <section class="atividade" id="ativ-lesoes">
 
-    <div class="instrucoes">
-      Associe cada <b>categoria</b> de lesão celular à sua <b>definição</b> correspondente.
-      O Acervo está dividido em <b>três montes</b> (reversíveis, irreversíveis e padrões de necrose), o que já indica a família de cada definição. Toque em uma carta do monte e depois no <b>espaço vazio</b> abaixo da categoria
-      certa. O tabuleiro está dividido em <b>Lesões Reversíveis</b>, <b>Lesões Irreversíveis</b>
-      e, dentro desta, os <b>Padrões Morfológicos de Necrose</b> — use essa organização como
-      pista. Quando as 12 estiverem posicionadas, toque em <b>SELAR RESPOSTAS</b>.
-      Use a <b>🔍 lupa</b> para ampliar qualquer carta.
+    <!-- ---------- TELA DE SELEÇÃO DE MODO ---------- -->
+    <div class="mor-selecao" id="lesSelecao">
+
+      <div class="mor-sel-cab">
+        <span class="mor-sel-titulo">Lesões Celulares</span>
+        <span class="mor-sel-sub">Escolha o conjunto desta partida</span>
+      </div>
+
+      <div class="mor-sel-opcoes">
+
+        <button class="mor-sel-card mor-sel-apo" type="button" data-modo="rev_irrev">
+          <span class="mor-sel-nome">Reversíveis e Irreversíveis</span>
+          <span class="mor-sel-desc">
+            As degenerações frente aos dois tipos de morte celular: o contraste entre a lesão
+            que a célula ainda consegue reverter e a que ela não consegue mais.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-rev"></i>Reversíveis
+            <i class="c-irrev"></i>Irreversíveis
+          </span>
+          <span class="mor-sel-tag">2 áreas · 6 cartas</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-nec" type="button" data-modo="irrev_nec">
+          <span class="mor-sel-nome">Irreversíveis e Padrões de Necrose</span>
+          <span class="mor-sel-desc">
+            Da morte celular aos seus padrões morfológicos: como a necrose se apresenta ao
+            microscópio em cada tecido.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-irrev"></i>Irreversíveis
+            <i class="c-nec2"></i>Padrões
+          </span>
+          <span class="mor-sel-tag">2 áreas · 8 cartas</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-ambas" type="button" data-modo="todas">
+          <span class="mor-sel-nome">Todos os Cartões</span>
+          <span class="mor-sel-desc">
+            O tabuleiro completo: degenerações, morte celular e os seis padrões morfológicos
+            de necrose, do reversível ao irreversível.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-rev"></i><i class="c-irrev"></i><i class="c-nec2"></i>
+            Todas
+          </span>
+          <span class="mor-sel-tag">3 áreas · 12 cartas</span>
+        </button>
+
+      </div>
     </div>
 
-    <div class="tabuleiro">
+    <div class="instrucoes" id="lesInstrucoes">
+      Associe cada <b>categoria</b> de lesão celular à sua <b>definição</b> correspondente.
+      O Acervo está dividido em <b>montes</b>, um para cada área do tabuleiro, o que já indica
+      a família de cada definição. Toque em uma carta do monte e depois no <b>espaço vazio</b>
+      abaixo da categoria certa; toque numa carta já posicionada para devolvê-la ao seu monte.
+      Use a organização do tabuleiro — <b>Lesões Reversíveis</b>, <b>Lesões Irreversíveis</b> e,
+      dentro desta, os <b>Padrões Morfológicos de Necrose</b> — como pista. Com todas
+      posicionadas, toque em <b>SELAR RESPOSTAS</b>. Use a <b>🔍 lupa</b> para ampliar qualquer
+      carta.
+    </div>
+
+    <div class="tabuleiro" id="lesTabuleiro">
 
       <div class="hud">
         <span class="hud-item" id="lesPos">POSICIONADAS: <b>0/12</b></span>
         <span class="hud-item" id="lesRod">RODADA: <b>1</b></span>
         <button class="btn-board principal" id="lesSelar" type="button" disabled>⚔ Selar respostas</button>
         <button class="btn-board" id="lesLimpar" type="button">↻ Recomeçar</button>
+        <button class="btn-board" id="lesTrocar" type="button">⇄ Trocar conjunto</button>
       </div>
 
       <div id="lesResultado"></div>
 
       <!-- ÁREA 1 — REVERSÍVEIS -->
-      <div class="zona zona-rev">
+      <div class="zona zona-rev" id="lesZonaRev">
         <div class="zona-cab">
           <span class="zona-nome">Lesões Reversíveis</span>
           <span class="zona-sub">Degenerações</span>
@@ -2592,14 +2667,14 @@
       </div>
 
       <!-- ÁREA 2 — IRREVERSÍVEIS (com subárea) -->
-      <div class="zona zona-irrev">
+      <div class="zona zona-irrev" id="lesZonaIrrev">
         <div class="zona-cab">
           <span class="zona-nome">Lesões Irreversíveis</span>
           <span class="zona-sub">Morte celular</span>
         </div>
         <div class="campo" id="lesCampoIrrev"></div>
 
-        <div class="subzona">
+        <div class="subzona" id="lesSubzonaNec">
           <div class="zona-cab sub">
             <span class="zona-nome">Padrões Morfológicos de Necrose</span>
           </div>
@@ -2614,7 +2689,7 @@
       <div class="grimorio">
         <div class="decks">
 
-          <div class="deck d-rev">
+          <div class="deck d-rev" id="lesDeckRev">
             <div class="deck-cab">
               <span class="deck-nome">Lesões Reversíveis</span>
               <span class="deck-conta" id="lesContaRev">0</span>
@@ -2622,7 +2697,7 @@
             <div class="mao" id="lesMaoRev"></div>
           </div>
 
-          <div class="deck d-irrev">
+          <div class="deck d-irrev" id="lesDeckIrrev">
             <div class="deck-cab">
               <span class="deck-nome">Lesões Irreversíveis</span>
               <span class="deck-conta" id="lesContaIrrev">0</span>
@@ -2630,7 +2705,7 @@
             <div class="mao" id="lesMaoIrrev"></div>
           </div>
 
-          <div class="deck d-nec">
+          <div class="deck d-nec" id="lesDeckNec">
             <div class="deck-cab">
               <span class="deck-nome">Padrões de Necrose</span>
               <span class="deck-conta" id="lesContaNec">0</span>
@@ -2666,24 +2741,65 @@
        ============================================================ -->
   <section class="atividade" id="ativ-organelas">
 
-    <div class="instrucoes">
+    <!-- ---------- TELA DE SELEÇÃO DE MODO ---------- -->
+    <div class="mor-selecao" id="orgSelecao">
+
+      <div class="mor-sel-cab">
+        <span class="mor-sel-titulo">Expedição Celular</span>
+        <span class="mor-sel-sub">Escolha o conjunto desta partida</span>
+      </div>
+
+      <div class="mor-sel-opcoes">
+
+        <button class="mor-sel-card mor-sel-apo" type="button" data-modo="verde_azul">
+          <span class="mor-sel-nome">Verdes e Azuis</span>
+          <span class="mor-sel-desc">
+            Só a biologia celular: cada estrutura ligada à sua definição e função molecular,
+            sem a camada clínica.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-v"></i>Estrutura
+            <i class="c-a"></i>Definição e função
+          </span>
+          <span class="mor-sel-tag">11 encaixes</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-ambas" type="button" data-modo="todas">
+          <span class="mor-sel-nome">Todos os Cartões</span>
+          <span class="mor-sel-desc">
+            O trio completo: à função molecular soma-se a correlação médica, ligando cada
+            organela à clínica.
+          </span>
+          <span class="mor-sel-trilhas">
+            <i class="c-v"></i><i class="c-a"></i><i class="c-r"></i>
+            Todas
+          </span>
+          <span class="mor-sel-tag">22 encaixes</span>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="instrucoes" id="orgInstrucoes">
       <b>Como jogar:</b> cada estação já traz a carta <b>verde</b> (a estrutura celular)
       encaixada no leque. Faltam as outras duas: a <b>azul</b> (definição e função molecular)
-      e a <b>vermelha</b> (correlação médica). O Acervo tem <b>dois montes separados</b>: um só de cartas azuis e outro só de vermelhas. Toque numa carta do monte e depois no
-      <b>encaixe vazio</b> da estação certa — o encaixe da esquerda só aceita azuis e o da
-      direita só aceita vermelhas. Para trocar, toque na carta já encaixada. Com os
-      <b>22 encaixes</b> preenchidos, toque em <b>FECHAR OS TRIOS</b>: os acertos ficam
+      e, no conjunto completo, a <b>vermelha</b> (correlação médica). O Acervo é separado por
+      cor: cada monte traz só as cartas da sua família. Toque numa carta do monte e depois no
+      <b>encaixe vazio</b> da estação certa — cada encaixe só aceita cartas da sua cor. Para
+      trocar, toque na carta já encaixada. Com todos os encaixes
+      preenchidos, toque em <b>FECHAR OS TRIOS</b>: os acertos ficam
       <b>verdes</b> e os erros <b>vermelhos</b> — sem revelar a resposta certa.
       Use a <b>🔍 lupa</b> para ler qualquer carta.
     </div>
 
-    <div class="tabuleiro org-tabuleiro">
+    <div class="tabuleiro org-tabuleiro" id="orgTabuleiro">
 
       <div class="hud">
         <span class="hud-item" id="orgPos">ENCAIXADAS: <b>0/22</b></span>
         <span class="hud-item" id="orgRod">RODADA: <b>1</b></span>
         <button class="btn-board principal" id="orgSelar" type="button" disabled>🔬 Fechar os trios</button>
         <button class="btn-board" id="orgLimpar" type="button">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board" id="orgTrocar" type="button">⇄ Trocar conjunto</button>
       </div>
 
       <div id="orgResultado"></div>
@@ -2691,7 +2807,7 @@
       <div class="org-legenda">
         <span><i class="c-v"></i> Verde · estrutura (já posicionada)</span>
         <span><i class="c-a"></i> Azul · definição e função</span>
-        <span><i class="c-r"></i> Vermelha · correlação médica</span>
+        <span data-leg="verm"><i class="c-r"></i> Vermelha · correlação médica</span>
       </div>
 
       <div class="faixa">
@@ -2715,7 +2831,7 @@
             <div class="org-mao" id="orgMaoAzul"></div>
           </div>
 
-          <div class="deck d-verm">
+          <div class="deck d-verm" id="orgDeckVerm">
             <div class="deck-cab">
               <span class="deck-nome">Correlação Médica</span>
               <span class="deck-conta" id="orgContaVerm">0</span>
@@ -4944,9 +5060,9 @@ function iniciarNervoso(){
      devolvida volta sempre para o monte de origem.
      ------------------------------------------------------------ */
   const LES_MONTES = [
-    { campo:'lesCampoRev',   mao:'lesMaoRev',   conta:'lesContaRev'   },
-    { campo:'lesCampoIrrev', mao:'lesMaoIrrev', conta:'lesContaIrrev' },
-    { campo:'lesCampoNec',   mao:'lesMaoNec',   conta:'lesContaNec'   }
+    { campo:'lesCampoRev',   mao:'lesMaoRev',   conta:'lesContaRev',   deck:'lesDeckRev'   },
+    { campo:'lesCampoIrrev', mao:'lesMaoIrrev', conta:'lesContaIrrev', deck:'lesDeckIrrev' },
+    { campo:'lesCampoNec',   mao:'lesMaoNec',   conta:'lesContaNec',   deck:'lesDeckNec'   }
   ];
   /* mapa numero-da-carta -> monte a que pertence */
   const LES_MONTE_DE = {};
@@ -4954,6 +5070,24 @@ function iniciarNervoso(){
     z.pares.forEach(function(p){ LES_MONTE_DE[p[0]] = LES_MONTES[i]; });
   });
   function lesMonte(num){ return LES_MONTE_DE[num]; }
+
+  /* ------------------------------------------------------------
+     CONJUNTOS DE CARTAS (tela de selecao)
+     Os indices apontam para LES_AREAS: 0 = reversiveis,
+     1 = irreversiveis, 2 = padroes morfologicos de necrose.
+     ------------------------------------------------------------ */
+  const LES_MODOS = {
+    rev_irrev: [0,1],
+    irrev_nec: [1,2],
+    todas:     [0,1,2]
+  };
+  let lesModo = 'todas';
+  function lesAreaAtiva(i){ return LES_MODOS[lesModo].indexOf(i) !== -1; }
+  function lesTotal(){
+    return LES_MODOS[lesModo].reduce(function(n,i){
+      return n + LES_AREAS[i].pares.length;
+    }, 0);
+  }
   function lesMaoDe(num){ return document.getElementById(lesMonte(num).mao); }
   /* atualiza o contador de cada monte */
   function lesContarMontes(){
@@ -5074,9 +5208,10 @@ function iniciarNervoso(){
   function lesAtualizar(){
     let n = 0;
     lesSlots().forEach(function(s){ if (s.dataset.posto) n++; });
-    lesHudPos.innerHTML = 'POSICIONADAS: <b>' + n + '/' + LES_PARES.length + '</b>';
-    lesHudPos.className = 'hud-item' + (n === LES_PARES.length ? ' ok' : '');
-    lesBtnSelar.disabled = (n !== LES_PARES.length);
+    const total = lesTotal();
+    lesHudPos.innerHTML = 'POSICIONADAS: <b>' + n + '/' + total + '</b>';
+    lesHudPos.className = 'hud-item' + (n === total ? ' ok' : '');
+    lesBtnSelar.disabled = (n !== total);
   }
 
   function lesLimparResultado(){
@@ -5097,8 +5232,9 @@ function iniciarNervoso(){
 
     if (errados.length === 0){
       lesResultado.className = 'on vitoria';
-      lesResultado.innerHTML = '<span class="grande">🏆 Todas as 12 associações estão corretas!</span>' +
-        'Você concluiu a atividade na rodada ' + lesRodada + '.';
+      lesResultado.innerHTML = '<span class="grande">🏆 Todas as ' + lesTotal() +
+        ' associações estão corretas!</span>' +
+        'Você concluiu o conjunto na rodada ' + lesRodada + '.';
       lesBtnSelar.disabled = true;
       somVitoria();
     } else {
@@ -5107,7 +5243,7 @@ function iniciarNervoso(){
         ' associação(ões) incorreta(s)</span>' +
         'As cartas marcadas em <b>vermelho</b> estão no lugar errado. ' +
         'Toque nelas para devolver ao Acervo e tentar de novo. ' +
-        '(' + acertos + ' de ' + LES_PARES.length + ' corretas)';
+        '(' + acertos + ' de ' + lesTotal() + ' corretas)';
       somErro();
       lesRodada++;
       lesHudRod.innerHTML = 'RODADA: <b>' + lesRodada + '</b>';
@@ -5125,19 +5261,28 @@ function iniciarNervoso(){
   }
 
   function lesMontar(){
-    // cada área recebe as suas categorias, em ordem fixa
-    LES_AREAS.forEach(function(z){
-      const el = document.getElementById(z.id);
-      el.innerHTML = '';
-      z.pares.forEach(function(p){ el.appendChild(lesCriarEstacao(p)); });
-    });
-    /* cada monte recebe apenas as suas definicoes, embaralhadas
-       entre si (a separacao por familia e proposital) */
+    /* so as areas do conjunto escolhido ganham estacoes e cartas;
+       as demais ficam vazias e escondidas, saindo do jogo */
     LES_AREAS.forEach(function(z, i){
-      const el = document.getElementById(LES_MONTES[i].mao);
+      const ativa = lesAreaAtiva(i);
+      const el = document.getElementById(z.id);
+      const mao = document.getElementById(LES_MONTES[i].mao);
       el.innerHTML = '';
-      lesEmbaralhar(z.pares).forEach(function(p){ el.appendChild(lesCriarDef(p)); });
+      mao.innerHTML = '';
+      if (ativa){
+        z.pares.forEach(function(p){ el.appendChild(lesCriarEstacao(p)); });
+        lesEmbaralhar(z.pares).forEach(function(p){ mao.appendChild(lesCriarDef(p)); });
+      }
+      document.getElementById(LES_MONTES[i].deck).classList.toggle('oculto', !ativa);
     });
+
+    /* areas do tabuleiro acompanham o conjunto escolhido */
+    const temRev   = lesAreaAtiva(0);
+    const temIrrev = lesAreaAtiva(1);
+    const temNec   = lesAreaAtiva(2);
+    document.getElementById('lesZonaRev').classList.toggle('oculto', !temRev);
+    document.getElementById('lesZonaIrrev').classList.toggle('oculto', !temIrrev && !temNec);
+    document.getElementById('lesSubzonaNec').classList.toggle('oculto', !temNec);
     lesContarMontes();
 
     lesSelecionada = null;
@@ -5150,11 +5295,37 @@ function iniciarNervoso(){
   lesBtnSelar.addEventListener('click', lesSelarRespostas);
   lesBtnLimpar.addEventListener('click', function(){ lesMontar(); somClique(); });
 
-  function iniciarLesoes(){
-    if (lesIniciado) return;
-    lesIniciado = true;
-    lesMontar();
+  /* ---------- tela de selecao do conjunto ---------- */
+  const lesSelecao    = document.getElementById('lesSelecao');
+  const lesInstrucoes = document.getElementById('lesInstrucoes');
+  const lesTabuleiro  = document.getElementById('lesTabuleiro');
+
+  function lesMostrarSelecao(){
+    lesSelecao.classList.add('on');
+    lesInstrucoes.classList.add('oculto');
+    lesTabuleiro.classList.add('oculto');
   }
+
+  function lesEscolher(modo){
+    lesModo = modo;
+    lesSelecao.classList.remove('on');
+    lesInstrucoes.classList.remove('oculto');
+    lesTabuleiro.classList.remove('oculto');
+    lesMontar();
+    somClique();
+    lesTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  document.querySelectorAll('#lesSelecao .mor-sel-card').forEach(function(b){
+    b.addEventListener('click', function(){ lesEscolher(b.dataset.modo); });
+  });
+  document.getElementById('lesTrocar').addEventListener('click', function(){
+    lesMostrarSelecao();
+    somClique();
+    lesSelecao.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  function iniciarLesoes(){ lesMostrarSelecao(); }
 
   /* ==============================================================
      ACERVOS DE IMAGENS DAS CARTAS (necrose e apoptose)
@@ -5195,7 +5366,18 @@ function iniciarNervoso(){
     ['ribossomos',   'Ribossomos'],
     ['citoesqueleto','Citoesqueleto']
   ];
-  const ORG_TOTAL = ORG_TRIOS.length * 2;   /* 2 encaixes por estação */
+  /* ------------------------------------------------------------
+     CONJUNTOS DE CARTAS (tela de selecao)
+     verde_azul = so a definicao/funcao (1 encaixe por estacao)
+     todas      = trio completo, com a correlacao medica
+     ------------------------------------------------------------ */
+  const ORG_MODOS = {
+    verde_azul: ['azul'],
+    todas:      ['azul','verm']
+  };
+  let orgModo = 'todas';
+  function orgTipoAtivo(t){ return ORG_MODOS[orgModo].indexOf(t) !== -1; }
+  function orgTotal(){ return ORG_TRIOS.length * ORG_MODOS[orgModo].length; }
 
   const orgCampo     = document.getElementById('orgCampo');
   /* ------------------------------------------------------------
@@ -5279,7 +5461,8 @@ function iniciarNervoso(){
     est.appendChild(rot);
 
     const leque = document.createElement('div');
-    leque.className = 'org-leque';
+    /* no conjunto so verde+azul o leque tem duas pecas em vez de tres */
+    leque.className = 'org-leque' + (orgTipoAtivo('verm') ? '' : ' duo');
 
     /* peca 1: encaixe azul | peca 2: carta verde fixa | peca 3: encaixe vermelho */
     leque.appendChild(orgCriarSlot(chave, 'azul'));
@@ -5293,7 +5476,7 @@ function iniciarNervoso(){
     fixa.appendChild(orgLupa(srcV));
     leque.appendChild(fixa);
 
-    leque.appendChild(orgCriarSlot(chave, 'verm'));
+    if (orgTipoAtivo('verm')) leque.appendChild(orgCriarSlot(chave, 'verm'));
 
     est.appendChild(leque);
     return est;
@@ -5343,9 +5526,10 @@ function iniciarNervoso(){
   function orgAtualizar(){
     let n = 0;
     orgSlots().forEach(function(s){ if (s.dataset.posto) n++; });
-    orgHudPos.innerHTML = 'ENCAIXADAS: <b>' + n + '/' + ORG_TOTAL + '</b>';
-    orgHudPos.className = 'hud-item' + (n === ORG_TOTAL ? ' ok' : '');
-    orgBtnSelar.disabled = (n !== ORG_TOTAL);
+    const total = orgTotal();
+    orgHudPos.innerHTML = 'ENCAIXADAS: <b>' + n + '/' + total + '</b>';
+    orgHudPos.className = 'hud-item' + (n === total ? ' ok' : '');
+    orgBtnSelar.disabled = (n !== total);
   }
 
   function orgLimparResultado(){
@@ -5366,9 +5550,12 @@ function iniciarNervoso(){
 
     if (errados.length === 0){
       orgResultado.className = 'on vitoria';
-      orgResultado.innerHTML = '<span class="grande">🏆 Os 11 trios foram fechados corretamente!</span>' +
+      orgResultado.innerHTML = '<span class="grande">🏆 As 11 estações foram fechadas corretamente!</span>' +
         'Você concluiu a expedição na rodada ' + orgRodada + '. ' +
-        'Cada estrutura foi ligada à sua função molecular e à sua repercussão clínica.';
+        (orgModo === 'todas'
+          ? 'Cada estrutura foi ligada à sua função molecular e à sua repercussão clínica.'
+          : 'Cada estrutura foi ligada à sua função molecular. Para fechar os trios com a ' +
+            'correlação médica, jogue novamente no conjunto completo.');
       orgBtnSelar.disabled = true;
       somVitoria();
     } else {
@@ -5379,7 +5566,7 @@ function iniciarNervoso(){
         ' carta(s) no trio errado</span>' +
         'As cartas em <b>vermelho</b> estão na estação errada; toque nelas para devolvê-las ' +
         'ao Acervo e repensar a associação. As <b>verdes</b> já estão travadas. (' +
-        acertos + ' de ' + ORG_TOTAL + ' corretas)';
+        acertos + ' de ' + orgTotal() + ' corretas)';
       somErro();
       orgRodada++;
       orgHudRod.innerHTML = 'RODADA: <b>' + orgRodada + '</b>';
@@ -5401,15 +5588,22 @@ function iniciarNervoso(){
     orgCampo.innerHTML = '';
     ORG_TRIOS.forEach(function(t){ orgCampo.appendChild(orgCriarEstacao(t)); });
 
-    /* cada monte recebe as suas 11 cartas, embaralhadas dentro do monte */
+    /* so os montes do conjunto escolhido recebem cartas */
     ['azul','verm'].forEach(function(tipo){
       const el = orgMaoDe(tipo);
       el.innerHTML = '';
-      const baralho = ORG_TRIOS.map(function(t){ return [tipo, t[0]]; });
-      orgEmbaralhar(baralho).forEach(function(c){
-        el.appendChild(orgCriarCarta(c[0], c[1]));
-      });
+      if (orgTipoAtivo(tipo)){
+        const baralho = ORG_TRIOS.map(function(t){ return [tipo, t[0]]; });
+        orgEmbaralhar(baralho).forEach(function(c){
+          el.appendChild(orgCriarCarta(c[0], c[1]));
+        });
+      }
     });
+    /* monte e legenda das vermelhas somem no conjunto reduzido */
+    const temVerm = orgTipoAtivo('verm');
+    document.getElementById('orgDeckVerm').classList.toggle('oculto', !temVerm);
+    document.querySelectorAll('#ativ-organelas .org-legenda span[data-leg="verm"]')
+      .forEach(function(sp){ sp.classList.toggle('oculto', !temVerm); });
     orgContarMontes();
 
     orgSelecionada = null;
@@ -5422,7 +5616,37 @@ function iniciarNervoso(){
   orgBtnSelar.addEventListener('click', orgFecharTrios);
   orgBtnLimpar.addEventListener('click', function(){ orgMontar(); somClique(); });
 
-  function iniciarOrganelas(){ orgMontar(); }
+  /* ---------- tela de selecao do conjunto ---------- */
+  const orgSelecao    = document.getElementById('orgSelecao');
+  const orgInstrucoes = document.getElementById('orgInstrucoes');
+  const orgTabuleiro  = document.getElementById('orgTabuleiro');
+
+  function orgMostrarSelecao(){
+    orgSelecao.classList.add('on');
+    orgInstrucoes.classList.add('oculto');
+    orgTabuleiro.classList.add('oculto');
+  }
+
+  function orgEscolher(modo){
+    orgModo = modo;
+    orgSelecao.classList.remove('on');
+    orgInstrucoes.classList.remove('oculto');
+    orgTabuleiro.classList.remove('oculto');
+    orgMontar();
+    somClique();
+    orgTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  document.querySelectorAll('#orgSelecao .mor-sel-card').forEach(function(b){
+    b.addEventListener('click', function(){ orgEscolher(b.dataset.modo); });
+  });
+  document.getElementById('orgTrocar').addEventListener('click', function(){
+    orgMostrarSelecao();
+    somClique();
+    orgSelecao.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  function iniciarOrganelas(){ orgMostrarSelecao(); }
 
   /* ==============================================================
      ATIVIDADE 6 — O DESTINO DA CÉLULA
