@@ -7,7 +7,7 @@
 <meta name="description" content="Atividades interativas usadas em sala de aula por Aldair de França Neto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&family=Cinzel:wght@600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&family=Cinzel:wght@600;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet">
 <style>
 /* ================================================================
    COMO FUNCIONA ESTA PÁGINA
@@ -1444,6 +1444,560 @@
     .decks{ grid-template-columns:1fr; gap:12px; }
     .deck{ padding:9px 8px 10px; }
   }
+
+  /* ============================================================
+     ATIVIDADE 7 — LABORATÓRIO DE CITOGENÉTICA (idiograma)
+     CSS escopado em #ativ-cariotipo, com classes prefixadas por
+     "k": o jogo nasceu como página independente e reaproveitava
+     nomes genéricos (.slot, .btn, .campo, .item) que já existem
+     nesta página.
+     ============================================================ */
+
+  #ativ-cariotipo{
+    /* paleta viva: fundo uva, acentos de doce — a citogenética é séria,
+       a interface não precisa ser */
+    --tinta:#FBF7FF;
+    --tinta2:rgba(251,247,255,.88);
+    --tinta3:rgba(251,247,255,.72);
+    --fundo:#2A1E5C;
+    --painel:#3D2E7E;
+    --painel2:#332568;
+    --slot:#1E1545;
+    --linha:rgba(196,170,255,.48);
+    --ciano:#3EDCEF;
+    --ambar:#FFC53D;
+    --verde:#3FDD95;
+    --vermelho:#FF6B7A;
+    --uva:#C77DFF;
+    --pixel:'Press Start 2P', monospace;
+    --serif:'Source Serif 4', Georgia, serif;
+  }
+  #ativ-cariotipo *{ box-sizing:border-box; }
+  #ativ-cariotipo{
+    margin:0; padding:26px 18px 50px;
+    font-size:16px;
+    background:
+      radial-gradient(760px 420px at 8% -6%,  rgba(62,220,239,.28), transparent 62%),
+      radial-gradient(700px 420px at 96% 4%,  rgba(255,197,61,.22), transparent 60%),
+      radial-gradient(820px 520px at 70% 96%, rgba(199,125,255,.26), transparent 64%),
+      radial-gradient(620px 400px at 18% 88%, rgba(63,221,149,.18), transparent 62%),
+      var(--fundo);
+    background-attachment:fixed;
+    color:var(--tinta); font-family:var(--serif);
+  }
+  #ativ-cariotipo .kenv{ max-width:1180px; margin:0 auto; }
+  #ativ-cariotipo h1{
+    font-family:var(--pixel); font-size:19px; line-height:1.7; margin:0 0 9px;
+    color:#FFF; text-shadow:3px 3px 0 rgba(199,125,255,.65), 6px 6px 0 rgba(0,0,0,.22);
+  }
+  #ativ-cariotipo .ksub{
+    font-family:var(--serif); font-weight:700; font-size:15px; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--ambar); margin:0 0 24px;
+  }
+  #ativ-cariotipo /* ---------------- tela de seleção ---------------- */
+  .kselecao{
+    border:3px solid var(--ciano); border-radius:22px; padding:26px 22px 28px; margin:0 0 26px;
+    background:linear-gradient(180deg, rgba(62,220,239,.14), rgba(42,30,92,.72));
+    box-shadow:0 8px 0 rgba(0,0,0,.22);
+  }
+  #ativ-cariotipo .kselecao.koculto{ display:none; }
+  #ativ-cariotipo .ksel-cab{ text-align:center; margin:0 0 20px; }
+  #ativ-cariotipo .ksel-titulo{ font-family:var(--pixel); font-size:16px; line-height:1.7; color:var(--ciano); }
+  #ativ-cariotipo .ksel-sub{
+    display:block; font-weight:700; font-size:14.5px; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--tinta3); margin-top:6px;
+  }
+  #ativ-cariotipo .ksel-sexo{
+    border:2px dashed rgba(79,209,197,.35); border-radius:12px;
+    padding:13px 14px 15px; margin:0 0 18px;
+  }
+  #ativ-cariotipo .ksel-sexo-nota{ margin:-4px 0 11px; font-size:14px; line-height:1.45;
+    color:var(--tinta3); }
+  #ativ-cariotipo .ksel-sexo-rot{
+    display:block; font-weight:700; font-size:13.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--tinta3); margin:0 0 11px;
+  }
+  #ativ-cariotipo .ksel-sexo-ops{
+    display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));
+  }
+  #ativ-cariotipo .ksel-sexo-btn{
+    display:flex; flex-direction:column; gap:5px; text-align:left; cursor:pointer;
+    border:2px solid var(--linha); border-radius:14px; padding:12px 14px 13px;
+    background:var(--painel2); color:var(--tinta); font:inherit;
+    transition:border-color .15s, background .15s, transform .1s;
+  }
+  #ativ-cariotipo .ksel-sexo-btn:hover{ transform:translateY(-2px); border-color:var(--ciano); }
+  #ativ-cariotipo .ksel-sexo-btn.kativo{
+    border-color:var(--ciano); background:rgba(79,209,197,.14);
+    box-shadow:0 0 0 2px rgba(79,209,197,.22);
+  }
+  #ativ-cariotipo .ksexo-formula{ font-family:var(--pixel); font-size:13.5px; line-height:1.7;
+    color:var(--tinta2); }
+  #ativ-cariotipo .ksel-sexo-btn.kativo .ksexo-formula{ color:var(--ciano); }
+  #ativ-cariotipo .ksexo-desc{ font-size:14.5px; line-height:1.45; color:var(--tinta2); }
+  #ativ-cariotipo .ksel-opcoes{
+    display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));
+  }
+  #ativ-cariotipo .ksel-card{
+    display:flex; flex-direction:column; gap:9px; text-align:left; cursor:pointer;
+    border:3px solid var(--ambar); border-radius:13px; padding:16px 15px;
+    background:linear-gradient(180deg, rgba(232,176,75,.10), rgba(11,18,32,.5));
+    color:var(--tinta); font:inherit; transition:transform .12s, box-shadow .15s;
+  }
+  #ativ-cariotipo .ksel-card:hover{ transform:translateY(-4px); box-shadow:0 9px 0 rgba(0,0,0,.25); }
+  #ativ-cariotipo .ksel-card[data-modo="autossomos"]{ border-color:var(--ciano); }
+  #ativ-cariotipo .ksel-card[data-modo="autossomos"]:hover{ box-shadow:0 0 0 2px rgba(79,209,197,.3); }
+  #ativ-cariotipo .ksel-card[data-modo="completo"]{ border-color:var(--ciano); }
+  #ativ-cariotipo .ksel-card[data-modo="completo"]:hover{ box-shadow:0 0 0 2px rgba(79,209,197,.3); }
+  #ativ-cariotipo .ksel-card[data-modo="livre"]{ border-color:var(--verde); }
+  #ativ-cariotipo .ksel-card[data-modo="livre"]:hover{ box-shadow:0 0 0 2px rgba(62,158,94,.3); }
+  #ativ-cariotipo .ksel-card[data-modo="desafio"]{ border-color:var(--vermelho); }
+  #ativ-cariotipo .ksel-card[data-modo="desafio"]:hover{ box-shadow:0 0 0 2px rgba(201,82,76,.3); }
+  #ativ-cariotipo .ksel-nome{ font-family:var(--pixel); font-size:12px; line-height:1.7; color:var(--ambar); }
+  #ativ-cariotipo .ksel-card[data-modo="completo"] .ksel-nome{ color:var(--ciano); }
+  #ativ-cariotipo .ksel-card[data-modo="livre"] .ksel-nome{ color:#9BE0B0; }
+  #ativ-cariotipo .ksel-card[data-modo="desafio"] .ksel-nome{ color:#F2A6A2; }
+  #ativ-cariotipo .ksel-desc{ font-size:15.5px; line-height:1.55; color:var(--tinta2); }
+  #ativ-cariotipo .ksel-tag{
+    align-self:flex-start; margin-top:auto;
+    font-family:var(--pixel); font-size:9.5px; line-height:1.8; padding:6px 11px;
+    border-radius:20px; color:#0B1220; background:var(--ambar); border:2px solid #F6DFAE;
+  }
+  #ativ-cariotipo .ksel-card[data-modo="completo"] .ksel-tag{ background:var(--ciano); border-color:#B9EFE8; }
+  #ativ-cariotipo .ksel-card[data-modo="livre"] .ksel-tag{ background:#9BE0B0; border-color:#C9F0D6; }
+  #ativ-cariotipo .ksel-card[data-modo="desafio"] .ksel-tag{ background:#F2A6A2; border-color:#FBD8D6;
+    color:#3A0F0D; }
+  #ativ-cariotipo /* ---------------- bancada ---------------- */
+  .kbancada.koculto{ display:none; }
+  #ativ-cariotipo .khud{
+    display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:0 0 16px;
+  }
+  #ativ-cariotipo .khud-item{
+    font-family:var(--pixel); font-size:10.5px; line-height:1.8; padding:10px 13px;
+    border:2px solid var(--linha); border-radius:10px; background:var(--painel2);
+  }
+  #ativ-cariotipo .khud-item.kok{ border-color:var(--verde); color:#9BE0B0; }
+  #ativ-cariotipo .kbtn{
+    font-family:var(--pixel); font-size:10.5px; line-height:1.8; padding:10px 13px; cursor:pointer;
+    border:2px solid var(--linha); border-radius:10px; background:var(--painel);
+    color:var(--tinta); transition:transform .1s, border-color .15s;
+  }
+  #ativ-cariotipo .kbtn{ box-shadow:0 3px 0 rgba(0,0,0,.28); }
+  #ativ-cariotipo .kbtn:hover:not(:disabled){ transform:translateY(-2px); border-color:var(--ciano);
+    box-shadow:0 5px 0 rgba(0,0,0,.28); }
+  #ativ-cariotipo .kbtn:active:not(:disabled){ transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.28); }
+  #ativ-cariotipo .kbtn:disabled{ opacity:.4; cursor:not-allowed; }
+  #ativ-cariotipo .kbtn.kprincipal{ border-color:var(--ambar); color:var(--ambar); }
+  #ativ-cariotipo .kbtn.kligado{ background:var(--ciano); color:#0B1220; border-color:#B9EFE8; }
+  #ativ-cariotipo #kresultado{ display:none; border:3px solid; border-radius:14px; padding:18px 20px; margin:0 0 18px;
+    font-weight:700; font-size:16px; line-height:1.6; }
+  #ativ-cariotipo #kresultado.kon{ display:block; }
+  #ativ-cariotipo #kresultado.kvitoria{ background:rgba(30,110,45,.25); border-color:var(--verde); color:#B7F0C1; }
+  #ativ-cariotipo #kresultado.kfalha{ background:rgba(180,40,36,.22); border-color:var(--vermelho); color:#FFC9C9; }
+  #ativ-cariotipo #kresultado.kdiagnostico{ background:rgba(232,176,75,.14); border-color:var(--ambar);
+    color:#F6E2B8; }
+  #ativ-cariotipo .kdiag-ops{ display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 2px; }
+  #ativ-cariotipo .kdiag-btn{
+    flex:1 1 190px; cursor:pointer; font:inherit; font-weight:700; font-size:15.5px;
+    padding:12px 14px; border-radius:9px; color:var(--tinta);
+    border:2px solid var(--linha); background:var(--painel2);
+    transition:transform .1s, border-color .15s, background .15s;
+  }
+  #ativ-cariotipo .kdiag-btn:hover{ transform:translateY(-2px); border-color:var(--ambar);
+    background:rgba(232,176,75,.14); color:#FFF0CE; }
+  #ativ-cariotipo .klaudo{
+    display:block; width:max-content; margin:6px 0 12px; padding:7px 13px; border-radius:6px;
+    font-family:var(--pixel); font-size:14px; line-height:1.7;
+    color:#0B1220; background:#9BE0B0; border:2px solid #C9F0D6;
+  }
+  #ativ-cariotipo .klaudo-fim{ margin:12px 0 0; font-weight:400; font-size:15.5px; line-height:1.55;
+    color:var(--tinta2); }
+  #ativ-cariotipo .kbtn.kligado{ background:var(--ciano); color:#0B1220; border-color:#B9EFE8; }
+  #ativ-cariotipo #kresultado .kgrande{ display:block; font-size:20px; color:#fff; margin-bottom:7px; }
+  #ativ-cariotipo .kcolunas{ display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start; }
+  #ativ-cariotipo /* no celular o roteiro vem ANTES do tabuleiro: é ele que conduz o jogo */
+  @media (max-width:900px){
+    .kcolunas{ display:flex; flex-direction:column; }
+    .kroteiro{ order:-1; position:static; max-height:none; }
+  }
+  #ativ-cariotipo /* ---------------- grupos e encaixes ---------------- */
+  /* os cartões acompanham a largura do grupo: o C (7 pares) ocupa uma
+     faixa inteira,
+  #ativ-cariotipo enquanto A,
+  #ativ-cariotipo B,
+  #ativ-cariotipo F e G se acomodam lado a lado */
+  /* ---------------- A FOLHA DE GABARITO ---------------- */
+  #ktabuleiro{
+    display:flex; flex-wrap:wrap; gap:13px; align-items:flex-start;
+    padding:22px 20px 24px; border-radius:2px;
+    background:
+      /* pauta de impressão, bem clara */
+      repeating-linear-gradient(0deg, transparent 0 27px,
+        rgba(74,110,160,.09) 27px 28px),
+      linear-gradient(180deg,#FBF7EC 0%, #F6F1E2 100%);
+    box-shadow:0 12px 34px rgba(0,0,0,.42), inset 0 0 0 1px rgba(120,110,80,.18);
+  }
+  #ativ-cariotipo /* ---- cabeçalho impresso da folha ---- */
+  .kfolha-cab{ flex:1 0 100%; margin:0 0 4px; }
+  #ativ-cariotipo .kfolha-titulo{
+    display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    flex-wrap:wrap; padding-bottom:7px;
+    border-bottom:2.5px solid rgba(44,76,122,.55);
+  }
+  #ativ-cariotipo .kfolha-titulo h2{
+    margin:0; font-family:var(--serif); font-weight:900; font-size:16.5px;
+    letter-spacing:.10em; color:#22436E; text-transform:uppercase;
+  }
+  #ativ-cariotipo .kfolha-formula{
+    font-family:var(--pixel); font-size:12.5px; line-height:1.7; color:#7A4E0A;
+    padding:3px 9px; border:1.5px solid rgba(138,90,18,.45); border-radius:2px;
+    background:rgba(232,176,75,.14);
+  }
+  #ativ-cariotipo .kfolha-fita{
+    display:flex; flex-wrap:wrap; gap:6px 22px; margin:9px 0 0; padding:0 0 9px;
+    border-bottom:1px solid rgba(44,76,122,.25);
+  }
+  #ativ-cariotipo .kcampo{
+    display:flex; align-items:baseline; gap:7px; flex:1 1 190px;
+    font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:#2C4C7A;
+  }
+  #ativ-cariotipo .kcampo i{ flex:1 1 auto; border-bottom:1px dotted rgba(44,76,122,.55); height:11px;
+    font-style:normal; font-family:var(--serif); font-size:12px; letter-spacing:.02em;
+    text-transform:none; color:#33507A; }
+  #ativ-cariotipo /* ---- rodapé impresso ---- */
+  .kfolha-pe{
+    flex:1 0 100%; margin:6px 0 0; padding:10px 0 0;
+    border-top:1px solid rgba(44,76,122,.25);
+    display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    font-size:13px; line-height:1.5; color:#46516B;
+  }
+  #ativ-cariotipo .kfolha-pe b{ color:rgba(44,76,122,.85); }
+  #ativ-cariotipo /* ---- selo de conferido,
+  #ativ-cariotipo carimbado ao vencer ---- */
+  .kselo{
+    position:absolute; right:26px; bottom:26px; z-index:4; display:none;
+    padding:9px 15px 10px; transform:rotate(-8deg);
+    border:3px double #2E7E4A; border-radius:3px; color:#2E7E4A;
+    background:rgba(62,158,94,.07);
+    font-family:var(--pixel); font-size:10px; line-height:1.75; text-align:center;
+    box-shadow:0 1px 0 rgba(46,126,74,.2);
+  }
+  #ativ-cariotipo .kselo span{ display:block; font-family:var(--serif); font-weight:700; font-size:10.5px;
+    letter-spacing:.10em; margin-top:4px; }
+  #ativ-cariotipo #ktabuleiro.kconferido .kselo{ display:block; }
+  #ativ-cariotipo #ktabuleiro{ position:relative; }
+  #ativ-cariotipo .kgrupo{
+    border:2px solid rgba(44,76,122,.4); border-radius:12px;
+    padding:11px 12px 13px; margin:0;
+    background:rgba(255,255,255,.5);
+    width:max-content; max-width:100%; flex:0 1 auto;
+  }
+  #ativ-cariotipo .kgrupo.koculto{ display:none; }
+  #ativ-cariotipo .kgrupo-cab{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 10px;
+    padding:0 0 7px; border-bottom:1px solid rgba(44,76,122,.28); }
+  #ativ-cariotipo .kgrupo-nome{
+    font-family:var(--pixel); font-size:10px; line-height:1.7; color:#FFF;
+    background:#2C4C7A; border-radius:7px; padding:5px 8px 4px;
+    box-shadow:0 2px 0 rgba(0,0,0,.20);
+  }
+  #ativ-cariotipo /* uma cor por grupo: ajuda a achar a região certa de longe */
+  .kg-A .kgrupo-nome{ background:#E8590C; }
+  #ativ-cariotipo .kg-B .kgrupo-nome{ background:#C2255C; }
+  #ativ-cariotipo .kg-C .kgrupo-nome{ background:#1C7ED6; }
+  #ativ-cariotipo .kg-D .kgrupo-nome{ background:#2F9E44; }
+  #ativ-cariotipo .kg-E .kgrupo-nome{ background:#7048E8; }
+  #ativ-cariotipo .kg-F .kgrupo-nome{ background:#0CA678; }
+  #ativ-cariotipo .kg-G .kgrupo-nome{ background:#E67700; }
+  #ativ-cariotipo .kg-S .kgrupo-nome{ background:#9C36B5; }
+  #ativ-cariotipo .kg-A{ border-color:rgba(232,89,12,.55); }
+  #ativ-cariotipo .kg-B{ border-color:rgba(194,37,92,.55); }
+  #ativ-cariotipo .kg-C{ border-color:rgba(28,126,214,.55); }
+  #ativ-cariotipo .kg-D{ border-color:rgba(47,158,68,.55); }
+  #ativ-cariotipo .kg-E{ border-color:rgba(112,72,232,.55); }
+  #ativ-cariotipo .kg-F{ border-color:rgba(12,166,120,.55); }
+  #ativ-cariotipo .kg-G{ border-color:rgba(230,119,0,.55); }
+  #ativ-cariotipo .kg-S{ border-color:rgba(156,54,181,.55); }
+  #ativ-cariotipo .kgrupo-sub{ font-weight:700; font-size:13px; letter-spacing:.06em;
+    text-transform:uppercase; color:#46516B; }
+  #ativ-cariotipo .kpar-num{ font-family:var(--pixel); font-size:10.5px; color:#25406B; }
+  #ativ-cariotipo .kfila{ display:flex; flex-wrap:wrap; gap:14px; }
+  #ativ-cariotipo .kpar{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  #ativ-cariotipo /* colchete impresso sob cada par,
+  #ativ-cariotipo como nas folhas de idiograma */
+  .kpar-base{
+    width:100%; height:6px; margin-top:2px;
+    border:1px solid rgba(44,76,122,.45); border-top:none; border-radius:0 0 3px 3px;
+  }
+  #ativ-cariotipo .kfila{ align-items:flex-start; }
+  #ativ-cariotipo .kpar-slots{ display:flex; gap:4px; }
+  #ativ-cariotipo .kslot{
+    position:relative; width:46px; height:var(--h); cursor:pointer;
+    background:rgba(255,255,255,.62);
+    border:1.5px dashed rgba(44,76,122,.35); border-radius:2px;
+    transition:border-color .15s, background .15s;
+  }
+  #ativ-cariotipo .kslot:hover{ border-color:#2C4C7A; background:rgba(255,255,255,.9); }
+  #ativ-cariotipo /* a linha do centrômero: é nela que todo cromossomo se alinha */
+  /* a linha tracejada do centrômero,
+  #ativ-cariotipo impressa em azul na folha */
+  .kslot::after{
+    content:''; position:absolute; left:-4px; right:-4px; top:var(--linhaY);
+    border-top:1.5px dashed #2C4C7A;
+  }
+  #ativ-cariotipo .kslot.kcheio{ border-style:solid; border-color:rgba(44,76,122,.3);
+    background:rgba(255,255,255,.4); }
+  #ativ-cariotipo .kslot.kcerto{ border-color:#2E7E4A; background:rgba(62,158,94,.20); }
+  #ativ-cariotipo .kslot.kerrado{ border-color:#B4322C; background:rgba(201,82,76,.18); }
+  #ativ-cariotipo .kslot .kpeca{ position:absolute; left:50%; }
+  #ativ-cariotipo /* ---------------- acervo ---------------- */
+  /* ---------------- A LÂMINA DE MICROSCOPIA ---------------- */
+  .kacervo{
+    position:relative; margin:0 0 22px; padding:14px 16px 18px;
+    border:1px solid rgba(214,232,220,.55); border-radius:3px;
+    background:
+      /* reflexo do vidro */
+      linear-gradient(104deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 22%,
+        rgba(255,255,255,0) 74%, rgba(255,255,255,.16) 100%),
+      linear-gradient(180deg, #DCE9E1 0%, #CFE0D6 55%, #C6D9CE 100%);
+    box-shadow:
+      inset 0 0 0 4px rgba(255,255,255,.34),
+      inset 0 2px 14px rgba(255,255,255,.5),
+      0 10px 30px rgba(0,0,0,.45);
+  }
+  #ativ-cariotipo /* bordas biseladas do vidro */
+  .kacervo::before,
+  #ativ-cariotipo .kacervo::after{
+    content:''; position:absolute; top:0; bottom:0; width:9px; pointer-events:none;
+  }
+  #ativ-cariotipo .kacervo::before{ left:0;  background:linear-gradient(90deg, rgba(255,255,255,.6), transparent); }
+  #ativ-cariotipo .kacervo::after{  right:0; background:linear-gradient(270deg, rgba(255,255,255,.6), transparent); }
+  #ativ-cariotipo /* etiqueta fosca,
+  #ativ-cariotipo colada no canto */
+  .klamina-etiqueta{
+    position:absolute; top:9px; right:11px; z-index:2; text-align:right;
+    padding:7px 11px 8px; border-radius:2px; transform:rotate(-.5deg);
+    background:linear-gradient(180deg,#FDFBF2,#F3EEDC);
+    border:1px solid rgba(120,110,80,.35);
+    box-shadow:0 2px 5px rgba(0,0,0,.18);
+  }
+  #ativ-cariotipo .klamina-caso{ display:block; font-family:var(--pixel); font-size:9px; line-height:1.7;
+    color:#4B4230; }
+  #ativ-cariotipo .klamina-meta{ display:block; font-size:11.5px; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; color:#5C5138; margin-top:2px; }
+  #ativ-cariotipo .kacervo-cab{ position:relative; z-index:1; font-family:var(--pixel); font-size:11.5px;
+    color:#33473F; margin:0 0 5px; }
+  #ativ-cariotipo .kacervo-dica{ position:relative; z-index:1; max-width:62%; font-size:14.5px; line-height:1.5;
+    color:#22423A; margin:0 0 12px; }
+  #ativ-cariotipo .kmetafase{ position:relative; z-index:1; }
+  #ativ-cariotipo .kmetafase{ display:flex; flex-wrap:wrap; gap:8px 10px; align-items:flex-end;
+    justify-content:center; }
+  #ativ-cariotipo .kdesenho{ display:flex; justify-content:center; }
+  #ativ-cariotipo .kmetafase:empty::after{
+    content:'Lâmina vazia — todos os cromossomos foram transferidos para o gabarito.';
+    display:block; padding:18px 6px; text-align:center; font-size:13px;
+    color:#2C4C43;
+  }
+  #ativ-cariotipo .kcarta{
+    position:relative; padding:4px 3px 3px; border-radius:4px; cursor:pointer;
+    border:2px solid transparent; background:rgba(255,255,255,.16);
+    transition:transform .1s, border-color .15s, background .15s;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    min-width:38px;
+  }
+  #ativ-cariotipo .kcarta:hover{ transform:translateY(-3px); background:rgba(255,255,255,.5);
+    border-color:rgba(58,74,70,.35); }
+  #ativ-cariotipo .kcarta.ksel{ border-color:#1E6E7A; background:rgba(255,255,255,.72);
+    box-shadow:0 0 0 2px rgba(30,110,122,.3); }
+  #ativ-cariotipo /* o rodapé fica FORA do desenho: numa carta estreita como a do Y,
+  #ativ-cariotipo um botão sobreposto cobriria a área de toque do cromossomo */
+  .kcarta-pe{ display:flex; align-items:center; justify-content:center; gap:4px; width:100%; }
+  #ativ-cariotipo .kgirar{
+    width:100%; height:16px; border-radius:3px; font-size:11px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.6); border:1px solid rgba(58,74,70,.3);
+    color:#33473F; cursor:pointer; padding:0;
+  }
+  #ativ-cariotipo .kgirar:hover{ background:#fff; border-color:#1E6E7A; color:#1E6E7A; }
+  #ativ-cariotipo /* o rótulo sob a carta só aparece onde não há cursor (toque) */
+  .kmedida{
+    display:none; font-family:var(--pixel); font-size:7px; color:#33473F;
+    white-space:nowrap;
+  }
+  @media (hover:none){
+  #ativ-cariotipo.kmedindo .kmedida{ display:block; } }
+  #ativ-cariotipo /* ---------- a régua como cursor ---------- */
+  #ativ-cariotipo.kmedindo,
+  #ativ-cariotipo.kmedindo .kcarta,
+  #ativ-cariotipo.kmedindo .kslot,
+  #ativ-cariotipo.kmedindo .kgirar,
+  #ativ-cariotipo.kmedindo .kbtn{ cursor:none; }
+  #ativ-cariotipo .kregua{
+    position:fixed; left:0; top:0; z-index:999; pointer-events:none;
+    display:none; align-items:flex-start; gap:6px;
+    filter:drop-shadow(0 4px 14px rgba(0,0,0,.65));
+  }
+  #ativ-cariotipo.kmedindo .kregua{ display:flex; }
+  #ativ-cariotipo .kregua-corpo{
+    background:linear-gradient(90deg, rgba(255,238,200,.94), rgba(240,214,155,.92));
+    border:1.5px solid #8A6B28; border-radius:3px;
+  }
+  #ativ-cariotipo .kregua-leitura{
+    margin-top:2px; padding:5px 7px; border-radius:6px; max-width:118px;
+    font-family:var(--pixel); font-size:8px; line-height:1.6;
+    background:rgba(11,18,32,.94); border:1.5px solid var(--ambar); color:var(--ambar);
+  }
+  #ativ-cariotipo .kregua-leitura.kvazia{ border-color:rgba(180,205,240,.4); color:var(--tinta3); }
+  #ativ-cariotipo .kregua-leitura b{ font-size:11px; color:#FFF0CE; }
+  #ativ-cariotipo .kregua-leitura span{ display:block; font-size:6.5px; line-height:1.7;
+    color:var(--tinta2); margin-top:4px; }
+  #ativ-cariotipo /* cromossomo sob a régua */
+  .kcarta.kmedido,
+  #ativ-cariotipo .kslot.kmedido{ outline:2px solid #C07A12; outline-offset:1px; }
+  #ativ-cariotipo /* ---------------- painel de pistas ---------------- */
+  .kroteiro{ border:3px solid var(--ciano); border-radius:16px; padding:12px 14px 14px; margin:0;
+    position:sticky; top:14px; max-height:calc(100vh - 40px); overflow-y:auto;
+    background:linear-gradient(180deg, rgba(79,209,197,.09), rgba(10,19,34,.85)); }
+  #ativ-cariotipo .kroteiro-cab{ font-family:var(--pixel); font-size:11.5px; color:var(--ciano); margin:0 0 10px; }
+  #ativ-cariotipo .ketapa-atual{ border:3px solid var(--ambar); border-radius:14px; padding:13px 14px 14px;
+    background:rgba(255,197,61,.13); }
+  #ativ-cariotipo .ketapa-atual.klivre{ border-color:var(--verde); background:rgba(62,158,94,.08); }
+  #ativ-cariotipo .ketapa-atual.klivre .ketapa-num{ color:#9BE0B0; }
+  #ativ-cariotipo .ketapa-atual.klivre .ketapa-texto b{ color:#9BE0B0; }
+  #ativ-cariotipo .ketapa-atual.klivre .ketapa-alvo{ border-top-color:rgba(62,158,94,.4); }
+  #ativ-cariotipo .ketapa-num{ display:block; font-family:var(--pixel); font-size:9.5px; line-height:1.8;
+    color:var(--ambar); margin-bottom:7px; }
+  #ativ-cariotipo .ketapa-texto{ font-size:16px; line-height:1.6; }
+  #ativ-cariotipo .ketapa-texto b{ color:var(--ambar); }
+  #ativ-cariotipo .ketapa-alvo.ksemtopo{ margin-top:0; padding-top:0; border-top:none; }
+  #ativ-cariotipo .ketapa-alvo{ display:block; margin-top:9px; padding-top:8px;
+    border-top:1px dashed rgba(232,176,75,.4);
+    font-weight:700; font-size:12.5px; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--tinta2); }
+  #ativ-cariotipo .kfeitas-cab{ font-family:var(--pixel); font-size:9.5px; color:var(--tinta3);
+    margin:16px 0 8px; }
+  #ativ-cariotipo .kfeita{ display:flex; gap:8px; align-items:baseline; font-size:14.5px; line-height:1.5;
+    padding:5px 0; color:var(--tinta2); border-bottom:1px dashed rgba(180,205,240,.14); }
+  #ativ-cariotipo .kfeita .ktique{ color:var(--verde); font-weight:900; }
+  #ativ-cariotipo #klistaFeitas:empty::after{ content:'Nenhuma ainda.'; font-size:13px;
+    color:var(--tinta3); }
+  #ativ-cariotipo /* posições ainda não liberadas pelo roteiro */
+  .kslot.ktravado{ opacity:.25; pointer-events:none; }
+  #ativ-cariotipo .kslot.kfechado{ pointer-events:none; }
+  #ativ-cariotipo .kslot.kliberado{ border-color:#C07A12; border-style:solid;
+    box-shadow:0 0 0 2px rgba(192,122,18,.18); }
+  #ativ-cariotipo .kpar.ktravado .kpar-num{ opacity:.3; }
+  #ativ-cariotipo .kgrupo.kinativo{ opacity:.7; }
+  #ativ-cariotipo /* ---------- roteiro de consulta ---------- */
+  .kbtn.kconsulta{ display:none; border-color:var(--verde); color:#9BE0B0; }
+  #ativ-cariotipo.klivre .kbtn.kconsulta{ display:inline-block; }
+  #ativ-cariotipo .kmodal{
+    display:none; position:fixed; inset:0; z-index:1000; padding:24px 16px;
+    background:rgba(4,8,16,.82); overflow-y:auto;
+  }
+  #ativ-cariotipo .kmodal.kon{ display:flex; align-items:flex-start; justify-content:center; }
+  #ativ-cariotipo .kmodal-caixa{
+    width:100%; max-width:720px; border:3px solid var(--verde); border-radius:20px;
+    padding:22px 22px 24px; background:linear-gradient(180deg,#3D2E7E,#2A1E5C);
+    box-shadow:0 24px 60px rgba(0,0,0,.6);
+  }
+  #ativ-cariotipo .kmodal-topo{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+    padding:0 0 12px; margin:0 0 12px; border-bottom:2px dashed rgba(62,158,94,.35); }
+  #ativ-cariotipo .kmodal-titulo{ display:block; font-family:var(--pixel); font-size:13.5px; line-height:1.7;
+    color:#9BE0B0; }
+  #ativ-cariotipo .kmodal-sub{ display:block; margin-top:6px; font-weight:700; font-size:13px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--tinta3); }
+  #ativ-cariotipo .kmodal-fechar{
+    flex:0 0 auto; width:34px; height:34px; border-radius:8px; cursor:pointer;
+    font-size:15px; line-height:1; background:var(--painel); color:var(--tinta);
+    border:2px solid var(--linha);
+  }
+  #ativ-cariotipo .kmodal-fechar:hover{ border-color:var(--vermelho); color:#FFC9C9; }
+  #ativ-cariotipo .kmodal-nota{ margin:0 0 16px; font-size:15px; line-height:1.5;
+    color:var(--tinta2); }
+  #ativ-cariotipo .kitem{ display:flex; gap:12px; padding:11px 0; border-bottom:1px dashed rgba(180,205,240,.16); }
+  #ativ-cariotipo .kitem:last-child{ border-bottom:none; }
+  #ativ-cariotipo .kitem-n{
+    flex:0 0 auto; width:26px; height:26px; border-radius:7px; margin-top:2px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--pixel); font-size:9px; color:#08210F;
+    background:#9BE0B0; border:2px solid #C9F0D6;
+  }
+  #ativ-cariotipo .kitem-txt{ font-size:16px; line-height:1.6; }
+  #ativ-cariotipo .kitem-txt b{ color:var(--ambar); }
+  #ativ-cariotipo .kitem-alvo{ display:block; margin-top:5px; font-weight:700; font-size:12.5px;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--tinta3); }
+
+  @media (max-width:600px){
+  #ativ-cariotipo .kmodal{ padding:14px 10px; }
+  #ativ-cariotipo .kmodal-caixa{ padding:15px 14px 17px; }
+  }
+  #ativ-cariotipo /* ---------------- referência bibliográfica ---------------- */
+  .kbiblio{
+    margin:26px 0 0; border:3px solid var(--uva); border-radius:16px;
+    background:linear-gradient(180deg, rgba(199,125,255,.15), rgba(42,30,92,.62));
+    box-shadow:0 5px 0 rgba(0,0,0,.22); overflow:hidden;
+  }
+  #ativ-cariotipo .kbiblio summary{
+    cursor:pointer; list-style:none; padding:15px 18px;
+    font-family:var(--pixel); font-size:11px; line-height:1.7; color:#EBD3FA;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  #ativ-cariotipo .kbiblio summary::-webkit-details-marker{ display:none; }
+  #ativ-cariotipo .kbiblio summary::after{
+    content:'▸'; font-family:var(--serif); font-size:19px; color:var(--uva);
+    transition:transform .18s;
+  }
+  #ativ-cariotipo .kbiblio[open] summary::after{ transform:rotate(90deg); }
+  #ativ-cariotipo .kbiblio summary:hover{ background:rgba(199,125,255,.14); }
+  #ativ-cariotipo .kbiblio-corpo{
+    padding:2px 18px 18px; border-top:2px dashed rgba(199,125,255,.35);
+    margin-top:2px; padding-top:15px;
+  }
+  #ativ-cariotipo .kbiblio-corpo p{ margin:0 0 12px; font-size:15.5px; line-height:1.6; color:var(--tinta2); }
+  #ativ-cariotipo .kbiblio-corpo p:last-child{ margin-bottom:0; }
+  #ativ-cariotipo .kbiblio-corpo a{ color:var(--ciano); word-break:break-all; }
+  #ativ-cariotipo .kbiblio-nota{ font-size:14.5px !important; color:var(--tinta3) !important; }
+  #ativ-cariotipo /* ---------------- referência bibliográfica ---------------- */
+  .kbiblio{
+    margin:26px 0 0; border:3px solid var(--uva); border-radius:16px;
+    background:linear-gradient(180deg, rgba(199,125,255,.15), rgba(42,30,92,.62));
+    box-shadow:0 5px 0 rgba(0,0,0,.22); overflow:hidden;
+  }
+  #ativ-cariotipo .kbiblio summary{
+    cursor:pointer; list-style:none; padding:15px 18px;
+    font-family:var(--pixel); font-size:11px; line-height:1.7; color:#EBD3FA;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  #ativ-cariotipo .kbiblio summary::-webkit-details-marker{ display:none; }
+  #ativ-cariotipo .kbiblio summary::after{
+    content:'\25B8'; font-family:var(--serif); font-size:19px; color:var(--uva);
+    transition:transform .18s;
+  }
+  #ativ-cariotipo .kbiblio[open] summary::after{ transform:rotate(90deg); }
+  #ativ-cariotipo .kbiblio summary:hover{ background:rgba(199,125,255,.14); }
+  #ativ-cariotipo .kbiblio-corpo{
+    padding:15px 18px 18px; border-top:2px dashed rgba(199,125,255,.35);
+  }
+  #ativ-cariotipo .kbiblio-corpo p{ margin:0 0 12px; font-size:15.5px; line-height:1.6; color:var(--tinta2); }
+  #ativ-cariotipo .kbiblio-corpo p:last-child{ margin-bottom:0; }
+  #ativ-cariotipo .kbiblio-corpo a{ color:var(--ciano); word-break:break-all; }
+  #ativ-cariotipo .kbiblio-nota{ font-size:14.5px !important; color:var(--tinta3) !important; }
+  #ativ-cariotipo svg{ display:block; overflow:visible; }
+
+  @media (max-width:600px){
+  #ativ-cariotipo /* no celular os cartões deixam de se ajustar ao conteúdo e passam a
+       ocupar a largura disponível,
+  #ativ-cariotipo senão o grupo C força o estouro */
+    #ktabuleiro{ padding:14px 10px 16px; gap:10px; min-width:0; }
+  #ativ-cariotipo .kgrupo{ padding:9px 9px 11px; width:auto; min-width:0; flex:1 1 100%; }
+  #ativ-cariotipo .kacervo{ padding:12px 11px 14px; }
+  #ativ-cariotipo .kacervo-dica{ max-width:100%; }
+  #ativ-cariotipo .klamina-etiqueta{ position:static; display:inline-block; text-align:left;
+      margin:0 0 9px; transform:none; }
+  }
+
+
 </style>
 </head>
 <body>
@@ -1546,6 +2100,12 @@
         <span class="sum-nome">O Destino da Célula</span>
         <span class="sum-desc">Os dois desfechos da lesão irreversível reconstruídos lado a lado: as duas vias da apoptose convergindo na execução comum e, correndo em paralelo, o curso temporal da necrose.</span>
         <span class="sum-tipo">ordenação em quatro trilhas</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num">07</span>
+        <span class="sum-nome">Laboratório de Citogenética</span>
+        <span class="sum-desc">Montagem do idiograma humano a partir de uma metáfase: medir, reconhecer a posição do centrômero e ler o bandeamento até dar nome a cada cromossomo. Inclui um modo de caso às cegas, com diagnóstico ao final.</span>
+        <span class="sum-tipo">montagem de cariótipo</span>
       </div>
     </div>
   </div>
@@ -3067,6 +3627,141 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 7 — LABORATÓRIO DE CITOGENÉTICA
+       senha: cariotipo
+       Montagem do idiograma humano. Os 46 cromossomos são
+       desenhados por código (SVG) a partir de uma tabela de
+       comprimento, posição do centrômero e bandeamento.
+       ============================================================ -->
+  <section class="atividade" id="ativ-cariotipo">
+
+<div class="kenv">
+
+  <!-- ============ TELA DE SELEÇÃO ============ -->
+  <div class="kselecao" id="kselecao">
+    <div class="ksel-cab">
+      <span class="ksel-titulo">Escolha a preparação</span>
+      <span class="ksel-sub">Primeiro o cariótipo, depois o modo de jogo</span>
+    </div>
+
+    <div class="ksel-sexo">
+      <span class="ksel-sexo-rot">Cariótipo da lâmina</span>
+      <p class="ksel-sexo-nota">Não se aplica ao <b>Caso às cegas</b>: nesse modo o cariótipo
+        da lâmina é sorteado e mantido em sigilo.</p>
+      <div class="ksel-sexo-ops">
+        <button class="ksel-sexo-btn kativo" type="button" data-sexo="XY">
+          <span class="ksexo-formula">46,XY</span>
+          <span class="ksexo-desc">Masculino — o X e o Y aparecem sozinhos, sem homólogo</span>
+        </button>
+        <button class="ksel-sexo-btn" type="button" data-sexo="XX">
+          <span class="ksexo-formula">46,XX</span>
+          <span class="ksexo-desc">Feminino — dois X formando par, e nenhum Y na lâmina</span>
+        </button>
+      </div>
+    </div>
+    <div class="ksel-opcoes">
+      <button class="ksel-card" type="button" data-modo="abg">
+        <span class="ksel-nome">Grupos A, B e G</span>
+        <span class="ksel-desc">Os maiores e os menores do conjunto, sem os grupos
+          intermediários. Três etapas para aprender o método: medir, ler a posição do
+          centrômero e comparar o bandeamento.</span>
+        <span class="ksel-tag">14 cromossomos · 3 etapas</span>
+      </button>
+      <button class="ksel-card" type="button" data-modo="completo">
+        <span class="ksel-nome">Cariótipo completo</span>
+        <span class="ksel-desc">Os 22 pares autossômicos mais o par sexual, guiado pelo roteiro
+          de identificação, etapa por etapa.</span>
+        <span class="ksel-tag" id="ktagCompleto">46 cromossomos · 11 etapas</span>
+      </button>
+      <button class="ksel-card" type="button" data-modo="desafio">
+        <span class="ksel-nome">Caso às cegas</span>
+        <span class="ksel-desc">Uma lâmina sorteada, sem roteiro e sem qualquer informação
+          prévia: nem o sexo, nem o número de cromossomos. Monte o idiograma e, só então,
+          diga o que encontrou.</span>
+        <span class="ksel-tag">diagnóstico ao final</span>
+      </button>
+      <button class="ksel-card" type="button" data-modo="livre">
+        <span class="ksel-nome">Bancada livre</span>
+        <span class="ksel-desc">Os mesmos 46 cromossomos, sem roteiro e com o tabuleiro
+          inteiro aberto: comece pelo grupo que quiser, na ordem que quiser, e confira
+          tudo de uma vez no fim.</span>
+        <span class="ksel-tag">46 cromossomos · sem instruções</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ BANCADA ============ -->
+  <div class="kbancada koculto" id="kbancada">
+
+    <div class="khud">
+      <span class="khud-item" id="khudEtapa">ETAPA <b>1/11</b></span>
+      <span class="khud-item" id="khudPos">NESTA ETAPA: <b>0/6</b></span>
+      <span class="khud-item" id="khudPont">PONTOS: <b>1000</b></span>
+      <button class="kbtn kligado" id="kbtnSom" type="button">🔊 Som</button>
+      <button class="kbtn" id="kbtnRegua" type="button">📏 Régua</button>
+      <button class="kbtn kconsulta" id="kbtnConsulta" type="button">📖 Consultar roteiro</button>
+      <button class="kbtn kprincipal" id="kbtnConferir" type="button" disabled>✓ Conferir etapa</button>
+      <button class="kbtn" id="kbtnRecomecar" type="button" disabled>↻ Nova preparação</button>
+      <button class="kbtn" id="kbtnTrocar" type="button" disabled>⇄ Trocar lâmina</button>
+    </div>
+
+    <div id="kresultado"></div>
+
+    <div class="kacervo">
+      <div class="klamina-etiqueta">
+        <span class="klamina-caso" id="klaminaCaso">CASO 46-XY</span>
+        <span class="klamina-meta">linfócitos · giemsa</span>
+      </div>
+      <div class="kacervo-cab">Lâmina — metáfase</div>
+      <p class="kacervo-dica" id="kdicaAcervo"></p>
+      <div class="kmetafase" id="kmetafase"></div>
+    </div>
+
+    <div class="kcolunas">
+      <div id="ktabuleiro"></div>
+      <div class="kroteiro">
+        <div class="kroteiro-cab">Roteiro de identificação</div>
+        <div id="kpainelEtapa"></div>
+        <div class="kfeitas-cab">Etapas concluídas</div>
+        <div id="klistaFeitas"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REFERÊNCIA BIBLIOGRÁFICA ============ -->
+  <details class="kbiblio">
+    <summary>📚 Referência bibliográfica</summary>
+    <div class="kbiblio-corpo">
+      <p>
+        Amabis JM, Martho GR. Organizando os cromossomos humanos: idiograma.
+        <em>Temas de Biologia: propostas para desenvolver em sala de aula</em> [Internet].
+        São Paulo: Moderna; 1997. n. 4. Disponível em:
+        <a href="https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf"
+           target="_blank" rel="noopener">https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf</a>
+      </p>
+    </div>
+  </details>
+</div>
+
+<!-- ============ ROTEIRO DE CONSULTA (modo livre) ============ -->
+<div class="kmodal" id="kmodalRoteiro" role="dialog" aria-modal="true" aria-labelledby="kmodalTitulo">
+  <div class="kmodal-caixa">
+    <div class="kmodal-topo">
+      <div>
+        <span class="kmodal-titulo" id="kmodalTitulo">Roteiro de identificação</span>
+        <span class="kmodal-sub">Consulta livre · as mesmas orientações do modo guiado</span>
+      </div>
+      <button class="kmodal-fechar" id="kbtnFechar" type="button" aria-label="Fechar">✕</button>
+    </div>
+    <p class="kmodal-nota">Na bancada livre você não é obrigado a seguir esta ordem — ela é
+      apenas o caminho que os citogeneticistas costumam usar, dos extremos para o meio.</p>
+    <div class="kmodal-corpo" id="kmodalCorpo"></div>
+  </div>
+</div>
+
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -3105,7 +3800,8 @@
     "nervoso": "ativ-nervoso",
     "lesoes": "ativ-lesoes",
     "organelas": "ativ-organelas",
-    "irreversivel": "ativ-morte"
+    "irreversivel": "ativ-morte",
+    "cariotipo": "ativ-cariotipo"
   };
 
   const portao = document.getElementById('portao');
@@ -3125,6 +3821,7 @@
       if (id === 'ativ-nervoso') iniciarNervoso();
       if (id === 'ativ-organelas') iniciarOrganelas();
       if (id === 'ativ-morte') iniciarMorte();
+      if (id === 'ativ-cariotipo' && window.iniciarCariotipo) window.iniciarCariotipo();
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -6021,6 +6718,1123 @@ function iniciarNervoso(){
   document.getElementById('lbFechar').addEventListener('click', fecharLightbox);
   lb.addEventListener('click', function(e){ if (e.target === lb) fecharLightbox(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fecharLightbox(); });
+
+})();
+</script>
+
+<script>
+/* ===== ATIVIDADE 7 — LABORATÓRIO DE CITOGENÉTICA ===== */
+
+(function(){
+'use strict';
+
+const raizAtiv = document.getElementById('ativ-cariotipo');
+
+/* ==================================================================
+   TABELA DE CROMOSSOMOS
+   len  = comprimento relativo (unidades arbitrárias, escala real
+          aproximada do cariótipo humano)
+   cen  = posição do centrômero, como fração do comprimento total
+          medida a partir da extremidade do braço curto (p)
+   sat  = satélite no braço curto (acrocêntricos dos grupos D e G)
+   bandas = [inicio, fim, tom] em fração do comprimento total.
+          tom 1 = cinza, tom 2 = negra. O que não é listado fica claro.
+   As bandas seguem o padrão de Paris (1971) de forma esquemática e
+   foram desenhadas para que TODAS as pistas do roteiro sejam
+   verificáveis no desenho.
+   ================================================================== */
+const CROMOS = [
+  {id:'1', grupo:'A', len:100, cen:.48, bandas:[[.06,.11,2],[.17,.22,2],[.30,.36,2],[.40,.46,1],[.54,.60,1],[.66,.72,2],[.80,.86,2],[.92,.97,2]]},
+  {id:'2', grupo:'A', len:97, cen:.38, bandas:[[.05,.09,2],[.14,.19,2],[.24,.29,2],[.44,.50,2],[.56,.61,2],[.68,.73,2],[.80,.85,2],[.91,.96,2]]},
+  {id:'3', grupo:'A', len:82, cen:.46, bandas:[[.07,.13,2],[.20,.26,2],[.33,.39,2],[.40,.46,1],[.54,.60,1],[.65,.71,2],[.78,.84,2],[.90,.96,2]]},
+  /* 4: faixa CINZENTA na região do centrômero — pista 2 */
+  {id:'4', grupo:'B', len:78, cen:.26, bandas:[[.06,.12,2],[.22,.32,1],[.40,.46,2],[.54,.60,2],[.66,.72,2],[.78,.84,2],[.90,.96,2]]},
+  {id:'5', grupo:'B', len:74, cen:.27, bandas:[[.07,.13,2],[.40,.47,2],[.55,.62,2],[.70,.77,2],[.86,.94,2]]},
+  /* 6 e 7: maiores do grupo C; o 6 tem faixas mais ESTREITAS no braço curto — pista 6 */
+  {id:'6', grupo:'C', len:70, cen:.36, bandas:[[.05,.08,2],[.13,.16,2],[.22,.25,2],[.45,.52,2],[.60,.66,2],[.74,.80,2],[.88,.94,2]]},
+  {id:'7', grupo:'C', len:65, cen:.38, bandas:[[.04,.11,2],[.18,.25,2],[.46,.53,2],[.62,.69,2],[.80,.88,2]]},
+  /* 8: faixas negras mais LARGAS no braço maior — pista 11 */
+  {id:'8', grupo:'C', len:60, cen:.31, bandas:[[.08,.14,2],[.40,.52,2],[.60,.72,2],[.80,.94,2]]},
+  /* 9: TRÊS faixas negras largas no braço curto — pista 10 */
+  {id:'9', grupo:'C', len:58, cen:.34, bandas:[[.03,.09,2],[.12,.18,2],[.22,.28,2],[.44,.50,2],[.60,.66,2],[.78,.85,2]]},
+  /* 10: centrômero mais deslocado para a extremidade — pista 11 */
+  {id:'10', grupo:'C', len:56, cen:.24, bandas:[[.07,.13,2],[.34,.41,2],[.50,.57,2],[.66,.73,2],[.84,.92,2]]},
+  {id:'11', grupo:'C', len:55, cen:.40, bandas:[[.09,.16,2],[.48,.55,2],[.66,.73,2],[.84,.92,2]]},
+  /* 12: UMA única faixa negra larga no braço curto — pista 10 */
+  {id:'12', grupo:'C', len:54, cen:.27, bandas:[[.08,.20,2],[.40,.47,2],[.56,.63,2],[.72,.79,2],[.88,.95,2]]},
+  /* grupo D — acrocêntricos com satélite; faixas do 13 > 14 > 15 (pista 5) */
+  {id:'13', grupo:'D', len:47, cen:.16, sat:true, bandas:[[.26,.38,2],[.46,.58,2],[.68,.80,2],[.88,.98,2]]},
+  {id:'14', grupo:'D', len:44, cen:.17, sat:true, bandas:[[.28,.36,2],[.48,.56,2],[.68,.76,2],[.88,.95,2]]},
+  {id:'15', grupo:'D', len:42, cen:.18, sat:true, bandas:[[.30,.35,2],[.50,.55,2],[.70,.75,2],[.89,.94,2]]},
+  /* grupo E — 16 tem faixa negra no braço curto MAIS LARGA que a do 17;
+     18 NÃO tem faixa escura no braço curto (pista 7) */
+  {id:'16', grupo:'E', len:38, cen:.40, bandas:[[.10,.24,2],[.50,.58,2],[.68,.76,2],[.88,.96,2]]},
+  {id:'17', grupo:'E', len:35, cen:.29, bandas:[[.10,.18,2],[.44,.52,2],[.62,.70,2],[.84,.92,2]]},
+  {id:'18', grupo:'E', len:33, cen:.26, bandas:[[.40,.50,2],[.62,.72,2],[.84,.94,2]]},
+  /* grupo F — 19 com faixa negra EM TORNO do centrômero; 20 com faixa larga
+     no braço menor e outra estreita no maior (pista 4) */
+  {id:'19', grupo:'F', len:28, cen:.45, bandas:[[.36,.56,2]]},
+  {id:'20', grupo:'F', len:27, cen:.44, bandas:[[.14,.32,2],[.70,.78,2]]},
+  /* grupo G — acrocêntricos com satélite; o 21 tem faixa negra MAIS LARGA (pista 3) */
+  {id:'21', grupo:'G', len:22, cen:.22, sat:true, bandas:[[.42,.72,2]]},
+  {id:'22', grupo:'G', len:23, cen:.25, sat:true, bandas:[[.48,.64,2],[.80,.90,2]]},
+  /* par sexual — X com faixa negra ESTREITA no braço curto (pista 9);
+     Y acrocêntrico com faixa CINZENTA larga no braço maior (pista 8) */
+  {id:'X', grupo:'S', len:63, cen:.37, unico:true, bandas:[[.12,.18,2],[.46,.54,2],[.62,.70,2],[.80,.90,2]]},
+  {id:'Y', grupo:'Y', len:25, cen:.20, unico:true, bandas:[[.50,.86,1]]}
+];
+
+const GRUPOS = [
+  {id:'A', nome:'Grupo A', sub:'1 a 3 · os maiores', ids:['1','2','3']},
+  {id:'B', nome:'Grupo B', sub:'4 e 5 · grandes, submetacêntricos', ids:['4','5']},
+  {id:'C', nome:'Grupo C', sub:'6 a 12 · o grupo mais numeroso', ids:['6','7','8','9','10','11','12']},
+  {id:'D', nome:'Grupo D', sub:'13 a 15 · acrocêntricos com satélite', ids:['13','14','15']},
+  {id:'E', nome:'Grupo E', sub:'16 a 18 · pequenos, submetacêntricos', ids:['16','17','18']},
+  {id:'F', nome:'Grupo F', sub:'19 e 20 · quase metacêntricos', ids:['19','20']},
+  {id:'G', nome:'Grupo G', sub:'21 e 22 · os menores, com satélite', ids:['21','22']},
+  {id:'S', nome:'Par sexual', sub:'X e Y · sem homólogo', ids:['X','Y']}
+];
+
+/* ==================================================================
+   ROTEIRO DE IDENTIFICAÇÃO
+   Cada etapa libera no tabuleiro apenas as posições dos cromossomos
+   que ela ensina a reconhecer. O aluno nunca escolhe "no escuro":
+   a instrução vem primeiro, a escolha depois. A ordem segue o
+   roteiro de Amabis & Martho, que não é a ordem numérica — parte
+   dos extremos (maiores e menores) e vai fechando o cerco.
+   ================================================================== */
+const ETAPAS = [
+  {ids:['1','2','3'], alvo:'Grupo A · pares 1, 2 e 3',
+   texto:'Localize os <b>três pares de maior tamanho</b>: eles constituem o <b>grupo A</b>. ' +
+     'Os pares <b>1</b> e <b>3</b> são <b>metacêntricos</b> — o centrômero fica em posição ' +
+     'aproximadamente central. O par <b>2</b> é <b>submetacêntrico</b>: o centrômero está um ' +
+     'pouco deslocado do centro. Entre o 1 e o 3, o <b>1 é o maior</b>.'},
+
+  {ids:['4','5'], alvo:'Grupo B · pares 4 e 5',
+   texto:'Dos cromossomos restantes, identifique os <b>dois pares de maior tamanho</b>: são o ' +
+     '<b>grupo B</b>. São grandes, pouco menores que o cromossomo 3, e <b>submetacêntricos</b>. ' +
+     'O que tem uma <b>faixa cinzenta na região do centrômero</b> é o cromossomo <b>4</b>.'},
+
+  {ids:['21','22'], alvo:'Grupo G · pares 21 e 22',
+   texto:'Localize agora os pares <b>21</b> e <b>22</b>, que constituem o <b>grupo G</b>. São os ' +
+     '<b>menores do conjunto</b> e do tipo <b>acrocêntrico</b> — centrômero perto da ' +
+     'extremidade. O braço menor tem uma pequena esfera terminal, o <b>satélite</b>. O que ' +
+     'apresenta a <b>faixa negra mais larga</b> é o <b>21</b>.'},
+
+  {ids:['19','20'], alvo:'Grupo F · pares 19 e 20',
+   texto:'Procure os pares <b>19</b> e <b>20</b>, do <b>grupo F</b>. São um pouco maiores que os ' +
+     'do grupo G e <b>quase metacêntricos</b>. O <b>19</b> apresenta uma faixa negra <b>em torno ' +
+     'do centrômero</b>. O <b>20</b> tem uma faixa negra larga no braço ligeiramente menor e ' +
+     'outra mais estreita no braço maior.'},
+
+  {ids:['13','14','15'], alvo:'Grupo D · pares 13, 14 e 15',
+   texto:'Localize os pares <b>13</b>, <b>14</b> e <b>15</b>, que constituem o <b>grupo D</b>. São ' +
+     '<b>acrocêntricos com satélite</b>, como os do grupo G, mas bem maiores. Separe-os pela ' +
+     'espessura das faixas: o de <b>faixas mais largas</b> é o 13; o de faixas <b>um pouco mais ' +
+     'estreitas</b> é o 14; o de faixas <b>ainda mais estreitas</b> é o 15.'},
+
+  {ids:['6','7'], alvo:'Grupo C · pares 6 e 7',
+   texto:'Comece o <b>grupo C</b> pelos pares <b>6</b> e <b>7</b>: são os <b>maiores entre os que ' +
+     'restaram</b> e do tipo <b>submetacêntrico</b>. O maior dos dois, com <b>faixas negras mais ' +
+     'estreitas no braço menor</b>, é o cromossomo <b>6</b>.'},
+
+  {ids:['16','17','18'], alvo:'Grupo E · pares 16, 17 e 18',
+   texto:'Dos restantes, descubra os <b>três pares de menor tamanho</b>, do tipo ' +
+     'submetacêntrico: são o <b>grupo E</b>. O <b>18</b> é o mais fácil — não apresenta ' +
+     '<b>nenhuma faixa escura no braço menor</b>. Entre os outros dois, o <b>16</b> tem, no ' +
+     'braço menor, uma faixa negra <b>mais larga</b> que a do 17.'},
+
+  {ids:['Y'], alvo:'Cromossomo Y',
+   texto:'Selecione o <b>menor dos cromossomos restantes</b>: trata-se do cromossomo sexual ' +
+     '<b>Y</b>. Além de <b>não ter homólogo</b>, é <b>acrocêntrico</b> e tem uma <b>faixa ' +
+     'cinzenta larga no braço maior</b>. Repare que ele ocupa uma posição só.'},
+
+  {ids:['X'], alvo:'Cromossomo X',
+   texto:'Dos onze cromossomos restantes, identifique o cromossomo sexual <b>X</b>. Ele ' +
+     'apresenta uma faixa negra <b>estreita no braço menor</b> e é o <b>único que sobrou sem ' +
+     'homólogo</b> — porque este é um cariótipo <b>masculino</b>.'},
+
+  {ids:['9','12'], alvo:'Grupo C · pares 9 e 12',
+   texto:'Selecione, dos restantes, o par que possui <b>três faixas negras largas no braço ' +
+     'curto</b>: é o cromossomo <b>9</b>. Procure agora o par que apresenta <b>apenas uma faixa ' +
+     'negra larga</b> no braço menor: trata-se do <b>12</b>.'},
+
+  {ids:['8','10','11'], alvo:'Grupo C · pares 8, 10 e 11',
+   texto:'Faltam apenas três pares. O que apresenta <b>faixas negras mais largas no braço ' +
+     'maior</b> é o <b>8</b>. Dos dois últimos, o que tem o <b>centrômero mais deslocado</b> ' +
+     'para a extremidade é o <b>10</b> — e o que sobrar é o <b>11</b>.'}
+];
+
+/* no cariótipo feminino as duas etapas do par sexual (Y e depois X)
+   dão lugar a uma só: reconhecer o PAR de cromossomos X */
+const ETAPA_XX = {ids:['X'], alvo:'Par sexual · X e X',
+  texto:'Falta o <b>par sexual</b>. Como esta é uma lâmina <b>feminina</b>, não há cromossomo ' +
+    'Y: procure <b>dois cromossomos X</b>, iguais entre si. São <b>submetacêntricos</b>, de ' +
+    'tamanho próximo ao dos maiores do grupo C, e apresentam uma faixa negra <b>estreita no ' +
+    'braço curto</b>. Diferentemente do cariótipo masculino, aqui eles formam um par.'};
+
+/* ==================================================================
+   CASOS DO MODO ÀS CEGAS
+   O sorteio nunca aparece na tela: nem no rótulo da lâmina, nem no
+   cabeçalho da folha, nem no contador. O único caminho para o
+   diagnóstico é montar o idiograma e contar.
+   ================================================================== */
+const CASOS = [
+  {chave:'down',    extra:'21', sexual:'auto', nome:'Síndrome de Down',
+   formula:'47,{S},+21',
+   nota:'Trissomia do cromossomo 21 — a alteração descrita por <b>Jérôme Lejeune em 1958</b>, ' +
+     'a primeira aneuploidia humana identificada. É a trissomia autossômica mais comum ' +
+     'compatível com a sobrevivência até a idade adulta, e o 21 é justamente o menor ' +
+     'autossomo: quanto menos genes em excesso, menor o desequilíbrio.'},
+  {chave:'edwards', extra:'18', sexual:'auto', nome:'Síndrome de Edwards',
+   formula:'47,{S},+18',
+   nota:'Trissomia do cromossomo 18. Bem mais grave que a do 21, com prognóstico reservado no ' +
+     'primeiro ano de vida. Repare que o 18 é maior que o 21 — mais material genético em ' +
+     'excesso significa desequilíbrio maior.'},
+  {chave:'patau',   extra:'13', sexual:'auto', nome:'Síndrome de Patau',
+   formula:'47,{S},+13',
+   nota:'Trissomia do cromossomo 13, do grupo D. É a mais grave das três trissomias ' +
+     'autossômicas viáveis, e o 13 é o maior dos três cromossomos envolvidos — o que ' +
+     'reforça a relação entre tamanho do cromossomo extra e gravidade do quadro.'},
+  {chave:'turner',  extra:null, sexual:'X0',   nome:'Síndrome de Turner',
+   formula:'45,X',
+   nota:'Monossomia do X — a <b>única monossomia viável</b> na espécie humana. Não é uma ' +
+     'trissomia: aqui falta um cromossomo, e a contagem fecha em 45. Só se percebe ao ' +
+     'chegar no par sexual e encontrar um X solitário, sem homólogo e sem Y.'}
+];
+let caso = null;   /* o caso sorteado da partida corrente */
+
+const MODOS = {
+  /* etapas: índices em ETAPAS, na ordem em que serão apresentadas */
+  abg:      {grupos:['A','B','G'],                          etapas:[0,1,2],
+             rotulo:'Grupos A, B e G'},
+  completo: {grupos:['A','B','C','D','E','F','G','S','Y'],  etapas:[0,1,2,3,4,5,6,7,8,9,10],
+             rotulo:'Cariótipo completo'},
+  /* bancada livre: mesmo conjunto, sem roteiro — o tabuleiro inteiro
+     fica aberto desde o começo e a conferência é única, no fim */
+  livre:    {grupos:['A','B','C','D','E','F','G','S','Y'],  etapas:null,
+             rotulo:'Bancada livre'},
+  /* às cegas: sem roteiro, com cariótipo sorteado e diagnóstico final */
+  desafio:  {grupos:['A','B','C','D','E','F','G','S','Y'],  etapas:null,
+             rotulo:'Caso às cegas'}
+};
+function desafio(){ return modo === 'desafio'; }
+
+/* ---------------- desenho do cromossomo em SVG ---------------- */
+const ESC = 1.35;          /* px por unidade de comprimento */
+const LARG = 9;            /* largura de cada cromátide */
+const VAO = 2.4;           /* vão entre as cromátides */
+const FENDA = 3;           /* constrição primária (centrômero) */
+/* bandas: cinzenta e negra. O contorno é CLARO porque a bancada é
+   escura — com contorno escuro o cromossomo parece partido nas bandas */
+/* campo claro: corpo quase branco, contorno e bandas escuros — é assim
+   que os cromossomos aparecem numa lâmina ao microscópio óptico */
+const TOM = {1:'#93A3A0', 2:'#232E29'};
+const CONTORNO = '#3A4A46';
+const CORPO = '#FBFCFA';
+
+function alturaDe(c){ return c.len * ESC; }
+function centroDe(c){ return c.cen * alturaDe(c); }
+
+function desenhar(c, virado){
+  const h = alturaDe(c), cen = centroDe(c);
+  const w = LARG*2 + VAO;
+  const topoSat = c.sat ? 9 : 0;
+  const uid = 'c' + c.id + Math.random().toString(36).slice(2,7);
+
+  const bracos = [
+    {y0:topoSat===0?0:0, y1:cen - FENDA/2},          /* braço p */
+    {y0:cen + FENDA/2,   y1:h}                        /* braço q */
+  ];
+
+  let defs = '', corpo = '';
+  bracos.forEach(function(b, ib){
+    const alt = Math.max(b.y1 - b.y0, 3);
+    const raio = Math.min(LARG/2, alt/2);
+    [0, LARG+VAO].forEach(function(dx, ic){
+      const cid = uid + '-' + ib + '-' + ic;
+      defs += '<clipPath id="'+cid+'"><rect x="'+dx+'" y="'+b.y0+'" width="'+LARG+
+              '" height="'+alt+'" rx="'+raio+'"/></clipPath>';
+      corpo += '<g clip-path="url(#'+cid+')">';
+      corpo += '<rect x="'+dx+'" y="'+b.y0+'" width="'+LARG+'" height="'+alt+'" fill="'+CORPO+'"/>';
+      (c.bandas||[]).forEach(function(bd){
+        const y0 = bd[0]*h, y1 = bd[1]*h;
+        if (y1 < b.y0 || y0 > b.y1) return;
+        corpo += '<rect x="'+dx+'" y="'+y0+'" width="'+LARG+'" height="'+(y1-y0)+
+                 '" fill="'+TOM[bd[2]]+'"/>';
+      });
+      corpo += '</g>';
+      corpo += '<rect x="'+dx+'" y="'+b.y0+'" width="'+LARG+'" height="'+alt+'" rx="'+raio+
+               '" fill="none" stroke="'+CONTORNO+'" stroke-width="1.1"/>';
+    });
+  });
+
+  /* satélite: haste fina e esfera na ponta do braço curto */
+  let sat = '';
+  if (c.sat){
+    [0, LARG+VAO].forEach(function(dx){
+      const cx = dx + LARG/2;
+      sat += '<line x1="'+cx+'" y1="0" x2="'+cx+'" y2="-5" stroke="'+CONTORNO+'" stroke-width="1.4"/>';
+      sat += '<circle cx="'+cx+'" cy="-7.6" r="2.7" fill="'+CORPO+'" stroke="'+CONTORNO+'" stroke-width="1.1"/>';
+    });
+  }
+
+  const giro = virado ? ' transform="rotate(180 '+(w/2)+' '+(h/2)+')"' : '';
+  return '<svg width="'+w+'" height="'+(h+topoSat)+'" viewBox="0 '+(-topoSat)+' '+w+' '+(h+topoSat)+'">' +
+         '<defs>'+defs+'</defs><g'+giro+'>'+sat+corpo+'</g></svg>';
+}
+
+/* onde fica o centrômero na peça já desenhada, contando o satélite */
+function centroVisual(c, virado){
+  const h = alturaDe(c), topoSat = c.sat ? 9 : 0;
+  return topoSat + (virado ? h - centroDe(c) : centroDe(c));
+}
+
+/* ==================================================================
+   SONS
+   Sintetizados na hora com Web Audio — nenhum arquivo externo, o que
+   mantém o jogo em um único HTML. Volumes baixos e envelopes curtos:
+   numa sala de aula com trinta pessoas jogando, som longo vira ruído.
+   ================================================================== */
+let audio = null, somLigado = true;
+
+function ctx(){
+  if (!audio){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audio = new AC();
+  }
+  if (audio.state === 'suspended') audio.resume();
+  return audio;
+}
+
+/* uma nota simples: onda, frequência (ou glissando), duração, volume */
+function nota(tipo, f0, f1, dur, vol, atraso){
+  const a = ctx(); if (!a) return;
+  const t = a.currentTime + (atraso || 0);
+  const osc = a.createOscillator();
+  const g = a.createGain();
+  osc.type = tipo;
+  osc.frequency.setValueAtTime(f0, t);
+  if (f1 && f1 !== f0) osc.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g); g.connect(a.destination);
+  osc.start(t); osc.stop(t + dur + 0.02);
+}
+
+/* um "toc" seco, de ruído filtrado — para o encaixe do cromossomo */
+function toque(vol, corte){
+  const a = ctx(); if (!a) return;
+  const t = a.currentTime;
+  const n = a.sampleRate * 0.06;
+  const buf = a.createBuffer(1, n, a.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random()*2 - 1) * Math.pow(1 - i/n, 3);
+  const src = a.createBufferSource(); src.buffer = buf;
+  const filtro = a.createBiquadFilter();
+  filtro.type = 'bandpass'; filtro.frequency.value = corte; filtro.Q.value = 1.2;
+  const g = a.createGain(); g.gain.value = vol;
+  src.connect(filtro); filtro.connect(g); g.connect(a.destination);
+  src.start(t);
+}
+
+const SONS = {
+  /* pegar uma carta: clique curto e agudo, como pinça de vidro */
+  selecionar: function(){ nota('triangle', 880, 1180, .05, .05); },
+  /* encaixar: toque seco de papel assentando */
+  encaixe:    function(){ toque(.16, 2200); nota('sine', 520, 660, .07, .05); },
+  /* devolver à lâmina: o mesmo toque, invertido */
+  devolver:   function(){ nota('sine', 620, 430, .08, .045); },
+  /* erro: dois graves curtos, sem estridência */
+  erro:       function(){ nota('sawtooth', 200, 150, .10, .045);
+                          nota('sawtooth', 150, 110, .13, .04, .10); },
+  /* etapa concluída: terça ascendente */
+  etapa:      function(){ nota('sine', 660, 660, .10, .05);
+                          nota('sine', 880, 880, .16, .05, .09); },
+  /* idiograma fechado: arpejo maior */
+  vitoria:    function(){ [523,659,784,1047].forEach(function(f,i){
+                          nota('sine', f, f, .30, .055, i*.10); }); },
+  /* laudo correto: o mesmo arpejo, mais alto e com quinta final */
+  diagnostico:function(){ [659,784,988,1319].forEach(function(f,i){
+                          nota('triangle', f, f, .34, .05, i*.11); });
+                          nota('sine', 1568, 1568, .5, .04, .46); },
+  /* régua ligando e desligando */
+  alternar:   function(){ nota('square', 440, 560, .05, .035); }
+};
+
+function tocar(nome){
+  if (!somLigado) return;
+  const f = SONS[nome];
+  if (f) try{ f(); }catch(e){}
+}
+
+/* ---------------- estado ---------------- */
+const el = {
+  selecao:   document.getElementById('kselecao'),
+  bancada:   document.getElementById('kbancada'),
+  tabuleiro: document.getElementById('ktabuleiro'),
+  metafase:  document.getElementById('kmetafase'),
+  painelEtapa: document.getElementById('kpainelEtapa'),
+  feitas:      document.getElementById('klistaFeitas'),
+  hudEtapa:    document.getElementById('khudEtapa'),
+  hudPos:    document.getElementById('khudPos'),
+  hudPont:   document.getElementById('khudPont'),
+  resultado: document.getElementById('kresultado')
+};
+let modo = 'completo', sexo = 'XY';
+let selecionada = null, pontos = 1000, etapaAtual = 0, tentativas = 1;
+
+/* quantas cópias de cada cromossomo entram na lâmina */
+function nCopias(c){
+  if (desafio() && caso){
+    if (c.id === 'Y') return (caso.sexual === 'X0' || sexo === 'XX') ? 0 : 1;
+    if (c.id === 'X') return caso.sexual === 'X0' ? 1 : (sexo === 'XY' ? 1 : 2);
+    return c.id === caso.extra ? 3 : 2;
+  }
+  if (c.id === 'Y') return sexo === 'XY' ? 1 : 0;
+  if (c.id === 'X') return sexo === 'XY' ? 1 : 2;
+  return 2;
+}
+
+/* quantas POSIÇÕES o gabarito mostra. No modo às cegas o número é
+   sempre o mesmo, qualquer que seja o caso sorteado — senão a própria
+   forma do tabuleiro entregaria a resposta antes da montagem. */
+function nPosicoes(c){
+  if (desafio()){
+    if (c.id === 'Y') return 1;
+    if (c.id === 'X') return 2;
+    return 3;
+  }
+  return nCopias(c);
+}
+
+function guiado(){ return MODOS[modo].etapas !== null; }
+function etapas(){
+  if (!guiado()) return [];
+  const lista = MODOS[modo].etapas.map(function(i){ return ETAPAS[i]; });
+  if (sexo === 'XY') return lista;
+  /* feminino: as etapas do Y e do X viram uma única etapa do par X */
+  const fora = [ETAPAS[7], ETAPAS[8]];
+  let inserido = false;
+  return lista.reduce(function(acc, e){
+    if (fora.indexOf(e) !== -1){
+      if (!inserido){ acc.push(ETAPA_XX); inserido = true; }
+      return acc;
+    }
+    acc.push(e); return acc;
+  }, []);
+}
+function etapa(){ return etapas()[etapaAtual]; }
+/* posições que a etapa corrente liberou */
+function slotsDaEtapa(){
+  const ids = etapa().ids;
+  return Array.prototype.filter.call(
+    el.tabuleiro.querySelectorAll('.kslot'),
+    function(s){ return ids.indexOf(s.dataset.alvo) !== -1; });
+}
+
+function ativos(){
+  const g = MODOS[modo].grupos;
+  return CROMOS.filter(function(c){
+    return g.indexOf(c.grupo) !== -1 && nCopias(c) > 0;
+  });
+}
+/* cromossomos que ganham posição no gabarito */
+function comPosicao(){
+  const g = MODOS[modo].grupos;
+  return CROMOS.filter(function(c){
+    return g.indexOf(c.grupo) !== -1 && nPosicoes(c) > 0;
+  });
+}
+function totalPecas(){
+  return ativos().reduce(function(n,c){ return n + nCopias(c); }, 0);
+}
+function acharCromo(id){ return CROMOS.find(function(c){ return c.id === id; }); }
+
+/* ---------------- montagem do tabuleiro ---------------- */
+function montarTabuleiro(){
+  const gs = MODOS[modo].grupos;
+  const hoje = new Date();
+  const dd = String(hoje.getDate()).padStart(2,'0');
+  const mm = String(hoje.getMonth()+1).padStart(2,'0');
+  const aa = String(hoje.getFullYear());
+
+  /* a folha impressa: cabeçalho com os campos do formulário, como no
+     gabarito de papel que o aluno receberia xerocopiado */
+  el.tabuleiro.className = '';
+  el.tabuleiro.innerHTML =
+    '<div class="kfolha-cab">' +
+      '<div class="kfolha-titulo">' +
+        '<h2>' + (desafio()
+            ? 'Idiograma · caso em análise'
+            : 'Idiograma humano normal · ' +
+              (sexo === 'XY' ? 'sexo masculino' : 'sexo feminino')) + '</h2>' +
+        '<span class="kfolha-formula">' + (desafio() ? 'a determinar' : '46,' + sexo) +
+        '</span>' +
+      '</div>' +
+      '<div class="kfolha-fita">' +
+        '<span class="kcampo">Montado por <i>&nbsp;</i></span>' +
+        '<span class="kcampo">Série <i>&nbsp;</i></span>' +
+        '<span class="kcampo">Data <i>' + dd + '/' + mm + '/' + aa + '</i></span>' +
+        '<span class="kcampo">Material <i>linfócitos · metáfase</i></span>' +
+      '</div>' +
+    '</div>';
+  GRUPOS.forEach(function(g){
+    const ids = g.ids.filter(function(id){
+      const c = acharCromo(id);
+      return gs.indexOf(c.grupo) !== -1 && nPosicoes(c) > 0;
+    });
+    if (!ids.length) return;
+
+    const sub = (g.id !== 'S') ? g.sub
+      : desafio() ? 'X e Y · a conferir'
+      : (sexo === 'XY' ? 'X e Y · sem homólogo' : 'X e X · o par sexual');
+
+    const box = document.createElement('div');
+    box.className = 'kgrupo kg-' + g.id;
+    box.innerHTML = '<div class="kgrupo-cab"><span class="kgrupo-nome">'+g.nome+
+      '</span><span class="kgrupo-sub">'+sub+'</span></div>';
+
+    /* a linha do centrômero é COMUM a toda a fileira: num idiograma os
+       centrômeros do grupo ficam todos sobre a mesma horizontal */
+    let acima = 0, abaixo = 0;
+    ids.forEach(function(id){
+      const c = acharCromo(id), h = alturaDe(c), cen = centroDe(c);
+      acima  = Math.max(acima,  cen + (c.sat ? 9 : 0));
+      abaixo = Math.max(abaixo, h - cen);
+    });
+    acima += 8; abaixo += 8;
+
+    const fila = document.createElement('div');
+    fila.className = 'kfila';
+    ids.forEach(function(id){
+      const c = acharCromo(id);
+      const par = document.createElement('div');
+      par.className = 'kpar';
+      /* no cariótipo feminino o rótulo marca o PAR, não o cromossomo solto */
+      const rotulo = (id === 'X' && !desafio() && sexo === 'XX') ? 'X X' : id;
+      par.innerHTML = '<span class="kpar-num">'+rotulo+'</span>';
+      const linha = document.createElement('div');
+      linha.className = 'kpar-slots';
+      const n = nPosicoes(c);
+      for (let i=0; i<n; i++) linha.appendChild(criarSlot(c, acima, abaixo));
+      par.appendChild(linha);
+      const base = document.createElement('div');
+      base.className = 'kpar-base';
+      par.appendChild(base);
+      fila.appendChild(par);
+    });
+    box.appendChild(fila);
+    el.tabuleiro.appendChild(box);
+  });
+
+  const pe = document.createElement('div');
+  pe.className = 'kfolha-pe';
+  pe.innerHTML =
+    '<span>Padrão de bandeamento conforme as normas do <b>4º Congresso Internacional de ' +
+      'Genética Humana</b>, Paris, 1971.</span>' +
+    '<span>Cole cada cromossomo com o <b>centrômero sobre a linha tracejada</b> e o braço ' +
+      'maior para baixo.</span>';
+  el.tabuleiro.appendChild(pe);
+
+  const selo = document.createElement('div');
+  selo.className = 'kselo';
+  selo.innerHTML = 'CONFERIDO<span>análise concluída</span>';
+  el.tabuleiro.appendChild(selo);
+}
+
+/* o encaixe tem altura suficiente para o cromossomo em qualquer
+   orientação, e a linha do centrômero fica sempre no mesmo ponto */
+function criarSlot(c, acima, abaixo){
+  const s = document.createElement('div');
+  s.className = 'kslot';
+  s.style.setProperty('--h', (acima + abaixo) + 'px');
+  s.style.setProperty('--linhaY', acima + 'px');
+  s.dataset.alvo = c.id;
+  s.dataset.linha = acima;
+  s.addEventListener('click', function(){ clicarSlot(s); });
+  return s;
+}
+
+/* ---------------- cartas na metáfase ---------------- */
+function criarCarta(c, virado){
+  const d = document.createElement('div');
+  d.className = 'kcarta';
+  d.dataset.id = c.id;
+  d.dataset.virado = virado ? '1' : '0';
+  d.innerHTML = '<div class="kdesenho">' + desenhar(c, virado) + '</div>' +
+    '<div class="kcarta-pe">' +
+      '<button class="kgirar" type="button" title="Virar 180°">⟳</button>' +
+      '<span class="kmedida">' + Math.round(c.len) + 'u</span>' +
+    '</div>';
+  d.querySelector('.kgirar').addEventListener('click', function(e){
+    e.stopPropagation();
+    const v = d.dataset.virado === '1';
+    d.dataset.virado = v ? '0' : '1';
+    d.querySelector('.kdesenho').innerHTML = desenhar(c, !v);
+    tocar('alternar');
+  });
+  d.addEventListener('click', function(){ selecionar(d); });
+  return d;
+}
+
+function selecionar(d){
+  if (selecionada === d){ d.classList.remove('ksel'); selecionada = null; return; }
+  if (selecionada) selecionada.classList.remove('ksel');
+  selecionada = d; d.classList.add('ksel');
+  tocar('selecionar');
+}
+
+function clicarSlot(s){
+  /* encaixe ocupado → devolve à metáfase */
+  if (s.dataset.posto){
+    const c = acharCromo(s.dataset.posto);
+    const virado = s.dataset.viradoPosto === '1';
+    s.dataset.posto = ''; s.dataset.viradoPosto = '';
+    s.className = 'kslot'; s.innerHTML = '';
+    el.metafase.appendChild(criarCarta(c, virado));
+    tocar('devolver');
+    aplicarTravas();
+    atualizar();
+    return;
+  }
+  if (!selecionada) return;
+
+  const c = acharCromo(selecionada.dataset.id);
+  const virado = selecionada.dataset.virado === '1';
+  s.dataset.posto = c.id;
+  s.dataset.viradoPosto = virado ? '1' : '0';
+  s.classList.remove('kcerto','kerrado');
+  s.classList.add('kcheio');
+
+  /* alinhamento pelo centrômero: é isto que a versão em papel pede
+     que o aluno faça à mão ao colar sobre a linha tracejada */
+  const peca = document.createElement('div');
+  peca.className = 'kpeca';
+  peca.innerHTML = desenhar(c, virado);
+  const w = LARG*2 + VAO;
+  peca.style.marginLeft = (-w/2) + 'px';
+  peca.style.top = (Number(s.dataset.linha) - centroVisual(c, virado)) + 'px';
+  s.innerHTML = '';
+  s.appendChild(peca);
+
+  selecionada.remove();
+  selecionada = null;
+  tocar('encaixe');
+  aplicarTravas();
+  atualizar();
+}
+
+/* ---------------- HUD, pistas e conferência ---------------- */
+/* só as posições da etapa corrente aceitam cromossomo; as já
+   fechadas ficam travadas em verde e as futuras, apagadas */
+function aplicarTravas(){
+  if (!guiado()){
+    /* bancada livre: tudo aberto, nada travado */
+    el.tabuleiro.querySelectorAll('.kslot').forEach(function(s){
+      s.classList.remove('ktravado','kliberado');
+    });
+    el.tabuleiro.querySelectorAll('.kgrupo').forEach(function(g){
+      g.classList.remove('kinativo');
+    });
+    return;
+  }
+  const ids = etapa() ? etapa().ids : [];
+  el.tabuleiro.querySelectorAll('.kslot').forEach(function(s){
+    const desta = ids.indexOf(s.dataset.alvo) !== -1;
+    const fechada = s.classList.contains('kfechado');
+    s.classList.toggle('kliberado', desta && !fechada);
+    s.classList.toggle('ktravado', !desta && !fechada);
+  });
+  el.tabuleiro.querySelectorAll('.kgrupo').forEach(function(g){
+    const temAtiva = g.querySelector('.kslot.kliberado');
+    g.classList.toggle('kinativo', !temAtiva);
+  });
+}
+
+function pintarEtapa(){
+  if (!guiado()){
+    el.painelEtapa.innerHTML =
+      '<div class="ketapa-atual klivre">' +
+        (desafio()
+          ? '<span class="ketapa-alvo ksemtopo">Monte primeiro. O laudo vem depois — e o ' +
+            'roteiro de identificação continua disponível em “Consultar roteiro”.</span>'
+          : '<span class="ketapa-alvo ksemtopo">Em dúvida? Abra o roteiro em ' +
+            '“Consultar roteiro”</span>') +
+      '</div>';
+    return;
+  }
+  const e = etapa();
+  const tot = etapas().length;
+  if (!e){ el.painelEtapa.innerHTML = ''; return; }
+  el.painelEtapa.innerHTML =
+    '<div class="ketapa-atual">' +
+      '<span class="ketapa-num">ETAPA ' + (etapaAtual+1) + ' DE ' + tot + '</span>' +
+      '<div class="ketapa-texto">' + e.texto + '</div>' +
+      '<span class="ketapa-alvo">Libera: ' + e.alvo + '</span>' +
+    '</div>';
+}
+
+function registrarFeita(e, n){
+  const d = document.createElement('div');
+  d.className = 'kfeita';
+  d.innerHTML = '<span class="ktique">✓</span><span>' + n + '. ' + e.alvo + '</span>';
+  el.feitas.appendChild(d);
+}
+
+function atualizar(){
+  el.hudPont.innerHTML = 'PONTOS: <b>' + pontos + '</b>';
+
+  if (!guiado()){
+    let n = 0;
+    el.tabuleiro.querySelectorAll('.kslot').forEach(function(s){ if (s.dataset.posto) n++; });
+    const total = totalPecas();
+    if (desafio()){
+      /* nada de total na tela: o número de cromossomos da lâmina É a
+         primeira pista do diagnóstico e cabe ao jogador contar */
+      el.hudEtapa.innerHTML = 'CASO <b>ÀS CEGAS</b>';
+      el.hudPos.innerHTML = 'MONTADOS: <b>' + n + '</b>';
+      el.hudPos.className = 'khud-item' + (n === total ? ' kok' : '');
+      document.getElementById('kbtnConferir').disabled = (n !== total) || !caso;
+      return;
+    }
+    el.hudEtapa.innerHTML = 'MODO <b>LIVRE</b>';
+    el.hudPos.innerHTML = 'MONTADOS: <b>' + n + '/' + total + '</b>';
+    el.hudPos.className = 'khud-item' + (n === total ? ' kok' : '');
+    document.getElementById('kbtnConferir').disabled = (n !== total);
+    return;
+  }
+
+  const e = etapa();
+  const tot = etapas().length;
+  el.hudEtapa.innerHTML = 'ETAPA <b>' + Math.min(etapaAtual+1, tot) + '/' + tot + '</b>';
+
+  let n = 0, alvo = 0;
+  if (e){
+    const ss = slotsDaEtapa();
+    alvo = ss.length;
+    ss.forEach(function(s){ if (s.dataset.posto) n++; });
+  }
+  el.hudPos.innerHTML = 'NESTA ETAPA: <b>' + n + '/' + alvo + '</b>';
+  el.hudPos.className = 'khud-item' + (alvo && n === alvo ? ' kok' : '');
+  document.getElementById('kbtnConferir').disabled = !e || n !== alvo;
+}
+
+function conferir(){
+  if (!guiado()) return conferirTudo();
+  const e = etapa();
+  if (!e) return;
+  const ss = slotsDaEtapa();
+  let certos = 0, trocados = 0, invertidos = 0;
+
+  ss.forEach(function(s){
+    const idOk = s.dataset.posto === s.dataset.alvo;
+    const c = acharCromo(s.dataset.posto);
+    /* orientação correta = braço maior (q) abaixo da linha */
+    const oriOk = (s.dataset.viradoPosto === '1') === (c.cen > .5);
+    s.classList.remove('kcerto','kerrado');
+    if (idOk && oriOk){ s.classList.add('kcerto'); certos++; }
+    else { s.classList.add('kerrado'); if (!idOk) trocados++; else invertidos++; }
+  });
+
+  if (certos === ss.length){
+    /* etapa fechada: as posições travam e o roteiro avança */
+    ss.forEach(function(s){ s.classList.add('kfechado'); });
+    registrarFeita(e, etapaAtual+1);
+    etapaAtual++;
+    tentativas = 1;
+    tocar(etapaAtual >= etapas().length ? 'kvitoria' : 'etapa');
+
+    if (etapaAtual >= etapas().length){
+      el.resultado.className = 'kon kvitoria';
+      el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo</span>' +
+        'Você percorreu as ' + etapas().length + ' etapas do roteiro e fechou o idiograma com ' +
+        '<b>' + pontos + ' pontos</b>. Repare no caminho que acabou de percorrer: a ' +
+        'identificação nunca começa pelo cromossomo 1 e segue até o 22 — ela parte dos ' +
+        '<b>extremos</b> (os maiores e os menores), fixa os que têm marcas inconfundíveis, e só ' +
+        'no fim resolve o grupo C por eliminação. É assim que o citogeneticista trabalha diante ' +
+        'de uma lâmina.';
+      document.getElementById('kbtnConferir').disabled = true;
+      el.tabuleiro.classList.add('kconferido');
+      liberarSaidas(true);
+      aplicarTravas();
+      atualizar();
+      el.resultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+      return;
+    }
+
+    el.resultado.className = 'kon kvitoria';
+    el.resultado.innerHTML = '<span class="kgrande">✓ Etapa ' + etapaAtual + ' concluída</span>' +
+      'Estas posições estão fechadas. O roteiro liberou a <b>etapa ' + (etapaAtual+1) + '</b>: ' +
+      etapa().alvo + '.';
+    pintarEtapa();
+    aplicarTravas();
+  } else {
+    pontos = Math.max(0, pontos - (ss.length - certos) * 10);
+    let diag = '';
+    if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
+    if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
+      'baixo</b> — o braço maior fica abaixo da linha. ';
+    el.resultado.className = 'kon kfalha';
+    tocar('erro');
+    el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
+      ' fora do lugar nesta etapa</span>' + diag +
+      'Toque nos encaixes em vermelho para devolver à metáfase e releia a instrução ao lado. (' +
+      certos + ' de ' + ss.length + ' corretos)';
+    tentativas++;
+  }
+  atualizar();
+  el.resultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* conferência única da bancada livre */
+function conferirTudo(){
+  let ss = Array.prototype.slice.call(el.tabuleiro.querySelectorAll('.kslot'));
+  /* no modo às cegas há mais posições que cromossomos: as que sobram
+     vazias fazem parte do jogo e não contam como erro */
+  if (desafio()) ss = ss.filter(function(s){ return s.dataset.posto; });
+  let certos = 0, trocados = 0, invertidos = 0;
+
+  ss.forEach(function(s){
+    const idOk = s.dataset.posto === s.dataset.alvo;
+    const c = acharCromo(s.dataset.posto);
+    const oriOk = (s.dataset.viradoPosto === '1') === (c.cen > .5);
+    s.classList.remove('kcerto','kerrado');
+    if (idOk && oriOk){ s.classList.add('kcerto'); certos++; }
+    else { s.classList.add('kerrado'); if (!idOk) trocados++; else invertidos++; }
+  });
+
+  if (certos === ss.length && desafio()){
+    /* montagem correta: só agora vem a pergunta do diagnóstico */
+    el.tabuleiro.classList.add('kconferido');
+    tocar('kvitoria');
+    pedirDiagnostico();
+    return;
+  }
+
+  if (certos === ss.length){
+    tocar('kvitoria');
+    el.resultado.className = 'kon kvitoria';
+    el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo, sem roteiro</span>' +
+      'Você montou os 46 cromossomos por conta própria, com <b>' + pontos + ' pontos</b>. ' +
+      'Sem instruções, cada decisão dependeu de comparar tamanho, posição do centrômero e ' +
+      'bandeamento — que é o que o citogeneticista faz diante de uma lâmina real.';
+    document.getElementById('kbtnConferir').disabled = true;
+    el.tabuleiro.classList.add('kconferido');
+    liberarSaidas(true);
+  } else {
+    pontos = Math.max(0, pontos - (ss.length - certos) * 10);
+    let diag = '';
+    if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
+    if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
+      'baixo</b> — o braço maior fica abaixo da linha. ';
+    tocar('erro');
+    el.resultado.className = 'kon kfalha';
+    el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
+      ' fora do lugar</span>' + diag +
+      'Toque nos encaixes em vermelho para devolver à metáfase. (' + certos + ' de ' +
+      ss.length + ' corretos)';
+    tentativas++;
+  }
+  atualizar();
+  el.resultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* ---------- a pergunta final do modo às cegas ---------- */
+function pedirDiagnostico(){
+  const ops = embaralhar(CASOS);
+  el.resultado.className = 'kon kdiagnostico';
+  el.resultado.innerHTML =
+    '<span class="kgrande">Idiograma montado corretamente</span>' +
+    'Agora o laudo: <b>qual alteração cromossômica este cariótipo apresenta?</b> ' +
+    'Confira a contagem total e depois cada grupo, um a um.' +
+    '<div class="kdiag-ops">' +
+      ops.map(function(c){
+        return '<button class="kdiag-btn" type="button" data-caso="' + c.chave + '">' +
+               c.nome + '</button>';
+      }).join('') +
+    '</div>';
+  el.resultado.querySelectorAll('.kdiag-btn').forEach(function(b){
+    b.addEventListener('click', function(){ responderDiagnostico(b.dataset.caso); });
+  });
+  document.getElementById('kbtnConferir').disabled = true;
+  el.resultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function responderDiagnostico(chave){
+  const acertou = (chave === caso.chave);
+  const formula = caso.formula.replace('{S}', sexo);
+  if (!acertou){
+    pontos = Math.max(0, pontos - 50);
+    tocar('erro');
+    el.resultado.className = 'kon kfalha';
+    el.resultado.innerHTML = '<span class="kgrande">✗ Não é esse o caso</span>' +
+      'O idiograma está montado corretamente, mas o laudo não confere. ' +
+      'Volte ao gabarito: comece pela <b>contagem total</b> — 45, 46 ou 47? — e depois procure ' +
+      'que posição tem cromossomos a mais ou a menos.' +
+      '<div class="kdiag-ops">' +
+        embaralhar(CASOS).map(function(c){
+          return '<button class="kdiag-btn" type="button" data-caso="' + c.chave + '">' +
+                 c.nome + '</button>';
+        }).join('') +
+      '</div>';
+    el.resultado.querySelectorAll('.kdiag-btn').forEach(function(b){
+      b.addEventListener('click', function(){ responderDiagnostico(b.dataset.caso); });
+    });
+    atualizar();
+    return;
+  }
+
+  tocar('kdiagnostico');
+  el.resultado.className = 'kon kvitoria';
+  el.resultado.innerHTML =
+    '<span class="kgrande">🏆 Diagnóstico correto — ' + caso.nome + '</span>' +
+    '<span class="klaudo">' + formula + '</span>' +
+    caso.nota +
+    '<p class="klaudo-fim">Você montou o idiograma e fechou o laudo com <b>' + pontos +
+    ' pontos</b>. Nenhuma informação da lâmina antecipava esse resultado: ele veio da ' +
+    'montagem, exatamente como no laboratório.</p>';
+  el.tabuleiro.classList.add('kconferido');
+  liberarSaidas(true);
+  /* caso encerrado: nada mais a conferir nesta lâmina */
+  caso = null;
+  document.getElementById('kbtnConferir').disabled = true;
+}
+
+function embaralhar(a){
+  const b = a.slice();
+  for (let i = b.length-1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = b[i]; b[i] = b[j]; b[j] = t;
+  }
+  return b;
+}
+
+/* as duas saídas só abrem quando a lâmina é fechada corretamente:
+   até lá, o caminho é terminar a análise */
+function liberarSaidas(liberar){
+  ['kbtnRecomecar','kbtnTrocar'].forEach(function(id){
+    const b = document.getElementById(id);
+    b.disabled = !liberar;
+    b.title = liberar ? '' : 'Disponível depois de fechar o idiograma';
+  });
+}
+
+function montar(){
+  if (desafio()){
+    caso = CASOS[Math.floor(Math.random()*CASOS.length)];
+    /* o sexo também é sorteado, menos no caso em que ele é a alteração */
+    sexo = (caso.sexual === 'X0') ? 'XX' : (Math.random() < .5 ? 'XY' : 'XX');
+  }
+  montarTabuleiro();
+  const pecas = [];
+  ativos().forEach(function(c){
+    const n = nCopias(c);
+    for (let i=0; i<n; i++) pecas.push(c);
+  });
+  el.metafase.innerHTML = '';
+  embaralhar(pecas).forEach(function(c){
+    el.metafase.appendChild(criarCarta(c, Math.random() < .5));
+  });
+  selecionada = null; pontos = 1000; etapaAtual = 0; tentativas = 1;
+  el.feitas.innerHTML = '';
+  el.resultado.className = ''; el.resultado.innerHTML = '';
+  raizAtiv.classList.toggle('klivre', !guiado());
+  /* cada preparação recebe um número de caso, como no laboratório */
+  document.getElementById('klaminaCaso').textContent =
+    'CASO ' + (2600 + Math.floor(Math.random()*400)) + '/26' +
+    (desafio() ? '' : ' · 46,' + sexo);
+  document.getElementById('kbtnConferir').textContent =
+    guiado() ? '✓ Conferir etapa' : '✓ Conferir idiograma';
+  document.querySelector('.kfeitas-cab').style.display = guiado() ? '' : 'none';
+  el.feitas.style.display = guiado() ? '' : 'none';
+  document.querySelector('.kroteiro-cab').textContent =
+    guiado() ? 'Roteiro de identificação' : (desafio() ? 'Caso às cegas' : 'Bancada livre');
+  document.getElementById('kdicaAcervo').innerHTML = guiado()
+    ? 'Siga o roteiro ao lado: cada etapa libera as posições do tabuleiro e diz o que ' +
+      'procurar. Toque num cromossomo e depois no encaixe liberado; use ⟳ para virá-lo, ' +
+      'deixando o braço maior abaixo da linha do centrômero.'
+    : desafio()
+    ? 'Lâmina sem identificação. Monte o idiograma inteiro e, ao conferir, você será ' +
+      'convidado a dar o laudo. O gabarito traz mais posições do que cromossomos: nem todas ' +
+      'serão usadas, e descobrir quais sobram faz parte da análise.'
+    : 'O tabuleiro está todo aberto. Toque num cromossomo e depois na posição que julgar ' +
+      'certa, em qualquer grupo; use ⟳ para virá-lo, deixando o braço maior abaixo da linha ' +
+      'do centrômero. A régua ajuda a comparar tamanhos.';
+  pintarEtapa();
+  aplicarTravas();
+  liberarSaidas(false);
+  atualizar();
+}
+
+/* ---------------- controles ---------------- */
+document.querySelectorAll('.ksel-sexo-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    sexo = b.dataset.sexo;
+    document.querySelectorAll('.ksel-sexo-btn').forEach(function(o){
+      o.classList.toggle('kativo', o === b);
+    });
+    document.getElementById('ktagCompleto').textContent =
+      '46 cromossomos · ' + (sexo === 'XY' ? '11' : '10') + ' etapas';
+  });
+});
+
+window.iniciarCariotipo = function(){
+  el.selecao.classList.remove('koculto');
+  el.bancada.classList.add('koculto');
+  modal.classList.remove('kon');
+  raizAtiv.classList.remove('kmedindo');
+};
+
+document.querySelectorAll('.ksel-card').forEach(function(b){
+  b.addEventListener('click', function(){
+    modo = b.dataset.modo;
+    el.selecao.classList.add('koculto');
+    el.bancada.classList.remove('koculto');
+    montar();
+    raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+document.getElementById('kbtnTrocar').addEventListener('click', function(){
+  modal.classList.remove('kon');
+  el.bancada.classList.add('koculto');
+  el.selecao.classList.remove('koculto');
+  raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
+});
+/* ==================================================================
+   ROTEIRO DE CONSULTA
+   No modo livre o jogador não é conduzido, mas pode abrir a qualquer
+   momento as MESMAS orientações do modo guiado — todas de uma vez,
+   e sem custo: a autonomia está em decidir quando (e se) consultar.
+   ================================================================== */
+const modal = document.getElementById('kmodalRoteiro');
+
+function preencherConsulta(){
+  const corpo = document.getElementById('kmodalCorpo');
+  corpo.innerHTML = ETAPAS.map(function(e, i){
+    return '<div class="kitem">' +
+             '<span class="kitem-n">' + (i+1) + '</span>' +
+             '<div class="kitem-txt">' + e.texto +
+               '<span class="kitem-alvo">' + e.alvo + '</span>' +
+             '</div>' +
+           '</div>';
+  }).join('');
+}
+
+function abrirConsulta(){
+  preencherConsulta();
+  modal.classList.add('kon');
+  document.getElementById('kbtnFechar').focus();
+}
+function fecharConsulta(){
+  modal.classList.remove('kon');
+  document.getElementById('kbtnConsulta').focus();
+}
+
+document.getElementById('kbtnConsulta').addEventListener('click', abrirConsulta);
+document.getElementById('kbtnFechar').addEventListener('click', fecharConsulta);
+modal.addEventListener('click', function(e){ if (e.target === modal) fecharConsulta(); });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && modal.classList.contains('kon')) fecharConsulta();
+});
+
+document.getElementById('kbtnRecomecar').addEventListener('click', montar);
+document.getElementById('kbtnConferir').addEventListener('click', conferir);
+/* ==================================================================
+   RÉGUA-CURSOR
+   Uma régua retangular vertical acompanha o ponteiro; sobre um
+   cromossomo, mostra a leitura digital do comprimento. A escala é a
+   MESMA em que os cromossomos são desenhados (ESC px por unidade),
+   então a régua realmente mede o que está na tela.
+   ================================================================== */
+const REGUA_U = 105;                    /* alcance em unidades */
+const REGUA_H = REGUA_U * ESC;          /* altura em px */
+
+function construirRegua(){
+  const larg = 30;
+  let m = '';
+  for (let u = 0; u <= REGUA_U; u += 5){
+    const y = u * ESC;
+    const maior = (u % 20 === 0);
+    const comp = maior ? 13 : (u % 10 === 0 ? 9 : 5);
+    m += '<line x1="0" y1="'+y+'" x2="'+comp+'" y2="'+y+'" stroke="#5C4715" stroke-width="'+
+         (maior ? 1.4 : .9)+'"/>';
+    if (maior && u > 0){
+      m += '<text x="'+(comp+2.5)+'" y="'+(y+3.4)+'" font-size="8" fill="#5C4715" ' +
+           'font-family="monospace">'+u+'</text>';
+    }
+  }
+  const svg = '<svg width="'+larg+'" height="'+(REGUA_H+2)+'" viewBox="0 -1 '+larg+' '+
+              (REGUA_H+2)+'">'+m+'</svg>';
+
+  const d = document.createElement('div');
+  d.className = 'kregua';
+  d.innerHTML = '<div class="kregua-corpo">'+svg+'</div>' +
+                '<div class="kregua-leitura kvazia" id="kreguaLeitura">— —</div>';
+  raizAtiv.appendChild(d);
+  return d;
+}
+const regua = construirRegua();
+const leitura = document.getElementById('kreguaLeitura');
+
+/* que cromossomo está sob o ponteiro? */
+function cromoSob(alvo){
+  if (!alvo || !alvo.closest) return null;
+  const carta = alvo.closest('.kcarta');
+  if (carta) return {c:acharCromo(carta.dataset.id), el:carta};
+  const slot = alvo.closest('.kslot');
+  if (slot && slot.dataset.posto) return {c:acharCromo(slot.dataset.posto), el:slot};
+  return null;
+}
+
+let medidoAtual = null;
+function moverRegua(x, y){
+  /* a marca zero da régua fica na ponta do ponteiro */
+  regua.style.transform = 'translate(' + (x + 9) + 'px,' + (y - 6) + 'px)';
+}
+
+document.addEventListener('mousemove', function(e){
+  if (!raizAtiv.classList.contains('kmedindo')) return;
+  moverRegua(e.clientX, e.clientY);
+
+  const achado = cromoSob(e.target);
+  if (medidoAtual && (!achado || achado.el !== medidoAtual)){
+    medidoAtual.classList.remove('kmedido');
+    medidoAtual = null;
+  }
+  if (achado){
+    achado.el.classList.add('kmedido');
+    medidoAtual = achado.el;
+    const c = achado.c;
+    const p = Math.round(c.cen * 100);
+    leitura.className = 'kregua-leitura';
+    leitura.innerHTML = '<b>' + Math.round(c.len) + ' u</b>' +
+      '<span>p ' + p + '% · q ' + (100 - p) + '%</span>';
+  } else {
+    leitura.className = 'kregua-leitura kvazia';
+    leitura.innerHTML = '— —';
+  }
+});
+
+document.getElementById('kbtnSom').addEventListener('click', function(){
+  somLigado = !somLigado;
+  this.classList.toggle('kligado', somLigado);
+  this.textContent = somLigado ? '🔊 Som' : '🔇 Som';
+  if (somLigado) tocar('alternar');
+});
+
+document.getElementById('kbtnRegua').addEventListener('click', function(){
+  tocar('alternar');
+  const ligada = raizAtiv.classList.toggle('kmedindo');
+  this.classList.toggle('kligado', ligada);
+  if (!ligada && medidoAtual){ medidoAtual.classList.remove('kmedido'); medidoAtual = null; }
+  if (ligada){
+    leitura.className = 'kregua-leitura kvazia';
+    leitura.innerHTML = '— —';
+  }
+});
 
 })();
 </script>
