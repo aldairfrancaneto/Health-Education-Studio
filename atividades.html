@@ -2166,7 +2166,6 @@
   .srt-tabela tbody tr:nth-child(even){ background:rgba(255,255,255,.04); }
   .srt-tabela .res-part{ color:#9BE0B0; font-weight:700; }
   .srt-tabela .res-aluno{ color:#FFB3BB; font-weight:700; }
-  .srt-tabela .res-prof{ color:#E4C4FF; font-weight:700; }
   .srt-vazia{ padding:18px 14px; text-align:center; color:var(--srt-tinta3); font-size:14.5px; }
 
   @media (max-width:600px){
@@ -3961,9 +3960,9 @@
       <b>MONTAR A TURMA</b> — cada aluno recebe um avatar sorteado. Depois, use
       <b>SORTEAR ALUNO</b> sempre que quiser fazer uma pergunta. O sorteio é
       <b>probabilístico</b>: quem ainda não participou tem peso maior, de modo que a turma
-      inteira acaba sendo chamada sem que o professor precise controlar isso. A cada sorteio há
-      três desfechos possíveis, e todos ficam registrados numa planilha que pode ser
-      baixada no fim da aula.
+      inteira acaba sendo chamada sem que o professor precise controlar isso. O aluno chamado
+      pode <b>participar</b> ou <b>pedir para passar</b> — nos dois casos o desfecho fica
+      registrado numa planilha que pode ser baixada no fim da aula.
     </div>
 
     <!-- ---------- 1. entrada da lista ---------- -->
@@ -7177,8 +7176,7 @@ function iniciarNervoso(){
     dec.className = 'srt-decisao';
     dec.innerHTML =
       '<button class="srt-btn menta" type="button" data-ato="participou">✓ Participou</button>' +
-      '<button class="srt-btn coral" type="button" data-ato="passou">🙋 Pediu para passar</button>' +
-      '<button class="srt-btn uva"   type="button" data-ato="professor">🔁 Sortear outro</button>';
+      '<button class="srt-btn coral" type="button" data-ato="passou">🙋 Pediu para passar</button>';
     srtEl.palco.querySelector('.srt-sorteado').appendChild(dec);
     dec.querySelectorAll('button').forEach(function(b){
       b.addEventListener('click', function(){ srtDecidir(idx, b.dataset.ato); });
@@ -7259,9 +7257,8 @@ function iniciarNervoso(){
 
   /* ---------- desfecho de cada chamada ---------- */
   const SRT_DESFECHOS = {
-    participou: {rotulo:'Participou',                 classe:'res-part'},
-    passou:     {rotulo:'Passou a vez (pedido do aluno)', classe:'res-aluno'},
-    professor:  {rotulo:'Trocado pelo professor',     classe:'res-prof'}
+    participou: {rotulo:'Participou',                     classe:'res-part'},
+    passou:     {rotulo:'Passou a vez (pedido do aluno)', classe:'res-aluno'}
   };
 
   function srtDecidir(idx, ato){
