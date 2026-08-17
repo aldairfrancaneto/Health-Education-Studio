@@ -281,7 +281,7 @@
   .pk-nome{ color:var(--tinta2); }
   .pk-c{ color:#FFC2C8; }  .pk-a{ color:#C3DAFF; }  .pk-r{ color:#E6CBFF; }
 
-  .escala{ margin:18px 0 0; }
+  .escala{ margin:18px 0 0; padding-bottom:26px; }
   .escala-rot{ font-weight:900; font-size:12.5px; letter-spacing:.06em;
     color:var(--tinta3); margin:0 0 4px; }
   .escala-barra{
@@ -289,12 +289,20 @@
     background:linear-gradient(90deg,#FF6B7A,#FFC53D,#3FDD95,#3EDCEF,#5B9BFF);
   }
   .escala-pk{ position:absolute; top:-6px; width:2px; height:46px; background:#0B1A24; }
-  .escala-pk span{ position:absolute; top:-19px; left:50%; transform:translateX(-50%);
-    font-size:11px; font-weight:900; white-space:nowrap; color:var(--tinta); }
+  .escala-pk span{
+    position:absolute; left:50%; transform:translateX(-50%);
+    font-size:11px; font-weight:900; white-space:nowrap; color:var(--tinta);
+    padding:1px 4px; border-radius:4px; background:rgba(18,42,58,.92);
+  }
   .escala-ph{ position:absolute; top:-13px; width:4px; height:60px; background:#fff;
     border-radius:2px; box-shadow:0 0 0 2px rgba(0,0,0,.4); }
-  .escala-ph span{ position:absolute; bottom:-20px; left:50%; transform:translateX(-50%);
-    font-family:var(--pixel); font-size:9px; color:#fff; white-space:nowrap; }
+  /* o rótulo do pH desce abaixo do eixo, para não disputar espaço com
+     as marcas 0 · 7 · 14 */
+  .escala-ph span{
+    position:absolute; bottom:-42px; left:50%; transform:translateX(-50%);
+    font-family:var(--pixel); font-size:9px; color:#0B2028; white-space:nowrap;
+    background:#fff; border-radius:5px; padding:3px 6px;
+  }
   .escala-eixo{ display:flex; justify-content:space-between; font-size:12px; color:var(--tinta3); }
 
   /* ---------------- pI ---------------- */
@@ -805,12 +813,44 @@ function montarPkTab(){
   el.pkTab.innerHTML = h;
 }
 
+/* Distribui os rótulos dos pKa em ALTURAS diferentes quando dois deles
+   ficam perto demais na barra — caso da tirosina (9,11 e 10,07), da
+   lisina (8,95 e 10,53) e do aspartato (1,88 e 3,65), em que os textos
+   se sobrepunham e ficavam ilegíveis. */
+const ALTURA_NIVEL = 17;   /* px entre uma faixa de rótulos e a seguinte */
+
 function montarEscala(){
-  const g = gruposDe(aa).slice().sort(function(a,b){ return a.pk - b.pk; });
-  el.barra.innerHTML = g.map(function(x){
-    return '<div class="escala-pk" style="left:' + (x.pk / 14 * 100) + '%">' +
-           '<span>pK ' + fmt(x.pk) + '</span></div>';
+  const g = gruposDe(aa).slice().sort(function(a, b){ return a.pk - b.pk; });
+
+  /* largura mínima, em unidades de pH, para dois rótulos caberem lado a
+     lado; calculada a partir da largura real da barra na tela */
+  const larg = el.barra.clientWidth || 250;
+  const separacao = 14 * (58 / larg);
+
+  /* estratégia gulosa: cada rótulo vai para a primeira faixa livre */
+  const ultimoDaFaixa = [];
+  const niveis = g.map(function(x){
+    for (let n = 0; n < ultimoDaFaixa.length; n++){
+      if (x.pk - ultimoDaFaixa[n] >= separacao){ ultimoDaFaixa[n] = x.pk; return n; }
+    }
+    ultimoDaFaixa.push(x.pk);
+    return ultimoDaFaixa.length - 1;
+  });
+
+  const totalNiveis = ultimoDaFaixa.length;
+  el.barra.innerHTML = g.map(function(x, i){
+    const n = niveis[i];
+    /* o traço cresce para alcançar o seu próprio rótulo */
+    const alturaTraco = 46 + n * ALTURA_NIVEL;
+    const topoTraco = -6 - n * ALTURA_NIVEL;
+    const topoTexto = -19;
+    return '<div class="escala-pk" style="left:' + (x.pk / 14 * 100) + '%;' +
+             'top:' + topoTraco + 'px;height:' + alturaTraco + 'px">' +
+           '<span style="top:' + topoTexto + 'px">pK ' + fmt(x.pk) + '</span></div>';
   }).join('');
+
+  /* a barra ganha o respiro necessário acima para caber todas as faixas */
+  el.barra.style.marginTop = (22 + (totalNiveis - 1) * ALTURA_NIVEL) + 'px';
 }
 
 function marcarPhNaEscala(ph){
@@ -1152,6 +1192,18 @@ modalCarta.addEventListener('click', function(e){
 });
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') modalCarta.classList.remove('on');
+});
+
+
+/* ==============================================================
+   MENU DE CONTEXTO DESABILITADO
+   Bloqueia o clique direito e o toque longo. Vale como um freio
+   para o uso casual — não impede quem abre o código-fonte ou as
+   ferramentas do navegador.
+   ============================================================== */
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.addEventListener('dragstart', function(e){
+  if (e.target && e.target.tagName === 'IMG') e.preventDefault();
 });
 
 montarSelecao();
