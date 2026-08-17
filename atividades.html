@@ -7545,6 +7545,18 @@ function iniciarNervoso(){
     if (q) q.style.height = (d.ionizacaoAltura + 24) + 'px';
   });
 
+
+  /* ==============================================================
+     MENU DE CONTEXTO DESABILITADO
+     Bloqueia o clique direito e o toque longo. Vale como um freio
+     para o uso casual — não impede quem abre o código-fonte ou as
+     ferramentas do navegador.
+     ============================================================== */
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  document.addEventListener('dragstart', function(e){
+    if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+  });
+
   /* ------------------ lightbox ------------------ */
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lbImg');
