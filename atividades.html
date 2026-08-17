@@ -2178,6 +2178,17 @@
     .srt-decisao .srt-btn{ width:100%; }
   }
 
+
+  /* ============================================================
+     ATIVIDADE 9 — IONIZAÇÃO DE AMINOÁCIDOS
+     O simulador vive em ionizacao.html e entra aqui por iframe: o
+     código dele não pesa nesta página, e a altura do quadro é
+     ajustada pelo próprio simulador via postMessage.
+     ============================================================ */
+  .quadro-ext{
+    width:100%; border:0; display:block; border-radius:14px;
+    background:#122A3A; min-height:640px;
+  }
 </style>
 </head>
 <body>
@@ -2292,6 +2303,12 @@
         <span class="sum-nome">Sorteio da Turma</span>
         <span class="sum-desc">Ferramenta do professor: cada aluno recebe um avatar e o sorteio chama alguém para responder, com peso maior para quem ainda não participou. O registro da aula sai em planilha.</span>
         <span class="sum-tipo">ferramenta de sala</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num">09</span>
+        <span class="sum-nome">Ionização de Aminoácidos</span>
+        <span class="sum-desc">Simulador: para cada valor de pH, o aluno monta a forma do aminoácido escolhendo o estado de cada grupo ionizável, determina a carga líquida e calcula o ponto isoelétrico.</span>
+        <span class="sum-tipo">simulador</span>
       </div>
     </div>
   </div>
@@ -4041,6 +4058,41 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 9 — IONIZAÇÃO DE AMINOÁCIDOS
+       senha: ionizacao
+       O simulador está no arquivo ionizacao.html, ao lado deste, e
+       é carregado aqui dentro por iframe. Mantenha os dois arquivos
+       na MESMA PASTA ao publicar no GitHub Pages.
+       ============================================================ -->
+  <section class="atividade" id="ativ-ionizacao">
+
+    <div class="instrucoes">
+      <b>Como jogar:</b> escolha um aminoácido e veja em quais valores de <b>pH</b> ele será
+      colocado. Para cada situação, decida a forma de cada <b>grupo ionizável</b> — comparando o
+      pH com o <b>pKa</b> daquele grupo — e encaixe-a na molécula: abaixo do pKa o grupo
+      permanece <b>protonado</b>; acima dele, perde o H⁺. Depois informe a <b>carga líquida</b>.
+      Ao fim de todas as situações, calcule o <b>ponto isoelétrico</b>.
+    </div>
+
+    <iframe class="quadro-ext" id="quadroIonizacao" title="Simulador de ionização de aminoácidos"
+      data-src="ionizacao.html" loading="lazy"></iframe>
+
+    <details class="biblio">
+      <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
+      <div class="conteudo">
+        <p>
+          NELSON, David L.; COX, Michael M. <em>Princípios de Bioquímica de Lehninger.</em>
+          7. ed. Porto Alegre: Artmed, 2019. Capítulo 3: Aminoácidos, peptídeos e proteínas.
+        </p>
+        <p style="margin-top:10px;">
+          Os valores de pKa e de ponto isoelétrico seguem a tabela de propriedades dos
+          aminoácidos comuns encontrados em proteínas.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -4081,7 +4133,8 @@
     "organelas": "ativ-organelas",
     "irreversivel": "ativ-morte",
     "cariotipo": "ativ-cariotipo",
-    "sorteio": "ativ-sorteio"
+    "sorteio": "ativ-sorteio",
+    "ionizacao": "ativ-ionizacao"
   };
 
   const portao = document.getElementById('portao');
@@ -4103,6 +4156,7 @@
       if (id === 'ativ-morte') iniciarMorte();
       if (id === 'ativ-cariotipo' && window.iniciarCariotipo) window.iniciarCariotipo();
       if (id === 'ativ-sorteio') iniciarSorteio();
+      if (id === 'ativ-ionizacao') iniciarIonizacao();
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -7472,6 +7526,24 @@ function iniciarNervoso(){
       srtEl.entrada.classList.remove('oculto');
     }
   }
+
+  /* ==============================================================
+     ATIVIDADE 9 — IONIZACAO DE AMINOACIDOS
+     So o involucro: o simulador esta em ionizacao.html. O iframe so
+     recebe o src quando a atividade e aberta, e a altura acompanha o
+     conteudo por postMessage.
+     ============================================================== */
+  function iniciarIonizacao(){
+    const q = document.getElementById('quadroIonizacao');
+    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
+  }
+
+  window.addEventListener('message', function(ev){
+    const d = ev.data;
+    if (!d || typeof d.ionizacaoAltura !== 'number') return;
+    const q = document.getElementById('quadroIonizacao');
+    if (q) q.style.height = (d.ionizacaoAltura + 24) + 'px';
+  });
 
   /* ------------------ lightbox ------------------ */
   const lb = document.getElementById('lightbox');
