@@ -2310,6 +2310,12 @@
         <span class="sum-desc">Simulador: para cada valor de pH, o aluno monta a forma do aminoácido escolhendo o estado de cada grupo ionizável, determina a carga líquida e calcula o ponto isoelétrico.</span>
         <span class="sum-tipo">simulador</span>
       </div>
+      <div class="sum-card">
+        <span class="sum-num">10</span>
+        <span class="sum-nome">Investigação Inflamatória</span>
+        <span class="sum-desc">Plantão de patologia em dez casos: o aluno investiga sinais, mecanismos e padrões da inflamação aguda para fechar cada diagnóstico, com pistas opcionais e laudo de desempenho ao final.</span>
+        <span class="sum-tipo">jogo investigativo</span>
+      </div>
     </div>
   </div>
 
@@ -4093,6 +4099,28 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 10 — INVESTIGAÇÃO INFLAMATÓRIA
+       senha: inflamacao
+       O jogo está no arquivo inflamacao.html, ao lado deste, e é
+       carregado aqui dentro por iframe. Mantenha os arquivos na
+       MESMA PASTA ao publicar no GitHub Pages.
+       ============================================================ -->
+  <section class="atividade" id="ativ-inflamacao">
+
+    <div class="instrucoes">
+      <b>Como jogar:</b> você assume um plantão como <b>residente de patologia</b>. Identifique-se
+      e resolva <b>dez casos</b> sobre inflamação aguda — dos padrões celulares à cascata vascular
+      e aos mediadores químicos. Cada caso só libera o seguinte quando a conclusão está correta.
+      Acertar de primeira vale <b>10 pontos</b>; com ajuda da <b>pista</b>, 5; depois de um erro,
+      nenhum — mas o retorno sempre explica o porquê. No fim sai o <b>laudo do plantão</b> com o
+      seu desempenho caso a caso.
+    </div>
+
+    <iframe class="quadro-ext" id="quadroInflamacao" title="Investigação Inflamatória"
+      data-src="inflamacao.html" loading="lazy"></iframe>
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -4134,7 +4162,8 @@
     "irreversivel": "ativ-morte",
     "cariotipo": "ativ-cariotipo",
     "sorteio": "ativ-sorteio",
-    "ionizacao": "ativ-ionizacao"
+    "ionizacao": "ativ-ionizacao",
+    "inflamacao": "ativ-inflamacao"
   };
 
   const portao = document.getElementById('portao');
@@ -4157,6 +4186,7 @@
       if (id === 'ativ-cariotipo' && window.iniciarCariotipo) window.iniciarCariotipo();
       if (id === 'ativ-sorteio') iniciarSorteio();
       if (id === 'ativ-ionizacao') iniciarIonizacao();
+      if (id === 'ativ-inflamacao') iniciarInflamacao();
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -7538,11 +7568,22 @@ function iniciarNervoso(){
     if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
   }
 
+  function iniciarInflamacao(){
+    const q = document.getElementById('quadroInflamacao');
+    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
+  }
+
   window.addEventListener('message', function(ev){
     const d = ev.data;
-    if (!d || typeof d.ionizacaoAltura !== 'number') return;
-    const q = document.getElementById('quadroIonizacao');
-    if (q) q.style.height = (d.ionizacaoAltura + 24) + 'px';
+    if (!d) return;
+    if (typeof d.ionizacaoAltura === 'number'){
+      const q = document.getElementById('quadroIonizacao');
+      if (q) q.style.height = (d.ionizacaoAltura + 24) + 'px';
+    }
+    if (typeof d.inflamacaoAltura === 'number'){
+      const q = document.getElementById('quadroInflamacao');
+      if (q) q.style.height = (d.inflamacaoAltura + 24) + 'px';
+    }
   });
 
 
