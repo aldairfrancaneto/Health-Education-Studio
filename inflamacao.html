@@ -512,7 +512,7 @@
     <div class="cracha">
       <div class="cracha-foto">
         <div class="cracha-emoji">🩺</div>
-        <span class="cracha-cargo">Residente</span>
+        <span class="cracha-cargo">Médico(a)<br>de plantão</span>
       </div>
       <div>
         <label class="campo-rot" for="nomeJogador">Identifique-se para assumir o plantão</label>
@@ -523,8 +523,8 @@
     </div>
 
     <div class="briefing">
-      <b>Contexto.</b> Você é residente de patologia em um hospital universitário e vai passar
-      a noite de plantão. São <b>três turnos</b> — as primeiras horas, a madrugada e a passagem
+      <b>Contexto.</b> Você é o <b>médico de plantão</b> de um hospital universitário e vai
+      atravessar a noite inteira no pronto-socorro. São <b>três turnos</b> — as primeiras horas, a madrugada e a passagem
       de plantão —, e ao fim de cada um o seu desempenho tem <b>consequência</b>: o que ficou
       sem resolver segue com você para o turno seguinte. Há um paciente no <b>leito 12</b> que
       atravessa a noite inteira, e o caso dele fecha o plantão.<br><br>
@@ -925,7 +925,7 @@ FASES.push(
      'Vasodilatação, com abertura de novos leitos capilares.',
      'Aumento da permeabilidade vascular e saída do exsudato.',
      'Estase sanguínea, com lentificação do fluxo.',
-     'Migração dos leucócitos: marginação, rolamento, adesão e diapedese.',
+     'Marginação, rolamento, adesão e diapedese.',
      'Quimiotaxia: locomoção dirigida pelo gradiente químico.',
      'Fagocitose e destruição do agente agressor.'
    ],
@@ -938,7 +938,7 @@ FASES.push(
 
   {tipo:'erro', titulo:'O Caso Mal Diagnosticado', icone:'🔍',
    rotulo:'Revisão de laudo',
-   cenario:'<p>Um residente do ano anterior deixou este laudo no prontuário. O preceptor ' +
+   cenario:'<p>Um plantonista do turno anterior deixou este laudo no prontuário. O preceptor ' +
      'desconfia do conteúdo e pede que você o revise antes de assinar.</p>',
    desafio:'Toque nas frases que contêm <b>erros conceituais</b>. São <b>quatro</b> — nem tudo ' +
      'o que está escrito está errado.',
@@ -1104,7 +1104,8 @@ const TURNOS = [
      'O pronto-socorro está cheio, e a maior parte do que chega hoje tem a mesma raiz: ' +
      '<b>inflamação aguda</b>.</p>' +
      '<p>Antes de sair, ela aponta para o fim do corredor: <b>leito 12</b> — homem de 45 anos, ' +
-     'diabético, com uma lesão endurecida na nuca. «Chegou há duas horas. O residente anterior ' +
+     'diabético, com uma lesão endurecida na nuca. «Chegou há duas horas. O plantonista ' +
+     'anterior ' +
      'não achou nada demais. Fica de olho.»</p>',
    fechos:{
      bom:'Você fechou as primeiras horas com segurança. Sobrou tempo para reexaminar o leito 12: ' +
