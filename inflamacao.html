@@ -104,7 +104,17 @@
   .hud-item b{ color:var(--sol); }
   .hud-item.nome b{ color:var(--agua); }
 
+  /* relógio de parede: marca o avanço da noite a cada desafio */
+  .relogio{ display:inline-flex; align-items:center; gap:9px; flex:0 0 auto; }
+  .relogio svg{ display:block; }
+  .relogio .digital{
+    font-family:var(--pixel); font-size:11px; line-height:1.7; color:var(--sol);
+  }
+  .relogio.grande{ justify-content:center; margin:0 0 14px; }
+  .relogio.grande .digital{ font-size:15px; }
+
   .turno-cab{ text-align:center; margin:0 0 18px; }
+  .turno-cab .relogio{ display:flex; }
   .turno-hora{
     display:inline-block; font-family:var(--pixel); font-size:10px; line-height:1.8;
     padding:7px 13px; border-radius:20px; color:#2B0A12;
@@ -168,6 +178,29 @@
     display:block; font-weight:900; font-size:12.5px; letter-spacing:.06em;
     text-transform:uppercase; color:var(--agua); margin:0 0 8px;
   }
+  .caso-nome{
+    display:block; font-family:var(--serif); font-weight:900;
+    font-size:27px; line-height:1.15; color:var(--sol); margin:2px 0 12px;
+  }
+  @media (max-width:560px){ .caso-nome{ font-size:23px; } }
+  .regras-tit{
+    font-family:var(--pixel); font-size:15px; line-height:1.6;
+    color:var(--sol); margin:0 0 6px;
+  }
+  .escondido{ display:none !important; }
+  .fala-rev{ margin:0 0 12px; }
+  .fala-rev:last-child{ margin:0; }
+  .cenario .fala-rev > p, .turno-texto .fala-rev > p{ margin:0; }
+  .fala-nova{ animation:falaEntra .34s ease both; }
+  @keyframes falaEntra{ from{ opacity:0; transform:translateY(7px); } to{ opacity:1; transform:none; } }
+  .btn-continuar{
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+    margin:14px 0 2px; padding:8px 15px; border-radius:20px;
+    font-family:var(--pixel); font-size:10px; line-height:1.6;
+    color:var(--sol); background:rgba(255,197,61,.12);
+    border:2px dashed var(--sol); transition:transform .1s, background .15s;
+  }
+  .btn-continuar:hover{ transform:translateY(-2px); background:rgba(255,197,61,.22); }
   .cenario p{ margin:0 0 10px; }
   .cenario p:last-child{ margin:0; }
   .cenario .afirm{ margin:10px 0 0; padding-left:4px; }
@@ -200,6 +233,8 @@
   .op.errada .op-letra{ background:var(--rubro); }
   .op:disabled{ cursor:default; }
   .op.apagada{ opacity:.45; }
+  .op.sel{ border-color:var(--sol); background:rgba(255,197,61,.16); }
+  .op.sel .op-letra{ background:var(--sol); color:#2B2004; }
 
   .pista{
     margin:16px 0 0; border:2px dashed var(--sol); border-radius:14px;
@@ -216,6 +251,7 @@
   .feedback.on{ display:block; }
   .feedback.ok{ background:rgba(30,110,45,.24); border-color:var(--menta); color:#C6F5D6; }
   .feedback.nao{ background:rgba(180,40,36,.22); border-color:var(--rubro); color:#FFD3D8; }
+  .feedback.neutro{ background:rgba(62,220,239,.12); border-color:var(--agua); color:#CFF4FB; }
   .feedback .grande{ display:block; font-size:18px; color:#fff; font-weight:900; margin-bottom:6px; }
 
   /* ---------------- caça-palavras ---------------- */
@@ -444,6 +480,41 @@
   .zoom.on{ display:flex; }
   .zoom img{ max-width:100%; max-height:92vh; border-radius:12px; }
 
+  /* ---------------- decisão clínica ---------------- */
+  .fala{
+    border-left:4px solid var(--sol); padding:4px 0 4px 14px; margin:0 0 12px;
+    font-style:italic; color:#FFE9BC;
+  }
+  .dec-ops{ display:flex; flex-direction:column; gap:11px; }
+  .dec-op{
+    display:flex; gap:12px; align-items:flex-start; text-align:left; cursor:pointer; font:inherit;
+    padding:14px 15px; border-radius:14px; color:var(--tinta); font-size:15.5px; line-height:1.55;
+    border:2px solid var(--linha); background:var(--painel2);
+    transition:transform .1s, border-color .15s, background .15s;
+  }
+  .dec-op:hover:not(:disabled){ transform:translateY(-2px); border-color:var(--sol);
+    background:rgba(255,197,61,.12); }
+  .dec-op > span:last-child{ text-align:justify; hyphens:auto; }
+  .dec-op .letra{
+    flex:0 0 auto; width:28px; height:28px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--pixel); font-size:10px; color:#2B0A12; background:var(--linha);
+  }
+  .dec-op.escolhida{ border-color:var(--agua); background:rgba(62,220,239,.14); }
+  .dec-op.escolhida .letra{ background:var(--agua); }
+  .dec-op.apagada{ opacity:.4; }
+
+  .estado-cx{
+    margin:16px 0 0; border:2px dashed rgba(255,190,200,.4); border-radius:14px;
+    padding:12px 14px; display:flex; flex-wrap:wrap; gap:8px;
+    font-family:var(--pixel); font-size:9px; line-height:1.8;
+  }
+  .estado-cx span{ padding:6px 10px; border-radius:9px; background:rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.18); }
+  .estado-cx .bom, .estado-cx .medio, .estado-cx .ruim{
+    border-color:var(--agua); color:#CFF4FB;
+  }
+
   /* ---------------- laudo final ---------------- */
   .laudo-topo{ text-align:center; margin:0 0 20px; }
   .laudo-selo{ font-size:64px; line-height:1.1; }
@@ -523,14 +594,10 @@
     </div>
 
     <div class="briefing">
-      <b>Contexto.</b> Você é o <b>médico de plantão</b> de um hospital universitário e vai
+      <b>Contexto.</b> Você está de <b>plantão</b> em um hospital universitário e vai
       atravessar a noite inteira no pronto-socorro. São <b>três turnos</b> — as primeiras horas, a madrugada e a passagem
       de plantão —, e ao fim de cada um o seu desempenho tem <b>consequência</b>: o que ficou
-      sem resolver segue com você para o turno seguinte. Há um paciente no <b>leito 12</b> que
-      atravessa a noite inteira, e o caso dele fecha o plantão.<br><br>
-      Cada etapa tem <b>uma única tentativa</b>: errou, o gabarito é revelado e o caso se
-      encerra. O plantão vale <b>1000 pontos</b>, divididos entre as 18 etapas; em cada uma há
-      uma <b>pista</b> disponível, e usá-la reduz o valor daquela etapa à metade.
+      sem resolver segue com você para o turno seguinte.
     </div>
 
     <div class="acoes">
@@ -538,9 +605,24 @@
     </div>
   </div>
 
+  <!-- ============ REGRAS DO PLANTÃO ============ -->
+  <div class="caixa oculto" id="telaRegras">
+    <h2 class="regras-tit">Antes de começar</h2>
+    <div class="briefing">
+      Você assumiu o plantão. Antes do primeiro atendimento, veja como a noite funciona.<br><br>
+      Cada atividade tem <b>uma única tentativa</b>: errou, o gabarito é revelado e demonstra
+      onde está o seu erro. Em cada desafio há uma <b>pista</b> disponível. Usá-la reduz o valor
+      da pontuação à metade.
+    </div>
+    <div class="acoes">
+      <button class="btn principal" id="btnRegras" type="button">→ Iniciar o plantão</button>
+    </div>
+  </div>
+
   <!-- ============ MARCO DE TURNO ============ -->
   <div class="caixa oculto" id="telaTurno">
     <div class="turno-cab">
+      <span class="relogio grande" id="relogioTurno" title="Hora do plantão"></span>
       <span class="turno-hora" id="turnoHora">—</span>
       <span class="turno-nome" id="turnoNome">—</span>
     </div>
@@ -554,6 +636,7 @@
   <!-- ============ PLANTÃO ============ -->
   <div class="caixa oculto" id="telaJogo">
     <div class="hud">
+      <span class="relogio" id="relogio" title="Hora do plantão"></span>
       <span class="hud-item nome" id="hudNome">—</span>
       <span class="hud-item turno" id="hudTurno">TURNO <b>1/3</b></span>
       <span class="hud-item" id="hudFase">CASO <b>1/10</b></span>
@@ -840,39 +923,41 @@ const TERMOS = [
 /* as três atividades finais entram na mesma sequência de fases */
 FASES.push(
   {tipo:'caca', bloco:1, titulo:'O Vocabulário Vascular', icone:'🔤',
-   rotulo:'Laboratório de terminologia',
-   cenario:'<p>Entre um caso e outro, o preceptor deixa sobre a bancada uma grade de letras com ' +
-     'os cinco termos que descrevem a <b>fase vascular</b> da inflamação aguda: as alterações de ' +
-     'calibre e de permeabilidade dos vasos e as suas consequências imediatas sobre o fluxo ' +
-     'sanguíneo e sobre o líquido que sai dele.</p>',
+   rotulo:'Prontuário — evolução incompleta',
+   cenario:'<p>Você procura no prontuário a evolução escrita pelo plantonista anterior. A ' +
+     'anotação está borrada: sobraram letras soltas onde deveriam estar os termos que descrevem ' +
+     '<b>o que aconteceu com o vaso</b> — a alteração de calibre, o líquido que saiu dele, o que ' +
+     'ocorreu ao fluxo e o primeiro movimento dos leucócitos.</p>',
    desafio:'Localize as quatro palavras na grade. Toque na <b>primeira</b> e depois na <b>última</b> ' +
      'letra de cada uma. Todas estão no sentido da leitura: da esquerda para a direita, de cima ' +
      'para baixo ou na diagonal descendente.',
    pista:'Procure primeiro a mais curta (seis letras) e depois a mais longa (treze).',
-   ok:'Vocabulário vascular dominado! Esses cinco termos descrevem, em ordem, o que acontece aos ' +
-     'vasos e ao líquido nos primeiros minutos da inflamação.',
+   ok:'Vocabulário vascular dominado! Esses termos descrevem, em ordem, o que acontece aos vasos ' +
+     'e ao líquido nos primeiros minutos da inflamação.',
    nao:''},
 
   {tipo:'caca', bloco:2, titulo:'O Vocabulário Celular', icone:'🔤',
-   rotulo:'Laboratório de terminologia',
-   cenario:'<p>A segunda grade traz os cinco termos da <b>fase celular</b>: as moléculas de adesão ' +
-     'que prendem o leucócito à parede do vaso, o modo como ele atravessa o endotélio, a bússola ' +
-     'química que o guia no tecido e o mecanismo com que destrói o agressor.</p>',
+   rotulo:'Arquivo do laboratório',
+   cenario:'<p>No arquivo do laboratório, o laudo da biópsia veio com a mesma falha de ' +
+     'impressão. Faltam os quatro termos da <b>fase celular</b>: as duas famílias de moléculas ' +
+     'de adesão que prendem o leucócito à parede do vaso, o modo como ele atravessa o endotélio ' +
+     'e o mecanismo com que destrói o agressor.</p>',
    desafio:'Localize as quatro palavras na grade. Toque na <b>primeira</b> e depois na <b>última</b> ' +
      'letra de cada uma. Todas estão no sentido da leitura: da esquerda para a direita, de cima ' +
      'para baixo ou na diagonal descendente.',
    pista:'Duas delas são famílias de moléculas de adesão e terminam com a mesma sílaba.',
-   ok:'Vocabulário celular dominado! Você percorreu o caminho completo do leucócito: rolamento, ' +
-     'adesão firme, transmigração, quimiotaxia e fagocitose.',
+   ok:'Vocabulário celular dominado! Você percorreu o caminho do leucócito: rolamento pelas ' +
+     'selectinas, adesão firme pelas integrinas, transmigração e fagocitose.',
    nao:''},
 
-  {tipo:'assoc', titulo:'A Bancada dos Conceitos', icone:'🗂️',
-   rotulo:'Revisão final do plantão',
-   cenario:'<p>Antes de fechar o plantão, o preceptor espalha sobre a bancada dez fichas com as ' +
-     'definições dos mecanismos que você investigou a noite inteira — e, ao lado, os cartões com ' +
-     'os nomes de cada um deles. Cabe a você devolver cada cartão à sua ficha.</p>',
-   desafio:'Associe cada <b>cartão</b> com a <b>definição</b> correspondente. Toque num cartão e ' +
-     'depois no espaço da definição certa; para desfazer, toque no cartão já posicionado.',
+  {tipo:'assoc', titulo:'Reconstrução do Caso', icone:'🗂️',
+   rotulo:'Prontuário — anotações fragmentadas',
+   cenario:'<p>Ao reunir o prontuário para a passagem de plantão, você encontra dez anotações ' +
+     'soltas: descrições de mecanismos escritas ao longo da noite, por mãos diferentes, sem ' +
+     'identificação. Para fechar o caso, é preciso devolver cada achado ao mecanismo a que ' +
+     'pertence.</p>',
+   desafio:'Relacione cada <b>achado anotado</b> ao <b>mecanismo</b> correspondente. Toque num ' +
+     'cartão e depois na anotação certa; para desfazer, toque no cartão já posicionado.',
    pista:'Comece pelos que você já viu nos casos: exsudato, estase e fagocitose apareceram ' +
      'explicitamente nas fases anteriores.',
    ok:'Todas as associações corretas! Você fecha o plantão com o vocabulário da inflamação aguda ' +
@@ -884,14 +969,14 @@ FASES.push(
    plantão passou de 10 para 13 etapas */
 /* ---------- as três mecânicas novas ---------- */
 FASES.push(
-  {tipo:'vf', titulo:'Plantão Relâmpago', icone:'⚡',
-   rotulo:'Sala de discussão',
-   cenario:'<p>O preceptor interrompe a passagem de plantão e dispara uma bateria de ' +
-     'afirmações sobre inflamação — algumas verdadeiras, outras com um erro plantado. É o ' +
-     'exercício que ele usa para ver quem realmente entendeu os mecanismos e quem apenas ' +
-     'decorou nomes.</p>',
-   desafio:'Marque cada afirmação como <b>verdadeira</b> ou <b>falsa</b>. Só é possível conferir ' +
-     'depois de julgar todas as seis.',
+  {tipo:'vf', titulo:'Antes de Liberar a Conduta', icone:'⚡',
+   rotulo:'Posto de enfermagem',
+   cenario:'<p>Você apresenta o caso ao preceptor e propõe a sua conduta. Ele ouve até o fim, ' +
+     'apoia-se no balcão e olha para você.</p>' +
+     '<p>«Você está dizendo que isso é <b>inflamação aguda</b>. Então, antes de eu liberar a sua ' +
+     'conduta, quero ver se você entendeu o mecanismo. Julgue estas afirmações para mim.»</p>',
+   desafio:'Julgue cada afirmação do preceptor como <b>verdadeira</b> ou <b>falsa</b>. Ele ' +
+     'espera todas as respostas antes de dizer qualquer coisa.',
    itens:[
      {txt:'A histamina causa vasoconstrição das arteríolas no foco inflamatório.', v:false,
       gab:'Falso: a histamina é vasodilatadora — é ela que produz o calor e o eritema.'},
@@ -912,15 +997,16 @@ FASES.push(
    ],
    pista:'Duas armadilhas clássicas: o efeito vascular da histamina e a diferença entre ' +
      'exsudato e transudato.',
-   ok:'Todas julgadas corretamente! Você distingue o que é mecanismo do que é apenas nome ' +
-     'parecido.',
+   ok:'O preceptor assente e libera a sua conduta: «Pode seguir. Você entendeu o mecanismo, ' +
+     'não apenas o nome.»',
    nao:''},
 
-  {tipo:'ordem', titulo:'A Linha do Tempo da Inflamação', icone:'⏱️',
-   rotulo:'Bancada de estudos',
-   cenario:'<p>O preceptor embaralha as fichas com os eventos da inflamação aguda e pede que ' +
-     'você as reorganize. A ordem não é decorativa: cada evento é condição para o seguinte, e ' +
-     'entender essa dependência é o que permite prever o quadro de um paciente.</p>',
+  {tipo:'ordem', titulo:'Reconstrua os Acontecimentos', icone:'⏱️',
+   rotulo:'Discussão à beira do microscópio',
+   cenario:'<p>«Antes de me dizer o que fazer», interrompe o preceptor, «me diga o que ' +
+     '<b>aconteceu primeiro</b> dentro daquele vaso.» Ele embaralha as fichas sobre a bancada e ' +
+     'espera. A ordem não é decorativa: cada evento é condição para o seguinte, e é isso que ' +
+     'permite prever para onde o quadro caminha.</p>',
    eventos:[
      'Vasodilatação, com abertura de novos leitos capilares.',
      'Aumento da permeabilidade vascular e saída do exsudato.',
@@ -1010,9 +1096,9 @@ const IMG_WP = [
 FASES.push(
   {tipo:'imagem', titulo:'A Lâmina e o Paciente', icone:'🖼️',
    rotulo:'Arquivo de imagens',
-   cenario:'<p>O preceptor projeta quatro imagens do arquivo do serviço: duas lâminas e duas ' +
-     'fotografias clínicas. Reconhecer o achado na imagem é diferente de reconhecê-lo no texto — ' +
-     'é o que se cobra na prática.</p>',
+   cenario:'<p>Você desce ao arquivo e recupera quatro imagens: duas lâminas de casos ' +
+     'semelhantes e duas fotografias clínicas. Antes de decidir qualquer coisa sobre o leito 12, ' +
+     'é preciso saber o que se espera encontrar — na lâmina e no paciente.</p>',
    desafio:'Em cada imagem, marque no banco de respostas <b>todas</b> as características ' +
      'presentes. Há mais de uma correta por imagem, e sobram alternativas que não se aplicam.',
    creditos:'Imagens: <a href="https://webpath.med.utah.edu/INFLHTML/INFLIDX.html#2" ' +
@@ -1065,9 +1151,124 @@ FASES.push(
    ],
    pista:'Duas imagens são histológicas e duas são clínicas: descarte de saída as alternativas ' +
      'que pertencem ao outro tipo de exame.',
-   ok:'Imagens interpretadas! Repare que as duas primeiras mostram, na lâmina, exatamente o que ' +
-     'as duas últimas mostram no paciente: o líquido que sai do vaso é o mesmo que produz a ' +
-     'tumefação visível à inspeção.',
+   ok:'Imagens interpretadas. As duas primeiras mostram, na lâmina, exatamente o que as duas ' +
+     'últimas mostram no paciente: o líquido que sai do vaso é o mesmo que produz a tumefação ' +
+     'visível à inspeção. <b>Agora você sabe o que procurar no leito 12</b> — e é para lá que ' +
+     'você volta.',
+   nao:''}
+);
+
+/* ==================================================================
+   O LEITO 12 — TRÊS CENAS DE DECISÃO
+   Aqui não há alternativa "certa" no sentido do quiz: há condutas
+   melhores e piores, e cada uma altera o estado do paciente, o
+   registro em prontuário e a confiança da equipe. O que se decide às
+   19h muda o que acontece às 2h.
+   ================================================================== */
+FASES.push(
+  {tipo:'decisao', titulo:'Leito 12 — a admissão', icone:'🛏️',
+   rotulo:'19h50 — leito 12', min:1190,
+   cenario:'<p>Você afasta a cortina do <b>leito 12</b>. Um homem de 45 anos, diabético, está ' +
+     'sentado na maca, com a mão na nuca.</p>' +
+     '<p>«Doutor(a), isso aqui começou como uma espinha faz uns quatro dias. Hoje amanheceu bem ' +
+     'maior, e está latejando.»</p>' +
+     '<p>Você se aproxima para examinar.</p>' +
+     '<p>«Pode ver à vontade. Só que dói quando aperta em volta.»</p>' +
+     '<p><i>À palpação, a lesão está endurecida, quente, com um halo avermelhado ao redor. Não ' +
+     'há flutuação perceptível ainda.</i></p>',
+   desafio:'É o primeiro contato com este paciente. O que você faz agora?',
+   opcoes:[
+     {txt:'Examinar a lesão, medir a área endurecida e registrar tudo no prontuário, com ' +
+        'horário.',
+      peso:'cheio',
+      efeito:{acompanhado:true, paciente:'em evolução', confianca:'alta'},
+      retorno:'Você mede, descreve e anota o horário. Parece burocracia — mas é o registro que ' +
+        'permitirá, mais tarde, afirmar que a lesão <b>cresceu</b>, e não apenas que «parece ' +
+        'maior».'},
+     {txt:'Prescrever analgésico, orientar compressa morna e reavaliar quando houver tempo.',
+      peso:'metade',
+      efeito:{acompanhado:false, paciente:'em evolução', confianca:'moderada'},
+      retorno:'A conduta alivia o sintoma e não é errada — mas nada foi registrado. Sem uma ' +
+        'medida inicial, qualquer comparação futura será impressão, não evidência.'},
+     {txt:'Encaminhar ao ambulatório de dermatologia, já que a lesão começou como uma lesão ' +
+        'de pele.',
+      peso:'zero',
+      efeito:{acompanhado:false, paciente:'deteriorando', confianca:'baixa'},
+      retorno:'Em um diabético, uma lesão endurecida e quente que cresce em quatro dias é ' +
+        'problema do plantão, não de ambulatório. A enfermeira registra o encaminhamento sem ' +
+        'comentar — mas o paciente permanece no leito 12.'}
+   ],
+   pista:'Pergunte-se o que você vai querer ter em mãos daqui a algumas horas, se a lesão mudar.',
+   nao:''},
+
+  {tipo:'decisao', titulo:'Leito 12 — a piora', icone:'🛏️',
+   rotulo:'04h05 — leito 12', min:1685,
+   cenario:'<p>A campainha do <b>leito 12</b> toca. «Doutor(a), está doendo muito mais. Parece ' +
+     'que ficou cheio de alguma coisa aqui dentro.»</p>',
+   cenarioSe:{
+     acompanhado:'<p>A enfermeira consulta as suas anotações antes de você pedir: «Você já ' +
+       'examinou essa lesão às 19h50. Ela <b>aumentou</b> desde então — e está mais mole no ' +
+       'centro.»</p>',
+     sozinho:'<p>A enfermeira procura uma anotação anterior, mas não encontra nenhuma. «Não há ' +
+       'registro da evolução», ela diz. Você não tem como afirmar se a lesão cresceu — só o que ' +
+       'o paciente relata.</p>'},
+   desafio:'A lâmina que você acabou de ler mostra o que acontece num foco supurativo: ' +
+     'neutrófilos, exsudato e detritos ocupando o interstício. Com essa evidência em mãos, qual ' +
+     'a conduta agora?',
+   opcoes:[
+     {txt:'Reexaminar imediatamente, procurar flutuação e programar drenagem com coleta para ' +
+        'cultura.',
+      peso:'cheio',
+      efeito:{paciente:'em evolução', confianca:'alta', pista:'flutuação confirmada às 04h05'},
+      retorno:'Há flutuação. Você programa a drenagem e colhe material para cultura <b>antes</b> ' +
+        'do antibiótico — a ordem importa, e é ela que dará o agente etiológico depois.'},
+     {txt:'Iniciar antibiótico sistêmico e reavaliar a lesão pela manhã.',
+      peso:'metade',
+      efeito:{paciente:'deteriorando', confianca:'moderada'},
+      retorno:'O antibiótico é parte do tratamento, mas coleção formada não se resolve só com ' +
+        'antibiótico: sem drenagem, o pus permanece. E, colhido depois da primeira dose, o ' +
+        'material perde valor para a cultura.'},
+     {txt:'Aumentar a analgesia e aguardar a evolução até a passagem de plantão.',
+      peso:'zero',
+      efeito:{paciente:'deteriorando', confianca:'baixa'},
+      retorno:'A dor cede um pouco e o problema continua crescendo por baixo do curativo. Em um ' +
+        'diabético, esperar é a conduta que mais custa caro.'}
+   ],
+   pista:'O que você viu na lâmina — neutrófilos, exsudato, detritos — tem um correlato ' +
+     'macroscópico que precisa ser procurado com a mão.',
+   nao:''},
+
+  {tipo:'decisao', titulo:'Leito 12 — a conduta final', icone:'🛏️',
+   rotulo:'06h40 — leito 12', min:1840,
+   cenario:'<p>Ao retirar o curativo, a lesão apresenta <b>flutuação</b> evidente e drena ' +
+     'secreção purulenta espontaneamente. A equipe da manhã já começa a chegar, e a passagem de ' +
+     'plantão se aproxima.</p>',
+   cenarioSe:{
+     acompanhado:'<p>Você abre o prontuário e tem, em duas linhas, a história inteira: a medida ' +
+       'das 19h50, a flutuação das 04h05 e o quadro de agora. É um caso documentado.</p>',
+     sozinho:'<p>Você abre o prontuário e encontra pouca coisa: o quadro de agora, sem a ' +
+       'evolução que o antecedeu. A história terá de ser reconstruída pela equipe da manhã.</p>'},
+   desafio:'É a sua última decisão sobre este paciente antes da passagem de plantão.',
+   opcoes:[
+     {txt:'Drenar o abscesso agora, manter a antibioticoterapia e entregar o caso documentado à ' +
+        'equipe da manhã.',
+      peso:'cheio',
+      efeito:{paciente:'estável', confianca:'alta'},
+      retorno:'Coleção formada se drena. Você resolve o caso dentro do seu plantão e entrega um ' +
+        'paciente melhor do que o recebeu — que é, no fim, a única medida que importa.'},
+     {txt:'Deixar a drenagem programada para a equipe da manhã, com a descrição do achado.',
+      peso:'metade',
+      efeito:{paciente:'em evolução', confianca:'moderada'},
+      retorno:'A conduta está indicada e descrita, mas adiada. Cada hora com a coleção sob ' +
+        'tensão é mais dor e mais risco de extensão — sobretudo em um diabético.'},
+     {txt:'Trocar o curativo e reforçar o antibiótico, sem drenar.',
+      peso:'zero',
+      efeito:{paciente:'deteriorando', confianca:'baixa'},
+      retorno:'O curativo esconde o problema e o antibiótico não alcança o interior da coleção. ' +
+        'A lesão continuará a evoluir sob o esparadrapo.'}
+   ],
+   pista:'Diante de uma coleção purulenta formada, existe uma conduta que nenhum antibiótico ' +
+     'substitui.',
    nao:''}
 );
 
@@ -1078,12 +1279,15 @@ FASES.push(
    0–9 casos · 10 caça vascular · 11 caça celular · 12 associação ·
    13 verdadeiro/falso · 14 ordenação · 15 caça ao erro */
 (function reordenar(){
-  /* Turno 1 (5) · Turno 2 (7) · Turno 3 (6). A ordem sobe em
-     dificuldade e termina num caso clínico, não numa revisão. */
+  /* Turno 1 (7) · Turno 2 (8) · Turno 3 (6) = 21 etapas.
+     As três cenas do leito 12 (18, 19, 20) abrem, viram e fecham o
+     arco: admissão às 19h50, piora às 04h05 e conduta às 06h40.
+     Na madrugada, a leitura das lâminas (17) vem imediatamente antes
+     da decisão — a evidência serve à conduta, e não ao contrário. */
   const seq = [
-    /* --- primeiras horas --- */   1, 0, 13, 2, 10,
-    /* --- madrugada ---      */   3, 4, 14, 5, 16, 17, 11,
-    /* --- passagem ---       */   6, 12, 7, 15, 8, 9
+    /* --- primeiras horas --- */   1, 18, 0, 13, 2, 10, 3,
+    /* --- madrugada ---      */   4, 14, 5, 16, 17, 19, 11, 6,
+    /* --- passagem ---       */   12, 7, 15, 8, 20, 9
   ];
   const novas = seq.map(function(i){ return FASES[i]; });
   FASES.length = 0;
@@ -1098,43 +1302,40 @@ FASES.push(
    atravessa a noite inteira: o homem do leito 12.
    ================================================================== */
 const TURNOS = [
-  {n:1, nome:'As primeiras horas', hora:'19h — plantão assumido', ini:0, fim:4,
+  {n:1, nome:'As primeiras horas', hora:'19h — plantão assumido', ini:0, fim:6,
+   relogio:{de:19*60, ate:25*60},   /* 19h → 01h */
    abertura:
-     '<p>A enfermeira entrega o quadro de leitos e resume o que ficou do turno da tarde. ' +
-     'O pronto-socorro está cheio, e a maior parte do que chega hoje tem a mesma raiz: ' +
-     '<b>inflamação aguda</b>.</p>' +
-     '<p>Antes de sair, ela aponta para o fim do corredor: <b>leito 12</b> — homem de 45 anos, ' +
-     'diabético, com uma lesão endurecida na nuca. «Chegou há duas horas. O plantonista ' +
-     'anterior ' +
-     'não achou nada demais. Fica de olho.»</p>',
+     '<p>A enfermeira do turno da tarde entrega o quadro de leitos e faz a passagem antes de ir ' +
+     'embora.</p>' +
+     '<p>«O pronto-socorro está cheio hoje, doutor(a). E repare numa coisa: a maior parte do que ' +
+     'chegou tem a mesma raiz — <b>inflamação aguda</b>.»</p>' +
+     '<p>Antes de sair, ela aponta para o fim do corredor.</p>' +
+     '<p>«Só mais uma coisa. No <b>leito 12</b> tem um homem de 45 anos, diabético, com uma ' +
+     'lesão endurecida na nuca. Chegou há duas horas. O plantonista anterior não achou nada ' +
+     'demais… mas fica de olho nele.»</p>',
    fechos:{
-     bom:'Você fechou as primeiras horas com segurança. Sobrou tempo para reexaminar o leito 12: ' +
-       'a lesão está mais quente e começa a amolecer no centro. Você anota a evolução no ' +
-       'prontuário — e a anotação vai fazer diferença mais tarde.',
-     medio:'As primeiras horas passaram sem grandes tropeços, mas algumas conclusões custaram ' +
-       'a sair. Você passa pelo leito 12 de relance: a lesão continua ali, um pouco maior. ' +
-       'Anota «reavaliar» e segue.',
-     ruim:'As primeiras horas foram difíceis e o corredor não esperou. O leito 12 ficou para ' +
-       'depois — e «depois», num plantão, costuma ser tarde. A lesão da nuca segue sem ' +
-       'reavaliação.'}},
+     bom:'Você fechou as primeiras horas com segurança e ainda com o corredor cheio.',
+     medio:'As primeiras horas passaram sem grandes tropeços, mas algumas conclusões custaram a ' +
+       'sair.',
+     ruim:'As primeiras horas foram difíceis e o corredor não esperou.'}},
 
-  {n:2, nome:'A madrugada', hora:'01h — o corredor esvazia', ini:5, fim:11,
+  {n:2, nome:'A madrugada', hora:'01h — o corredor esvazia', ini:7, fim:14,
+   relogio:{de:25*60, ate:30*60},   /* 01h → 06h */
    abertura:
      '<p>O movimento cai e sobra o que é mais difícil: os casos que dependem de laboratório, ' +
      'de lâmina e de raciocínio fino. É a hora em que o preceptor aparece — ele sempre aparece ' +
      'na madrugada — e transforma o descanso em arguição.</p>' +
      '<p>«Enquanto está calmo», ele diz, «me explique o que está acontecendo dentro do vaso.»</p>',
    fechos:{
-     bom:'Você atravessou a madrugada explicando o mecanismo, e não apenas nomeando achados. ' +
-       'O preceptor concorda com a sua leitura das lâminas. No leito 12, a área já flutua ao ' +
-       'toque: há coleção. Você pede o material para cultura antes que o dia comece.',
+     bom:'Você atravessou a madrugada explicando o mecanismo, e não apenas nomeando achados. O ' +
+       'preceptor concorda com a sua leitura das lâminas.',
      medio:'A madrugada rendeu, com hesitações. Algumas lâminas você leu depressa demais, e o ' +
-       'preceptor notou. O leito 12 piorou durante a noite, e a conduta ficou para a manhã.',
-     ruim:'A madrugada foi longa. Faltou método na leitura das lâminas e o preceptor precisou ' +
-       'corrigir mais de uma conclusão. O leito 12 passou a noite sem conduta — e a lesão ' +
-       'avançou.'}},
+       'preceptor notou.',
+     ruim:'A madrugada foi longa. Faltou método na leitura das lâminas, e o preceptor precisou ' +
+       'corrigir mais de uma conclusão.'}},
 
-  {n:3, nome:'A passagem de plantão', hora:'06h — a equipe da manhã chega', ini:12, fim:17,
+  {n:3, nome:'A passagem de plantão', hora:'06h — a equipe da manhã chega', ini:15, fim:20,
+   relogio:{de:30*60, ate:31*60},   /* 06h → 07h */
    abertura:
      '<p>A luz muda no corredor e a equipe da manhã começa a chegar. Antes de entregar o ' +
      'plantão, é preciso revisar o que ficou pendente, conferir laudos e fechar os casos que ' +
@@ -1142,13 +1343,9 @@ const TURNOS = [
      '<p>O último deles é o <b>leito 12</b>. O que era uma lesão endurecida agora tem centro ' +
      'flutuante e drena secreção purulenta. É o seu caso, e ele fecha a noite.</p>',
    fechos:{
-     bom:'Plantão entregue com todos os casos fechados e justificados. O abscesso do leito 12 ' +
-       'foi drenado ainda na sua passagem — e a decisão foi sua, sustentada pelo que você viu ' +
-       'na lâmina e no paciente.',
-     medio:'Plantão entregue. A equipe da manhã herda algumas conclusões para revisar, mas o ' +
-       'essencial do leito 12 foi reconhecido a tempo.',
-     ruim:'Plantão entregue com pendências. O caso do leito 12 chegou à equipe da manhã sem ' +
-       'conduta definida — e o que se perde numa noite, às vezes, não se recupera na seguinte.'}}
+     bom:'Plantão entregue com todos os casos fechados e justificados.',
+     medio:'Plantão entregue. A equipe da manhã herda algumas conclusões para revisar.',
+     ruim:'Plantão entregue com pendências para a equipe da manhã.'}}
 ];
 
 function turnoDaFase(i){
@@ -1176,6 +1373,7 @@ const LETRAS = ['A','B','C','D'];
 /* ---------- estado ---------- */
 const el = {
   telaNome:  document.getElementById('telaNome'),
+  telaRegras:document.getElementById('telaRegras'),
   telaTurno: document.getElementById('telaTurno'),
   telaJogo:  document.getElementById('telaJogo'),
   telaLaudo: document.getElementById('telaLaudo'),
@@ -1196,7 +1394,15 @@ const el = {
 };
 
 let jogador = '', fase = 0, pontos = 0;
+
+/* estados narrativos: mudam com as decisões e são consultados pelas
+   cenas seguintes, pelos fechamentos de turno e pelo laudo */
+let estado = {acompanhado:false, paciente:'estável', confianca:'moderada', pistas:[]};
+function zerarEstado(){
+  estado = {acompanhado:false, paciente:'estável', confianca:'moderada', pistas:[]};
+}
 let usouPista = false, errouNaFase = false, respondida = false;
+let selecaoMC = null;
 let registro = [];
 
 /* ---------- som ---------- */
@@ -1225,6 +1431,84 @@ const som = {
   erro:  function(){ nota(200,150,.10,.045); nota(150,110,.13,.04,.10); },
   fim:   function(){ [523,659,784,1047].forEach(function(f,i){ nota(f,f,.32,.055,i*.11); }); }
 };
+
+/* ==================================================================
+   O RELÓGIO DE PAREDE
+   A noite corre de 19h às 07h. Cada etapa concluída avança o ponteiro
+   dentro da faixa do seu turno, de modo que o relógio sempre bate com
+   a hora anunciada na abertura de cada turno.
+   ================================================================== */
+function minutosDaEtapa(i){
+  const t = turnoDaFase(Math.min(i, FASES.length - 1));
+  const etapasDoTurno = t.fim - t.ini + 1;
+  const passo = (t.relogio.ate - t.relogio.de) / etapasDoTurno;
+  return Math.round(t.relogio.de + (i - t.ini) * passo);
+}
+
+function horaTexto(min){
+  const h = Math.floor(min / 60) % 24, m = Math.round(min % 60);
+  return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+
+/* desenha o relógio: mostrador, marcas de hora e os dois ponteiros */
+function relogioSVG(min, raio){
+  const r = raio || 21;
+  const c = r + 3;
+  const h = (min / 60) % 12, m = min % 60;
+  const angH = (h + m / 60) * 30 - 90;
+  const angM = m * 6 - 90;
+  const ponta = function(ang, comp, larg, cor){
+    const x = c + Math.cos(ang * Math.PI / 180) * comp;
+    const y = c + Math.sin(ang * Math.PI / 180) * comp;
+    return '<line x1="' + c + '" y1="' + c + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) +
+           '" stroke="' + cor + '" stroke-width="' + larg + '" stroke-linecap="round"/>';
+  };
+  let marcas = '';
+  for (let i = 0; i < 12; i++){
+    const a = i * 30 - 90;
+    const r1 = r - (i % 3 === 0 ? 5 : 3), r2 = r - 1.5;
+    marcas += '<line x1="' + (c + Math.cos(a*Math.PI/180)*r1).toFixed(1) +
+              '" y1="' + (c + Math.sin(a*Math.PI/180)*r1).toFixed(1) +
+              '" x2="' + (c + Math.cos(a*Math.PI/180)*r2).toFixed(1) +
+              '" y2="' + (c + Math.sin(a*Math.PI/180)*r2).toFixed(1) +
+              '" stroke="rgba(253,246,244,.55)" stroke-width="' + (i % 3 === 0 ? 1.8 : 1) + '"/>';
+  }
+  /* a noite escurece o mostrador; ao amanhecer, ele clareia */
+  const dia = min >= 6*60 + 24*60 || (min % 1440) >= 6*60 && (min % 1440) < 18*60;
+  const fundo = dia ? '#FFE9BC' : '#241019';
+  const aro = dia ? '#FFC53D' : 'rgba(255,190,200,.55)';
+  return '<svg width="' + (c*2) + '" height="' + (c*2) + '" viewBox="0 0 ' + (c*2) + ' ' + (c*2) + '">' +
+    '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="' + fundo +
+      '" stroke="' + aro + '" stroke-width="2.5"/>' + marcas +
+    ponta(angH, r * 0.52, 2.6, dia ? '#7A4E0A' : '#FDF6F4') +
+    ponta(angM, r * 0.78, 1.8, dia ? '#B4322C' : 'var(--sol)') +
+    '<circle cx="' + c + '" cy="' + c + '" r="1.8" fill="' + (dia ? '#7A4E0A' : 'var(--sol)') + '"/>' +
+  '</svg>';
+}
+
+function pintarRelogio(alvo, min, raio){
+  const el2 = document.getElementById(alvo);
+  if (!el2) return;
+  el2.innerHTML = relogioSVG(min, raio) + '<span class="digital">' + horaTexto(min) + '</span>';
+}
+
+/* ==================================================================
+   REGISTRO DAS RESPOSTAS
+   Cada etapa guarda o que o aluno marcou e o que era correto, item a
+   item — é isso que alimenta a planilha do fim do plantão.
+   ================================================================== */
+let detalheDaFase = [];
+
+function anotar(item, marcou, correta){
+  detalheDaFase.push({
+    item: String(item),
+    marcou: String(marcou),
+    correta: String(correta),
+    ok: String(marcou).trim() === String(correta).trim()
+  });
+}
+
+function semTags(t){ return String(t).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(); }
 
 /* ---------- utilitários ---------- */
 function embaralhar(a){
@@ -1376,7 +1660,7 @@ function montarCaca(f){
 }
 
 /* ---------- desistir do caça-palavras ----------
-   Quem não encontra as cinco palavras não fica preso: pode seguir
+   Quem não encontra todas as palavras não fica preso: pode seguir
    levando só o que achou, com desconto. Sem isso, uma palavra teimosa
    trava o plantão inteiro. */
 function botaoPular(){
@@ -1407,6 +1691,7 @@ function pularCaca(){
   caca.lista.forEach(function(t){
     if (caca.achadas[t.txt]) return;
     faltantes.push(t.rot);
+    anotar('Palavra: ' + t.rot, 'Não encontrou', 'Encontrou');
     revelarPalavra(t.txt);
   });
   pintarListaCaca();
@@ -1484,6 +1769,7 @@ function clicarCelula(r, c, botao){
   if (!alvo){ som.erro(); return; }
 
   caca.achadas[alvo.txt] = true;
+  anotar('Palavra: ' + alvo.rot, 'Encontrou', 'Encontrou');
   celulas.forEach(function(id){
     const p = id.split('-');
     document.querySelector('#cacaGrade .cel[data-r="' + p[0] + '"][data-c="' + p[1] + '"]')
@@ -1535,7 +1821,7 @@ function pintarAssoc(){
     div.className = 'assoc-item';
     div.innerHTML =
       '<div class="assoc-slot' + (posto ? ' cheio' : '') + '" data-i="' + i + '">' +
-        (termo ? termo.rot : 'arraste o cartão') + '</div>' +
+        (termo ? termo.rot : 'toque para posicionar') + '</div>' +
       '<div class="assoc-def">' + d.def + '</div>';
     div.querySelector('.assoc-slot').addEventListener('click', function(){
       if (respondida) return;
@@ -1562,6 +1848,8 @@ function conferirAssoc(){
   assoc.defs.forEach(function(d, i){
     const slot = document.querySelector('.assoc-slot[data-i="' + i + '"]');
     const ok = assoc.postos[i] === d.txt;
+    const escolhido = TERMOS.find(function(t){ return t.txt === assoc.postos[i]; });
+    anotar(d.def.slice(0, 90) + '…', escolhido ? escolhido.rot : '(vazio)', d.rot);
     slot.classList.add(ok ? 'ok' : 'nao');
     if (!ok){
       erros++;
@@ -1626,6 +1914,7 @@ function conferirVF(){
     const ok = vf.resp[i] === it.v;
     d.classList.add(ok ? 'ok' : 'nao');
     if (!ok) erros++;
+    anotar(it.txt, vf.resp[i] ? 'Verdadeiro' : 'Falso', it.v ? 'Verdadeiro' : 'Falso');
     const g = document.createElement('span');
     g.className = 'vf-gab';
     g.innerHTML = (ok ? '✓ ' : '✗ ') + it.gab;
@@ -1687,6 +1976,7 @@ function conferirOrdem(){
     const ok = it.certo === i;
     d.classList.add(ok ? 'ok' : 'nao');
     if (!ok) erros++;
+    anotar((i + 1) + 'ª posição', it.t, FASES[fase].eventos[i]);
   });
   el.ops.querySelectorAll('.ord-seta').forEach(function(b){ b.disabled = true; });
   if (!erros) return concluirAtividade();
@@ -1742,6 +2032,8 @@ function conferirErro(){
     if (fr.erro && marcada){ sp.classList.add('certa'); notas.push('<li>' + fr.pq + '</li>'); }
     else if (fr.erro && !marcada){ sp.classList.add('passou'); faltou++; }
     else if (!fr.erro && marcada){ sobrou++; }
+    anotar(fr.txt, marcada ? 'Marcou como erro' : 'Não marcou',
+           fr.erro ? 'Marcou como erro' : 'Não marcou');
   });
   /* revela o gabarito completo: os erros que passaram ficam em vermelho
      na própria frase, e a explicação de todos eles vem no retorno */
@@ -1823,11 +2115,13 @@ function pintarLupa(){
 
 function conferirLupa(){
   let erros = 0;
+  const nomeCol = function(c){ return c === 'macro' ? 'Macroscópico' : 'Microscópico'; };
   lupa.itens.forEach(function(it){
     const b = el.ops.querySelector('.achado[data-i="' + it.i + '"]');
     const ok = it.posto === it.tipo;
     b.classList.add(ok ? 'ok' : 'nao');
     if (!ok) erros++;
+    anotar(it.txt, nomeCol(it.posto), nomeCol(it.tipo));
   });
   if (erros){
     errouNaFase = true;
@@ -1918,6 +2212,8 @@ function conferirImagem(){
       const marcada = !!imgAtiv.marcadas[k][j];
       b.classList.remove('sel');
       b.disabled = true;
+      anotar('Imagem ' + (k+1) + ' — ' + semTags(o.txt),
+             marcada ? 'Marcou' : 'Não marcou', o.certa ? 'Marcou' : 'Não marcou');
       if (o.certa && marcada){ b.classList.add('ok'); b.querySelector('.marca').textContent = '✓'; }
       else if (o.certa && !marcada){
         b.classList.add('nao'); b.querySelector('.marca').textContent = '!';
@@ -1934,6 +2230,125 @@ function conferirImagem(){
       'corretas e ficaram sem marcar' +
       (faltaram.length ? ':<ul><li>' + faltaram.join('</li><li>') + '</li></ul>' : '.')
     : '');
+}
+
+/* ==================================================================
+   DECISÃO CLÍNICA
+   Não há alternativa "certa" no sentido do quiz: há condutas melhores
+   e piores. Cada uma pontua de modo diferente E altera o estado
+   narrativo, que as cenas seguintes consultam.
+   ================================================================== */
+const PESO_VALOR = {cheio:1, metade:0.5, zero:0};
+const ROTULO_PESO = {cheio:'Conduta adequada', metade:'Conduta parcial', zero:'Conduta inadequada'};
+
+function montarDecisao(f){
+  /* o leito 12 tem hora própria: acerta o relógio para o rótulo da cena */
+  if (f.min != null) pintarRelogio('relogio', f.min);
+  /* o texto da cena muda conforme o que já foi decidido antes */
+  let cena = f.cenario;
+  if (f.cenarioSe) cena += (estado.acompanhado ? f.cenarioSe.acompanhado : f.cenarioSe.sozinho);
+  const cabCena = '<span class="cenario-rot">' + f.rotulo + '</span>' +
+    '<span class="caso-nome">' + f.titulo + '</span>';
+
+  const ops = embaralhar(f.opcoes);
+  el.ops.innerHTML = '<div class="dec-ops">' +
+    ops.map(function(o, i){
+      return '<button class="dec-op" type="button" data-i="' + i + '">' +
+             '<span class="letra">' + LETRAS[i] + '</span><span>' + o.txt + '</span></button>';
+    }).join('') + '</div>';
+
+  let selDec = null;
+  el.ops.querySelectorAll('.dec-op').forEach(function(b, i){
+    b.addEventListener('click', function(){
+      if (respondida) return;
+      selDec = {op:ops[i], b:b};
+      el.ops.querySelectorAll('.dec-op').forEach(function(x){ x.classList.remove('escolhida'); });
+      b.classList.add('escolhida');
+      som.toque();
+      botaoConferir('✓ Confirmar conduta', function(){
+        if (selDec) decidir(selDec.op, selDec.b);
+      });
+    });
+  });
+
+  /* revela a conversa com o paciente frase-a-frase; as condutas só
+     aparecem depois da última fala */
+  if (temDialogo(cena)){
+    el.desafio.classList.add('escondido');
+    el.ops.classList.add('escondido');
+    el.btnPista.disabled = true;
+    revelarFalas(el.cenario, cabCena, dividirFalas(cena), function(){
+      el.desafio.classList.remove('escondido');
+      el.ops.classList.remove('escondido');
+      if (!usouPista) el.btnPista.disabled = false;
+    });
+  } else {
+    el.cenario.innerHTML = cabCena + cena;
+    el.desafio.classList.remove('escondido');
+    el.ops.classList.remove('escondido');
+  }
+}
+
+function decidir(op, botao){
+  if (respondida) return;
+  respondida = true;
+  el.btnPista.disabled = true;
+  el.ops.querySelectorAll('.dec-op').forEach(function(b){
+    b.disabled = true;
+    if (b !== botao) b.classList.add('apagada');
+  });
+  botao.classList.add('escolhida');
+
+  /* aplica o efeito da conduta sobre o estado narrativo */
+  const e = op.efeito || {};
+  if (e.acompanhado !== undefined) estado.acompanhado = e.acompanhado;
+  if (e.paciente) estado.paciente = e.paciente;
+  if (e.confianca) estado.confianca = e.confianca;
+  if (e.pista) estado.pistas.push(e.pista);
+
+  const f = FASES[fase];
+  const valor = valorDaEtapa(fase);
+  const ganho = Math.round(valor * PESO_VALOR[op.peso] * (usouPista ? 0.5 : 1));
+  pontos += ganho;
+  if (op.peso !== 'cheio') errouNaFase = true;
+
+  anotar(semTags(f.desafio), semTags(op.txt), ROTULO_PESO[op.peso]);
+  registro.push({
+    n: fase + 1, titulo: f.titulo,
+    desfecho: ROTULO_PESO[op.peso],
+    pontos: ganho,
+    detalhe: detalheDaFase.slice()
+  });
+
+  el.feedback.className = 'feedback neutro on';
+  el.feedback.innerHTML =
+    '<span class="grande">➜ ' + ROTULO_PESO[op.peso] +
+    ' — +' + ganho + ' pontos</span>' + op.retorno + painelEstado();
+  som.toque();
+
+  const b = document.createElement('button');
+  b.className = 'btn principal'; b.type = 'button';
+  b.textContent = rotuloAvanco();
+  b.addEventListener('click', function(){ som.toque(); avancar(); });
+  el.acoes.innerHTML = '';
+  el.acoes.appendChild(b);
+  atualizarHud();
+  el.feedback.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* como está o leito 12 depois desta decisão */
+function painelEstado(){
+  const cor = {
+    'estável':'bom', 'em evolução':'medio', 'deteriorando':'ruim',
+    'alta':'bom', 'moderada':'medio', 'baixa':'ruim'
+  };
+  return '<div class="estado-cx">' +
+    '<span class="' + cor[estado.paciente] + '">Leito 12: ' + estado.paciente + '</span>' +
+    '<span class="' + cor[estado.confianca] + '">Confiança da equipe: ' + estado.confianca + '</span>' +
+    '<span class="' + (estado.acompanhado ? 'bom' : 'ruim') + '">' +
+      (estado.acompanhado ? 'Evolução registrada em prontuário' : 'Sem registro de evolução') +
+    '</span>' +
+  '</div>';
 }
 
 /* botão de conferir compartilhado pelas atividades de mecânica própria */
@@ -1959,7 +2374,8 @@ function concluirAtividade(extra, ganhoForcado, desfechoForcado, textoForcado){
     n: fase + 1, titulo: f.titulo,
     desfecho: desfechoForcado ||
       (errouNaFase ? 'Concluiu após erro' : (usouPista ? 'Concluiu com pista' : 'Concluiu sem ajuda')),
-    pontos: ganho
+    pontos: ganho,
+    detalhe: detalheDaFase.slice()
   });
   const houveErro = errouNaFase && !textoForcado;
   el.feedback.className = 'feedback ' + (houveErro ? 'nao' : 'ok') + ' on';
@@ -1979,16 +2395,63 @@ function concluirAtividade(extra, ganhoForcado, desfechoForcado, textoForcado){
   el.feedback.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
+/* ==================================================================
+   DIÁLOGO REVELADO FRASE-A-FRASE
+   Quando uma cena traz a fala de um personagem (marcada por «»), o
+   texto é entregue um bloco por vez: o jogador lê e toca em «Continuar»
+   para revelar a próxima fala. Só depois da última é que o desafio e as
+   opções aparecem.
+   ================================================================== */
+function temDialogo(html){ return String(html).indexOf('\u00AB') !== -1; }
+
+function dividirFalas(html){
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const segs = [];
+  Array.prototype.forEach.call(tmp.childNodes, function(node){
+    if (node.nodeType === 1) segs.push(node.outerHTML);
+    else if (node.nodeType === 3 && node.textContent.trim())
+      segs.push('<p>' + node.textContent.trim() + '</p>');
+  });
+  return segs.length ? segs : [html];
+}
+
+function revelarFalas(alvo, cabecalho, segs, aoFim){
+  let i = 0;
+  function pintar(nova){
+    let corpo = '';
+    for (let k = 0; k <= i; k++){
+      corpo += '<div class="fala-rev' + (nova && k === i ? ' fala-nova' : '') + '">' +
+               segs[k] + '</div>';
+    }
+    const fim = (i >= segs.length - 1);
+    const ctrl = fim ? '' :
+      '<button class="btn-continuar" type="button" id="btnFala">▸ Continuar</button>';
+    alvo.innerHTML = cabecalho + corpo + ctrl;
+    if (!fim){
+      document.getElementById('btnFala').addEventListener('click', function(){
+        i++; som.toque(); pintar(true);
+        const nv = alvo.querySelector('.fala-nova');
+        if (nv) nv.scrollIntoView({behavior:'smooth', block:'nearest'});
+      });
+    } else if (aoFim){
+      aoFim();
+    }
+  }
+  pintar(false);
+}
+
 /* ---------- montagem de uma fase ---------- */
 function montarFase(){
   const f = FASES[fase];
   usouPista = false; errouNaFase = false; respondida = false;
+  detalheDaFase = [];
 
   el.faseNum.textContent = 'Fase ' + (fase + 1);
   el.faseTitulo.textContent = f.icone + '  ' + f.titulo;
-  el.cenario.innerHTML = '<span class="cenario-rot">' + f.rotulo + '</span>' + f.cenario;
   el.desafio.innerHTML = f.desafio;
   const tAtual = turnoDaFase(fase);
+  pintarRelogio('relogio', minutosDaEtapa(fase));
   document.getElementById('hudTurno').innerHTML = 'TURNO <b>' + tAtual.n + '/3</b>';
   el.hudFase.innerHTML = (f.tipo ? 'ETAPA <b>' : 'CASO <b>') +
     (fase - tAtual.ini + 1) + '/' + (tAtual.fim - tAtual.ini + 1) + '</b>';
@@ -2002,6 +2465,27 @@ function montarFase(){
   el.btnPista.disabled = false;
   el.btnPista.textContent = '💡 Pedir pista (vale metade)';
 
+  /* cenário (com nome grande no caso clínico); se houver fala de
+     personagem, as frases são reveladas uma a uma antes de liberar o
+     desafio. As decisões tratam o próprio cenário em montarDecisao. */
+  el.desafio.classList.remove('escondido');
+  el.ops.classList.remove('escondido');
+  const nomeGrande = (f.rotulo === 'Cenário clínico')
+    ? '<span class="caso-nome">' + f.titulo + '</span>' : '';
+  const cabCena = '<span class="cenario-rot">' + f.rotulo + '</span>' + nomeGrande;
+  if (f.tipo !== 'decisao' && temDialogo(f.cenario)){
+    el.desafio.classList.add('escondido');
+    el.ops.classList.add('escondido');
+    el.btnPista.disabled = true;
+    revelarFalas(el.cenario, cabCena, dividirFalas(f.cenario), function(){
+      el.desafio.classList.remove('escondido');
+      el.ops.classList.remove('escondido');
+      if (!usouPista) el.btnPista.disabled = false;
+    });
+  } else if (f.tipo !== 'decisao'){
+    el.cenario.innerHTML = cabCena + f.cenario;
+  }
+
   if (f.tipo === 'caca'){ montarCaca(f); atualizarHud(); return; }
   if (f.tipo === 'assoc'){ montarAssoc(); atualizarHud(); return; }
   if (f.tipo === 'vf'){ montarVF(f); atualizarHud(); return; }
@@ -2009,6 +2493,7 @@ function montarFase(){
   if (f.tipo === 'erro'){ montarErro(f); atualizarHud(); return; }
   if (f.tipo === 'lupa'){ montarLupa(f); atualizarHud(); return; }
   if (f.tipo === 'imagem'){ montarImagem(f); atualizarHud(); return; }
+  if (f.tipo === 'decisao'){ montarDecisao(f); atualizarHud(); return; }
 
   /* a alternativa certa é a de índice 0 na escrita; a posição em que
      ela aparece vem da fila balanceada */
@@ -2021,7 +2506,16 @@ function montarFase(){
     b.type = 'button';
     b.innerHTML = '<span class="op-letra">' + LETRAS[i] + '</span><span>' +
                   escapar(op.txt) + '</span>';
-    b.addEventListener('click', function(){ responder(b, op, alternativas); });
+    b.addEventListener('click', function(){
+      if (respondida) return;
+      selecaoMC = {b:b, op:op};
+      el.ops.querySelectorAll('.op').forEach(function(x){ x.classList.remove('sel'); });
+      b.classList.add('sel');
+      som.toque();
+      botaoConferir('✓ Confirmar resposta', function(){
+        if (selecaoMC) responder(selecaoMC.b, selecaoMC.op, alternativas);
+      });
+    });
     el.ops.appendChild(b);
   });
 
@@ -2042,7 +2536,8 @@ function responder(botao, op, todas){
      se encerra sem pontos. Repetir até acertar premiava a insistência,
      e não o raciocínio. */
   respondida = true;
-  el.ops.querySelectorAll('.op').forEach(function(b){ b.disabled = true; });
+  el.acoes.innerHTML = '';
+  el.ops.querySelectorAll('.op').forEach(function(b){ b.disabled = true; b.classList.remove('sel'); });
   el.btnPista.disabled = true;
 
   const botoes = el.ops.querySelectorAll('.op');
@@ -2069,13 +2564,16 @@ function responder(botao, op, todas){
     som.certo();
   }
 
+  anotar(semTags(f.desafio), semTags(op.txt), semTags(todas[iCerta].txt));
+
   pontos += ganho;
   registro.push({
     n: fase + 1,
     titulo: FASES[fase].titulo,
     desfecho: !op.certa ? 'Errou — gabarito revelado'
                         : (usouPista ? 'Acertou com pista' : 'Acertou de primeira'),
-    pontos: ganho
+    pontos: ganho,
+    detalhe: detalheDaFase.slice()
   });
 
   const b = document.createElement('button');
@@ -2118,15 +2616,48 @@ function desempenhoDoTurno(t){
   };
 }
 
+/* o parágrafo sobre o leito 12 é escrito a partir do ESTADO, e não do
+   placar: é a decisão do aluno que determina o que se lê aqui */
+function notaDoLeito12(){
+  const p = estado.paciente, reg = estado.acompanhado;
+  let t = '<br><br><b>Leito 12.</b> ';
+  if (p === 'estável')
+    t += 'O quadro está controlado, e o caso segue documentado.';
+  else if (p === 'em evolução')
+    t += 'A lesão continua evoluindo' + (reg
+      ? ', mas cada mudança está registrada com horário — você poderá comparar.'
+      : ', e não há registro anterior com que comparar.');
+  else
+    t += 'A lesão avançou' + (reg
+      ? ', apesar do acompanhamento.'
+      : ', e ninguém acompanhou de perto: não há uma linha sobre ela no prontuário.');
+  return t;
+}
+
 function mostrarTurno(indiceTurno, turnoQueFechou){
   const t = TURNOS[indiceTurno];
   el.telaJogo.classList.add('oculto');
   el.telaTurno.classList.remove('oculto');
+  pintarRelogio('relogioTurno', t.relogio.de, 30);
   document.getElementById('turnoHora').textContent = t.hora;
   document.getElementById('turnoNome').textContent = 'Turno ' + t.n + ' — ' + t.nome;
-  document.getElementById('turnoTexto').innerHTML = t.abertura;
   document.getElementById('btnTurno').textContent =
     (indiceTurno === 0 ? '→ Assumir o plantão' : '→ Assumir o turno ' + t.n);
+
+  /* quando a abertura é uma fala de personagem, revela frase-a-frase e
+     só libera o botão de assumir o turno após a última */
+  const turnoTxt = document.getElementById('turnoTexto');
+  const acoesTurno = el.telaTurno.querySelector('.acoes');
+  if (temDialogo(t.abertura)){
+    acoesTurno.classList.add('escondido');
+    revelarFalas(turnoTxt, '', dividirFalas(t.abertura), function(){
+      acoesTurno.classList.remove('escondido');
+      acoesTurno.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  } else {
+    acoesTurno.classList.remove('escondido');
+    turnoTxt.innerHTML = t.abertura;
+  }
 
   const cx = document.getElementById('turnoFecho');
   if (turnoQueFechou){
@@ -2138,7 +2669,7 @@ function mostrarTurno(indiceTurno, turnoQueFechou){
         '<span>' + d.perc + '% do turno</span>' +
         '<span>' + d.cheias + ' de ' + d.etapas + ' sem tropeço</span>' +
         (d.zeros ? '<span>' + d.zeros + ' zerada(s)</span>' : '') +
-      '</div>' + turnoQueFechou.fechos[d.faixa] + '</div>';
+      '</div>' + turnoQueFechou.fechos[d.faixa] + notaDoLeito12() + '</div>';
   } else cx.innerHTML = '';
   el.telaTurno.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -2183,6 +2714,16 @@ function mostrarLaudo(){
   const primeiras = registro.filter(function(r){ return r.pontos === 10; }).length;
   const comPista  = registro.filter(function(r){ return r.pontos === 5; }).length;
   const apos      = registro.filter(function(r){ return r.pontos === 0; }).length;
+  const desfecho12 =
+    estado.paciente === 'estável'
+      ? '<b>Leito 12:</b> abscesso drenado dentro do seu plantão, com material colhido e ' +
+        'evolução documentada. O paciente sai da noite melhor do que entrou.'
+      : estado.paciente === 'em evolução'
+      ? '<b>Leito 12:</b> o caso foi reconhecido, mas a conduta definitiva ficou para a equipe ' +
+        'da manhã. A coleção passou mais algumas horas sob tensão.'
+      : '<b>Leito 12:</b> a lesão avançou durante a noite sem conduta definida. O que se perde ' +
+        'num plantão nem sempre se recupera no seguinte.';
+
   document.getElementById('laudoTexto').innerHTML =
     'Plantão encerrado às 07h. Você atravessou os <b>três turnos</b> e concluiu as <b>' +
     FASES.length + ' etapas</b> (' + perc +
@@ -2195,7 +2736,8 @@ function mostrarLaudo(){
       ? 'Boa base construída. Vale retomar os casos em que a pista foi necessária: eles apontam ' +
         'exatamente onde o raciocínio ainda hesita.'
       : 'Vale refazer o plantão revisando os fundamentos: a sequência dos eventos vasculares, a ' +
-        'diferença entre exsudato e transudato e o perfil celular de cada padrão inflamatório.');
+        'diferença entre exsudato e transudato e o perfil celular de cada padrão inflamatório.') +
+    '<br><br>' + desfecho12;
 
   /* o laudo abre com o desempenho de cada turno, antes do detalhe */
   const porTurno = TURNOS.map(function(t){
@@ -2255,6 +2797,29 @@ function gerarPlanilha(){
   h += '<tr><th colspan="4">TOTAL</th><th>' + pontos + ' de ' + maximo + '</th></tr>';
   h += '</table><br>';
 
+  /* ---- respostas item a item ---- */
+  h += '<table><tr><td class="tit" colspan="6">Respostas do aluno, item a item</td></tr></table>';
+  h += '<table><tr><th>Etapa</th><th>Atividade</th><th>Item</th>' +
+       '<th>Resposta do aluno</th><th>Resposta correta</th><th>Resultado</th></tr>';
+  registro.forEach(function(r){
+    (r.detalhe || []).forEach(function(d){
+      h += '<tr>' +
+        '<td>' + r.n + '</td>' +
+        '<td>' + escapar(r.titulo) + '</td>' +
+        '<td>' + escapar(d.item) + '</td>' +
+        '<td>' + escapar(d.marcou) + '</td>' +
+        '<td>' + escapar(d.correta) + '</td>' +
+        '<td style="background:' + (d.ok ? '#D8F3E3' : '#FBDDE0') + '">' +
+          (d.ok ? 'Acertou' : 'Errou') + '</td>' +
+      '</tr>';
+    });
+  });
+  const totItens = registro.reduce(function(a, r){ return a + (r.detalhe || []).length; }, 0);
+  const acertos = registro.reduce(function(a, r){
+    return a + (r.detalhe || []).filter(function(d){ return d.ok; }).length; }, 0);
+  h += '<tr><th colspan="5">ITENS CORRETOS</th><th>' + acertos + ' de ' + totItens + '</th></tr>';
+  h += '</table><br>';
+
   h += '<table><tr><th>Turno</th><th>Pontos</th><th>Aproveitamento</th>' +
        '<th>Etapas sem tropeço</th></tr>';
   TURNOS.forEach(function(t){
@@ -2310,13 +2875,21 @@ function comecar(){
   }
   jogador = nome;
   fase = 0; pontos = 0; registro = [];
+  zerarEstado();
   prepararPosicoes();
   el.telaNome.classList.add('oculto');
   el.telaLaudo.classList.add('oculto');
-  mostrarTurno(0, null);
+  el.telaRegras.classList.remove('oculto');
   som.toque();
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+document.getElementById('btnRegras').addEventListener('click', function(){
+  el.telaRegras.classList.add('oculto');
+  mostrarTurno(0, null);
+  som.toque();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
 
 document.getElementById('btnComecar').addEventListener('click', comecar);
 el.nome.addEventListener('keydown', function(e){ if (e.key === 'Enter') comecar(); });
@@ -2324,6 +2897,7 @@ el.nome.addEventListener('keydown', function(e){ if (e.key === 'Enter') comecar(
 document.getElementById('btnRepetir').addEventListener('click', function(){
   el.telaLaudo.classList.add('oculto');
   el.telaTurno.classList.add('oculto');
+  el.telaRegras.classList.add('oculto');
   el.telaNome.classList.remove('oculto');
   el.nome.value = jogador;
   som.toque();
