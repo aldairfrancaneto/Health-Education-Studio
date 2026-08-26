@@ -2319,6 +2319,12 @@
         <span class="sum-desc">A <b>Investigação Inflamatória</b> transcorre ao longo de um plantão dividido em três turnos. Casos clínicos, lâminas, imagens e revisões de laudo conduzem o aluno pelos mecanismos da inflamação aguda. O desempenho obtido em cada turno repercute no seguinte, e o laudo final pode ser exportado em planilha.</span>
         <span class="sum-tipo">jogo investigativo</span>
       </div>
+      <div class="sum-card">
+        <span class="sum-num">11</span>
+        <span class="sum-nome">CSI Genética: O Mistério da Herança</span>
+        <span class="sum-desc">Em <b>CSI Genética: O Mistério da Herança</b>, a turma conduz uma investigação colaborativa de vínculo biológico (Caso 0147). O professor projeta os desafios como Pesquisador Principal e os alunos participam como Pesquisadores Auxiliares, decidindo em equipe cada etapa sobre cadeia de custódia, marcadores STR, PCR, eletroforese e interpretação de perfis.</span>
+        <span class="sum-tipo">jogo investigativo colaborativo</span>
+      </div>
     </div>
   </div>
 
@@ -4124,6 +4130,32 @@
   </section>
 
   <!-- ============================================================
+       ATIVIDADE 11 — CSI GENÉTICA: O MISTÉRIO DA HERANÇA
+       senha: polimerase
+       O jogo está no arquivo csi-genetica-caso0147.html, ao lado
+       deste, e é carregado aqui dentro por iframe. Mantenha os
+       arquivos na MESMA PASTA ao publicar no GitHub Pages.
+       Obs.: este jogo NÃO ajusta a própria altura por postMessage,
+       então o iframe recebe uma altura alta e fixa (o conteúdo já é
+       responsivo e rola dentro do quadro, se necessário).
+       ============================================================ -->
+  <section class="atividade" id="ativ-csi">
+
+    <div class="instrucoes">
+      <b>Como jogar:</b> esta é uma investigação <b>colaborativa</b>. O professor abre o modo
+      <b>Pesquisador Principal</b> no computador projetado e conduz o Caso 0147; os alunos
+      abrem o modo <b>Pesquisador Auxiliar</b> nos próprios aparelhos. A turma discute cada
+      desafio olhando a tela, decide a alternativa em equipe, converte a letra em um
+      <b>código</b> na Central de Decisão e informa apenas esse código ao professor, que o
+      digita para revelar o resultado. Cada aluno pode abrir esta mesma atividade com a senha
+      <b>polimerase</b> para acessar a Central de Decisão.
+    </div>
+
+    <iframe class="quadro-ext" id="quadroCsi" title="CSI Genética: O Mistério da Herança"
+      data-src="csi-genetica-caso0147.html" loading="lazy" style="min-height:88vh;"></iframe>
+  </section>
+
+  <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
 
        <section class="atividade" id="ativ-exemplo">
@@ -4166,7 +4198,8 @@
     "cariotipo": "ativ-cariotipo",
     "sorteio": "ativ-sorteio",
     "ionizacao": "ativ-ionizacao",
-    "inflamacao": "ativ-inflamacao"
+    "inflamacao": "ativ-inflamacao",
+    "polimerase": "ativ-csi"
   };
 
   const portao = document.getElementById('portao');
@@ -4190,6 +4223,7 @@
       if (id === 'ativ-sorteio') iniciarSorteio();
       if (id === 'ativ-ionizacao') iniciarIonizacao();
       if (id === 'ativ-inflamacao') iniciarInflamacao();
+      if (id === 'ativ-csi') iniciarCsi();
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -7576,6 +7610,14 @@ function iniciarNervoso(){
     if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
   }
 
+  /* ATIVIDADE 11 — CSI GENÉTICA: O MISTÉRIO DA HERANÇA
+     Só o invólucro: o jogo está em csi-genetica-caso0147.html. O
+     iframe só recebe o src quando a atividade é aberta. */
+  function iniciarCsi(){
+    const q = document.getElementById('quadroCsi');
+    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
+  }
+
   window.addEventListener('message', function(ev){
     const d = ev.data;
     if (!d) return;
@@ -7586,6 +7628,11 @@ function iniciarNervoso(){
     if (typeof d.inflamacaoAltura === 'number'){
       const q = document.getElementById('quadroInflamacao');
       if (q) q.style.height = (d.inflamacaoAltura + 24) + 'px';
+    }
+    /* Caso o jogo passe a emitir a própria altura, este handler já a aplica. */
+    if (typeof d.csiAltura === 'number'){
+      const q = document.getElementById('quadroCsi');
+      if (q) q.style.height = (d.csiAltura + 24) + 'px';
     }
   });
 
