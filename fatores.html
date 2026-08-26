@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes, maximum-scale=5.0">
+<title>A Trilha das Evidências — Fatores do Envelhecimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-pixel:'Press Start 2P',monospace;
+  --font-body:'Baloo 2',sans-serif;
+}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0; background:#0A1424; color:#fff;
+  font-family:var(--font-body); font-weight:600; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.pagina{ max-width:900px; margin:0 auto; padding:14px; }
+  /* ================================================================
+     ATIVIDADE 2 — A TRILHA DAS EVIDÊNCIAS
+     Visual de aventura 16-bit (pergaminho, madeira e ouro).
+     Todas as classes começam com "lab-" para não conflitar com o
+     resto do site.
+     ================================================================ */
+  #ativ-fatores,
+  #ativ-nervoso{
+  /* ---- paleta da aventura ---- */
+  /* céu de crepúsculo sobre o mar — base fria e profunda */
+    /* céu de crepúsculo sobre o mar — base fria e profunda */
+    --noite:#123A4E;      --noite-2:#1B5C74;   --noite-3:#0A2534;
+    --turq:#26A9AF;       --turq-claro:#6FDCDA; --turq-esc:#13727A;
+    /* pergaminho quente */
+    --perg:#FBF1DA;       --perg-2:#F3E2BC;     --perg-som:#DCC391;
+    /* madeira mais avermelhada e viva, sem lama */
+    --mad:#8C5230;        --mad-esc:#553019;    --mad-claro:#B8703F;
+    --ouro:#F5C65C;       --ouro-esc:#C08F26;   --ouro-luz:#FFEDB8;
+    --esm:#43A85E;        --esm-claro:#74CE84;  --esm-esc:#2C7A42;
+    --rubi:#D65A46;       --rubi-claro:#EC7E6B; --rubi-esc:#9C3527;
+    --ameixa:#7B5199;     --ameixa-claro:#9E74BC; --ameixa-esc:#553369;
+    --tinta:#3B2716;      --tinta-fraca:#7E6142;
+  }
+
+  /* ---------- o "cenário" que envolve a atividade ---------- */
+  .lab-mundo{
+    position:relative; border-radius:16px; overflow:hidden;
+    border:5px solid var(--mad-esc);
+    box-shadow:0 0 0 3px var(--mad), 10px 10px 0 rgba(0,0,0,.28);
+    background:
+      radial-gradient(900px 420px at 50% 0%, rgba(92,214,222,.16), transparent 65%),
+      radial-gradient(600px 300px at 12% 100%, rgba(31,165,181,.14), transparent 70%),
+      linear-gradient(180deg, var(--noite-2) 0%, var(--noite) 55%, var(--noite-3) 100%);
+    padding:24px 20px 28px; margin:0 0 24px;
+  }
+  /* estrelinhas do céu */
+  .lab-mundo::before{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:
+      radial-gradient(2px 2px at 12% 14%, #fff, transparent),
+      radial-gradient(2px 2px at 78% 9%, #fff, transparent),
+      radial-gradient(2px 2px at 34% 26%, var(--turq-claro), transparent),
+      radial-gradient(2px 2px at 63% 20%, #fff, transparent),
+      radial-gradient(2px 2px at 90% 32%, var(--ouro-luz), transparent),
+      radial-gradient(2px 2px at 22% 40%, #fff, transparent);
+  }
+  .lab-mundo > *{ position:relative; z-index:1; }
+
+  /* ---------- painéis de pergaminho ---------- */
+  .lab-painel{
+    background:
+      repeating-linear-gradient(0deg, rgba(122,74,34,.035) 0 2px, transparent 2px 5px),
+      linear-gradient(160deg, var(--perg) 0%, var(--perg-2) 100%);
+    border:4px solid var(--mad-esc); border-radius:14px;
+    box-shadow:inset 0 0 40px rgba(160,110,50,.20), 6px 6px 0 rgba(0,0,0,.30);
+    padding:24px 24px 28px; margin:0 0 18px; color:var(--tinta);
+    font-family:var(--font-body);
+  }
+  .lab-tela{ display:none; }
+  .lab-tela.on{ display:block; animation:labEntra .45s ease; }
+  @keyframes labEntra{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+  /* ---------- cabeçalho com brasão ---------- */
+  .lab-topo{ display:flex; align-items:center; gap:14px; margin:0 0 18px; }
+  .lab-ico{
+    width:52px; height:52px; flex:0 0 52px; border-radius:12px;
+    background:linear-gradient(150deg, var(--ouro-luz), var(--ouro) 45%, var(--ouro-esc));
+    border:3px solid var(--mad-esc);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.55), 3px 3px 0 rgba(0,0,0,.25);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lab-ico svg{ width:27px; height:27px; fill:none; stroke:var(--mad-esc); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .lab-h{
+    font-family:var(--font-pixel); font-size:clamp(13px,2.1vw,17px); line-height:1.55;
+    color:var(--mad-esc); margin:0;
+    text-shadow:1px 1px 0 var(--ouro-luz);
+  }
+  .lab-sub{ color:var(--tinta-fraca); font-size:15px; margin:6px 0 0; font-weight:600; }
+  .lab-p{ font-size:16.5px; line-height:1.7; margin:0 0 14px; text-align:justify; color:var(--tinta); }
+  .lab-p b{ color:var(--mad-esc); background:rgba(242,193,78,.35); padding:0 3px; border-radius:3px; }
+
+  /* ---------- botões de aventura ---------- */
+  .lab-btn{
+    font-family:var(--font-pixel); font-size:11.5px; line-height:1.5;
+    padding:15px 22px; border-radius:9px; cursor:pointer;
+    border:3px solid var(--mad-esc); color:#fff;
+    background:linear-gradient(180deg, var(--esm-claro), var(--esm) 55%, var(--esm-esc));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.35), 0 6px 0 var(--mad-esc);
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    text-shadow:1px 1px 0 rgba(0,0,0,.35);
+    transition:transform .1s, box-shadow .1s, filter .15s;
+  }
+  .lab-btn:hover{ filter:brightness(1.1); }
+  .lab-btn:active{ transform:translateY(4px); box-shadow:inset 0 2px 0 rgba(255,255,255,.3), 0 2px 0 var(--mad-esc); }
+  .lab-btn.azul{ background:linear-gradient(180deg, var(--turq-claro), var(--turq) 55%, var(--turq-esc)); }
+  .lab-btn.sec{
+    background:linear-gradient(180deg, var(--perg), var(--perg-2) 60%, var(--perg-som));
+    color:var(--mad-esc); text-shadow:1px 1px 0 rgba(255,255,255,.6);
+  }
+  .lab-btn[disabled]{ opacity:.5; cursor:not-allowed; filter:grayscale(.55); }
+  .lab-btn[disabled]:active{ transform:none; box-shadow:inset 0 2px 0 rgba(255,255,255,.35), 0 6px 0 var(--mad-esc); }
+  .lab-btn svg{ width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .lab-acoes{ display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; }
+
+  /* ---------- campos ---------- */
+  .lab-campo{ margin:0 0 16px; }
+  .lab-campo label{
+    display:block; font-family:var(--font-pixel); font-size:10px;
+    color:var(--mad-esc); margin:0 0 9px; letter-spacing:.03em;
+  }
+  .lab-campo input{
+    width:100%; font-family:var(--font-body); font-weight:700; font-size:17px;
+    padding:14px 16px; border:3px solid var(--mad); border-radius:10px;
+    background:#FFFDF6; color:var(--tinta);
+    box-shadow:inset 2px 2px 0 rgba(122,74,34,.13);
+  }
+  .lab-campo input:focus{ outline:none; border-color:var(--turq); box-shadow:inset 2px 2px 0 rgba(31,165,181,.15), 0 0 0 3px rgba(92,214,222,.35); }
+
+  /* ---------- barra de progresso (trilha) ---------- */
+  .lab-prog-topo{ display:flex; justify-content:space-between; align-items:baseline; margin:0 0 9px; gap:10px; }
+  .lab-prog-txt{
+    font-family:var(--font-pixel); font-size:10px; color:var(--mad-esc);
+    text-shadow:1px 1px 0 rgba(255,255,255,.55);
+  }
+  .lab-prog-pct{
+    font-family:var(--font-pixel); font-size:10px; color:var(--turq-esc);
+    text-shadow:1px 1px 0 rgba(255,255,255,.55);
+  }
+  .lab-prog{
+    height:16px; border:3px solid var(--mad-esc); border-radius:99px; overflow:hidden;
+    background:var(--noite-3); box-shadow:inset 0 2px 6px rgba(0,0,0,.5); margin:0 0 20px;
+  }
+  .lab-prog i{
+    display:block; height:100%; width:0; border-radius:99px;
+    background:linear-gradient(90deg, var(--turq), var(--esm-claro) 55%, var(--ouro));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.4);
+    transition:width .55s cubic-bezier(.2,.8,.3,1);
+  }
+
+  /* ---------- placar (placas de madeira) ---------- */
+  .lab-placar{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:0 0 18px; }
+  .lab-jog{
+    background:linear-gradient(180deg, #1D6076, #14455A 65%, #0E3547);
+    border:3px solid var(--turq-esc); border-radius:12px; padding:12px 14px;
+    box-shadow:inset 0 2px 0 rgba(111,220,218,.28), 3px 3px 0 rgba(0,0,0,.26);
+    transition:transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .lab-jog.lider{
+    background:linear-gradient(180deg, var(--ouro-luz), var(--ouro) 55%, var(--ouro-esc));
+    border-color:var(--ouro-esc);
+    transform:translateY(-3px);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.55), 4px 6px 0 rgba(0,0,0,.28), 0 0 22px rgba(245,198,92,.4);
+  }
+  .lab-jog-nome{
+    font-family:var(--font-pixel); font-size:9.5px; color:#EAF9F8; line-height:1.6;
+    display:flex; align-items:center; gap:7px; text-shadow:1px 1px 0 rgba(0,0,0,.5);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .lab-jog.lider .lab-jog-nome{ color:#5A3D0A; text-shadow:1px 1px 0 rgba(255,255,255,.55); }
+  .lab-jog-pts{
+    font-family:var(--font-pixel); font-size:20px; color:var(--ouro-luz); margin-top:8px;
+    text-shadow:2px 2px 0 rgba(0,0,0,.42); display:flex; align-items:center; gap:8px;
+  }
+  .lab-jog.lider .lab-jog-pts{ color:#5A3D0A; text-shadow:1px 1px 0 rgba(255,255,255,.55); }
+  .lab-jog-pts small{ font-family:var(--font-body); font-size:12.5px; font-weight:700; opacity:.85; }
+  /* moedinha */
+  .lab-jog-pts::before{
+    content:""; width:17px; height:17px; border-radius:50%; flex:0 0 17px;
+    background:radial-gradient(circle at 35% 30%, var(--ouro-luz), var(--ouro) 55%, var(--ouro-esc));
+    border:2px solid rgba(90,61,10,.75);
+  }
+  .lab-coroa{ font-size:14px; }
+
+  /* ---------- papéis (estandartes) ---------- */
+  .lab-papeis{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:0 0 20px; }
+  .lab-papel{
+    border-radius:12px; padding:12px 15px; border:3px solid var(--mad-esc);
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.25), 3px 3px 0 rgba(0,0,0,.25);
+  }
+  .lab-papel.leitor{
+    background:linear-gradient(180deg, var(--ameixa-claro), var(--ameixa) 58%, var(--ameixa-esc));
+    border-color:var(--ameixa-esc); color:#fff;
+  }
+  .lab-papel.resp{
+    background:linear-gradient(180deg, #2A9AA2, #14757E 58%, #0B535C);
+    border-color:#083F47; color:#fff;
+  }
+  .lab-papel.resp .lab-papel-rot{ color:#BFF2F0; opacity:1; }
+  .lab-papel.resp .lab-papel-nome{ color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,.45); }
+  .lab-papel-rot{
+    font-family:var(--font-pixel); font-size:8.5px; letter-spacing:.05em;
+    display:flex; align-items:center; gap:7px; margin-bottom:8px;
+    text-shadow:1px 1px 0 rgba(0,0,0,.4); opacity:.95;
+  }
+  .lab-papel-nome{
+    font-family:var(--font-pixel); font-size:11px; line-height:1.5;
+    text-shadow:1px 1px 0 rgba(0,0,0,.45);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .lab-papel svg{ width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.4; }
+
+  /* ---------- afirmativa (pergaminho aberto) ---------- */
+  .lab-afirm{
+    background:
+      repeating-linear-gradient(0deg, rgba(122,74,34,.05) 0 2px, transparent 2px 6px),
+      linear-gradient(160deg, #FFFBEF, var(--perg) 100%);
+    border:3px solid var(--mad); border-left:9px solid var(--ouro);
+    border-radius:12px; padding:20px 22px; margin:0 0 18px;
+    box-shadow:inset 0 0 30px rgba(160,110,50,.16), 3px 3px 0 rgba(0,0,0,.22);
+  }
+  .lab-afirm-rot{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.05em;
+    color:var(--mad); margin:0 0 12px;
+  }
+  .lab-afirm-txt{
+    font-size:clamp(16px,2.1vw,18.5px); line-height:1.7; text-align:justify;
+    margin:0; font-weight:600; color:var(--tinta);
+  }
+
+  /* ---------- painel do leitor (pergaminho selado) ---------- */
+  .lab-leitor{
+    border:3px dashed var(--ouro-esc); border-radius:12px; margin:0 0 18px;
+    overflow:hidden; background:linear-gradient(180deg, #FFF7E2, #F6E6BE);
+    box-shadow:3px 3px 0 rgba(0,0,0,.2);
+  }
+  .lab-leitor > summary{
+    cursor:pointer; list-style:none; padding:14px 16px;
+    font-family:var(--font-pixel); font-size:9.5px; color:var(--mad-esc);
+    display:flex; align-items:center; gap:10px; line-height:1.6;
+  }
+  .lab-leitor > summary::-webkit-details-marker{ display:none; }
+  .lab-leitor > summary::after{ content:"▸"; margin-left:auto; font-size:13px; transition:transform .2s; }
+  .lab-leitor[open] > summary::after{ transform:rotate(90deg); }
+  .lab-leitor > summary:hover{ background:rgba(242,193,78,.35); }
+  .lab-leitor svg{ width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2.4; }
+  .lab-leitor:not([open]) .lab-leitor-int{ display:none; }
+  .lab-leitor-int{ padding:6px 16px 18px; border-top:2px dashed rgba(193,145,43,.55); }
+  .lab-aviso{
+    font-size:13px; color:var(--rubi-esc); margin:12px 0 14px; font-weight:700;
+    background:rgba(209,70,56,.10); border-left:4px solid var(--rubi);
+    padding:8px 11px; border-radius:0 7px 7px 0;
+  }
+  .lab-codigos{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 14px; }
+  .lab-cod{ border-radius:10px; padding:12px; text-align:center; border:3px solid; box-shadow:2px 2px 0 rgba(0,0,0,.18); }
+  .lab-cod.v{ background:linear-gradient(180deg,#E4F7E6,#CDEFD2); border-color:var(--esm-esc); }
+  .lab-cod.f{ background:linear-gradient(180deg,#FCE7E4,#F7D2CD); border-color:var(--rubi-esc); }
+  .lab-cod-rot{ font-family:var(--font-pixel); font-size:8px; letter-spacing:.05em; color:var(--tinta-fraca); }
+  .lab-cod-val{ font-family:var(--font-pixel); font-size:17px; margin-top:9px; letter-spacing:.06em; }
+  .lab-cod.v .lab-cod-val{ color:var(--esm-esc); text-shadow:1px 1px 0 rgba(255,255,255,.7); }
+  .lab-cod.f .lab-cod-val{ color:var(--rubi-esc); text-shadow:1px 1px 0 rgba(255,255,255,.7); }
+  .lab-gab{ font-size:15px; line-height:1.65; text-align:justify; color:var(--tinta); }
+  .lab-gab b{ color:var(--mad-esc); }
+
+  /* ---------- entrada do código ---------- */
+  .lab-entrada{ display:flex; gap:14px; flex-wrap:wrap; align-items:stretch; }
+  .lab-entrada input{
+    flex:1; min-width:150px; font-family:var(--font-pixel); font-size:15px; letter-spacing:.1em;
+    text-transform:uppercase; text-align:center;
+    padding:16px 14px; border:3px solid var(--mad); border-radius:10px;
+    background:#FFFDF6; color:var(--mad-esc);
+    box-shadow:inset 2px 2px 0 rgba(122,74,34,.13);
+  }
+  .lab-entrada input:focus{ outline:none; border-color:var(--turq); box-shadow:inset 2px 2px 0 rgba(31,165,181,.15), 0 0 0 3px rgba(92,214,222,.35); }
+  .lab-dica{ font-size:14px; color:var(--tinta-fraca); margin:12px 0 0; font-weight:600; }
+
+  /* ---------- feedback ---------- */
+  .lab-fb{ display:none; border-radius:12px; padding:20px 22px; margin:18px 0 0; border:3px solid; }
+  .lab-fb.on{ display:block; animation:labPop .45s cubic-bezier(.2,1.3,.4,1); }
+  @keyframes labPop{ from{opacity:0; transform:scale(.93);} to{opacity:1; transform:scale(1);} }
+  .lab-fb.acerto{ background:linear-gradient(180deg,#E7F8E9,#D2EFD6); border-color:var(--esm-esc); }
+  .lab-fb.erro{ background:linear-gradient(180deg,#FCE9E6,#F6D4CE); border-color:var(--rubi-esc); }
+  .lab-fb-cab{ display:flex; align-items:center; gap:13px; margin:0 0 14px; }
+  .lab-fb-sel{
+    width:46px; height:46px; border-radius:11px; flex:0 0 46px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:25px; color:#fff; border:3px solid var(--mad-esc);
+    text-shadow:1px 1px 0 rgba(0,0,0,.35);
+  }
+  .lab-fb.acerto .lab-fb-sel{ background:linear-gradient(180deg,var(--esm-claro),var(--esm-esc)); animation:labSelo .5s cubic-bezier(.2,1.4,.4,1); }
+  .lab-fb.erro .lab-fb-sel{ background:linear-gradient(180deg,var(--rubi-claro),var(--rubi-esc)); animation:labTrema .5s; }
+  @keyframes labSelo{ 0%{transform:scale(0) rotate(-90deg);} 100%{transform:scale(1) rotate(0);} }
+  @keyframes labTrema{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+  .lab-fb-tit{ font-family:var(--font-pixel); font-size:14px; margin:0; line-height:1.5; }
+  .lab-fb.acerto .lab-fb-tit{ color:var(--esm-esc); text-shadow:1px 1px 0 rgba(255,255,255,.6); }
+  .lab-fb.erro .lab-fb-tit{ color:var(--rubi-esc); text-shadow:1px 1px 0 rgba(255,255,255,.6); }
+  .lab-fb-resp{ font-size:15px; font-weight:700; margin:0 0 11px; color:var(--tinta); }
+  .lab-fb-just{ font-size:15px; line-height:1.7; text-align:justify; margin:0 0 18px; color:var(--tinta); }
+
+  /* ---------- final ---------- */
+  .lab-medalha{ font-size:62px; text-align:center; line-height:1; margin:0 0 8px; }
+  .lab-campeao{
+    background:linear-gradient(180deg, var(--ouro-luz), var(--ouro) 60%, var(--ouro-esc));
+    border:4px solid var(--mad-esc); border-radius:14px; padding:22px;
+    text-align:center; margin:0 0 20px;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.5), 5px 5px 0 rgba(0,0,0,.25);
+  }
+  .lab-campeao-rot{ font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em; color:var(--mad-esc); opacity:.85; }
+  .lab-campeao-nome{
+    font-family:var(--font-pixel); font-size:clamp(13px,2.4vw,19px); line-height:1.5;
+    color:var(--mad-esc); margin:12px 0 0; text-shadow:1px 1px 0 rgba(255,255,255,.55);
+  }
+  .lab-stats{ display:grid; grid-template-columns:1fr 1fr; gap:13px; margin:0 0 20px; }
+  .lab-stat{
+    background:linear-gradient(180deg,#FFFBEF,var(--perg-2));
+    border:3px solid var(--mad); border-radius:12px; padding:16px; text-align:center;
+    box-shadow:2px 2px 0 rgba(0,0,0,.18);
+  }
+  .lab-stat-n{ font-family:var(--font-pixel); font-size:17px; color:var(--mad-esc); }
+  .lab-stat-r{ font-size:13px; color:var(--tinta-fraca); font-weight:700; margin-top:9px; line-height:1.5; }
+
+  @media (max-width:600px){
+    .lab-mundo{ padding:16px 12px 20px; border-width:4px; border-radius:13px; }
+    .lab-painel{ padding:18px 15px 22px; border-radius:12px; }
+    .lab-placar, .lab-papeis, .lab-codigos, .lab-stats{ grid-template-columns:1fr; }
+    .lab-afirm{ padding:16px; }
+    .lab-btn{ width:100%; font-size:10px; padding:14px 16px; }
+    .lab-entrada input{ min-width:0; font-size:14px; }
+    .lab-ico{ width:44px; height:44px; flex:0 0 44px; }
+    .lab-h{ font-size:11.5px; }
+    .lab-jog-pts{ font-size:17px; }
+    .lab-fb-tit{ font-size:12px; }
+  }
+
+</style>
+</head>
+<body>
+<div id="ativ-fatores" class="pagina">
+    <!-- ---------- TELA 1: MISSÃO ---------- -->
+    <div class="lab-tela on" id="labIntro">
+      <div class="lab-mundo">
+        <div class="lab-painel">
+          <h2 class="lab-h">A Trilha das Evidências</h2>
+          <p class="lab-sub">Fatores modificáveis e não modificáveis no envelhecimento</p>
+
+          <p class="lab-p">
+            <b>Missão:</b> vocês são pesquisadores analisando evidências científicas.
+            Cada afirmativa deve ser julgada como <b>VERDADEIRA</b> ou <b>FALSA</b>.
+          </p>
+          <p class="lab-p">
+            Para que as duplas vizinhas não escutem a resposta, quem responde
+            <b>não diz “verdadeiro” ou “falso”</b>: diz apenas o <b>código</b>
+            correspondente à sua escolha. Cada afirmativa tem o seu par fixo de
+            códigos, iguais em qualquer aparelho.
+          </p>
+          <p class="lab-p">
+            A cada rodada os papéis se invertem sozinhos: quem leu passa a responder.
+          </p>
+
+          <div class="lab-acoes">
+            <button class="lab-btn" type="button" id="labIrCadastro">▶ Iniciar missão</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 2: CADASTRO ---------- -->
+    <div class="lab-tela" id="labCadastro">
+      <div class="lab-mundo">
+        <div class="lab-painel">
+          <h2 class="lab-h">A dupla</h2>
+          <p class="lab-sub">Quem vai investigar hoje?</p>
+
+          <div class="lab-campo">
+            <label for="labN1">Jogador 1</label>
+            <input type="text" id="labN1" maxlength="20" placeholder="Nome" autocomplete="off">
+          </div>
+          <div class="lab-campo">
+            <label for="labN2">Jogador 2</label>
+            <input type="text" id="labN2" maxlength="20" placeholder="Nome" autocomplete="off">
+          </div>
+
+          <div class="lab-campo">
+            <label for="labSemente">Código da partida <span style="font-weight:600; opacity:.75;">(opcional)</span></label>
+            <input type="text" id="labSemente" maxlength="8" placeholder="Ex.: TURMA3" autocomplete="off" spellcheck="false">
+            <p class="lab-dica" style="margin-top:7px;">
+              Se dois aparelhos digitarem o <b>mesmo código</b>, as afirmativas
+              aparecem na <b>mesma ordem</b> nos dois. Em branco = ordem sorteada.
+            </p>
+          </div>
+
+          <div class="lab-campo">
+            <label>Este aparelho é de quem?</label>
+            <div class="lab-opcoes" id="labDono">
+              <button type="button" class="lab-op sel" data-dono="ambos">Um aparelho<br><small>para a dupla</small></button>
+              <button type="button" class="lab-op" data-dono="0">Só do<br><small id="labOpN1">Jogador 1</small></button>
+              <button type="button" class="lab-op" data-dono="1">Só do<br><small id="labOpN2">Jogador 2</small></button>
+            </div>
+            <p class="lab-dica" style="margin-top:7px;">
+              Com <b>um aparelho por aluno</b>, quem está respondendo não consegue
+              digitar código nenhum — só registra se acertou ou errou. Use o mesmo
+              <b>código da partida</b> nos dois para as afirmativas baterem.
+            </p>
+          </div>
+
+          <p class="lab-erro" id="labErroNome" style="display:none;">
+            Preencha o nome dos dois jogadores para começar.
+          </p>
+
+          <div class="lab-acoes">
+            <button class="lab-btn" type="button" id="labComecar">▶ Começar</button>
+            <button class="lab-btn sec" type="button" id="labVoltarIntro">Voltar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 3: RODADA ---------- -->
+    <div class="lab-tela" id="labJogo">
+      <div class="lab-mundo">
+
+        <!-- faixa grande de quem é a vez -->
+        <div class="lab-vez" id="labVez">
+          <div class="lab-vez-linha">
+            <span class="lab-vez-rot">RESPONDE AGORA</span>
+            <span class="lab-vez-nome" id="labVezNome">—</span>
+          </div>
+          <div class="lab-vez-sub">
+            <span id="labVezLeitor">—</span> lê a afirmativa em voz alta e digita o código
+          </div>
+        </div>
+
+        <div class="lab-painel">
+          <div class="lab-prog-topo">
+            <span class="lab-prog-txt" id="labProgTxt">Afirmativa 1 de 10</span>
+            <span class="lab-prog-pct" id="labProgPct">0%</span>
+          </div>
+          <div class="lab-prog"><i id="labProgBar"></i></div>
+
+          <div class="lab-placar">
+            <div class="lab-jog" id="labJog1">
+              <div class="lab-jog-nome"><span id="labNome1">Jogador 1</span><span class="lab-coroa" id="labCoroa1"></span></div>
+              <div class="lab-jog-pts"><span id="labPts1">0</span> <small>ponto(s)</small></div>
+            </div>
+            <div class="lab-jog" id="labJog2">
+              <div class="lab-jog-nome"><span id="labNome2">Jogador 2</span><span class="lab-coroa" id="labCoroa2"></span></div>
+              <div class="lab-jog-pts"><span id="labPts2">0</span> <small>ponto(s)</small></div>
+            </div>
+          </div>
+
+          <!-- texto da afirmativa: só no aparelho de quem LÊ -->
+          <div class="lab-afirm" id="labAfirmBox">
+            <p class="lab-afirm-rot">Afirmativa para análise</p>
+            <p class="lab-afirm-txt" id="labAfirm">—</p>
+          </div>
+
+          <!-- no aparelho de quem RESPONDE: só o aviso, sem o texto -->
+          <div class="lab-ouvir" id="labOuvir" style="display:none;">
+            <div class="lab-ouvir-ico">👂</div>
+            <p class="lab-ouvir-tit">Ouça com atenção</p>
+            <p class="lab-ouvir-txt">
+              <span id="labOuvirLeitor">—</span> vai ler a afirmativa em voz alta.
+              O texto não aparece aqui de propósito — julgue pelo que ouvir.
+            </p>
+          </div>
+
+          <!-- códigos (ocultos apenas para o leitor, no modo de 2 aparelhos) -->
+          <div class="lab-codigos" id="labCodigos">
+            <div class="lab-cod v">
+              <div class="lab-cod-rot">Se achar VERDADEIRA, diga</div>
+              <div class="lab-cod-val" id="labCodV">—</div>
+            </div>
+            <div class="lab-cod f">
+              <div class="lab-cod-rot">Se achar FALSA, diga</div>
+              <div class="lab-cod-val" id="labCodF">—</div>
+            </div>
+          </div>
+
+          <!-- aparece no aparelho de quem LÊ (ou no aparelho único) -->
+          <div id="labBlocoLeitor">
+            <div class="lab-entrada">
+              <input type="text" id="labCodigo" maxlength="4" placeholder="CÓDIGO DITO" autocomplete="off" spellcheck="false">
+              <button class="lab-btn azul" type="button" id="labConfirmar">✔ Confirmar</button>
+            </div>
+            <p class="lab-dica" id="labDica">
+              <span id="labDicaNome">—</span> diz o código em voz alta · <span id="labDicaLeitor">—</span> digita aqui e confirma.
+            </p>
+          </div>
+
+          <!-- aparece no aparelho de quem RESPONDE: sem campo de código -->
+          <div id="labBlocoResp" style="display:none;">
+            <div class="lab-espera">
+              <p class="lab-espera-tit">É a sua vez de responder</p>
+              <p class="lab-espera-txt">
+                Diga em voz alta apenas o <b>código</b> da sua escolha.
+                Depois que <span id="labEsperaLeitor">—</span> disser o resultado, registre aqui:
+              </p>
+              <div class="lab-registro">
+                <button class="lab-btn verde" type="button" id="labAcertei">✓ Acertei</button>
+                <button class="lab-btn vermelho" type="button" id="labErrei">✕ Errei</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-fb" id="labFb">
+            <div class="lab-fb-cab">
+              <div class="lab-fb-sel" id="labFbSel">✓</div>
+              <p class="lab-fb-tit" id="labFbTit">Correto!</p>
+            </div>
+            <p class="lab-fb-resp" id="labFbResp"></p>
+            <p class="lab-fb-just" id="labFbJust"></p>
+            <button class="lab-btn" type="button" id="labProxima">Próxima rodada ▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TELA 4: FINAL ---------- -->
+    <div class="lab-tela" id="labFinal">
+      <div class="lab-mundo">
+        <div class="lab-painel">
+          <div class="lab-medalha">🏅</div>
+          <h2 class="lab-h" style="text-align:center;">Missão concluída</h2>
+          <div class="lab-campeao" id="labCampeao">
+            <div class="lab-campeao-rot" id="labCampeaoRot">Campeão da partida</div>
+            <div class="lab-campeao-nome" id="labCampeaoNome">—</div>
+          </div>
+          <div class="lab-stats" id="labStats"></div>
+          <div class="lab-acoes">
+            <button class="lab-btn" type="button" id="labDeNovo">↻ Jogar novamente</button>
+            <button class="lab-btn sec" type="button" id="labNovaPartida">Nova dupla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ==============================================================
+     SOM (gerado no navegador, sem arquivos externos)
+     ============================================================== */
+  let ctxAudio = null;
+  function audio(){
+    if (!ctxAudio){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctxAudio = new AC();
+    }
+    if (ctxAudio.state === 'suspended') ctxAudio.resume();
+    return ctxAudio;
+  }
+  function nota(freq, inicio, dur, tipo, vol){
+    const ac = audio(); if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = tipo || 'triangle';
+    o.frequency.setValueAtTime(freq, ac.currentTime + inicio);
+    g.gain.setValueAtTime(0.0001, ac.currentTime + inicio);
+    g.gain.exponentialRampToValueAtTime(vol || 0.22, ac.currentTime + inicio + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + inicio + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(ac.currentTime + inicio); o.stop(ac.currentTime + inicio + dur + 0.02);
+  }
+  function somVitoria(){   // arpejo ascendente triunfal
+    [523.25, 659.25, 783.99, 1046.50].forEach(function(f,i){
+      nota(f, i*0.11, 0.32, 'triangle', 0.24);
+    });
+    nota(1318.51, 0.46, 0.55, 'sine', 0.18);
+  }
+  const AFIRMATIVAS = [
+    {
+      afirmativa: "A restrição calórica moderada e sem desnutrição atua como um estímulo benéfico que desacelera o envelhecimento, por promover a ativação da autofagia e de mecanismos de defesa contra o estresse celular.",
+      resposta: true,
+      justificativa: "A restrição calórica reduz os sinais proliferativos e de crescimento celular. Isso faz com que as células redirecionem seus recursos energéticos da proliferação para atividades de reparo celular e estabilidade genômica, além de estimular fortemente a autofagia."
+    },
+    {
+      afirmativa: "O encurtamento dos telômeros, estruturas localizadas nas extremidades dos cromossomos, pode limitar a capacidade de divisão das células e contribuir para a senescência celular.",
+      resposta: true,
+      justificativa: "Os telômeros funcionam como protetores das extremidades dos cromossomos. Com as divisões celulares, eles podem se encurtar e levar a célula a interromper sua multiplicação — processo chamado senescência celular."
+    },
+    {
+      afirmativa: "A herança genética influencia a longevidade, mas o envelhecimento também é afetado pelo estilo de vida, pelo ambiente e pelas condições sociais.",
+      resposta: true,
+      justificativa: "A genética participa da determinação da longevidade, mas não define sozinha como uma pessoa envelhecerá. Alimentação, atividade física, sono, estresse, condições de trabalho, renda e acesso à saúde também influenciam esse processo."
+    },
+    {
+      afirmativa: "O declínio fisiológico de GH e IGF-1 na somatopause reduz a longevidade de mamíferos, sendo a reposição de GH uma terapia comprovada para prolongar a expectativa de vida máxima.",
+      resposta: false,
+      justificativa: "A redução de GH e IGF-1 ocorre com o envelhecimento, mas isso não significa que a reposição de GH aumente a longevidade. O uso de GH em pessoas idosas saudáveis é controverso, pode causar efeitos adversos e não demonstrou aumentar sistematicamente a longevidade humana. Benefícios observados em alguns animais não podem ser automaticamente aplicados às pessoas."
+    },
+    {
+      afirmativa: "A exposição a desreguladores endócrinos (EDCs) na juventude pode causar alterações epigenéticas permanentes, elevando o risco de desenvolver obesidade e diabetes tipo 2 ao longo do tempo.",
+      resposta: true,
+      justificativa: "Algumas substâncias ambientais podem interferir na ação dos hormônios e no metabolismo. A exposição durante períodos importantes do desenvolvimento pode aumentar a suscetibilidade à obesidade e ao diabetes, embora o risco dependa da dose, do tempo de exposição e de outros fatores individuais."
+    },
+    {
+      afirmativa: "Células senescentes deixam de se dividir, mas continuam metabolicamente ativas e podem liberar substâncias que aumentam a inflamação nos tecidos.",
+      resposta: true,
+      justificativa: "Células senescentes não são necessariamente células mortas. Elas param de se dividir e podem liberar substâncias inflamatórias, conhecidas em conjunto como SASP, que alteram o ambiente ao redor e podem prejudicar a regeneração dos tecidos."
+    },
+    {
+      afirmativa: "O envelhecimento ocorre em uma única direção, sem interação entre danos celulares, alterações dos tecidos e funcionamento dos órgãos.",
+      resposta: false,
+      justificativa: "O envelhecimento não é uma sequência isolada e linear. Existe uma relação de mão dupla: danos celulares podem prejudicar os tecidos e órgãos, enquanto a disfunção dos órgãos, da circulação e do sistema imune pode gerar novos danos celulares."
+    },
+    {
+      afirmativa: "A redução do estrogênio após a menopausa pode contribuir para perda óssea, alterações metabólicas e aumento de processos inflamatórios.",
+      resposta: true,
+      justificativa: "A redução do estrogênio na menopausa está associada à maior perda de massa óssea e pode influenciar a inflamação e a saúde cardiovascular. A intensidade desses efeitos varia entre as pessoas e pode ser influenciada por atividade física, alimentação, composição corporal e acompanhamento clínico."
+    },
+    {
+      afirmativa: "Com o envelhecimento, a célula pode perder parte da capacidade de eliminar componentes danificados, favorecendo o acúmulo de resíduos celulares.",
+      resposta: true,
+      justificativa: "A autofagia é um dos mecanismos de limpeza das células. Com o envelhecimento, sua eficiência pode diminuir, dificultando a remoção de organelas e proteínas danificadas e contribuindo para a disfunção celular."
+    },
+    {
+      afirmativa: "Os produtos finais de glicação avançada produzidos na Diabetes Mellitus, na hiperglicemia crônica e no envelhecimento são sempre completamente eliminados pelo organismo e não provocam inflamação.",
+      resposta: false,
+      justificativa: "Os produtos finais de glicação avançada (AGEs) não são eliminados de forma totalmente eficiente. Seu acúmulo pode contribuir para estresse oxidativo, inflamação e alterações nos vasos sanguíneos e nos tecidos. A formação de AGEs ocorre tanto no organismo quanto em alimentos submetidos a determinadas condições de processamento e cocção."
+    }
+  ];
+
+  /* --------------------------------------------------------------
+     CÓDIGOS FIXOS POR AFIRMATIVA
+     Cada afirmativa tem SEMPRE o mesmo par de códigos, em qualquer
+     aparelho e em qualquer partida. Assim os dois jogadores veem
+     exatamente os mesmos códigos, e o professor pode até imprimi-los.
+     Os códigos evitam caracteres ambíguos (O, 0, I, 1, S, 5).
+     -------------------------------------------------------------- */
+  const LETRAS  = 'ABCDEFGHJKLMNPQRTUVWXYZ';
+  const NUMEROS = '2346789';
+
+  // gerador determinístico: mesma entrada -> mesma saída, sempre
+  function hashTexto(txt){
+    let h = 2166136261;
+    for (let i = 0; i < txt.length; i++){
+      h ^= txt.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+  function prng(semente){
+    let a = semente >>> 0;
+    return function(){
+      a += 0x6D2B79F5;
+      let t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function codigoDe(semente){
+    const r = prng(semente);
+    const tam = r() < 0.5 ? 3 : 4;
+    let c = '';
+    for (let i = 0; i < tam; i++){
+      c += (i % 2 === 0)
+        ? LETRAS.charAt(Math.floor(r()*LETRAS.length))
+        : NUMEROS.charAt(Math.floor(r()*NUMEROS.length));
+    }
+    return c;
+  }
+  // atribui os pares fixos, garantindo que nenhum código se repita
+  (function definirCodigos(){
+    const usados = new Set();
+    AFIRMATIVAS.forEach(function(q, i){
+      ['codV','codF'].forEach(function(campo, k){
+        let tentativa = 0, cod;
+        do {
+          cod = codigoDe(hashTexto(q.afirmativa) + i*7919 + k*104729 + tentativa*31);
+          tentativa++;
+        } while (usados.has(cod) && tentativa < 500);
+        usados.add(cod);
+        q[campo] = cod;
+      });
+    });
+  })();
+
+  /* ---- sons próprios desta atividade ---- */
+  function somAcerto(){
+    [659.25, 830.61, 987.77].forEach(function(f,i){ nota(f, i*0.09, 0.26, 'triangle', 0.22); });
+    nota(1318.51, 0.28, 0.34, 'sine', 0.15);
+  }
+  function somErrou(){
+    nota(311.13, 0.00, 0.22, 'square', 0.13);
+    nota(233.08, 0.18, 0.40, 'sawtooth', 0.13);
+  }
+  function somVirada(){ nota(523.25,0,0.09,'triangle',0.11); nota(784,0.09,0.13,'triangle',0.10); }
+
+  // ---- estado ----
+  const $ = function(id){ return document.getElementById(id); };
+  const telas = ['labIntro','labCadastro','labJogo','labFinal'];
+  let jogadores = ['Jogador 1','Jogador 2'];
+  let pontos = [0,0];
+  let baralho = [];
+  let indice = 0;
+  let respondendo = 1;
+  let travado = false;
+  let fatoresIniciado = false;
+  let dono = 'ambos';   // 'ambos' | 0 | 1  -> de quem é este aparelho
+
+  function mostrarTela(id){
+    telas.forEach(function(t){ $(t).classList.toggle('on', t === id); });
+  }
+
+  // embaralha; se houver semente, a ordem é a MESMA em qualquer aparelho
+  function embaralharCom(lista, sementeTxt){
+    const c = lista.slice();
+    const r = sementeTxt ? prng(hashTexto(sementeTxt)) : Math.random;
+    for (let i = c.length-1; i > 0; i--){
+      const j = Math.floor(r()*(i+1));
+      const t = c[i]; c[i] = c[j]; c[j] = t;
+    }
+    return c;
+  }
+
+  function novaPartida(manterNomes){
+    if (!manterNomes){
+      jogadores = ['Jogador 1','Jogador 2'];
+      $('labN1').value = ''; $('labN2').value = ''; $('labSemente').value = '';
+    }
+    pontos = [0,0];
+    const semente = $('labSemente').value.trim().toUpperCase();
+    baralho = embaralharCom(AFIRMATIVAS, semente);
+    indice = 0;
+    travado = false;
+    $('labNome1').textContent = jogadores[0];
+    $('labNome2').textContent = jogadores[1];
+    atualizarPlacar();
+    montarRodada();
+    mostrarTela('labJogo');
+  }
+
+  function atualizarPlacar(){
+    $('labPts1').textContent = pontos[0];
+    $('labPts2').textContent = pontos[1];
+    const l1 = pontos[0] > pontos[1], l2 = pontos[1] > pontos[0];
+    $('labJog1').classList.toggle('lider', l1);
+    $('labJog2').classList.toggle('lider', l2);
+    $('labCoroa1').textContent = l1 ? '👑' : '';
+    $('labCoroa2').textContent = l2 ? '👑' : '';
+  }
+
+  function montarRodada(){
+    const q = baralho[indice];
+    const leitor = indice % 2;
+    respondendo = 1 - leitor;
+
+    // quem é a vez — bem destacado, só com os nomes
+    $('labVezNome').textContent = jogadores[respondendo];
+    $('labVezLeitor').textContent = jogadores[leitor];
+    $('labDicaNome').textContent = jogadores[respondendo];
+    $('labDicaLeitor').textContent = jogadores[leitor];
+    $('labVez').classList.toggle('vez-b', respondendo === 1);
+
+    $('labAfirm').textContent = q.afirmativa;
+    $('labCodV').textContent = q.codV;
+    $('labCodF').textContent = q.codF;
+
+    const total = baralho.length;
+    $('labProgTxt').textContent = 'Afirmativa ' + (indice+1) + ' de ' + total;
+    const pct = Math.round((indice/total)*100);
+    $('labProgPct').textContent = pct + '%';
+    $('labProgBar').style.width = pct + '%';
+
+    $('labCodigo').value = '';
+    $('labCodigo').disabled = false;
+    $('labConfirmar').disabled = false;
+    // CÓDIGOS: só quem RESPONDE pode vê-los. Se o leitor os visse, descobriria
+    // a escolha do colega no instante em que ouvisse o código.
+    $('labFb').className = 'lab-fb';
+    $('labDica').classList.remove('erro');
+
+    // Neste aparelho, o usuário é quem LÊ ou quem RESPONDE?
+    // Quem responde NÃO recebe campo de código (senão descobriria a resposta
+    // testando os códigos antes de se comprometer).
+    const souRespondedor = (dono !== 'ambos') && (Number(dono) === respondendo);
+    const aparelhoUnico  = (dono === 'ambos');
+    // Códigos: aparecem no aparelho único (tela compartilhada pela dupla) e no
+    // aparelho de quem responde. Ficam ocultos só para o LEITOR quando cada um
+    // usa o próprio aparelho — assim ele não descobre a escolha do colega.
+    $('labCodigos').style.display = (aparelhoUnico || souRespondedor) ? '' : 'none';
+    $('labBlocoLeitor').style.display = souRespondedor ? 'none' : '';
+    $('labBlocoResp').style.display   = souRespondedor ? '' : 'none';
+    // o texto da afirmativa fica oculto para quem responde — ele deve OUVIR
+    $('labAfirmBox').style.display = souRespondedor ? 'none' : '';
+    $('labOuvir').style.display    = souRespondedor ? '' : 'none';
+    $('labOuvirLeitor').textContent = jogadores[leitor];
+    $('labEsperaLeitor').textContent  = jogadores[leitor];
+    $('labAcertei').disabled = false;
+    $('labErrei').disabled = false;
+
+    travado = false;
+    somVirada();
+  }
+
+  function confirmar(){
+    if (travado) return;
+    const q = baralho[indice];
+    const digitado = $('labCodigo').value.trim().toUpperCase();
+    const dica = $('labDica');
+
+    if (!digitado){
+      dica.textContent = 'Digite o código que o colega disse.';
+      dica.classList.add('erro'); return;
+    }
+    if (digitado !== q.codV && digitado !== q.codF){
+      dica.textContent = 'Esse código não é de nenhuma das duas opções desta afirmativa. Confira e digite de novo.';
+      dica.classList.add('erro'); return;
+    }
+
+    travado = true;
+    $('labCodigo').disabled = true;
+    $('labConfirmar').disabled = true;
+
+    const respondeuVerdadeiro = (digitado === q.codV);
+    const acertou = (respondeuVerdadeiro === q.resposta);
+    if (acertou){ pontos[respondendo]++; atualizarPlacar(); }
+
+    // só AGORA a resposta e a justificativa aparecem
+    const fb = $('labFb');
+    fb.className = 'lab-fb on ' + (acertou ? 'acerto' : 'erro');
+    $('labFbSel').textContent = acertou ? '✓' : '✕';
+    $('labFbTit').textContent = acertou ? 'Correto!' : 'Incorreto!';
+    $('labFbResp').textContent =
+      jogadores[respondendo] + ' respondeu ' + (respondeuVerdadeiro ? 'VERDADEIRA' : 'FALSA') +
+      ' · Resposta correta: ' + (q.resposta ? 'VERDADEIRA' : 'FALSA');
+    $('labFbJust').textContent = q.justificativa;
+
+    if (acertou) somAcerto(); else somErrou();
+
+    $('labProxima').textContent = (indice + 1 >= baralho.length) ? 'Ver resultado ▶' : 'Próxima rodada ▶';
+    fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // registro feito pelo próprio respondedor, conforme o leitor informou
+  function registrar(acertou){
+    if (travado) return;
+    travado = true;
+    $('labAcertei').disabled = true;
+    $('labErrei').disabled = true;
+    const q = baralho[indice];
+    if (acertou){ pontos[respondendo]++; atualizarPlacar(); }
+
+    const fb = $('labFb');
+    fb.className = 'lab-fb on ' + (acertou ? 'acerto' : 'erro');
+    $('labFbSel').textContent = acertou ? '✓' : '✕';
+    $('labFbTit').textContent = acertou ? 'Acertou!' : 'Não foi dessa vez';
+    $('labFbResp').textContent = 'Resposta correta: ' + (q.resposta ? 'VERDADEIRA' : 'FALSA');
+    $('labFbJust').textContent = q.justificativa;
+    if (acertou) somAcerto(); else somErrou();
+    $('labProxima').textContent = (indice + 1 >= baralho.length) ? 'Ver resultado ▶' : 'Próxima rodada ▶';
+    fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function proxima(){
+    indice++;
+    if (indice >= baralho.length){ finalizar(); return; }
+    montarRodada();
+    $('labVez').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  function finalizar(){
+    $('labProgPct').textContent = '100%';
+    $('labProgBar').style.width = '100%';
+    const total = baralho.length;
+    let respJ1 = 0, respJ2 = 0;
+    for (let i = 0; i < total; i++){ if ((1 - (i % 2)) === 0) respJ1++; else respJ2++; }
+    const pct1 = respJ1 ? Math.round(pontos[0]/respJ1*100) : 0;
+    const pct2 = respJ2 ? Math.round(pontos[1]/respJ2*100) : 0;
+
+    if (pontos[0] === pontos[1]){
+      $('labCampeaoRot').textContent = 'Resultado';
+      $('labCampeaoNome').textContent = 'Empate! ' + pontos[0] + ' × ' + pontos[1];
+    } else {
+      const v = pontos[0] > pontos[1] ? 0 : 1;
+      $('labCampeaoRot').textContent = 'Campeão da partida';
+      $('labCampeaoNome').textContent = '🏆 ' + jogadores[v];
+    }
+    $('labStats').innerHTML =
+      '<div class="lab-stat"><div class="lab-stat-n">' + pontos[0] + '/' + respJ1 + '</div>' +
+        '<div class="lab-stat-r">' + jogadores[0] + ' — ' + pct1 + '%</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + pontos[1] + '/' + respJ2 + '</div>' +
+        '<div class="lab-stat-r">' + jogadores[1] + ' — ' + pct2 + '%</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + (pontos[0]+pontos[1]) + '/' + total + '</div>' +
+        '<div class="lab-stat-r">Acertos da dupla</div></div>' +
+      '<div class="lab-stat"><div class="lab-stat-n">' + Math.round((pontos[0]+pontos[1])/total*100) + '%</div>' +
+        '<div class="lab-stat-r">Aproveitamento</div></div>';
+    somVitoria();
+    mostrarTela('labFinal');
+    $('labFinal').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function iniciarFatores(){
+    if (fatoresIniciado) return;
+    fatoresIniciado = true;
+    $('labIrCadastro').addEventListener('click', function(){ mostrarTela('labCadastro'); somVirada(); });
+    $('labVoltarIntro').addEventListener('click', function(){ mostrarTela('labIntro'); });
+    $('labComecar').addEventListener('click', function(){
+      const n1 = $('labN1').value.trim(), n2 = $('labN2').value.trim();
+      if (!n1 || !n2){ $('labErroNome').style.display = 'block'; return; }
+      $('labErroNome').style.display = 'none';
+      jogadores = [n1, n2];
+      novaPartida(true);
+    });
+    // escolha de quem é o aparelho
+    $('labDono').addEventListener('click', function(e){
+      const b = e.target.closest('.lab-op');
+      if (!b) return;
+      $('labDono').querySelectorAll('.lab-op').forEach(function(x){ x.classList.remove('sel'); });
+      b.classList.add('sel');
+      dono = (b.dataset.dono === 'ambos') ? 'ambos' : Number(b.dataset.dono);
+      somVirada();
+    });
+    // mantém os nomes atualizados nos botões de escolha
+    ['labN1','labN2'].forEach(function(idc, k){
+      $(idc).addEventListener('input', function(){
+        $(k===0 ? 'labOpN1' : 'labOpN2').textContent = $(idc).value.trim() || ('Jogador ' + (k+1));
+      });
+    });
+
+    $('labAcertei').addEventListener('click', function(){ registrar(true); });
+    $('labErrei').addEventListener('click', function(){ registrar(false); });
+
+    $('labConfirmar').addEventListener('click', confirmar);
+    $('labCodigo').addEventListener('keydown', function(e){
+      if (e.key === 'Enter'){ e.preventDefault(); confirmar(); }
+    });
+    $('labProxima').addEventListener('click', proxima);
+    $('labDeNovo').addEventListener('click', function(){ novaPartida(true); });
+    $('labNovaPartida').addEventListener('click', function(){
+      novaPartida(false); mostrarTela('labCadastro');
+    });
+  }
+
+  iniciarFatores();
+
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  document.addEventListener('dragstart', function(e){
+    if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  /* ==============================================================
+     AVISA A ALTURA AO PAI (quando aberto dentro de um iframe em
+     atividades.html)
+     ============================================================== */
+  let ultimaAltura = 0;
+  function avisarAltura(){
+    if (window.parent === window) return;
+    const cont = document.querySelector('.pagina');
+    if (!cont) return;
+    const h = Math.ceil(cont.getBoundingClientRect().height) + 40;
+    if (Math.abs(h - ultimaAltura) < 6) return;
+    ultimaAltura = h;
+    window.parent.postMessage({fatoresAltura:h}, '*');
+  }
+  new MutationObserver(avisarAltura).observe(document.body, {childList:true, subtree:true, attributes:true});
+  window.addEventListener('resize', avisarAltura);
+  window.addEventListener('load', avisarAltura);
+  setInterval(avisarAltura, 700);
+  avisarAltura();
+
+})();
+</script>
+</body>
+</html>
