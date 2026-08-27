@@ -7,7 +7,8 @@
 <meta name="description" content="Atividades interativas usadas em sala de aula por Aldair de França Neto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&family=Cinzel:wght@600;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&family=Cinzel:wght@600;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&family=Cinzel:wght@600;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400&display=swap"></noscript>
 <style>
 /* ================================================================
    COMO FUNCIONA ESTA PÁGINA
@@ -140,21 +141,6 @@
   /* ---------------- atividades (ocultas por padrão) ---------------- */
   .atividade{ display:none; padding-bottom:60px; }
   .atividade.on{ display:block; }
-
-  /* --------- lightbox --------- */
-  #lightbox{
-    position:fixed; inset:0; z-index:100; display:none;
-    background:rgba(6,12,22,.92); padding:20px; align-items:center; justify-content:center;
-  }
-  #lightbox.on{ display:flex; }
-  #lightbox img{
-    max-width:min(560px,92vw); max-height:88vh; border:4px solid var(--gold); border-radius:12px;
-  }
-  #lbFechar{
-    position:absolute; top:14px; right:14px; cursor:pointer;
-    font-family:var(--font-serif); font-weight:700; font-size:14px; color:#1A1206;
-    background:var(--gold); border:2px solid var(--gold-soft); border-radius:6px; padding:10px 14px;
-  }
 
   .instrucoes{
     background:var(--paper); border:3px solid var(--outline); border-radius:10px;
@@ -412,14 +398,12 @@
   }
   /* ============================================================
      ATIVIDADE 9 — IONIZAÇÃO DE AMINOÁCIDOS
-     O simulador vive em ionizacao.html e entra aqui por iframe: o
-     código dele não pesa nesta página, e a altura do quadro é
-     ajustada pelo próprio simulador via postMessage.
+     Cada atividade é um arquivo HTML próprio. Ao digitar a senha
+     certa, o jogo abre numa aba nova (window.open) — assim o
+     contorno desta página não atrapalha a visualização do jogo.
      ============================================================ */
-  .quadro-ext{
-    width:100%; border:0; display:block; border-radius:14px;
-    background:#122A3A; min-height:640px;
-  }
+  .abrir-jogo{ margin:0 0 26px; text-align:center; }
+  .abrir-jogo .btn{ font-size:13px; padding:16px 26px; }
 </style>
 <body>
 
@@ -558,13 +542,8 @@
   <!-- ============================================================
        ATIVIDADE 1 — HALLMARKS DO ENVELHECIMENTO
        senha: envelhecimento
-       ============================================================ -->
-  <!-- ============================================================
-       ATIVIDADE 1 — HALLMARKS DO ENVELHECIMENTO
-       senha: envelhecimento
-       O jogo está no arquivo hallmarks.html, ao lado deste, e é
-       carregado aqui dentro por iframe. Mantenha os arquivos na
-       MESMA PASTA ao publicar no GitHub Pages.
+       O jogo está no arquivo hallmarks.html, ao lado deste. Ao
+       digitar a senha certa ele abre sozinho numa aba nova.
        ============================================================ -->
   <section class="atividade" id="ativ-hallmarks">
 
@@ -576,8 +555,9 @@
       Use a <b>🔍 lupa</b> para ampliar e ler qualquer carta.
     </div>
 
-    <iframe class="quadro-ext" id="quadroHallmarks" title="Hallmarks do Envelhecimento"
-      data-src="hallmarks.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-hallmarks')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
     <details class="biblio">
       <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
@@ -608,8 +588,9 @@
       papéis se invertem a cada rodada.
     </div>
 
-    <iframe class="quadro-ext" id="quadroFatores" title="A Trilha das Evidências — Fatores do Envelhecimento"
-      data-src="fatores.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-fatores')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -629,8 +610,9 @@
       as duplas vizinhas não escutem a resposta. Os papéis se invertem a cada rodada.
     </div>
 
-    <iframe class="quadro-ext" id="quadroNervoso" title="A Trilha das Evidências — Envelhecimento do Sistema Nervoso"
-      data-src="nervoso.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-nervoso')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -654,8 +636,9 @@
       carta.
     </div>
 
-    <iframe class="quadro-ext" id="quadroLesoes" title="Lesões Celulares Reversíveis e Irreversíveis"
-      data-src="lesoes.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-lesoes')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -680,8 +663,9 @@
       Use a <b>🔍 lupa</b> para ler qualquer carta.
     </div>
 
-    <iframe class="quadro-ext" id="quadroOrganelas" title="Expedição Celular"
-      data-src="organelas.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-organelas')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -704,8 +688,9 @@
       carta.
     </div>
 
-    <iframe class="quadro-ext" id="quadroMorte" title="O Destino da Célula"
-      data-src="morte.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-morte')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -725,8 +710,9 @@
       correto, meça-o com a régua e leia a posição do centrômero para identificá-lo.
     </div>
 
-    <iframe class="quadro-ext" id="quadroCariotipo" title="Laboratório de Citogenética"
-      data-src="cariotipo.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-cariotipo')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
   </section>
 
@@ -749,8 +735,9 @@
       registrado numa planilha que pode ser baixada no fim da aula.
     </div>
 
-    <iframe class="quadro-ext" id="quadroSorteio" title="Sorteio da Turma"
-      data-src="sorteio.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-sorteio')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
     <details class="biblio">
       <summary>📚 SOBRE ESTA FERRAMENTA</summary>
@@ -786,8 +773,9 @@
       Ao fim de todas as situações, calcule o <b>ponto isoelétrico</b>.
     </div>
 
-    <iframe class="quadro-ext" id="quadroIonizacao" title="Simulador de ionização de aminoácidos"
-      data-src="ionizacao.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-ionizacao')">▶ Abrir o jogo em nova aba</button>
+    </div>
 
     <details class="biblio">
       <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
@@ -822,8 +810,9 @@
       fim sai o <b>laudo do plantão</b>, que pode ser baixado em planilha.
     </div>
 
-    <iframe class="quadro-ext" id="quadroInflamacao" title="Investigação Inflamatória"
-      data-src="inflamacao.html" loading="lazy"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-inflamacao')">▶ Abrir o jogo em nova aba</button>
+    </div>
   </section>
 
   <!-- ============================================================
@@ -848,8 +837,9 @@
       <b>polimerase</b> para acessar a Central de Decisão.
     </div>
 
-    <iframe class="quadro-ext" id="quadroCsi" title="CSI Genética: O Mistério da Herança"
-      data-src="csi-genetica-caso0147.html" loading="lazy" style="min-height:88vh;"></iframe>
+    <div class="abrir-jogo">
+      <button class="btn green" type="button" onclick="abrirJogo('ativ-csi')">▶ Abrir o jogo em nova aba</button>
+    </div>
   </section>
 
   <!-- ============================================================
@@ -862,11 +852,6 @@
        e registre a senha lá no final, dentro de const SENHAS.
        ============================================================ -->
 
-</div>
-
-<div id="lightbox">
-  <button id="lbFechar" type="button">✕ FECHAR</button>
-  <img id="lbImg" src="" alt="Carta ampliada">
 </div>
 
 <footer>
@@ -898,6 +883,31 @@
     "polimerase": "ativ-csi"
   };
 
+  /* ==============================================================
+     ARQUIVO DE CADA ATIVIDADE
+     Cada jogo é um arquivo HTML próprio, aberto numa aba nova
+     (window.open) para não ficar preso ao contorno desta página.
+     ============================================================== */
+  const ARQUIVOS = {
+    "ativ-hallmarks": "hallmarks.html",
+    "ativ-fatores": "fatores.html",
+    "ativ-nervoso": "nervoso.html",
+    "ativ-lesoes": "lesoes.html",
+    "ativ-organelas": "organelas.html",
+    "ativ-morte": "morte.html",
+    "ativ-cariotipo": "cariotipo.html",
+    "ativ-sorteio": "sorteio.html",
+    "ativ-ionizacao": "ionizacao.html",
+    "ativ-inflamacao": "inflamacao.html",
+    "ativ-csi": "csi-genetica-caso0147.html"
+  };
+
+  function abrirJogo(id){
+    const arquivo = ARQUIVOS[id];
+    if (arquivo) window.open(arquivo, '_blank', 'noopener');
+  }
+  window.abrirJogo = abrirJogo;
+
   const portao = document.getElementById('portao');
   const input  = document.getElementById('inputSenha');
   const erro   = document.getElementById('erroSenha');
@@ -909,17 +919,7 @@
     const alvo = document.getElementById(id);
     if (alvo){
       alvo.classList.add('on');
-      if (id === 'ativ-hallmarks') iniciarHallmarks();
-      if (id === 'ativ-fatores') iniciarFatores();
-      if (id === 'ativ-lesoes') iniciarLesoes();
-      if (id === 'ativ-nervoso') iniciarNervoso();
-      if (id === 'ativ-organelas') iniciarOrganelas();
-      if (id === 'ativ-morte') iniciarMorte();
-      if (id === 'ativ-cariotipo') iniciarCariotipo();
-      if (id === 'ativ-sorteio') iniciarSorteio();
-      if (id === 'ativ-ionizacao') iniciarIonizacao();
-      if (id === 'ativ-inflamacao') iniciarInflamacao();
-      if (id === 'ativ-csi') iniciarCsi();
+      abrirJogo(id);
     }
   }
   /* ---- sumário: os cartões são só um índice ----
@@ -943,127 +943,6 @@
   });
 
   /* ==============================================================
-
-  /* ==============================================================
-     ATIVIDADES 1 A 8 — cada uma virou um arquivo HTML próprio.
-     Só o invólucro: o jogo está no arquivo correspondente. O
-     iframe só recebe o src quando a atividade é aberta, e a
-     altura acompanha o conteúdo por postMessage.
-     ============================================================== */
-  function iniciarHallmarks(){
-    const q = document.getElementById('quadroHallmarks');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarFatores(){
-    const q = document.getElementById('quadroFatores');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarNervoso(){
-    const q = document.getElementById('quadroNervoso');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarLesoes(){
-    const q = document.getElementById('quadroLesoes');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarOrganelas(){
-    const q = document.getElementById('quadroOrganelas');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarMorte(){
-    const q = document.getElementById('quadroMorte');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarCariotipo(){
-    const q = document.getElementById('quadroCariotipo');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarSorteio(){
-    const q = document.getElementById('quadroSorteio');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  /* ==============================================================
-     ATIVIDADE 9 — IONIZACAO DE AMINOACIDOS
-     So o involucro: o simulador esta em ionizacao.html. O iframe so
-     recebe o src quando a atividade e aberta, e a altura acompanha o
-     conteudo por postMessage.
-     ============================================================== */
-  function iniciarIonizacao(){
-    const q = document.getElementById('quadroIonizacao');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  function iniciarInflamacao(){
-    const q = document.getElementById('quadroInflamacao');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-
-  /* ATIVIDADE 11 — CSI GENÉTICA: O MISTÉRIO DA HERANÇA
-     Só o invólucro: o jogo está em csi-genetica-caso0147.html. O
-     iframe só recebe o src quando a atividade é aberta. */
-  function iniciarCsi(){
-    const q = document.getElementById('quadroCsi');
-    if (!q.getAttribute('src')) q.setAttribute('src', q.dataset.src);
-  }
-  window.addEventListener('message', function(ev){
-    const d = ev.data;
-    if (!d) return;
-    if (typeof d.hallmarksAltura === 'number'){
-      const q = document.getElementById('quadroHallmarks');
-      if (q) q.style.height = (d.hallmarksAltura + 24) + 'px';
-    }
-    if (typeof d.fatoresAltura === 'number'){
-      const q = document.getElementById('quadroFatores');
-      if (q) q.style.height = (d.fatoresAltura + 24) + 'px';
-    }
-    if (typeof d.nervosoAltura === 'number'){
-      const q = document.getElementById('quadroNervoso');
-      if (q) q.style.height = (d.nervosoAltura + 24) + 'px';
-    }
-    if (typeof d.lesoesAltura === 'number'){
-      const q = document.getElementById('quadroLesoes');
-      if (q) q.style.height = (d.lesoesAltura + 24) + 'px';
-    }
-    if (typeof d.organelasAltura === 'number'){
-      const q = document.getElementById('quadroOrganelas');
-      if (q) q.style.height = (d.organelasAltura + 24) + 'px';
-    }
-    if (typeof d.morteAltura === 'number'){
-      const q = document.getElementById('quadroMorte');
-      if (q) q.style.height = (d.morteAltura + 24) + 'px';
-    }
-    if (typeof d.cariotipoAltura === 'number'){
-      const q = document.getElementById('quadroCariotipo');
-      if (q) q.style.height = (d.cariotipoAltura + 24) + 'px';
-    }
-    if (typeof d.sorteioAltura === 'number'){
-      const q = document.getElementById('quadroSorteio');
-      if (q) q.style.height = (d.sorteioAltura + 24) + 'px';
-    }
-    if (typeof d.ionizacaoAltura === 'number'){
-      const q = document.getElementById('quadroIonizacao');
-      if (q) q.style.height = (d.ionizacaoAltura + 24) + 'px';
-    }
-    if (typeof d.inflamacaoAltura === 'number'){
-      const q = document.getElementById('quadroInflamacao');
-      if (q) q.style.height = (d.inflamacaoAltura + 24) + 'px';
-    }
-    /* Caso o jogo passe a emitir a própria altura, este handler já a aplica. */
-    if (typeof d.csiAltura === 'number'){
-      const q = document.getElementById('quadroCsi');
-      if (q) q.style.height = (d.csiAltura + 24) + 'px';
-    }
-  });
-
-  /* ==============================================================
      MENU DE CONTEXTO DESABILITADO
      Bloqueia o clique direito e o toque longo. Vale como um freio
      para o uso casual — não impede quem abre o código-fonte ou as
@@ -1073,15 +952,6 @@
   document.addEventListener('dragstart', function(e){
     if (e.target && e.target.tagName === 'IMG') e.preventDefault();
   });
-
-  /* ------------------ lightbox ------------------ */
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lbImg');
-  function abrirLightbox(src){ lbImg.src = src; lb.classList.add('on'); }
-  function fecharLightbox(){ lb.classList.remove('on'); lbImg.src = ''; }
-  document.getElementById('lbFechar').addEventListener('click', fecharLightbox);
-  lb.addEventListener('click', function(e){ if (e.target === lb) fecharLightbox(); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fecharLightbox(); });
 
 })();
 </script>
