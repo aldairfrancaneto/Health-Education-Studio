@@ -88,6 +88,10 @@
   .brand .role-tag{color:var(--ink-faint)}
   .brand h1{font-size:1rem;margin:0;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hud-spacer{flex:1 1 auto}
+  .btn-fullscreen{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(56,214,255,.45);border-radius:8px;padding:7px 10px;
+    background:rgba(56,214,255,.08);color:var(--cyan);font:700 .68rem var(--mono);letter-spacing:.7px;text-transform:uppercase}
+  .btn-fullscreen:hover{background:rgba(56,214,255,.18)}
+  .fullscreen-control{position:fixed;top:14px;right:16px;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.28)}
   .stat{display:flex;flex-direction:column;align-items:flex-end;font-family:var(--mono);line-height:1.1}
   .stat .k{font-size:.6rem;color:var(--ink-faint);letter-spacing:1.5px;text-transform:uppercase}
   .stat .v{font-size:1.05rem;font-weight:700}.stat .v b{color:var(--cyan)}
@@ -118,18 +122,17 @@
     font-weight:800;text-transform:uppercase;padding:5px 13px;border-radius:999px;box-shadow:0 1px 0 rgba(0,0,0,.25)}
   /* Falas e narração: fonte maior (17 px) e texto justificado */
   .dialogo p{margin:0;color:var(--ink);font-size:17px;line-height:1.6;text-align:justify}
-  .narrador p,.sistema p{color:var(--ink-dim)}
-  .narrador   {--c:#C9D8E8;--cbg:rgba(201,216,232,.06)}
-  .consultoria{--c:#DCCBFF;--cbg:rgba(220,203,255,.08)}
-  .laboratorio{--c:#A7F3D0;--cbg:rgba(167,243,208,.07)}
-  .sistema    {--c:#40D9FF;--cbg:rgba(64,217,255,.08)}
+  .narrador p{color:#FFFFFF}
+  .narrador   {--c:#FFFFFF;--cbg:rgba(255,255,255,.07)}
   .documento  {--c:#FFD98A;--cbg:rgba(255,217,138,.08)}
   .validado   {--c:#38D996;--cbg:rgba(56,217,150,.10)}
   .reavaliar  {--c:#FFB45B;--cbg:rgba(255,180,91,.10)}
   .alerta     {--c:#FF7070;--cbg:rgba(255,112,112,.10)}
-  /* Voz do Pesquisador Principal — amarelo forte, com destaque extra */
-  .principal  {--c:var(--principal);--cbg:rgba(255,226,61,.14);border-left-width:5px;box-shadow:0 0 0 1px rgba(255,226,61,.28)}
-  .principal p{color:#FFF3B0;font-weight:600}
+  /* Voz do Pesquisador Principal — destaque sem identidade pessoal definida */
+  .principal  {--c:#FFD54A;--cbg:rgba(255,213,74,.12);border-left-width:5px;box-shadow:0 0 0 1px rgba(255,213,74,.32)}
+  .principal p{color:#FFF1A6;font-weight:600}
+  .aurora-status{margin:0 0 10px;padding:8px 12px;border:1px solid rgba(64,217,255,.36);border-radius:7px;
+    background:rgba(64,217,255,.06);color:#40D9FF;font-family:var(--mono);font-size:.76rem;letter-spacing:.8px;font-weight:800}
 
   /* Indicador "pressione para continuar" */
   .seq-next{margin-top:6px}
@@ -143,6 +146,10 @@
   .opt.correct{border-color:var(--ok);background:rgba(62,224,143,.16);box-shadow:0 0 0 2px var(--ok)}
   .opt.correct .letter{background:#1f8f5b;color:#eafff4}
   .opt.wrong{border-color:var(--no);background:rgba(255,122,89,.16);box-shadow:0 0 0 2px var(--no)}
+  .opt.single-choice{cursor:pointer;text-align:left;font:inherit}
+  .opt.single-choice:hover{border-color:var(--cyan);background:rgba(56,214,255,.08)}
+  .opt.selected{border-color:var(--evi);background:rgba(255,210,63,.13);box-shadow:0 0 0 2px rgba(255,210,63,.5)}
+  .single-confirm{margin:14px 0;padding:12px 14px;border:1px solid rgba(255,210,63,.38);border-radius:10px;background:rgba(255,210,63,.07);color:#ffe9a6}
   .opt.wrong .letter{background:#c2452c;color:#fff1ec}
   .opt.dim{opacity:.4}
   pre.seq{font-family:var(--mono);background:var(--navy-800);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow:auto;color:var(--cyan);font-size:.95rem;margin:0 0 14px}
@@ -266,6 +273,13 @@
   .sci-note{max-width:760px;margin:0 auto 12px;background:rgba(255,210,63,.07);border:1px solid rgba(255,210,63,.35);border-radius:10px;padding:14px 16px;color:#ffe9a6;font-size:16px;text-align:justify;line-height:1.6}
   .sci-note b{color:var(--evi)}
   .closing{text-align:left;max-width:760px;margin:0 auto}
+  .thanks-screen{min-height:72vh;justify-content:center;color:var(--ink)}
+  .thanks-stars{font-size:2rem;letter-spacing:12px;color:var(--evi);animation:thanksPulse 1.2s ease-in-out infinite alternate}
+  .thanks-screen h2{font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;color:var(--cyan);text-shadow:2px 2px 0 var(--cyan-deep)}
+  .thanks-screen p{max-width:530px;color:var(--ink-dim);font-size:1.08rem}
+  @keyframes thanksPulse{to{transform:scale(1.12);filter:drop-shadow(0 0 10px var(--evi))}}
+  .site-footer{margin:24px 0 8px;padding:14px 10px 4px;border-top:1px solid var(--line);color:var(--ink-faint);font:600 .68rem var(--mono);letter-spacing:.5px;text-align:center;line-height:1.7}
+  .site-footer strong{color:var(--ink-dim)}
 
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
   .center{display:flex;justify-content:center}
@@ -283,12 +297,13 @@
 </head>
 <body>
 <div class="app">
+  <button class="btn-fullscreen fullscreen-control" id="fullscreenBtn" type="button" aria-pressed="false" title="Entrar em tela cheia">⛶ Tela cheia</button>
   <header class="hud" id="hud" hidden>
     <div class="hud-top">
       <div class="brand">
         <span class="glyph" aria-hidden="true">🧬</span>
         <div style="min-width:0">
-          <div class="case">Caso 0147 · <span class="role-tag">Pesquisador Principal</span></div>
+          <div class="case">Caso 0147 · <span class="role-tag" id="roleTag">Pesquisador Principal</span></div>
           <h1>CSI Genética</h1>
         </div>
       </div>
@@ -302,6 +317,10 @@
     <div class="status-row" id="statusRow" aria-label="Status do laboratório"></div>
   </header>
   <main id="stage" aria-live="polite"></main>
+  <footer class="site-footer">
+    Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
+    Última atualização: 26 de agosto de 2026
+  </footer>
 </div>
 
 <!-- Modal Vídeo -->
@@ -338,30 +357,21 @@ const VIDEOS = {
    Emissor "principal" = voz do Pesquisador Principal (amarela).
    ============================================================================ */
 const ROTULOS = {
-  narrador:"◇ NARRADOR", consultoria:"✦ CONSULTORIA MÉDICO-LEGAL",
-  laboratorio:"▣ LABORATÓRIO DE GENÉTICA FORENSE", sistema:"◉ SISTEMA AURORA",
-  documento:"▤ DOCUMENTO DO CASO", validado:"✓ PROCEDIMENTO VALIDADO",
-  reavaliar:"↻ REAVALIAR PROCEDIMENTO", alerta:"⚠ ALERTA CRÍTICO",
-  principal:"◈ PESQUISADOR PRINCIPAL"
+  narrador:"◇ NARRADOR", principal:"◆ PESQUISADOR PRINCIPAL",
+  sistema:"AURORA | STATUS", documento:"▤ ARQUIVO DO CASO"
 };
 const b = (t,x,r=null)=>({t,x,r});
-
-/* Fala padrão do Pesquisador Principal dirigida aos auxiliares (sempre explícita). */
-const FALA_PRINCIPAL_DECISAO = b("principal","— Equipe de Pesquisadores Auxiliares, falo com vocês: discutam entre si, abram a Central de Decisão quando eu liberar o código de etapa e me informem apenas o código da alternativa escolhida pela turma.");
 
 /* ============================================================================
    4) PRÓLOGO
    ============================================================================ */
 const PROLOGO = [
-  b("narrador","Uma solicitação judicial fictícia foi encaminhada para investigação de vínculo biológico. Maria solicita a análise entre seu filho, Lucas, e dois possíveis pais: João e Carlos.","◇ NARRADOR · DIA 1 — CENTRAL DE PERÍCIA GENÉTICA — 08:15"),
-  b("narrador","O caso exige cuidado. A equipe não deve buscar semelhanças físicas nem formular juízos sobre as pessoas. A missão é interpretar evidências genéticas de modo tecnicamente adequado."),
-  b("documento","Objetivo: verificar a compatibilidade dos perfis genéticos no contexto de investigação de vínculo biológico.","▤ DOCUMENTO DO CASO · SOLICITAÇÃO DE ANÁLISE"),
-  b("documento","— Eu não quero que ninguém seja acusado sem provas. Preciso de uma resposta tecnicamente responsável.","▤ DOCUMENTO DO CASO · DECLARAÇÃO — MARIA"),
-  b("documento","— Concordo com a análise, desde que a conclusão seja baseada em evidências e não em suposições.","▤ DOCUMENTO DO CASO · DECLARAÇÃO — JOÃO"),
-  b("documento","— Autorizo a comparação do meu perfil para que o caso seja analisado de maneira imparcial.","▤ DOCUMENTO DO CASO · DECLARAÇÃO — CARLOS"),
-  b("consultoria","— Pesquisador Principal, a equipe será avaliada não apenas por acertar, mas por saber o que cada evidência permite — e o que ela não permite — concluir."),
-  b("principal","— Pesquisadores Auxiliares, é com vocês que vou contar em cada decisão. Observem a tela, debatam e cheguem a um consenso: quem decide o rumo da investigação é a equipe."),
-  b("sistema","Caso 0147 iniciado. Integridade das evidências: pendente.")
+  b("narrador","Maria solicita uma análise de vínculo biológico entre Lucas e dois possíveis pais: João e Carlos. A equipe deverá comparar evidências genéticas, sem recorrer a aparência, suposições ou juízos sobre os envolvidos.","◇ NARRADOR · DIA 1 — CENTRAL DE PERÍCIA GENÉTICA — 08:15"),
+  b("documento","“Eu não quero que ninguém seja acusado sem provas. Preciso de uma resposta tecnicamente responsável.”","▤ ARQUIVO DO CASO — DECLARAÇÃO DE MARIA"),
+  b("documento","“Concordo com a análise, desde que a conclusão seja baseada em evidências e não em suposições.”","▤ ARQUIVO DO CASO — DECLARAÇÃO DE JOÃO"),
+  b("documento","“Autorizo a comparação do meu perfil para que o caso seja analisado de maneira imparcial.”","▤ ARQUIVO DO CASO — DECLARAÇÃO DE CARLOS"),
+  b("principal","Os registros apresentam o caso. Agora, nossa responsabilidade é decidir somente com base nas evidências que conseguirmos validar."),
+  b("sistema","AURORA | CASO 0147 INICIADO · INTEGRIDADE DAS EVIDÊNCIAS: PENDENTE")
 ];
 
 /* ============================================================================
@@ -371,173 +381,146 @@ const FASES = [
   /* ------------------------------- FASE 1 ------------------------------- */
   {
     fase:1, titulo:"Cadeia de custódia", status:"Amostras preservadas", video:null,
-    introBlocos:[
-      b("narrador","Quatro amostras lacradas aguardam processamento. Cada uma foi registrada como M, F, P1 ou P2. Antes da extração de DNA, a equipe precisa garantir que a identidade de cada material permaneça preservada.","◇ NARRADOR · DIA 1 — SALA DE TRIAGEM — 08:30"),
-      b("laboratorio","— Uma técnica pode ser impecável, mas o resultado perde valor se não conseguirmos demonstrar a origem da amostra analisada."),
-      b("consultoria","— Pesquisador Principal, qual conduta protege a rastreabilidade e reduz o risco de erro antes do início do exame?")
-    ],
+    introBlocos:[ b("narrador","Quatro amostras lacradas, identificadas como M, F, P1 e P2, aguardam análise. Antes da extração, a origem de cada material precisa permanecer rastreável.","◇ NARRADOR · DIA 1 — SALA DE TRIAGEM — 08:30"), b("principal","Pesquisadores auxiliares, qual conduta preserva a identificação das amostras e permite confiar nos resultados que virão depois?"), b("sistema","AURORA | ETAPA PRÉ-ANALÍTICA: PENDENTE") ],
     passos:[
       {
-        tipo:"decisao", codigoEtapa:"LAGO", pontuacaoMaxima:100, correta:"B",
-        durante:[ b("sistema","Etapa pré-analítica: pendente.") ],
+        tipo:"decisao", codigoEtapa:"POLIMERASE", pontuacaoMaxima:100, correta:"A",
+        durante:[],
         pergunta:"Antes de iniciar a análise genética, qual procedimento deve ser adotado?",
-        alternativas:{ A:"Reunir todas as amostras em um único recipiente identificado.",
-          B:"Lacrar, identificar e registrar cada amostra separadamente.",
+        alternativas:{ A:"Lacrar, identificar e registrar cada amostra separadamente.",
+          B:"Reunir todas as amostras em um único recipiente identificado.",
           C:"Aquecer as escovas para facilitar a liberação do DNA celular.",
           D:"Misturar as amostras com solução salina antes da extração." },
-        codigos:{ A:"MONTE", B:"FAROL", C:"TIGRE", D:"VELA" },
-        okBlocos:[ b("validado","Rastreabilidade confirmada. As amostras foram individualizadas e liberadas para extração."),
-          b("consultoria","— Antes de interpretar uma evidência, precisamos ter certeza de que sabemos de onde ela veio.") ]
+        codigos:{ A:"FAROL", B:"MONTE", C:"TIGRE", D:"VELA" },
+        okBlocos:[ b("sistema","AURORA | RASTREABILIDADE CONFIRMADA"), b("narrador","As amostras foram individualizadas, registradas e liberadas para extração."), b("principal","Sem rastreabilidade, até um resultado tecnicamente correto pode ser atribuído à pessoa errada.") ],
+        wrongBlocos:[ b("sistema","AURORA | PROCEDIMENTO REJEITADO"), b("narrador","O protocolo escolhido não garante que cada perfil permaneça associado à amostra de origem."), b("principal","Reavaliem: antes de analisar DNA, precisamos saber exatamente de quem é cada material.") ]
       }
     ]
   },
   /* ------------------------------- FASE 2 ------------------------------- */
   {
     fase:2, titulo:"Regiões STR", status:"Marcadores STR reconhecidos", video:"fingerprint",
-    introBlocos:[
-      b("narrador","A extração e a quantificação foram concluídas. Há DNA detectável nas amostras, e o laboratório inicia a seleção dos marcadores que permitirão a comparação dos perfis.","◇ NARRADOR · DIA 1 — 12:40"),
-      b("narrador","O sistema apresenta regiões curtas e repetidas do DNA. Elas não explicam traços clínicos nem características visíveis, mas variam entre indivíduos e auxiliam na comparação de perfis.","◇ NARRADOR · NÚCLEO DE GENÉTICA FORENSE"),
-      b("laboratorio","— Não precisamos analisar todo o genoma. Precisamos escolher marcadores informativos para a investigação."),
-      b("consultoria","— Pesquisador Principal, identifique a evidência molecular que permitirá transformar uma amostra em perfil comparável.")
-    ],
+    introBlocos:[ b("narrador","A extração e a quantificação foram concluídas. A equipe agora precisa selecionar marcadores capazes de diferenciar os perfis dos envolvidos.","◇ NARRADOR · DIA 1 — NÚCLEO DE GENÉTICA FORENSE — 12:40"), b("principal","Não precisamos analisar todo o genoma. Precisamos identificar marcadores que variem entre indivíduos e possam ser comparados de forma confiável."), b("sistema","AURORA | SELEÇÃO DE MARCADORES: PENDENTE") ],
     passos:[
       {
-        tipo:"decisao", codigoEtapa:"MURAL", pontuacaoMaxima:100, correta:"B",
-        durante:[ b("sistema","Seleção de marcadores: pendente.") ],
+        tipo:"decisao", codigoEtapa:"PRIMASE", pontuacaoMaxima:100, correta:"C",
+        durante:[],
         pergunta:"Qual definição descreve corretamente uma região STR?",
         alternativas:{ A:"Segmento de DNA que codifica diretamente características físicas.",
-          B:"Sequência curta de DNA repetida em série, com variação individual.",
-          C:"Proteína que separa as duas fitas durante a replicação celular.",
+          B:"Proteína que separa as duas fitas durante a replicação celular.",
+          C:"Sequência curta de DNA repetida em série, com variação individual.",
           D:"Fragmento de RNA produzido após a leitura de um gene específico." },
-        codigos:{ A:"PEDRA", B:"CAMINHO", C:"TORRE", D:"BARCO" },
-        okBlocos:[ b("sistema","Marcadores STR selecionados. Variação de alelos detectável entre amostras."),
-          b("laboratorio","— Agora sabemos o que procurar: não uma característica física, mas o número de repetições em regiões específicas do DNA.") ]
+        codigos:{ A:"PEDRA", B:"TORRE", C:"CAMINHO", D:"BARCO" },
+        okBlocos:[ b("sistema","AURORA | MARCADORES STR SELECIONADOS"), b("narrador","Foram selecionadas regiões STR: pequenas sequências de DNA cujo número de repetições pode variar entre pessoas."), b("principal","O alvo não é aparência ou característica clínica: é a quantidade de repetições em regiões específicas do DNA.") ],
+        wrongBlocos:[ b("sistema","AURORA | SELEÇÃO REJEITADA"), b("narrador","A alternativa não descreve um marcador adequado para comparar perfis genéticos."), b("principal","Revejam a função de um STR antes de registrar a decisão coletiva.") ]
       },
       {
-        tipo:"decisao", codigoEtapa:"TREVO", pontuacaoMaxima:0, correta:"B", miniatividade:true,
+        tipo:"decisao", codigoEtapa:"PRIMER", pontuacaoMaxima:0, correta:"D", miniatividade:true,
         cenaIntro:[
-          b("narrador","Duas sequências aparecem no monitor. Ambas usam o mesmo motivo, AGAT, mas uma delas se repete mais vezes.","◇ NARRADOR · ARQUIVO VISUAL 02 — COMPARAÇÃO DE PADRÕES"),
-          b("principal","— Pesquisadores Auxiliares, olhem com atenção o painel: a informação não está em uma letra isolada, mas na quantidade de vezes que o padrão AGAT reaparece. É sobre isso que vocês vão votar.")
+          b("narrador","Duas sequências exibem o mesmo motivo, AGAT, repetido em quantidades diferentes.","◇ NARRADOR · ARQUIVO VISUAL 02"), b("principal","Observem o padrão: o que muda entre os perfis não é o motivo AGAT, mas o número de vezes que ele se repete."), b("sistema","AURORA | PADRÕES STR EM COMPARAÇÃO")
         ],
         pergunta:"O que diferencia os dois perfis apresentados?",
         preformatado:"Indivíduo A:  AGAT AGAT AGAT AGAT\nIndivíduo B:  AGAT AGAT AGAT AGAT AGAT AGAT",
         alternativas:{ A:"A presença de bases nitrogenadas completamente diferentes.",
-          B:"A quantidade de repetições da mesma sequência de DNA.",
+          B:"A produção de proteínas distintas durante a análise genética.",
           C:"A ausência de DNA em uma das amostras comparadas.",
-          D:"A produção de proteínas distintas durante a análise genética." },
-        codigos:{ A:"FOLHA", B:"NUVEM", C:"CERCA", D:"VASO" },
-        okBlocos:[ b("laboratorio","— O motivo AGAT é o mesmo; muda o número de repetições. É essa variação que gera alelos distintos em um STR.") ]
+          D:"A quantidade de repetições da mesma sequência de DNA." },
+        codigos:{ A:"FOLHA", B:"VASO", C:"CERCA", D:"NUVEM" },
+        okBlocos:[ b("sistema","AURORA | PADRÃO INTERPRETADO"), b("narrador","O motivo é o mesmo; o número de repetições muda. Essa diferença pode corresponder a alelos distintos em um marcador STR.") ],
+        wrongBlocos:[ b("sistema","AURORA | PADRÃO NÃO VALIDADO"), b("narrador","A comparação deve considerar a repetição do motivo, não a presença de uma sequência diferente."), b("principal","Observem novamente quantas vezes AGAT aparece em cada perfil.") ]
       }
     ]
   },
   /* ------------------------------- FASE 3 ------------------------------- */
   {
     fase:3, titulo:"Amplificação por PCR", status:"PCR concluída", video:"pcr",
-    introBlocos:[
-      b("narrador","A quantificação revelou DNA detectável, porém em concentração limitada. A equipe seleciona um painel de marcadores STR e prepara a amplificação das regiões de interesse.","◇ NARRADOR · DIA 1 — SALA DE PREPARAÇÃO MOLECULAR — 14:20"),
-      b("sistema","Alerta amarelo: concentração de DNA abaixo do limiar de análise direta."),
-      b("laboratorio","— Precisamos obter cópias das regiões STR, preservando a especificidade do alvo analisado."),
-      b("consultoria","— Qual procedimento permite ampliar o material sem alterar a lógica da comparação genética?")
-    ],
+    introBlocos:[ b("narrador","Há DNA detectável nas amostras, mas em concentração limitada. A análise direta dos marcadores pode não produzir sinal suficiente para comparação.","◇ NARRADOR · DIA 1 — SALA DE PREPARAÇÃO MOLECULAR — 14:20"), b("principal","Equipe auxiliar, precisamos aumentar as cópias das regiões STR sem alterar o perfil que já existe na amostra. Qual técnica atende a esse objetivo?"), b("sistema","AURORA | DNA ABAIXO DO LIMIAR DE ANÁLISE DIRETA") ],
     passos:[
       {
-        tipo:"decisao", codigoEtapa:"VENTO", pontuacaoMaxima:100, correta:"B",
-        durante:[ b("sistema","Amplificação: aguardando definição do método.") ],
+        tipo:"decisao", codigoEtapa:"OKASAKE", pontuacaoMaxima:100, correta:"A",
+        durante:[],
         pergunta:"A amostra contém pouco DNA. Qual técnica permite ampliar os marcadores de interesse?",
-        alternativas:{ A:"Centrifugação para aumentar a divisão das moléculas de DNA.",
-          B:"PCR para amplificar regiões específicas por ciclos térmicos.",
+        alternativas:{ A:"PCR para amplificar regiões específicas por ciclos térmicos.",
+          B:"Centrifugação para aumentar a divisão das moléculas de DNA.",
           C:"Microscopia para observar diretamente as sequências de DNA.",
           D:"Aquecimento para concentrar os fragmentos dentro da amostra." },
-        codigos:{ A:"TRILHA", B:"PONTE", C:"MARCO", D:"JANELA" },
-        okBlocos:[ b("validado","Amplificação autorizada. Regiões STR selecionadas para cópia."),
-          b("laboratorio","— A PCR produzirá cópias dos marcadores já existentes na amostra. Isso não cria um novo perfil; torna o perfil detectável.") ]
+        codigos:{ A:"PONTE", B:"TRILHA", C:"MARCO", D:"JANELA" },
+        okBlocos:[ b("sistema","AURORA | PCR AUTORIZADA"), b("narrador","A PCR foi selecionada para amplificar os marcadores de interesse. O procedimento produzirá cópias de regiões já presentes na amostra."), b("principal","A técnica não cria uma identidade nova; ela torna o perfil existente detectável.") ],
+        wrongBlocos:[ b("sistema","AURORA | MÉTODO REJEITADO"), b("narrador","A técnica escolhida não amplia regiões específicas do DNA para comparação."), b("principal","Reavaliem qual procedimento usa ciclos térmicos para copiar o alvo selecionado.") ]
       },
       {
         tipo:"ordenar", pontuacaoMaxima:0,
         cenaIntro:[
-          b("narrador","A tampa do equipamento se fecha. A tela pede que a equipe valide a sequência de etapas antes de iniciar o programa.","◇ NARRADOR · TERMOCICLADOR — CICLO 01"),
-          b("laboratorio","— O DNA deve se separar, os primers devem encontrar o alvo e a polimerase deve completar as novas fitas.")
+          b("narrador","O equipamento pede a validação do ciclo antes de iniciar a amplificação.","◇ NARRADOR · TERMOCICLADOR — CICLO 01"), b("principal","Organizem as etapas: primeiro as fitas se separam, depois os primers reconhecem o alvo e, por fim, a polimerase sintetiza novas fitas."), b("sistema","AURORA | CICLO AGUARDANDO VALIDAÇÃO")
         ],
         pergunta:"Organize as etapas de um ciclo de PCR na sequência correta.",
         itens:["Desnaturação","Anelamento","Extensão"],
-        okBlocos:[ b("sistema","Sequência validada. Programa de ciclagem iniciado."),
-          b("laboratorio","— Primeiro as fitas se separam (desnaturação); depois os primers se ligam ao alvo (anelamento); por fim a polimerase sintetiza novas fitas (extensão).") ]
+        okBlocos:[ b("sistema","AURORA | CICLO VALIDADO"), b("narrador","A sequência foi confirmada: desnaturação, anelamento e extensão. O termociclador inicia os ciclos programados.") ],
+        wrongBlocos:[ b("sistema","AURORA | CICLO REJEITADO"), b("narrador","A sequência apresentada não corresponde à ordem de um ciclo de PCR."), b("principal","Revejam o que acontece primeiro com as fitas de DNA e reorganizem os cartões.") ]
       }
     ]
   },
   /* ------------------------------- FASE 4 ------------------------------- */
   {
     fase:4, titulo:"Eletroforese", status:"Fragmentos separados", video:"blot",
-    introBlocos:[
-      b("narrador","As amostras amplificadas retornam à bancada. Agora os fragmentos serão separados por tamanho e detectados para gerar um perfil interpretável.","◇ NARRADOR · DIA 2 — SETOR DE LEITURA INSTRUMENTAL — 08:30"),
-      b("sistema","Campo elétrico disponível. Matriz porosa: preparada."),
-      b("laboratorio","— Para comparar os perfis, precisamos separar os fragmentos conforme seu tamanho e registrar o padrão obtido."),
-      b("laboratorio","Para fins didáticos, o jogo representa os perfis como bandas em gel. Em laboratórios modernos, a análise de STRs é frequentemente conduzida por PCR multiplex, eletroforese capilar e detecção fluorescente."),
-      b("consultoria","— Qual método converte esses fragmentos invisíveis em dados interpretáveis?")
-    ],
+    introBlocos:[ b("narrador","As regiões STR foram amplificadas, mas os fragmentos ainda precisam ser separados por tamanho para que os perfis possam ser comparados.","◇ NARRADOR · DIA 2 — SETOR DE LEITURA INSTRUMENTAL — 08:30"), b("principal","Equipe auxiliar, qual método permite converter esses fragmentos em um padrão interpretável?"), b("sistema","AURORA | CAMPO ELÉTRICO DISPONÍVEL"), b("documento","Para fins didáticos, o jogo representa perfis como bandas em gel. Em laboratórios atuais, STRs costumam ser analisados com PCR multiplex, eletroforese capilar e detecção fluorescente.","▤ NOTA DIDÁTICA") ],
     passos:[
       {
-        tipo:"decisao", codigoEtapa:"AREIA", pontuacaoMaxima:100, correta:"A",
-        durante:[ b("sistema","Aguardando definição do método de separação.") ],
+        tipo:"decisao", codigoEtapa:"LIGASE", pontuacaoMaxima:100, correta:"B",
+        durante:[],
         pergunta:"Após a PCR, qual método permite separar os fragmentos conforme o tamanho?",
-        alternativas:{ A:"Eletroforese em gel sob a ação de um campo elétrico.",
-          B:"Microscopia óptica com aumento máximo da lâmina analisada.",
+        alternativas:{ A:"Microscopia óptica com aumento máximo da lâmina analisada.",
+          B:"Eletroforese em gel sob a ação de um campo elétrico.",
           C:"Centrifugação em alta velocidade durante vários minutos.",
           D:"Aquecimento controlado até a evaporação dos fragmentos." },
-        codigos:{ A:"CAMPO", B:"FORNO", C:"REMO", D:"LIVRO" },
-        okBlocos:[ b("validado","Corrida eletroforética concluída. Padrões de fragmentos detectados."),
-          b("laboratorio","— Cada banda não é uma resposta pronta. É um dado que precisa ser comparado e interpretado no contexto correto.") ]
+        codigos:{ A:"FORNO", B:"CAMPO", C:"REMO", D:"LIVRO" },
+        okBlocos:[ b("sistema","AURORA | SEPARAÇÃO CONCLUÍDA"), b("narrador","A eletroforese separa os fragmentos segundo o tamanho, permitindo visualizar padrões comparáveis entre as amostras."), b("principal","Cada banda é um dado. A interpretação depende da comparação entre perfis, não da observação isolada de uma faixa.") ],
+        wrongBlocos:[ b("sistema","AURORA | MÉTODO REJEITADO"), b("narrador","A opção escolhida não separa os fragmentos de DNA por tamanho para formar um padrão comparável."), b("principal","Reavaliem qual método combina uma matriz porosa e um campo elétrico.") ]
       },
       {
-        tipo:"decisao", codigoEtapa:"GALHO", pontuacaoMaxima:0, correta:"B", miniatividade:true,
+        tipo:"decisao", codigoEtapa:"HELICASE", pontuacaoMaxima:0, correta:"C", miniatividade:true,
         cenaIntro:[
-          b("narrador","Três fragmentos atravessam o gel em velocidades diferentes. O menor já se aproxima do polo positivo, enquanto o maior permanece mais próximo do poço.","◇ NARRADOR · PAINEL DE LEITURA — 09:15"),
-          b("principal","— Pesquisadores Auxiliares, esta é a pergunta de vocês: o gel funciona como uma malha; decidam qual fragmento encontra menos resistência no caminho.")
+          b("narrador","Três fragmentos percorrem o gel. O menor já migrou mais em direção ao polo positivo.","◇ NARRADOR · PAINEL DE LEITURA — 09:15"), b("principal","O gel funciona como uma malha: qual fragmento encontra menos resistência e percorre a maior distância?"), b("sistema","AURORA | MIGRAÇÃO EM ANÁLISE")
         ],
         pergunta:"Três fragmentos foram aplicados no gel: A = 300 pb, B = 180 pb, C = 90 pb. Qual tende a migrar mais longe?",
         alternativas:{ A:"O fragmento de maior tamanho, por possuir mais massa molecular.",
-          B:"O fragmento de menor tamanho, por atravessar os poros mais facilmente.",
-          C:"O fragmento mais concentrado, por apresentar maior quantidade de DNA.",
+          B:"O fragmento mais concentrado, por apresentar maior quantidade de DNA.",
+          C:"O fragmento de menor tamanho, por atravessar os poros mais facilmente.",
           D:"O fragmento mais recente, por possuir ligações químicas mais fortes." },
-        codigos:{ A:"TELHA", B:"SINO", C:"PORTAO", D:"PRADO" },
-        okBlocos:[ b("laboratorio","— O fragmento menor encontra menos resistência na malha e migra mais longe. Tamanho, não concentração, define a posição.") ]
+        codigos:{ A:"TELHA", B:"PORTAO", C:"SINO", D:"PRADO" },
+        okBlocos:[ b("sistema","AURORA | MIGRAÇÃO INTERPRETADA"), b("narrador","Fragmentos menores atravessam os poros com mais facilidade e migram mais longe.") ],
+        wrongBlocos:[ b("sistema","AURORA | MIGRAÇÃO NÃO VALIDADA"), b("narrador","A distância percorrida no gel depende principalmente do tamanho do fragmento."), b("principal","Comparem os tamanhos informados e retomem a decisão coletiva.") ]
       }
     ]
   },
   /* ------------------------------- FASE 5 ------------------------------- */
   {
     fase:5, titulo:"Interpretação genética", status:"Perfil interpretado", video:null, showProfile:true,
-    introBlocos:[
-      b("narrador","Os perfis foram organizados. Maria apresenta 12/14; Lucas, 14/18; João, 15/18; e Carlos, 12/16. A equipe precisa aplicar o princípio de herança de alelos para interpretar o dado.","◇ NARRADOR · DIA 2 — SALA DE INTERPRETAÇÃO — 15:40"),
-      b("sistema","Comparação familiar ativada."),
-      b("consultoria","— Não buscamos identidade total entre os perfis. Primeiro, identifiquem o alelo de Lucas que pode ser explicado pela mãe. Depois, avaliem qual hipótese paterna é compatível com o alelo restante."),
-      b("laboratorio","— Dados laboratoriais disponíveis. Interpretação dependente da equipe.")
-    ],
+    introBlocos:[ b("narrador","Os perfis do marcador demonstrativo estão disponíveis: Maria, 12/14; Lucas, 14/18; João, 15/18; e Carlos, 12/16.","◇ NARRADOR · DIA 2 — SALA DE INTERPRETAÇÃO — 15:40"), b("principal","Não buscamos perfis idênticos. Primeiro, identifiquem qual alelo de Lucas pode ser explicado por Maria; depois, procurem quem explica o alelo restante."), b("sistema","AURORA | COMPARAÇÃO FAMILIAR: ATIVA") ],
     passos:[
       {
-        tipo:"decisao", codigoEtapa:"DUNA", pontuacaoMaxima:50, correta:"C",
-        durante:[ b("sistema","Limite de inferência: análise baseada em um único marcador.") ],
+        tipo:"decisao", codigoEtapa:"TOPOISOMERASE", pontuacaoMaxima:50, correta:"D",
+        durante:[],
         pergunta:"No marcador analisado, Lucas apresenta os alelos 14 e 18. Maria apresenta 12 e 14. Qual alelo de Lucas deve ser explicado pelo possível pai?",
         alternativas:{ A:"O alelo 12, pois ele aparece exclusivamente no perfil materno.",
           B:"O alelo 14, pois ele não pode ser herdado da mãe de Lucas.",
-          C:"O alelo 18, pois o alelo 14 pode ser atribuído à mãe.",
-          D:"Ambos os alelos, pois a criança recebe o mesmo perfil do pai." },
-        codigos:{ A:"COLINA", B:"ESTRADA", C:"LARGO", D:"CABANA" },
-        okBlocos:[ b("sistema","Alelo materno compatível identificado: 14. Alelo de origem paterna a ser investigado: 18."),
-          b("laboratorio","— Agora a pergunta muda. Não é quem se parece com Lucas, mas qual perfil explica o alelo que não veio de Maria.") ]
+          C:"Ambos os alelos, pois a criança recebe o mesmo perfil do pai.",
+          D:"O alelo 18, pois o alelo 14 pode ser atribuído à mãe." },
+        codigos:{ A:"COLINA", B:"ESTRADA", C:"CABANA", D:"LARGO" },
+        okBlocos:[ b("sistema","AURORA | ALELO MATERNO IDENTIFICADO"), b("narrador","O alelo 14 de Lucas é compatível com Maria. Resta investigar a origem do alelo 18."), b("principal","A próxima decisão não é sobre semelhança física: é sobre qual perfil contém o alelo que Lucas não recebeu da mãe.") ],
+        wrongBlocos:[ b("sistema","AURORA | HERANÇA NÃO VALIDADA"), b("narrador","A interpretação deve partir do alelo de Lucas que pode ser explicado pelo perfil materno."), b("principal","Comparem os alelos de Maria e Lucas antes de decidir qual contribuição investigar.") ]
       },
       {
-        tipo:"decisao", codigoEtapa:"ORVALHO", pontuacaoMaxima:50, correta:"A",
-        durante:[ b("sistema","Hipóteses paternas em comparação no marcador.") ],
+        tipo:"decisao", codigoEtapa:"TELOMERASE", pontuacaoMaxima:50, correta:"B",
+        durante:[],
         pergunta:"João apresenta os alelos 15 e 18. Carlos apresenta 12 e 16. Quem é compatível com a contribuição paterna nesse marcador?",
-        alternativas:{ A:"João, pois apresenta o alelo 18 observado no perfil de Lucas.",
-          B:"Carlos, pois apresenta o alelo 12 observado no perfil de Maria.",
+        alternativas:{ A:"Carlos, pois apresenta o alelo 12 observado no perfil de Maria.",
+          B:"João, pois apresenta o alelo 18 observado no perfil de Lucas.",
           C:"Ambos, pois qualquer alelo comum confirma a paternidade genética.",
           D:"Nenhum, pois pai e filho devem ter os dois alelos exatamente iguais." },
-        codigos:{ A:"MOINHO", B:"JARDIM", C:"CANOA", D:"MASTRO" },
-        okBlocos:[ b("sistema","Compatibilidade observada no marcador analisado: João apresenta o alelo 18. Incompatibilidade neste marcador: Carlos não apresenta o alelo 18."),
-          b("consultoria","— Temos uma interpretação preliminar. Compatibilidade em um marcador não equivale, por si só, à confirmação definitiva de paternidade."),
-          b("alerta","Resultado didático preliminar: compatibilidade observada em um marcador; análise ampliada necessária.") ]
+        codigos:{ A:"JARDIM", B:"MOINHO", C:"CANOA", D:"MASTRO" },
+        okBlocos:[ b("sistema","AURORA | COMPATIBILIDADE NO MARCADOR DEMONSTRATIVO"), b("narrador","João apresenta o alelo 18. Carlos não apresenta esse alelo no marcador analisado."), b("principal","Esta é uma interpretação preliminar. Um único marcador ensina a lógica da herança, mas não basta para concluir formalmente a paternidade."), b("sistema","AURORA | ANÁLISE AMPLIADA NECESSÁRIA") ],
+        wrongBlocos:[ b("sistema","AURORA | COMPATIBILIDADE NÃO VALIDADA"), b("narrador","A hipótese paterna precisa explicar o alelo de Lucas que não foi atribuído a Maria."), b("principal","Procurem o alelo 18 nos perfis comparados e retomem a decisão.") ]
       }
     ]
   }
@@ -548,12 +531,13 @@ const FASES = [
    ============================================================================ */
 const INTERSTICIOS = {
   d1_1810:{ blocos:[
-    b("narrador","A amplificação foi concluída. Os produtos seguem para a próxima etapa do fluxo analítico. A equipe registra os controles do ensaio e encerra o processamento do dia.","◇ NARRADOR · DIA 1 — 18:10"),
-    b("sistema","PCR finalizada. Leitura instrumental programada para o próximo turno.")
+    b("narrador","A amplificação foi concluída. Os controles são registrados, e os produtos seguem para leitura instrumental no próximo turno.","◇ NARRADOR · DIA 1 — 18:10"),
+    b("sistema","AURORA | PCR FINALIZADA — LEITURA PROGRAMADA")
   ], botao:"Avançar para o Dia 2  ▸" },
   d3_5:{ blocos:[
-    b("narrador","O laboratório concluiu a análise de múltiplos marcadores STR, revisou os controles, verificou a consistência dos dados e realizou a avaliação estatística necessária para interpretação do vínculo biológico.","◇ NARRADOR · DIAS 3 A 5 — REVISÃO E ANÁLISE AMPLIADA"),
-    b("sistema","Revisão técnica: concluída. Painel ampliado: consistente. Parecer disponível para emissão.")
+    b("narrador","O painel de múltiplos marcadores foi revisado, com controles e avaliação estatística para o parecer.","◇ NARRADOR · DIAS 3 A 5 — REVISÃO E ANÁLISE AMPLIADA"),
+    b("principal","Uma conclusão responsável comunica tanto a compatibilidade observada quanto os limites e critérios que sustentam essa interpretação."),
+    b("sistema","AURORA | REVISÃO CONCLUÍDA — PARECER DISPONÍVEL")
   ], botao:"Emitir parecer  ▸" }
 };
 
@@ -585,11 +569,27 @@ function el(tag,props={},...kids){
   return n;
 }
 const stage=$("#stage"), hud=$("#hud");
+function voltarAoTopo(){ window.scrollTo({top:0,left:0,behavior:"auto"}); }
+function atualizarBotaoTelaCheia(){
+  const btn=$("#fullscreenBtn"), ativa=Boolean(document.fullscreenElement);
+  if(!btn) return;
+  btn.setAttribute("aria-pressed",String(ativa));
+  btn.setAttribute("title",ativa?"Sair da tela cheia":"Entrar em tela cheia");
+  btn.textContent=ativa?"⛶ Sair da tela cheia":"⛶ Tela cheia";
+}
+$("#fullscreenBtn")?.addEventListener("click",async()=>{
+  try{
+    if(document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  }catch(_){ /* Alguns navegadores podem bloquear tela cheia fora de interação direta. */ }
+});
+document.addEventListener("fullscreenchange",atualizarBotaoTelaCheia);
 const normalizarCodigo = s => String(s||"").trim().toLowerCase();
 function construirMapaInverso(codigos){ const m={}; for(const[l,c] of Object.entries(codigos)) m[normalizarCodigo(c)]=l; return m; }
 
 /* Cria um elemento de bloco de diálogo. */
 function blocoEl(bl){
+  if(bl.t==="sistema") return el("div",{class:"aurora-status",role:"status"},bl.x);
   const sec=el("section",{class:"dialogo "+bl.t,role:"note"});
   sec.append(el("span",{class:"rotulo"}, bl.r || ROTULOS[bl.t] || ""));
   sec.append(el("p",{}, bl.x));
@@ -635,10 +635,12 @@ FASES.forEach(f=>f.passos.forEach(p=>{ if(p.tipo==="decisao") INDICE_ETAPAS[norm
    9) ESTADO + CONTROLE DE CENAS
    ============================================================================ */
 const estado={ faseIndex:0, passoIndex:0, score:0, statuses:[], videosConsultados:new Set() };
+let modoJogo="multiplayer";
 const SEQ=[ {k:"prologo"},{k:"fase",i:0},{k:"fase",i:1},{k:"fase",i:2},
   {k:"inter",id:"d1_1810"},{k:"fase",i:3},{k:"fase",i:4},{k:"inter",id:"d3_5"},{k:"final"} ];
 let scenePos=0;
 function renderScene(){ const s=SEQ[scenePos];
+  voltarAoTopo();
   if(s.k==="prologo") renderPrologo(); else if(s.k==="fase") renderFase(s.i);
   else if(s.k==="inter") renderInterstitial(s.id); else renderFinal(); }
 function proximaCena(){ scenePos++; renderScene(); }
@@ -647,7 +649,7 @@ function proximaCena(){ scenePos++; renderScene(); }
    10) TELA-TÍTULO RETRÔ (PRESS START) + FAKE LOAD (5 s)
    ============================================================================ */
 function renderTitulo(){
-  hud.hidden=true; stage.innerHTML="";
+  voltarAoTopo(); hud.hidden=true; stage.innerHTML="";
   let iniciou=false;
   const scr=el("section",{class:"panel retro-screen scanlines",role:"button",tabindex:"0","aria-label":"Tela inicial. Pressione para começar."},
     el("div",{class:"pixel-dna","aria-hidden":"true"},"🧬"),
@@ -666,7 +668,7 @@ function renderTitulo(){
 }
 
 function renderFakeLoad(){
-  hud.hidden=true; stage.innerHTML="";
+  voltarAoTopo(); hud.hidden=true; stage.innerHTML="";
   const fill=el("div",{class:"load-fill"});
   const pct=el("div",{class:"load-pct"},"0%");
   const scr=el("section",{class:"panel retro-screen scanlines"},
@@ -680,15 +682,29 @@ function renderFakeLoad(){
   const iv=setInterval(()=>{
     const p=Math.min(100, Math.round((performance.now()-t0)/dur*100));
     fill.style.width=p+"%"; pct.textContent=p+"%"; $("#loadBar")?.setAttribute("aria-valuenow",p);
-    if(p>=100){ clearInterval(iv); renderSelecaoPapel(); }
+    if(p>=100){ clearInterval(iv); renderSelecaoModo(); }
   },40);
 }
 
 /* ============================================================================
-   11) SELEÇÃO DE PAPEL — com pedido explícito ao jogador
+   11) SELEÇÃO DE MODO E PAPEL
    ============================================================================ */
+function renderSelecaoModo(){
+  voltarAoTopo(); hud.hidden=true; stage.innerHTML="";
+  const card=(ico,titulo,sub,on)=>{ const btn=el("button",{class:"role-card",type:"button","aria-label":titulo+" — "+sub});
+    btn.append(el("span",{class:"r-ico","aria-hidden":"true"},ico),el("span",{class:"r-title"},titulo),el("span",{class:"r-sub"},sub)); btn.addEventListener("click",on); return btn; };
+  const panel=el("section",{class:"panel home"},
+    el("div",{class:"dna","aria-hidden":"true"},"🧬"),
+    el("p",{class:"case-name"},"Caso 0147: A Evidência que Faltava"),
+    el("h2",{class:"title"},"Escolha o modo de jogo"),
+    el("p",{class:"subtitle"},"Jogue individualmente ou organize a investigação colaborativa em sala."),
+    el("div",{class:"roles"},
+      card("👤","SINGLE PLAYER","Resolva o caso sozinho, escolhendo e confirmando suas respostas.",iniciarSingle),
+      card("👥","MULTIPLAYER","Use os códigos e a Central de Decisão com a turma.",renderSelecaoPapel)));
+  stage.append(panel); panel.querySelector(".role-card").focus();
+}
 function renderSelecaoPapel(){
-  hud.hidden=true; stage.innerHTML="";
+  voltarAoTopo(); hud.hidden=true; stage.innerHTML="";
   const card=(ico,titulo,sub,on)=>{ const btn=el("button",{class:"role-card",type:"button","aria-label":titulo+" — "+sub});
     btn.append(el("span",{class:"r-ico","aria-hidden":"true"},ico),el("span",{class:"r-title"},titulo),el("span",{class:"r-sub"},sub));
     btn.addEventListener("click",on); return btn; };
@@ -711,7 +727,7 @@ function renderSelecaoPapel(){
        sem botão de trocar papel)
    ============================================================================ */
 function renderAuxiliar(){
-  hud.hidden=true; stage.innerHTML="";
+  voltarAoTopo(); hud.hidden=true; stage.innerHTML="";
   const wrap=el("div",{class:"aux-wrap"});
   const card=el("div",{class:"aux-card"},
     el("div",{class:"aux-badge"},"Central de Decisão"),
@@ -748,8 +764,12 @@ function tabelaConversao(passo){
 /* ============================================================================
    13) MODO PRINCIPAL — fluxo
    ============================================================================ */
-function iniciarPrincipal(){
+function iniciarPrincipal(){ iniciarPartida("multiplayer"); }
+function iniciarSingle(){ iniciarPartida("single"); }
+function iniciarPartida(modo){
+  modoJogo=modo;
   estado.faseIndex=0; estado.passoIndex=0; estado.score=0; estado.statuses=[]; estado.videosConsultados=new Set();
+  $("#roleTag").textContent=modo==="single"?"Single Player":"Pesquisador Principal";
   construirChips(); hud.hidden=false; scenePos=0; atualizarHUD(); renderScene();
 }
 function construirChips(){ const row=$("#statusRow"); row.innerHTML="";
@@ -773,7 +793,7 @@ function renderPrologo(){
     panel.append(el("div",{class:"actions"}, el("button",{class:"btn btn-primary",type:"button",onclick:proximaCena},"Iniciar investigação  ▸")));
     panel.querySelector(".actions .btn").focus();
   });
-  stage.scrollIntoView({behavior:"smooth",block:"start"});
+  voltarAoTopo();
 }
 
 /* ---------------------------- Interstício (tempo) ----------------------- */
@@ -785,7 +805,7 @@ function renderInterstitial(id){
     panel.append(el("div",{class:"actions"}, el("button",{class:"btn btn-primary",type:"button",onclick:proximaCena}, it.botao||"Continuar  ▸")));
     panel.querySelector(".actions .btn").focus();
   });
-  stage.scrollIntoView({behavior:"smooth",block:"start"});
+  voltarAoTopo();
 }
 
 /* -------------------------------- Fase ---------------------------------- */
@@ -802,18 +822,32 @@ function renderFase(i){
   const introHost=el("div"); panel.append(introHost);
   stage.append(panel);
   sequencia(introHost, fase.introBlocos, ()=>{
-    if(fase.showProfile) panel.append(buildProfile());
-    panel.append(el("div",{id:"passoBox"}));
     renderPassoInterno();
   });
-  stage.scrollIntoView({behavior:"smooth",block:"start"});
+  voltarAoTopo();
 }
 function renderPassoInterno(){
   const passo=FASES[estado.faseIndex].passos[estado.passoIndex];
-  const box=$("#passoBox"); box.innerHTML="";
-  const construir=()=>{ if(passo.tipo==="decisao") renderDecisao(box,passo); if(passo.tipo==="ordenar") renderOrdenar(box,passo); };
-  if(passo.cenaIntro && passo.cenaIntro.length) sequencia(box, passo.cenaIntro, construir);
-  else construir();
+  if(passo.cenaIntro && passo.cenaIntro.length){
+    stage.innerHTML="";
+    const panel=el("section",{class:"panel interstitial"}, el("p",{class:"eyebrow"},"Fase "+FASES[estado.faseIndex].fase+" · Preparação da atividade"), el("h2",{class:"title"},FASES[estado.faseIndex].titulo));
+    const host=el("div"); panel.append(host); stage.append(panel);
+    sequencia(host, passo.cenaIntro, renderTelaPergunta);
+  }else renderTelaPergunta();
+  voltarAoTopo();
+}
+function renderTelaPergunta(){
+  const fase=FASES[estado.faseIndex], passo=fase.passos[estado.passoIndex];
+  stage.innerHTML="";
+  const tipo=passo.miniatividade?"Miniatividade coletiva":"Decisão coletiva";
+  const panel=el("section",{class:"panel question-screen"},
+    el("p",{class:"eyebrow"},"Dia "+dayFor(estado.faseIndex)+" · Fase "+fase.fase+" de 5 · "+tipo),
+    el("h2",{class:"title"},fase.titulo));
+  if(fase.showProfile) panel.append(buildProfile());
+  const box=el("div",{id:"passoBox"}); panel.append(box); stage.append(panel);
+  if(passo.tipo==="decisao") renderDecisao(box,passo);
+  if(passo.tipo==="ordenar") renderOrdenar(box,passo);
+  voltarAoTopo();
 }
 
 /* ------------------------ Passo DECISÃO (código) ------------------------ */
@@ -828,9 +862,6 @@ function renderDecisao(container,passo){
   ["A","B","C","D"].forEach(L=>group.append(el("div",{class:"opt","data-letter":L},
     el("span",{class:"letter","aria-hidden":"true"},L), el("span",{class:"body"},passo.alternativas[L]))));
   container.append(group);
-
-  // Voz do Pesquisador Principal, dirigida aos auxiliares (amarela).
-  container.append(blocoEl(FALA_PRINCIPAL_DECISAO));
 
   // Código de etapa oculto em guia expansiva (inicia CONTRAÍDA).
   const det=el("details",{class:"etapa"});
@@ -888,7 +919,7 @@ function renderDecisao(container,passo){
       resultZone.append(el("div",{class:"answer-reveal wrong"},
         el("div",{class:"big"},"⚠ Alternativa incorreta"),
         el("div",{},"A alternativa informada não está correta. Discutam novamente em equipe e escolham outra alternativa; depois informem o novo código.")));
-      inp.disabled=false; confirmBtn.disabled=false; inp.value=""; inp.focus();
+      sequencia(resultZone, passo.wrongBlocos, ()=>{ inp.disabled=false; confirmBtn.disabled=false; inp.value=""; inp.focus(); });
     }
   }
   confirmBtn.addEventListener("click",confirmar);
@@ -912,7 +943,7 @@ function adicionarAvanco(zone){
   const btn=el("button",{class:"btn btn-primary",type:"button"},label);
   btn.addEventListener("click",()=>{
     if(ultimoPasso){ if(!estado.statuses.includes(fase.status)) estado.statuses.push(fase.status); atualizarHUD(); proximaCena(); }
-    else { estado.passoIndex++; renderPassoInterno(); $("#passoBox").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+    else { estado.passoIndex++; renderPassoInterno(); }
   });
   zone.append(el("div",{class:"actions"},btn)); btn.focus();
 }
@@ -957,6 +988,7 @@ function renderOrdenar(container,passo){
       resultZone.append(el("div",{class:"answer-reveal wrong"},
         el("div",{class:"big"},"⚠ Sequência incorreta"),
         el("div",{},"Reorganizem os cartões em equipe e verifiquem novamente.")));
+      if(passo.wrongBlocos) sequencia(resultZone, passo.wrongBlocos, ()=>{});
     }
   });
 }
@@ -1016,8 +1048,8 @@ function renderFinal(){
   const nar=el("div",{style:"text-align:left"}); panel.append(nar);
   stage.append(panel);
   sequencia(nar, [
-    b("narrador","A equipe percorreu todas as etapas: preservou as amostras, selecionou marcadores, amplificou regiões de interesse, separou fragmentos e interpretou os alelos obtidos.","◇ NARRADOR · DIA 5 — GABINETE DE EMISSÃO DO PARECER"),
-    b("consultoria","— Uma leitura tecnicamente correta também exige comunicação responsável. A equipe deve registrar não apenas a compatibilidade observada, mas os limites da evidência.")
+    b("narrador","A equipe concluiu a investigação com rastreabilidade, método e interpretação proporcional às evidências disponíveis.","◇ NARRADOR · DIA 5 — GABINETE DE EMISSÃO DO PARECER"),
+    b("principal","O parecer registra a compatibilidade observada e os limites necessários para interpretá-la com responsabilidade.")
   ], ()=>{
     panel.append(el("div",{class:"rank-badge"},
       el("span",{class:"rank-icon","aria-hidden":"true"},rank.icon),
@@ -1030,14 +1062,13 @@ function renderFinal(){
       "este é um cenário didático simplificado. Em exames reais de vínculo biológico, a conclusão não deve ser baseada em apenas um marcador. Laboratórios analisam múltiplos loci STR, adotam controles de qualidade, mantêm a cadeia de custódia e realizam avaliação estatística da evidência."));
     const fech=el("div",{class:"closing"}); panel.append(fech);
     sequencia(fech, [
-      b("consultoria","— Esta investigação não foi conduzida por aparência, suposição ou pressão. Foi conduzida por rastreabilidade, método e interpretação proporcional aos dados."),
-      b("sistema","Caso 0147 encerrado para fins educacionais.")
+      b("sistema","AURORA | CASO 0147 ENCERRADO PARA FINS EDUCACIONAIS")
     ], ()=>{
       panel.append(el("div",{class:"actions",style:"justify-content:center;margin-top:20px"},
         el("button",{class:"btn btn-primary",type:"button",onclick:iniciarPrincipal},"↺ Reiniciar investigação")));
     });
   });
-  stage.scrollIntoView({behavior:"smooth",block:"start"});
+  voltarAoTopo();
 }
 
 /* ============================================================================
