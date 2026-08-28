@@ -146,7 +146,8 @@
   .opt.correct{border-color:var(--ok);background:rgba(62,224,143,.16);box-shadow:0 0 0 2px var(--ok)}
   .opt.correct .letter{background:#1f8f5b;color:#eafff4}
   .opt.wrong{border-color:var(--no);background:rgba(255,122,89,.16);box-shadow:0 0 0 2px var(--no)}
-  .opt.single-choice{cursor:pointer;text-align:left;font:inherit}
+  .opt.single-choice{cursor:pointer;text-align:left;font:inherit;color:inherit}
+  .opt.single-choice:disabled{cursor:default}
   .opt.single-choice:hover{border-color:var(--cyan);background:rgba(56,214,255,.08)}
   .opt.selected{border-color:var(--evi);background:rgba(255,210,63,.13);box-shadow:0 0 0 2px rgba(255,210,63,.5)}
   .single-confirm{margin:14px 0;padding:12px 14px;border:1px solid rgba(255,210,63,.38);border-radius:10px;background:rgba(255,210,63,.07);color:#ffe9a6}
@@ -319,7 +320,7 @@
   <main id="stage" aria-live="polite"></main>
   <footer class="site-footer">
     Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
-    Última atualização: 26 de agosto de 2026
+    Versão 1.0 · Última atualização: 27 de agosto de 2026
   </footer>
 </div>
 
@@ -839,13 +840,18 @@ function renderPassoInterno(){
 function renderTelaPergunta(){
   const fase=FASES[estado.faseIndex], passo=fase.passos[estado.passoIndex];
   stage.innerHTML="";
-  const tipo=passo.miniatividade?"Miniatividade coletiva":"Decisão coletiva";
+  const tipo=modoJogo==="single"
+    ? (passo.miniatividade?"Miniatividade":"Decisão")
+    : (passo.miniatividade?"Miniatividade coletiva":"Decisão coletiva");
   const panel=el("section",{class:"panel question-screen"},
     el("p",{class:"eyebrow"},"Dia "+dayFor(estado.faseIndex)+" · Fase "+fase.fase+" de 5 · "+tipo),
     el("h2",{class:"title"},fase.titulo));
   if(fase.showProfile) panel.append(buildProfile());
   const box=el("div",{id:"passoBox"}); panel.append(box); stage.append(panel);
-  if(passo.tipo==="decisao") renderDecisao(box,passo);
+  if(passo.tipo==="decisao"){
+    if(modoJogo==="single") renderDecisaoSingle(box,passo);
+    else renderDecisao(box,passo);
+  }
   if(passo.tipo==="ordenar") renderOrdenar(box,passo);
   voltarAoTopo();
 }
@@ -924,6 +930,81 @@ function renderDecisao(container,passo){
   }
   confirmBtn.addEventListener("click",confirmar);
   inp.addEventListener("keydown",e=>{ if(e.key==="Enter") confirmar(); });
+}
+
+/* --------------------- Passo DECISÃO (single player) --------------------
+   Aqui não há código nem equipe auxiliar: o próprio jogador toca na
+   alternativa, confirma a escolha e só então o gabarito é revelado.
+   Uma única tentativa por pergunta — acertando ou errando — porque a
+   pontuação está sendo contabilizada. */
+function renderDecisaoSingle(container,passo){
+  const local={resolvido:false, selecionada:null};
+  if(passo.miniatividade) container.append(el("p",{class:"eyebrow",style:"color:var(--ink-faint)"},"Miniatividade complementar"));
+  container.append(el("p",{class:"prompt"},passo.pergunta));
+  if(passo.preformatado) container.append(el("pre",{class:"seq"},passo.preformatado));
+  if(passo.durante) renderBlocos(container, passo.durante);
+
+  const group=el("div",{class:"options",role:"group","aria-label":"Alternativas"});
+  const resultZone=el("div",{"aria-live":"polite"});
+
+  const confirmTxt=el("span",{},"Toque em uma alternativa para selecioná-la.");
+  const confirmBtn=el("button",{class:"btn btn-primary",type:"button",disabled:"disabled"},"Confirmar resposta");
+  const confirmBox=el("div",{class:"single-confirm"}, confirmTxt, el("div",{class:"actions",style:"margin-top:10px"},confirmBtn));
+
+  ["A","B","C","D"].forEach(L=>{
+    const opt=el("button",{class:"opt single-choice",type:"button","data-letter":L,"aria-pressed":"false"},
+      el("span",{class:"letter","aria-hidden":"true"},L), el("span",{class:"body"},passo.alternativas[L]));
+    opt.addEventListener("click",()=>{
+      if(local.resolvido) return;
+      local.selecionada=L;
+      group.querySelectorAll(".opt").forEach(o=>{ o.classList.remove("selected"); o.setAttribute("aria-pressed","false"); });
+      opt.classList.add("selected"); opt.setAttribute("aria-pressed","true");
+      confirmTxt.textContent="Alternativa "+L+" selecionada. Confirme para registrar a resposta.";
+      confirmBtn.disabled=false;
+    });
+    group.append(opt);
+  });
+
+  container.append(group, confirmBox, resultZone);
+
+  function confirmar(){
+    if(local.resolvido || !local.selecionada) return;
+    local.resolvido=true;
+    group.querySelectorAll(".opt").forEach(o=>{ o.disabled=true; });
+    confirmBox.remove();
+    processar(resultZone, ()=>revelar(local.selecionada));
+  }
+  confirmBtn.addEventListener("click",confirmar);
+
+  function revelar(letra){
+    const acertou=(letra===passo.correta);
+    resultZone.innerHTML="";
+    group.querySelectorAll(".opt").forEach(o=>{
+      const L=o.dataset.letter;
+      if(L===passo.correta) o.classList.add("correct");
+      else if(L===letra) o.classList.add("wrong");
+      else o.classList.add("dim");
+    });
+    if(acertou){
+      resultZone.append(el("div",{class:"answer-reveal correct"},
+        el("div",{class:"big"},"✓ Resposta correta — alternativa "+letra),
+        el("div",{}, passo.alternativas[letra])));
+      let pts=0;
+      if(passo.pontuacaoMaxima>0){
+        const penalVideo=CONFIG.usarPontuacaoPorConsulta && estado.videosConsultados.has(estado.faseIndex);
+        const f=penalVideo?0.7:1;
+        pts=Math.round(passo.pontuacaoMaxima*f);
+        estado.score=Math.min(CONFIG.pontuacaoMaxima, estado.score+pts); atualizarHUD();
+      }
+      const ptsEl = passo.pontuacaoMaxima>0 ? el("div",{class:"pts"},"+"+pts+" pontos") : null;
+      sequencia(resultZone, passo.okBlocos, ()=>{ if(ptsEl) resultZone.append(ptsEl); adicionarAvanco(resultZone); });
+    }else{
+      resultZone.append(el("div",{class:"answer-reveal wrong"},
+        el("div",{class:"big"},"✗ Resposta incorreta"),
+        el("div",{},"A alternativa correta era a "+passo.correta+": "+passo.alternativas[passo.correta]+".")));
+      sequencia(resultZone, passo.wrongBlocos, ()=>adicionarAvanco(resultZone));
+    }
+  }
 }
 
 /* Animação de ~2s antes de revelar. */

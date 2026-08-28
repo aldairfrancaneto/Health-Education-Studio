@@ -348,38 +348,9 @@ body{
   .instrucoes{
     background:var(--paper); border:3px solid var(--outline); border-radius:10px;
     box-shadow:5px 5px 0 var(--outline); padding:16px 20px; margin:0 0 22px; font-size:16px;
+    color:var(--ink);
   }
   .instrucoes b{ color:var(--red-dark); }
-
-  /* --------- aba expansível de bibliografia --------- */
-  .biblio{
-    background:var(--paper); border:3px solid var(--outline); border-radius:10px;
-    box-shadow:5px 5px 0 var(--outline); margin:0 0 26px; overflow:hidden;
-  }
-  .biblio > summary{
-    cursor:pointer; list-style:none; padding:15px 20px;
-    font-family:var(--font-pixel); font-size:10.5px; color:var(--ink);
-    background:var(--paper-2); border-bottom:3px solid transparent;
-    display:flex; align-items:center; gap:10px;
-  }
-  .biblio > summary::-webkit-details-marker{ display:none; }
-  .biblio > summary::after{
-    content:"▸"; margin-left:auto; font-size:14px; transition:transform .2s;
-  }
-  .biblio[open] > summary{ border-bottom-color:var(--outline); }
-  .biblio[open] > summary::after{ transform:rotate(90deg); }
-  .biblio > summary:hover{ background:var(--coin); }
-  /* esconde de fato o conteúdo com a aba fechada (não só visualmente) */
-  .biblio:not([open]) .conteudo{ display:none; }
-  .biblio .conteudo{ padding:18px 20px; }
-  .biblio .conteudo p{
-    margin:0; font-size:15.5px; line-height:1.65;
-    text-align:justify; hyphens:auto; overflow-wrap:break-word;
-  }
-  .biblio .conteudo a{
-    color:var(--blue-dark); text-decoration:underline; overflow-wrap:break-word;
-  }
-  .biblio .conteudo a:hover{ color:var(--red-dark); }
   /* ============================================================
      ATIVIDADE 5 — EXPEDIÇÃO CELULAR (trios de cartas)
      Mesmo tabuleiro do jogo de associação, repaginado em tons de
@@ -513,10 +484,58 @@ body{
     .org-mao{ grid-template-columns:repeat(auto-fill,minmax(94px,1fr)); gap:9px; }
     .org-leque{ min-height:128px; }
   }
+.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+.site-footer strong{ color:rgba(255,255,255,.8); }
+
+/* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
+.tela-titulo, .tela-carregando{
+  min-height:70vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; gap:18px; padding:40px 20px;
+  position:relative; cursor:pointer; overflow:hidden;
+}
+.tela-titulo::after, .tela-carregando::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px);
+  opacity:.4;
+}
+.tt-ico{ font-size:2.8rem; line-height:1; }
+.tt-caso{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.15em; color:var(--gold); text-transform:uppercase; }
+.tt-titulo{
+  font-family:var(--font-pixel); font-size:clamp(15px,4vw,26px); line-height:1.6;
+  color:var(--gold-soft); text-shadow:3px 3px 0 rgba(0,0,0,.4);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.tt-sub{ font-family:var(--font-pixel); font-size:9px; letter-spacing:.08em; color:rgba(232,238,247,.7); text-transform:uppercase; line-height:1.7; }
+.tt-start{ margin-top:6px; font-family:var(--font-pixel); font-size:12px; letter-spacing:.1em; color:#fff; text-transform:uppercase; animation:ttBlink 1s steps(1) infinite; }
+.tt-rodape{ font-family:var(--font-pixel); font-size:7px; letter-spacing:.06em; color:rgba(232,238,247,.5); text-transform:uppercase; }
+@keyframes ttBlink{ 50%{ opacity:0; } }
+.tc-titulo{ font-family:var(--font-pixel); font-size:clamp(13px,3.2vw,18px); letter-spacing:.1em; color:var(--gold-soft); text-transform:uppercase; animation:ttBlink 1.1s steps(1) infinite; }
+.tc-barra{ width:min(360px,80vw); height:22px; border:3px solid var(--gold-dim); background:var(--slot); padding:3px; }
+.tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dim) 10px 14px); }
+.tc-pct{ font-family:var(--font-pixel); font-size:11px; letter-spacing:.06em; color:var(--gold-soft); }
+.tc-dica{ font-family:var(--font-pixel); font-size:7.5px; letter-spacing:.05em; line-height:1.9; color:rgba(232,238,247,.6); max-width:320px; }
 </style>
 </head>
 <body>
-<div class="pagina">
+
+<div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Toque ou pressione qualquer tecla para começar.">
+  <div class="tt-ico" aria-hidden="true">🧬</div>
+  <div class="tt-caso">Atividade 05</div>
+  <div class="tt-titulo">Expedição<br>Celular</div>
+  <div class="tt-sub">Organelas · associação de trios</div>
+  <div class="tt-start">▶ Press Start</div>
+  <div class="tt-rodape">toque ou pressione qualquer tecla</div>
+</div>
+
+<div class="tela-carregando" id="telaCarregando" style="display:none;">
+  <div class="tc-titulo">Carregando</div>
+  <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
+  <div class="tc-pct" id="tcPct">0%</div>
+  <div class="tc-dica">Organizando as organelas…</div>
+</div>
+
+<div class="pagina" id="conteudoJogo" style="display:none;">
     <!-- ---------- TELA DE SELEÇÃO DE MODO ---------- -->
     <div class="mor-selecao" id="orgSelecao">
 
@@ -620,31 +639,17 @@ body{
 
     </div>
 
-    <details class="biblio">
-      <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
-      <div class="conteudo">
-        <p>
-          Ganeo AL, Cândido L, Santos JA, Santos LAFR, Schimit LM, Carrenho MCP, et al.
-          Células: uma breve revisão sobre a diversidade, características, organização,
-          estruturas e funções celulares. <em>UNISANTA Bioscience.</em> 2019;8(4):457-465.
-        </p>
-        <p style="margin-top:10px;">
-          Schieweck R, Götz M. Pan-cellular organelles and suborganelles—from common
-          functions to cellular diversity? <em>Genes Dev.</em> 2024;38(3-4):98-114.
-          doi: <a href="https://doi.org/10.1101/gad.351337.123" target="_blank" rel="noopener">10.1101/gad.351337.123</a>.
-        </p>
-        <p style="margin-top:10px;">
-          Alberts B, et al. <em>Fundamentos da Biologia Celular.</em> 4th ed.
-          Porto Alegre: Artmed; 2017.
-        </p>
-      </div>
-    </details>
 </div>
 
 <div id="lightbox">
   <button id="lbFechar" type="button">✕ FECHAR</button>
   <img id="lbImg" src="" alt="Carta ampliada">
 </div>
+
+<footer class="site-footer">
+  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
+  Versão 1.0 · Última atualização: 27 de agosto de 2026
+</footer>
 
 <script>
 (function(){
@@ -846,7 +851,7 @@ body{
     return est;
   }
 
-  function orgSlots(){ return document.querySelectorAll('#ativ-organelas .org-slot'); }
+  function orgSlots(){ return document.querySelectorAll('.org-slot'); }
 
   function orgClicarSlot(slot){
     /* encaixe ocupado → devolve a carta ao acervo */
@@ -903,7 +908,7 @@ body{
   }
 
   function orgFecharTrios(){
-    document.querySelectorAll('#ativ-organelas .org-slot:not(.travado)').forEach(function(s){
+    document.querySelectorAll('.org-slot:not(.travado)').forEach(function(s){
       s.classList.remove('certo','errado');
     });
     let acertos = 0; const errados = [];
@@ -966,7 +971,7 @@ body{
     /* monte e legenda das vermelhas somem no conjunto reduzido */
     const temVerm = orgTipoAtivo('verm');
     document.getElementById('orgDeckVerm').classList.toggle('oculto', !temVerm);
-    document.querySelectorAll('#ativ-organelas .org-legenda span[data-leg="verm"]')
+    document.querySelectorAll('.org-legenda span[data-leg="verm"]')
       .forEach(function(sp){ sp.classList.toggle('oculto', !temVerm); });
     orgContarMontes();
 
@@ -1034,6 +1039,42 @@ body{
   setInterval(avisarAltura, 700);
   avisarAltura();
 
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var titulo = document.getElementById('telaTitulo');
+  var carregando = document.getElementById('telaCarregando');
+  var conteudo = document.getElementById('conteudoJogo');
+  var fill = document.getElementById('tcPreenchimento');
+  var pct = document.getElementById('tcPct');
+  var iniciado = false;
+  var DURACAO = 2600;
+
+  function iniciar(){
+    if (iniciado) return;
+    iniciado = true;
+    titulo.style.display = 'none';
+    carregando.style.display = '';
+    var t0 = performance.now();
+    function passo(){
+      var p = Math.min(100, Math.round((performance.now() - t0) / DURACAO * 100));
+      fill.style.width = p + '%';
+      pct.textContent = p + '%';
+      if (p < 100){ requestAnimationFrame(passo); }
+      else {
+        carregando.style.display = 'none';
+        conteudo.style.display = '';
+      }
+    }
+    requestAnimationFrame(passo);
+  }
+  titulo.addEventListener('click', iniciar);
+  titulo.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
+  });
 })();
 </script>
 </body>

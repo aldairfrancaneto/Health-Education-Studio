@@ -503,57 +503,6 @@ body{
   #ativ-cariotipo .kmodal{ padding:14px 10px; }
   #ativ-cariotipo .kmodal-caixa{ padding:15px 14px 17px; }
   }
-  #ativ-cariotipo /* ---------------- referência bibliográfica ---------------- */
-  .kbiblio{
-    margin:26px 0 0; border:3px solid var(--uva); border-radius:16px;
-    background:linear-gradient(180deg, rgba(199,125,255,.15), rgba(42,30,92,.62));
-    box-shadow:0 5px 0 rgba(0,0,0,.22); overflow:hidden;
-  }
-  #ativ-cariotipo .kbiblio summary{
-    cursor:pointer; list-style:none; padding:15px 18px;
-    font-family:var(--pixel); font-size:11px; line-height:1.7; color:#EBD3FA;
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-  }
-  #ativ-cariotipo .kbiblio summary::-webkit-details-marker{ display:none; }
-  #ativ-cariotipo .kbiblio summary::after{
-    content:'▸'; font-family:var(--serif); font-size:19px; color:var(--uva);
-    transition:transform .18s;
-  }
-  #ativ-cariotipo .kbiblio[open] summary::after{ transform:rotate(90deg); }
-  #ativ-cariotipo .kbiblio summary:hover{ background:rgba(199,125,255,.14); }
-  #ativ-cariotipo .kbiblio-corpo{
-    padding:2px 18px 18px; border-top:2px dashed rgba(199,125,255,.35);
-    margin-top:2px; padding-top:15px;
-  }
-  #ativ-cariotipo .kbiblio-corpo p{ margin:0 0 12px; font-size:15.5px; line-height:1.6; color:var(--tinta2); }
-  #ativ-cariotipo .kbiblio-corpo p:last-child{ margin-bottom:0; }
-  #ativ-cariotipo .kbiblio-corpo a{ color:var(--ciano); word-break:break-all; }
-  #ativ-cariotipo .kbiblio-nota{ font-size:14.5px !important; color:var(--tinta3) !important; }
-  #ativ-cariotipo /* ---------------- referência bibliográfica ---------------- */
-  .kbiblio{
-    margin:26px 0 0; border:3px solid var(--uva); border-radius:16px;
-    background:linear-gradient(180deg, rgba(199,125,255,.15), rgba(42,30,92,.62));
-    box-shadow:0 5px 0 rgba(0,0,0,.22); overflow:hidden;
-  }
-  #ativ-cariotipo .kbiblio summary{
-    cursor:pointer; list-style:none; padding:15px 18px;
-    font-family:var(--pixel); font-size:11px; line-height:1.7; color:#EBD3FA;
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-  }
-  #ativ-cariotipo .kbiblio summary::-webkit-details-marker{ display:none; }
-  #ativ-cariotipo .kbiblio summary::after{
-    content:'\25B8'; font-family:var(--serif); font-size:19px; color:var(--uva);
-    transition:transform .18s;
-  }
-  #ativ-cariotipo .kbiblio[open] summary::after{ transform:rotate(90deg); }
-  #ativ-cariotipo .kbiblio summary:hover{ background:rgba(199,125,255,.14); }
-  #ativ-cariotipo .kbiblio-corpo{
-    padding:15px 18px 18px; border-top:2px dashed rgba(199,125,255,.35);
-  }
-  #ativ-cariotipo .kbiblio-corpo p{ margin:0 0 12px; font-size:15.5px; line-height:1.6; color:var(--tinta2); }
-  #ativ-cariotipo .kbiblio-corpo p:last-child{ margin-bottom:0; }
-  #ativ-cariotipo .kbiblio-corpo a{ color:var(--ciano); word-break:break-all; }
-  #ativ-cariotipo .kbiblio-nota{ font-size:14.5px !important; color:var(--tinta3) !important; }
   #ativ-cariotipo svg{ display:block; overflow:visible; }
 
   @media (max-width:600px){
@@ -570,11 +519,59 @@ body{
 
 
 
+.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+.site-footer strong{ color:rgba(255,255,255,.8); }
+
+/* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
+.tela-titulo, .tela-carregando{
+  min-height:70vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; gap:18px; padding:40px 20px;
+  position:relative; cursor:pointer; overflow:hidden;
+}
+.tela-titulo::after, .tela-carregando::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px);
+  opacity:.4;
+}
+.tt-ico{ font-size:2.8rem; line-height:1; }
+.tt-caso{ font-family:var(--pixel); font-size:10px; letter-spacing:.15em; color:var(--ambar); text-transform:uppercase; }
+.tt-titulo{
+  font-family:var(--pixel); font-size:clamp(15px,4vw,26px); line-height:1.6;
+  color:var(--ciano); text-shadow:3px 3px 0 rgba(0,0,0,.4);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.tt-sub{ font-family:var(--pixel); font-size:9px; letter-spacing:.08em; color:var(--tinta3); text-transform:uppercase; line-height:1.7; }
+.tt-start{ margin-top:6px; font-family:var(--pixel); font-size:12px; letter-spacing:.1em; color:#fff; text-transform:uppercase; animation:ttBlink 1s steps(1) infinite; }
+.tt-rodape{ font-family:var(--pixel); font-size:7px; letter-spacing:.06em; color:var(--tinta3); text-transform:uppercase; }
+@keyframes ttBlink{ 50%{ opacity:0; } }
+.tc-titulo{ font-family:var(--pixel); font-size:clamp(13px,3.2vw,18px); letter-spacing:.1em; color:var(--ciano); text-transform:uppercase; animation:ttBlink 1.1s steps(1) infinite; }
+.tc-barra{ width:min(360px,80vw); height:22px; border:3px solid var(--ambar); background:var(--slot); padding:3px; }
+.tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--ciano) 0 10px, #1E6E7A 10px 14px); }
+.tc-pct{ font-family:var(--pixel); font-size:11px; letter-spacing:.06em; color:var(--ciano); }
+.tc-dica{ font-family:var(--pixel); font-size:7.5px; letter-spacing:.05em; line-height:1.9; color:var(--tinta3); max-width:320px; }
 </style>
 </head>
 <body>
 <div id="ativ-cariotipo">
-<div class="kenv">
+
+<div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Toque ou pressione qualquer tecla para começar.">
+  <div class="tt-ico" aria-hidden="true">🔬</div>
+  <div class="tt-caso">Atividade 07</div>
+  <div class="tt-titulo">Laboratório de<br>Citogenética</div>
+  <div class="tt-sub">Montagem de cariótipo</div>
+  <div class="tt-start">▶ Press Start</div>
+  <div class="tt-rodape">toque ou pressione qualquer tecla</div>
+</div>
+
+<div class="tela-carregando" id="telaCarregando" style="display:none;">
+  <div class="tc-titulo">Carregando</div>
+  <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
+  <div class="tc-pct" id="tcPct">0%</div>
+  <div class="tc-dica">Preparando a lâmina e a régua…</div>
+</div>
+
+<div class="kenv" id="conteudoJogo" style="display:none;">
 
   <!-- ============ TELA DE SELEÇÃO ============ -->
   <div class="kselecao" id="kselecao">
@@ -666,20 +663,6 @@ body{
       </div>
     </div>
   </div>
-
-  <!-- ============ REFERÊNCIA BIBLIOGRÁFICA ============ -->
-  <details class="kbiblio">
-    <summary>📚 Referência bibliográfica</summary>
-    <div class="kbiblio-corpo">
-      <p>
-        Amabis JM, Martho GR. Organizando os cromossomos humanos: idiograma.
-        <em>Temas de Biologia: propostas para desenvolver em sala de aula</em> [Internet].
-        São Paulo: Moderna; 1997. n. 4. Disponível em:
-        <a href="https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf"
-           target="_blank" rel="noopener">https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf</a>
-      </p>
-    </div>
-  </details>
 </div>
 
 <!-- ============ ROTEIRO DE CONSULTA (modo livre) ============ -->
@@ -698,6 +681,11 @@ body{
   </div>
 </div>
 </div>
+
+<footer class="site-footer">
+  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
+  Versão 1.0 · Última atualização: 27 de agosto de 2026
+</footer>
 
 <script>
 /* ===== ATIVIDADE 7 — LABORATÓRIO DE CITOGENÉTICA ===== */
@@ -1845,6 +1833,42 @@ document.getElementById('kbtnRegua').addEventListener('click', function(){
   setInterval(avisarAltura, 700);
   avisarAltura();
 
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var titulo = document.getElementById('telaTitulo');
+  var carregando = document.getElementById('telaCarregando');
+  var conteudo = document.getElementById('conteudoJogo');
+  var fill = document.getElementById('tcPreenchimento');
+  var pct = document.getElementById('tcPct');
+  var iniciado = false;
+  var DURACAO = 2600;
+
+  function iniciar(){
+    if (iniciado) return;
+    iniciado = true;
+    titulo.style.display = 'none';
+    carregando.style.display = '';
+    var t0 = performance.now();
+    function passo(){
+      var p = Math.min(100, Math.round((performance.now() - t0) / DURACAO * 100));
+      fill.style.width = p + '%';
+      pct.textContent = p + '%';
+      if (p < 100){ requestAnimationFrame(passo); }
+      else {
+        carregando.style.display = 'none';
+        conteudo.style.display = '';
+      }
+    }
+    requestAnimationFrame(passo);
+  }
+  titulo.addEventListener('click', iniciar);
+  titulo.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
+  });
 })();
 </script>
 </body>

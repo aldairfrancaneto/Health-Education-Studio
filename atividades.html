@@ -120,6 +120,8 @@
   #inputSenha:focus{ outline:none; border-color:var(--blue); }
   #erroSenha{ display:none; margin:14px 0 0; color:var(--red-dark); font-size:15.5px; }
   #erroSenha.on{ display:block; }
+  #okSenha{ display:none; margin:14px 0 0; color:var(--green-dark); font-size:15.5px; }
+  #okSenha.on{ display:block; }
 
   .btn{
     font-family:var(--font-pixel); font-size:11px; padding:13px 20px; border-radius:6px;
@@ -142,11 +144,6 @@
   .atividade{ display:none; padding-bottom:60px; }
   .atividade.on{ display:block; }
 
-  .instrucoes{
-    background:var(--paper); border:3px solid var(--outline); border-radius:10px;
-    box-shadow:5px 5px 0 var(--outline); padding:16px 20px; margin:0 0 22px; font-size:16px;
-  }
-  .instrucoes b{ color:var(--red-dark); }
 
   /* --------- aba expansível de bibliografia --------- */
   .biblio{
@@ -386,6 +383,27 @@
     background:var(--paper-2); border:2px solid var(--outline); border-radius:4px;
     padding:6px 8px; align-self:flex-start; color:var(--ink);
   }
+  /* referência bibliográfica, dobrada dentro do próprio cartão */
+  .sum-card .sum-biblio{
+    margin-top:4px; border:2px solid var(--outline); border-radius:8px;
+    background:var(--paper-2); overflow:hidden;
+  }
+  .sum-card .sum-biblio summary{
+    cursor:pointer; list-style:none; padding:7px 10px;
+    font-family:var(--font-pixel); font-size:7.5px; line-height:1.6; color:var(--ink);
+    display:flex; align-items:center; gap:6px;
+  }
+  .sum-card .sum-biblio summary::-webkit-details-marker{ display:none; }
+  .sum-card .sum-biblio summary::after{ content:"▸"; margin-left:auto; font-size:10px; transition:transform .2s; }
+  .sum-card .sum-biblio[open] summary::after{ transform:rotate(90deg); }
+  .sum-card .sum-biblio summary:hover{ background:var(--coin); }
+  .sum-card .sum-biblio-corpo{
+    padding:0 10px 10px; font-size:12.5px; line-height:1.5;
+    text-align:justify; hyphens:auto; overflow-wrap:break-word;
+  }
+  .sum-card .sum-biblio-corpo p{ margin:0 0 8px; }
+  .sum-card .sum-biblio-corpo p:last-child{ margin-bottom:0; }
+  .sum-card .sum-biblio-corpo a{ color:var(--blue-dark); word-break:break-all; }
   /* aviso de como obter a senha */
   .sum-aviso{
     margin:14px 0 0; font-size:15px; line-height:1.6;
@@ -397,13 +415,10 @@
     .sum-grade{ grid-template-columns:1fr; gap:13px; }
   }
   /* ============================================================
-     ATIVIDADE 9 — IONIZAÇÃO DE AMINOÁCIDOS
      Cada atividade é um arquivo HTML próprio. Ao digitar a senha
-     certa, o jogo abre numa aba nova (window.open) — assim o
-     contorno desta página não atrapalha a visualização do jogo.
+     certa, o jogo abre sozinho numa aba nova (window.open) — o
+     portão de senha permanece na tela, pronto para a próxima senha.
      ============================================================ */
-  .abrir-jogo{ margin:0 0 26px; text-align:center; }
-  .abrir-jogo .btn{ font-size:13px; padding:16px 26px; }
 </style>
 <body>
 
@@ -444,6 +459,7 @@
         <button class="btn" type="button" id="btnEntrar">▶ ENTRAR</button>
       </div>
       <p id="erroSenha">Senha incorreta. Confira com o professor e tente novamente.</p>
+      <p id="okSenha">✔ Senha aceita! O jogo abriu numa aba nova — se não abriu, confira se o navegador bloqueou o pop-up.</p>
     </div>
   </div>
 
@@ -475,6 +491,16 @@
         <span class="sum-nome">Hallmarks do Envelhecimento</span>
         <span class="sum-desc">Em <b>Hallmarks do Envelhecimento</b>, o aluno associa cada uma das doze marcas do envelhecimento celular à sua respectiva definição. Ao completar o quadro, obtém o panorama dos mecanismos que conduzem à perda funcional dos tecidos.</span>
         <span class="sum-tipo">associação de cartas</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              LÓPEZ-OTÍN, Carlos et al. Hallmarks of aging: An expanding universe.
+              <em>Cell</em>, v. 186, n. 2, p. 243-278, 19 jan. 2023.
+              DOI: <a href="https://doi.org/10.1016/j.cell.2022.11.001" target="_blank" rel="noopener">https://doi.org/10.1016/j.cell.2022.11.001</a>.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">02</span>
@@ -493,24 +519,82 @@
         <span class="sum-nome">Lesões Celulares</span>
         <span class="sum-desc">Em <b>Lesões Celulares</b>, o aluno distribui cada categoria de lesão na zona correspondente do tabuleiro, que se divide em degenerações, morte celular e padrões morfológicos de necrose. A cada categoria deve ser atribuída a definição adequada.</span>
         <span class="sum-tipo">associação por zonas</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              KUMAR, Vinay; ABBAS, Abul K.; ASTER, Jon C. <em>Robbins &amp; Cotran Patologia: Bases
+              Patológicas das Doenças.</em> 10. ed. Rio de Janeiro: GEN Guanabara Koogan, 2023.
+              E-book. ISBN 9788595159174.
+            </p>
+            <p>
+              FILHO, Geraldo B. <em>Bogliolo - Patologia.</em> 10. ed. Rio de Janeiro:
+              Guanabara Koogan, 2021. E-book. ISBN 9788527738378.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">05</span>
         <span class="sum-nome">Expedição Celular</span>
         <span class="sum-desc">A <b>Expedição Celular</b> reúne, em trios, a estrutura de cada organela, a sua função molecular e a correlação médica correspondente. A dinâmica estabelece a ponte entre a biologia celular e a prática clínica.</span>
         <span class="sum-tipo">associação de trios</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              Ganeo AL, Cândido L, Santos JA, Santos LAFR, Schimit LM, Carrenho MCP, et al.
+              Células: uma breve revisão sobre a diversidade, características, organização,
+              estruturas e funções celulares. <em>UNISANTA Bioscience.</em> 2019;8(4):457-465.
+            </p>
+            <p>
+              Schieweck R, Götz M. Pan-cellular organelles and suborganelles—from common
+              functions to cellular diversity? <em>Genes Dev.</em> 2024;38(3-4):98-114.
+              doi: <a href="https://doi.org/10.1101/gad.351337.123" target="_blank" rel="noopener">10.1101/gad.351337.123</a>.
+            </p>
+            <p>
+              Alberts B, et al. <em>Fundamentos da Biologia Celular.</em> 4th ed.
+              Porto Alegre: Artmed; 2017.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">06</span>
         <span class="sum-nome">O Destino da Célula</span>
         <span class="sum-desc"><b>O Destino da Célula</b> reconstrói, lado a lado, os dois desfechos da lesão irreversível. De um lado, as duas vias da apoptose convergem para a fase de execução comum; do outro, corre em paralelo a linha do tempo da necrose.</span>
         <span class="sum-tipo">ordenação em quatro trilhas</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              KUMAR, Vinay; ABBAS, Abul K.; ASTER, Jon C. <em>Robbins &amp; Cotran Patologia: Bases
+              Patológicas das Doenças.</em> 10. ed. Rio de Janeiro: GEN Guanabara Koogan, 2023.
+              E-book. ISBN 9788595159174.
+            </p>
+            <p>
+              FILHO, Geraldo B. <em>Bogliolo - Patologia.</em> 10. ed. Rio de Janeiro:
+              Guanabara Koogan, 2021. E-book. ISBN 9788527738378.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">07</span>
         <span class="sum-nome">Laboratório de Citogenética</span>
         <span class="sum-desc">No <b>Laboratório de Citogenética</b>, o aluno monta o idiograma humano a partir de uma metáfase, medindo os cromossomos, reconhecendo a posição do centrômero e interpretando o bandeamento. Há ainda um modo de caso às cegas, que se encerra com um diagnóstico.</span>
         <span class="sum-tipo">montagem de cariótipo</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              Amabis JM, Martho GR. Organizando os cromossomos humanos: idiograma.
+              <em>Temas de Biologia: propostas para desenvolver em sala de aula</em> [Internet].
+              São Paulo: Moderna; 1997. n. 4. Disponível em:
+              <a href="https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf" target="_blank" rel="noopener">https://bgnaescola.files.wordpress.com/2009/12/cariotipo.pdf</a>
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">08</span>
@@ -523,12 +607,38 @@
         <span class="sum-nome">Ionização de Aminoácidos</span>
         <span class="sum-desc">O simulador <b>Ionização de Aminoácidos</b> abrange os vinte aminoácidos. Para cada valor de pH, o aluno monta a forma da molécula, define o estado de cada grupo ionizável e determina a carga líquida. O modo guiado encerra-se no cálculo do ponto isoelétrico; o modo livre permite escolher o pH.</span>
         <span class="sum-tipo">simulador</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              Nelson DL, Cox MM. <em>Princípios de Bioquímica de Lehninger</em>. 7. ed. Porto Alegre:
+              Artmed; 2019. Capítulo 3: Aminoácidos, peptídeos e proteínas.
+            </p>
+            <p>
+              Os valores de pKa e de pI seguem a tabela de propriedades dos aminoácidos comuns
+              encontrados em proteínas.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">10</span>
         <span class="sum-nome">Investigação Inflamatória</span>
         <span class="sum-desc">A <b>Investigação Inflamatória</b> transcorre ao longo de um plantão dividido em três turnos. Casos clínicos, lâminas, imagens e revisões de laudo conduzem o aluno pelos mecanismos da inflamação aguda. O desempenho obtido em cada turno repercute no seguinte, e o laudo final pode ser exportado em planilha.</span>
         <span class="sum-tipo">jogo investigativo</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <p>
+              KUMAR, Vinay; ABBAS, Abul K.; ASTER, Jon C. <em>Robbins &amp; Cotran Patologia: Bases
+              Patológicas das Doenças.</em> 10. ed. Rio de Janeiro: GEN Guanabara Koogan, 2023.
+            </p>
+            <p>
+              FILHO, Geraldo B. <em>Bogliolo — Patologia.</em> 10. ed. Rio de Janeiro:
+              Guanabara Koogan, 2021.
+            </p>
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">11</span>
@@ -545,31 +655,7 @@
        O jogo está no arquivo hallmarks.html, ao lado deste. Ao
        digitar a senha certa ele abre sozinho numa aba nova.
        ============================================================ -->
-  <section class="atividade" id="ativ-hallmarks">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> toque em uma carta de <b>definição</b> no Acervo e depois
-      no <b>espaço vazio</b> abaixo da categoria correspondente no campo. Para trocar,
-      toque na carta já posicionada para devolvê-la ao Acervo. Quando todas as
-      12 estiverem posicionadas, toque em <b>SELAR RESPOSTAS</b> para conferir.
-      Use a <b>🔍 lupa</b> para ampliar e ler qualquer carta.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-hallmarks')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-    <details class="biblio">
-      <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
-      <div class="conteudo">
-        <p>
-          LÓPEZ-OTÍN, Carlos et al. Hallmarks of aging: An expanding universe.
-          <em>Cell</em>, v. 186, n. 2, p. 243-278, 19 jan. 2023.
-          DOI: <a href="https://doi.org/10.1016/j.cell.2022.11.001" target="_blank" rel="noopener">https://doi.org/10.1016/j.cell.2022.11.001</a>.
-        </p>
-      </div>
-    </details>
-  </section>
+  <section class="atividade" id="ativ-hallmarks"></section>
 
   <!-- ============================================================
        ATIVIDADE 2 — FATORES MODIFICÁVEIS E NÃO MODIFICÁVEIS
@@ -578,21 +664,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-fatores">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> em duplas, vocês analisam evidências científicas sobre fatores
-      modificáveis e não modificáveis no envelhecimento. Um lê a afirmativa em voz alta e o
-      outro julga se ela é <b>VERDADEIRA</b> ou <b>FALSA</b>, dizendo apenas o <b>código</b>
-      correspondente à sua escolha — para que as duplas vizinhas não escutem a resposta. Os
-      papéis se invertem a cada rodada.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-fatores')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-fatores"></section>
 
   <!-- ============================================================
        ATIVIDADE 3 — SENESCÊNCIA DO SISTEMA NERVOSO
@@ -601,20 +673,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-nervoso">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> mesmo formato da Trilha das Evidências, agora sobre o envelhecimento
-      do sistema nervoso. Em duplas, um lê a afirmativa em voz alta e o outro julga se ela é
-      <b>VERDADEIRA</b> ou <b>FALSA</b> dizendo apenas o <b>código</b> correspondente, para que
-      as duplas vizinhas não escutem a resposta. Os papéis se invertem a cada rodada.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-nervoso')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-nervoso"></section>
 
   <!-- ============================================================
        ATIVIDADE 4 — LESÕES CELULARES REVERSÍVEIS E IRREVERSÍVEIS
@@ -623,24 +682,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-lesoes">
-
-    <div class="instrucoes">
-      Associe cada <b>categoria</b> de lesão celular à sua <b>definição</b> correspondente.
-      O Acervo está dividido em <b>montes</b>, um para cada área do tabuleiro, o que já indica
-      a família de cada definição. Toque em uma carta do monte e depois no <b>espaço vazio</b>
-      abaixo da categoria certa; toque numa carta já posicionada para devolvê-la ao seu monte.
-      Use a organização do tabuleiro — <b>Lesões Reversíveis</b>, <b>Lesões Irreversíveis</b> e,
-      dentro desta, os <b>Padrões Morfológicos de Necrose</b> — como pista. Com todas
-      posicionadas, toque em <b>SELAR RESPOSTAS</b>. Use a <b>🔍 lupa</b> para ampliar qualquer
-      carta.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-lesoes')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-lesoes"></section>
 
   <!-- ============================================================
        ATIVIDADE 5 — EXPEDIÇÃO CELULAR (ORGANELAS)
@@ -649,25 +691,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-organelas">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> cada estação já traz a carta <b>verde</b> (a estrutura celular)
-      encaixada no leque. Faltam as outras duas: a <b>azul</b> (definição e função molecular)
-      e, no conjunto completo, a <b>vermelha</b> (correlação médica). O Acervo é separado por
-      cor: cada monte traz só as cartas da sua família. Toque numa carta do monte e depois no
-      <b>encaixe vazio</b> da estação certa — cada encaixe só aceita cartas da sua cor. Para
-      trocar, toque na carta já encaixada. Com todos os encaixes
-      preenchidos, toque em <b>FECHAR OS TRIOS</b>: os acertos ficam
-      <b>verdes</b> e os erros <b>vermelhos</b> — sem revelar a resposta certa.
-      Use a <b>🔍 lupa</b> para ler qualquer carta.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-organelas')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-organelas"></section>
 
   <!-- ============================================================
        ATIVIDADE 6 — O DESTINO DA CÉLULA (NECROSE E APOPTOSE)
@@ -676,23 +700,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-morte">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> o Acervo está dividido em <b>montes</b>, um para cada trilha do
-      tabuleiro. Cada monte já indica a qual trilha as suas cartas pertencem; o desafio é
-      descobrir <b>em que momento</b> cada evento acontece dentro dela. Toque na carta e depois
-      no <b>espaço vazio</b> da posição desejada; toque numa carta já posicionada para devolvê-la
-      ao seu monte. Com todas no lugar, toque em <b>CONFIRMAR ORDEM</b>: as certas ficam
-      <b>verdes</b> e as fora de lugar, <b>vermelhas</b>. Use a <b>🔍 lupa</b> para ler qualquer
-      carta.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-morte')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-morte"></section>
 
   <!-- ============================================================
        ATIVIDADE 7 — LABORATÓRIO DE CITOGENÉTICA (CARIÓTIPO)
@@ -701,20 +709,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-cariotipo">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> escolha o cariótipo da lâmina (46,XY ou 46,XX) e o modo de jogo —
-      dos grupos A, B e G até o cariótipo completo, ou um <b>caso às cegas</b> para
-      diagnosticar sem roteiro. Monte o idiograma arrastando cada cromossomo até o par
-      correto, meça-o com a régua e leia a posição do centrômero para identificá-lo.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-cariotipo')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-  </section>
+  <section class="atividade" id="ativ-cariotipo"></section>
 
   <!-- ============================================================
        ATIVIDADE 8 — SORTEIO DA TURMA (FERRAMENTA DO PROFESSOR)
@@ -724,20 +719,6 @@
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
   <section class="atividade" id="ativ-sorteio">
-
-    <div class="instrucoes">
-      <b>Como usar:</b> cole a lista da turma (um aluno por linha) e toque em
-      <b>MONTAR A TURMA</b> — cada aluno recebe um avatar sorteado. Depois, use
-      <b>SORTEAR ALUNO</b> sempre que quiser fazer uma pergunta. O sorteio é
-      <b>probabilístico</b>: quem ainda não participou tem peso maior, de modo que a turma
-      inteira acaba sendo chamada sem que o professor precise controlar isso. O aluno chamado
-      pode <b>participar</b> ou <b>pedir para passar</b> — nos dois casos o desfecho fica
-      registrado numa planilha que pode ser baixada no fim da aula.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-sorteio')">▶ Abrir o jogo em nova aba</button>
-    </div>
 
     <details class="biblio">
       <summary>📚 SOBRE ESTA FERRAMENTA</summary>
@@ -763,34 +744,7 @@
        é carregado aqui dentro por iframe. Mantenha os dois arquivos
        na MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-ionizacao">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> escolha um aminoácido e veja em quais valores de <b>pH</b> ele será
-      colocado. Para cada situação, decida a forma de cada <b>grupo ionizável</b> — comparando o
-      pH com o <b>pKa</b> daquele grupo — e encaixe-a na molécula: abaixo do pKa o grupo
-      permanece <b>protonado</b>; acima dele, perde o H⁺. Depois informe a <b>carga líquida</b>.
-      Ao fim de todas as situações, calcule o <b>ponto isoelétrico</b>.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-ionizacao')">▶ Abrir o jogo em nova aba</button>
-    </div>
-
-    <details class="biblio">
-      <summary>📚 REFERÊNCIA BIBLIOGRÁFICA</summary>
-      <div class="conteudo">
-        <p>
-          NELSON, David L.; COX, Michael M. <em>Princípios de Bioquímica de Lehninger.</em>
-          7. ed. Porto Alegre: Artmed, 2019. Capítulo 3: Aminoácidos, peptídeos e proteínas.
-        </p>
-        <p style="margin-top:10px;">
-          Os valores de pKa e de ponto isoelétrico seguem a tabela de propriedades dos
-          aminoácidos comuns encontrados em proteínas.
-        </p>
-      </div>
-    </details>
-  </section>
+  <section class="atividade" id="ativ-ionizacao"></section>
 
   <!-- ============================================================
        ATIVIDADE 10 — INVESTIGAÇÃO INFLAMATÓRIA
@@ -799,21 +753,7 @@
        carregado aqui dentro por iframe. Mantenha os arquivos na
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
-  <section class="atividade" id="ativ-inflamacao">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> você assume um plantão em um <b>hospital universitário</b>.
-      Identifique-se e resolva os casos sobre inflamação aguda. A noite é dividida em
-      <b>três turnos</b>, e o desempenho em cada um tem consequência no seguinte. Cada etapa tem
-      <b>uma única tentativa</b>: errou, o gabarito é revelado e o caso se encerra — mas o
-      retorno sempre explica o porquê. A <b>pista</b> é opcional e vale metade dos pontos. No
-      fim sai o <b>laudo do plantão</b>, que pode ser baixado em planilha.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-inflamacao')">▶ Abrir o jogo em nova aba</button>
-    </div>
-  </section>
+  <section class="atividade" id="ativ-inflamacao"></section>
 
   <!-- ============================================================
        ATIVIDADE 11 — CSI GENÉTICA: O MISTÉRIO DA HERANÇA
@@ -825,22 +765,7 @@
        então o iframe recebe uma altura alta e fixa (o conteúdo já é
        responsivo e rola dentro do quadro, se necessário).
        ============================================================ -->
-  <section class="atividade" id="ativ-csi">
-
-    <div class="instrucoes">
-      <b>Como jogar:</b> esta é uma investigação <b>colaborativa</b>. O professor abre o modo
-      <b>Pesquisador Principal</b> no computador projetado e conduz o Caso 0147; os alunos
-      abrem o modo <b>Pesquisador Auxiliar</b> nos próprios aparelhos. A turma discute cada
-      desafio olhando a tela, decide a alternativa em equipe, converte a letra em um
-      <b>código</b> na Central de Decisão e informa apenas esse código ao professor, que o
-      digita para revelar o resultado. Cada aluno pode abrir esta mesma atividade com a senha
-      <b>polimerase</b> para acessar a Central de Decisão.
-    </div>
-
-    <div class="abrir-jogo">
-      <button class="btn green" type="button" onclick="abrirJogo('ativ-csi')">▶ Abrir o jogo em nova aba</button>
-    </div>
-  </section>
+  <section class="atividade" id="ativ-csi"></section>
 
   <!-- ============================================================
        Para criar a PRÓXIMA atividade, copie o modelo abaixo:
@@ -908,19 +833,18 @@
   }
   window.abrirJogo = abrirJogo;
 
-  const portao = document.getElementById('portao');
-  const input  = document.getElementById('inputSenha');
-  const erro   = document.getElementById('erroSenha');
+  const input = document.getElementById('inputSenha');
+  const erro  = document.getElementById('erroSenha');
+  const ok    = document.getElementById('okSenha');
 
+  /* ---- o portão de senha nunca é escondido ----
+     O jogo abre sozinho numa aba nova; a página de atividades continua
+     mostrando o portão, pronta para receber a próxima senha. */
   function abrirAtividade(id){
-    portao.style.display = 'none';
-    document.getElementById('sumario').style.display = 'none';
-    document.querySelectorAll('.atividade').forEach(function(s){ s.classList.remove('on'); });
-    const alvo = document.getElementById(id);
-    if (alvo){
-      alvo.classList.add('on');
-      abrirJogo(id);
-    }
+    abrirJogo(id);
+    erro.classList.remove('on');
+    ok.classList.add('on');
+    input.value = '';
   }
   /* ---- sumário: os cartões são só um índice ----
      Eles NÃO abrem a atividade e não exibem senhas. A entrada continua
@@ -929,9 +853,9 @@
   function tentarSenha(){
     const s = input.value.trim().toLowerCase();
     if (Object.prototype.hasOwnProperty.call(SENHAS, s)){
-      erro.classList.remove('on');
       abrirAtividade(SENHAS[s]);
     } else {
+      ok.classList.remove('on');
       erro.classList.add('on');
       input.value = '';
       input.focus();
@@ -940,6 +864,10 @@
   document.getElementById('btnEntrar').addEventListener('click', tentarSenha);
   input.addEventListener('keydown', function(e){
     if (e.key === 'Enter'){ e.preventDefault(); tentarSenha(); }
+  });
+  input.addEventListener('input', function(){
+    erro.classList.remove('on');
+    ok.classList.remove('on');
   });
 
   /* ==============================================================

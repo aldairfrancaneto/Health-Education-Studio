@@ -344,10 +344,165 @@ body{
     .lab-fb-tit{ font-size:12px; }
   }
 
+  /* ---------- faixa de VEZ (bem destacada, só com nomes) ---------- */
+  .lab-vez{
+    position:relative; border-radius:14px; margin:0 0 18px; padding:16px 20px;
+    border:4px solid var(--ameixa-esc);
+    background:linear-gradient(180deg, var(--ameixa-claro), var(--ameixa) 60%, var(--ameixa-esc));
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.25), 4px 4px 0 rgba(0,0,0,.3);
+    text-align:center; animation:labVezEntra .45s cubic-bezier(.2,1.2,.3,1);
+  }
+  .lab-vez.vez-b{
+    border-color:#083F47;
+    background:linear-gradient(180deg, #34B0B6, #17828C 60%, #0B535C);
+  }
+  @keyframes labVezEntra{ from{opacity:0; transform:translateY(-8px) scale(.98);} to{opacity:1; transform:none;} }
+  .lab-vez-linha{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .lab-vez-rot{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.08em;
+    color:rgba(255,255,255,.9); background:rgba(0,0,0,.28);
+    padding:6px 9px; border-radius:6px;
+  }
+  .lab-vez-nome{
+    font-family:var(--font-pixel); font-size:clamp(15px,3.2vw,24px); color:#FFF6DE;
+    text-shadow:2px 2px 0 rgba(0,0,0,.5);
+  }
+  .lab-vez-sub{
+    margin-top:9px; font-size:14.5px; font-weight:700; color:rgba(255,255,255,.94);
+    text-shadow:1px 1px 0 rgba(0,0,0,.35);
+  }
+  .lab-vez-sub span{ color:var(--ouro-luz); }
+
+  /* ---------- códigos abertos (iguais nos dois aparelhos) ---------- */
+  .lab-codigos{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:0 0 16px; }
+  .lab-codigos .lab-cod{
+    border-radius:12px; padding:13px 12px; text-align:center; border:3px solid;
+  }
+  .lab-codigos .lab-cod.v{ background:#E7F7EA; border-color:var(--esm-esc); }
+  .lab-codigos .lab-cod.f{ background:#FCEAE7; border-color:var(--rubi-esc); }
+  .lab-codigos .lab-cod-rot{
+    font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--tinta-fraca);
+  }
+  .lab-codigos .lab-cod-val{
+    font-family:var(--font-pixel); font-size:clamp(15px,3.4vw,21px); margin-top:8px; letter-spacing:.06em;
+  }
+  .lab-codigos .lab-cod.v .lab-cod-val{ color:var(--esm-esc); }
+  .lab-codigos .lab-cod.f .lab-cod-val{ color:var(--rubi-esc); }
+
+  .lab-dica.erro{ color:var(--rubi-esc); font-weight:800; }
+  .lab-erro{ color:var(--rubi-esc); font-weight:800; font-size:14.5px; margin:0 0 14px; }
+
+  @media (max-width:600px){
+    .lab-codigos{ grid-template-columns:1fr; gap:9px; }
+    .lab-vez{ padding:13px 14px; }
+    .lab-vez-sub{ font-size:13px; }
+  }
+  /* ---------- escolha de aparelho ---------- */
+  .lab-opcoes{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+  .lab-op{
+    font-family:var(--font-body); font-weight:700; font-size:13px; line-height:1.35;
+    padding:11px 8px; border-radius:10px; cursor:pointer; text-align:center;
+    border:3px solid var(--mad-esc); background:var(--perg-2); color:var(--tinta);
+    transition:transform .12s, box-shadow .12s, background .15s;
+  }
+  .lab-op small{ display:block; font-size:11.5px; font-weight:700; opacity:.8; margin-top:2px; }
+  .lab-op:hover{ background:var(--perg); }
+  .lab-op.sel{
+    background:linear-gradient(180deg, var(--ouro-luz), var(--ouro) 60%, var(--ouro-esc));
+    border-color:var(--ouro-esc); box-shadow:0 0 0 3px rgba(245,198,92,.35);
+  }
+
+  /* ---------- bloco de quem responde ---------- */
+  .lab-espera{
+    border:3px dashed var(--turq-esc); border-radius:14px; padding:18px 18px 20px;
+    background:linear-gradient(180deg,#EAFBFB,#D6F2F3);
+  }
+  .lab-espera-tit{
+    font-family:var(--font-pixel); font-size:12px; color:#0B535C; margin:0 0 10px;
+  }
+  .lab-espera-txt{ font-size:15px; line-height:1.6; color:var(--tinta); margin:0 0 16px; }
+  .lab-espera-txt span{ font-weight:800; color:#0B535C; }
+  .lab-registro{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .lab-btn.verde{
+    background:linear-gradient(180deg, var(--esm-claro), var(--esm) 60%, var(--esm-esc));
+    border-color:var(--esm-esc);
+  }
+  .lab-btn.vermelho{
+    background:linear-gradient(180deg, var(--rubi-claro), var(--rubi) 60%, var(--rubi-esc));
+    border-color:var(--rubi-esc);
+  }
+  @media (max-width:600px){
+    .lab-opcoes{ grid-template-columns:1fr; }
+    .lab-registro{ grid-template-columns:1fr; }
+  }
+  /* ---------- aviso "ouça" (aparelho de quem responde) ---------- */
+  .lab-ouvir{
+    border:3px dashed var(--ouro-esc); border-radius:14px; padding:22px 20px;
+    background:linear-gradient(180deg,#FFF8E4,#F7E9C6); text-align:center; margin:0 0 16px;
+  }
+  .lab-ouvir-ico{ font-size:38px; line-height:1; margin-bottom:8px; }
+  .lab-ouvir-tit{
+    font-family:var(--font-pixel); font-size:12px; color:var(--mad-esc); margin:0 0 10px;
+  }
+  .lab-ouvir-txt{ font-size:15px; line-height:1.6; color:var(--tinta); margin:0; }
+  .lab-ouvir-txt span{ font-weight:800; color:var(--mad-esc); }
+
+  /* ---------- resposta direta (aparelho único: sem código, sem falar) ---------- */
+  #labBlocoDireto .lab-registro{ margin:0 0 4px; }
+
+.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+.site-footer strong{ color:rgba(255,255,255,.8); }
+
+/* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
+.tela-titulo, .tela-carregando{
+  min-height:70vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; gap:18px; padding:40px 20px;
+  position:relative; cursor:pointer; overflow:hidden;
+}
+.tela-titulo::after, .tela-carregando::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px);
+  opacity:.4;
+}
+.tt-ico{ font-size:2.8rem; line-height:1; }
+.tt-caso{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.15em; color:#F5C65C; text-transform:uppercase; }
+.tt-titulo{
+  font-family:var(--font-pixel); font-size:clamp(15px,4vw,26px); line-height:1.6;
+  color:#FFEDB8; text-shadow:3px 3px 0 rgba(0,0,0,.4);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.tt-sub{ font-family:var(--font-pixel); font-size:9px; letter-spacing:.08em; color:rgba(255,255,255,.7); text-transform:uppercase; line-height:1.7; }
+.tt-start{ margin-top:6px; font-family:var(--font-pixel); font-size:12px; letter-spacing:.1em; color:#fff; text-transform:uppercase; animation:ttBlink 1s steps(1) infinite; }
+.tt-rodape{ font-family:var(--font-pixel); font-size:7px; letter-spacing:.06em; color:rgba(255,255,255,.5); text-transform:uppercase; }
+@keyframes ttBlink{ 50%{ opacity:0; } }
+.tc-titulo{ font-family:var(--font-pixel); font-size:clamp(13px,3.2vw,18px); letter-spacing:.1em; color:#FFEDB8; text-transform:uppercase; animation:ttBlink 1.1s steps(1) infinite; }
+.tc-barra{ width:min(360px,80vw); height:22px; border:3px solid #C08F26; background:#123A4E; padding:3px; }
+.tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, #F5C65C 0 10px, #C08F26 10px 14px); }
+.tc-pct{ font-family:var(--font-pixel); font-size:11px; letter-spacing:.06em; color:#FFEDB8; }
+.tc-dica{ font-family:var(--font-pixel); font-size:7.5px; letter-spacing:.05em; line-height:1.9; color:rgba(255,255,255,.6); max-width:320px; }
 </style>
 </head>
 <body>
-<div id="ativ-fatores" class="pagina">
+
+<div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Toque ou pressione qualquer tecla para começar.">
+  <div class="tt-ico" aria-hidden="true">🗺️</div>
+  <div class="tt-caso">Atividade 02</div>
+  <div class="tt-titulo">A Trilha das<br>Evidências</div>
+  <div class="tt-sub">Fatores do envelhecimento · quiz</div>
+  <div class="tt-start">▶ Press Start</div>
+  <div class="tt-rodape">toque ou pressione qualquer tecla</div>
+</div>
+
+<div class="tela-carregando" id="telaCarregando" style="display:none;">
+  <div class="tc-titulo">Carregando</div>
+  <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
+  <div class="tc-pct" id="tcPct">0%</div>
+  <div class="tc-dica">Preparando o mapa da expedição…</div>
+</div>
+
+<div id="ativ-fatores" class="pagina" style="display:none;">
     <!-- ---------- TELA 1: MISSÃO ---------- -->
     <div class="lab-tela on" id="labIntro">
       <div class="lab-mundo">
@@ -476,7 +631,8 @@ body{
             </p>
           </div>
 
-          <!-- códigos (ocultos apenas para o leitor, no modo de 2 aparelhos) -->
+          <!-- códigos: só existem no modo de 2 aparelhos, e aparecem apenas
+               no aparelho de quem RESPONDE (o leitor não os vê) -->
           <div class="lab-codigos" id="labCodigos">
             <div class="lab-cod v">
               <div class="lab-cod-rot">Se achar VERDADEIRA, diga</div>
@@ -488,7 +644,16 @@ body{
             </div>
           </div>
 
-          <!-- aparece no aparelho de quem LÊ (ou no aparelho único) -->
+          <!-- aparece só no APARELHO ÚNICO: sem falar nada em voz alta, quem
+               responde toca direto no botão certo, na frente de quem leu -->
+          <div id="labBlocoDireto" style="display:none;">
+            <div class="lab-registro">
+              <button class="lab-btn verde" type="button" id="labDiretoV">✓ VERDADEIRA</button>
+              <button class="lab-btn vermelho" type="button" id="labDiretoF">✕ FALSA</button>
+            </div>
+          </div>
+
+          <!-- aparece no aparelho de quem LÊ, só no modo de 2 aparelhos -->
           <div id="labBlocoLeitor">
             <div class="lab-entrada">
               <input type="text" id="labCodigo" maxlength="4" placeholder="CÓDIGO DITO" autocomplete="off" spellcheck="false">
@@ -547,6 +712,11 @@ body{
     </div>
 
 </div>
+
+<footer class="site-footer">
+  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
+  Versão 1.0 · Última atualização: 27 de agosto de 2026
+</footer>
 
 <script>
 (function(){
@@ -781,6 +951,8 @@ body{
     $('labCodigo').value = '';
     $('labCodigo').disabled = false;
     $('labConfirmar').disabled = false;
+    $('labDiretoV').disabled = false;
+    $('labDiretoF').disabled = false;
     // CÓDIGOS: só quem RESPONDE pode vê-los. Se o leitor os visse, descobriria
     // a escolha do colega no instante em que ouvisse o código.
     $('labFb').className = 'lab-fb';
@@ -791,12 +963,14 @@ body{
     // testando os códigos antes de se comprometer).
     const souRespondedor = (dono !== 'ambos') && (Number(dono) === respondendo);
     const aparelhoUnico  = (dono === 'ambos');
-    // Códigos: aparecem no aparelho único (tela compartilhada pela dupla) e no
-    // aparelho de quem responde. Ficam ocultos só para o LEITOR quando cada um
-    // usa o próprio aparelho — assim ele não descobre a escolha do colega.
-    $('labCodigos').style.display = (aparelhoUnico || souRespondedor) ? '' : 'none';
-    $('labBlocoLeitor').style.display = souRespondedor ? 'none' : '';
+    // O sistema de código só existe para evitar que duplas vizinhas escutem a
+    // resposta dita em voz alta — necessário apenas quando os dois jogadores
+    // usam APARELHOS SEPARADOS. No aparelho único, ninguém precisa falar nada:
+    // quem responde toca direto no botão certo, na tela que os dois veem.
+    $('labCodigos').style.display     = souRespondedor ? '' : 'none';
+    $('labBlocoLeitor').style.display = (!aparelhoUnico && !souRespondedor) ? '' : 'none';
     $('labBlocoResp').style.display   = souRespondedor ? '' : 'none';
+    $('labBlocoDireto').style.display = aparelhoUnico ? '' : 'none';
     // o texto da afirmativa fica oculto para quem responde — ele deve OUVIR
     $('labAfirmBox').style.display = souRespondedor ? 'none' : '';
     $('labOuvir').style.display    = souRespondedor ? '' : 'none';
@@ -809,26 +983,10 @@ body{
     somVirada();
   }
 
-  function confirmar(){
-    if (travado) return;
-    const q = baralho[indice];
-    const digitado = $('labCodigo').value.trim().toUpperCase();
-    const dica = $('labDica');
-
-    if (!digitado){
-      dica.textContent = 'Digite o código que o colega disse.';
-      dica.classList.add('erro'); return;
-    }
-    if (digitado !== q.codV && digitado !== q.codF){
-      dica.textContent = 'Esse código não é de nenhuma das duas opções desta afirmativa. Confira e digite de novo.';
-      dica.classList.add('erro'); return;
-    }
-
+  // parte comum a qualquer forma de responder (código digitado ou botão direto)
+  function registrarResposta(respondeuVerdadeiro){
     travado = true;
-    $('labCodigo').disabled = true;
-    $('labConfirmar').disabled = true;
-
-    const respondeuVerdadeiro = (digitado === q.codV);
+    const q = baralho[indice];
     const acertou = (respondeuVerdadeiro === q.resposta);
     if (acertou){ pontos[respondendo]++; atualizarPlacar(); }
 
@@ -846,6 +1004,35 @@ body{
 
     $('labProxima').textContent = (indice + 1 >= baralho.length) ? 'Ver resultado ▶' : 'Próxima rodada ▶';
     fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // modo de 2 aparelhos: quem lê digita o código que o colega disse em voz alta
+  function confirmar(){
+    if (travado) return;
+    const q = baralho[indice];
+    const digitado = $('labCodigo').value.trim().toUpperCase();
+    const dica = $('labDica');
+
+    if (!digitado){
+      dica.textContent = 'Digite o código que o colega disse.';
+      dica.classList.add('erro'); return;
+    }
+    if (digitado !== q.codV && digitado !== q.codF){
+      dica.textContent = 'Esse código não é de nenhuma das duas opções desta afirmativa. Confira e digite de novo.';
+      dica.classList.add('erro'); return;
+    }
+
+    $('labCodigo').disabled = true;
+    $('labConfirmar').disabled = true;
+    registrarResposta(digitado === q.codV);
+  }
+
+  // aparelho único: quem responde toca direto no botão, sem código nenhum
+  function confirmarDireto(respondeuVerdadeiro){
+    if (travado) return;
+    $('labDiretoV').disabled = true;
+    $('labDiretoF').disabled = true;
+    registrarResposta(respondeuVerdadeiro);
   }
 
   // registro feito pelo próprio respondedor, conforme o leitor informou
@@ -941,6 +1128,8 @@ body{
     $('labCodigo').addEventListener('keydown', function(e){
       if (e.key === 'Enter'){ e.preventDefault(); confirmar(); }
     });
+    $('labDiretoV').addEventListener('click', function(){ confirmarDireto(true); });
+    $('labDiretoF').addEventListener('click', function(){ confirmarDireto(false); });
     $('labProxima').addEventListener('click', proxima);
     $('labDeNovo').addEventListener('click', function(){ novaPartida(true); });
     $('labNovaPartida').addEventListener('click', function(){
@@ -975,6 +1164,42 @@ body{
   setInterval(avisarAltura, 700);
   avisarAltura();
 
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var titulo = document.getElementById('telaTitulo');
+  var carregando = document.getElementById('telaCarregando');
+  var conteudo = document.getElementById('ativ-fatores');
+  var fill = document.getElementById('tcPreenchimento');
+  var pct = document.getElementById('tcPct');
+  var iniciado = false;
+  var DURACAO = 2600;
+
+  function iniciar(){
+    if (iniciado) return;
+    iniciado = true;
+    titulo.style.display = 'none';
+    carregando.style.display = '';
+    var t0 = performance.now();
+    function passo(){
+      var p = Math.min(100, Math.round((performance.now() - t0) / DURACAO * 100));
+      fill.style.width = p + '%';
+      pct.textContent = p + '%';
+      if (p < 100){ requestAnimationFrame(passo); }
+      else {
+        carregando.style.display = 'none';
+        conteudo.style.display = '';
+      }
+    }
+    requestAnimationFrame(passo);
+  }
+  titulo.addEventListener('click', iniciar);
+  titulo.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
+  });
 })();
 </script>
 </body>
