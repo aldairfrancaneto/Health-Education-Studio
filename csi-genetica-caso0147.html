@@ -92,6 +92,7 @@
     background:rgba(56,214,255,.08);color:var(--cyan);font:700 .68rem var(--mono);letter-spacing:.7px;text-transform:uppercase}
   .btn-fullscreen:hover{background:rgba(56,214,255,.18)}
   .fullscreen-control{position:fixed;top:14px;right:16px;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+  .nav-back-control{position:fixed;top:14px;left:16px;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.28)}
   .stat{display:flex;flex-direction:column;align-items:flex-end;font-family:var(--mono);line-height:1.1}
   .stat .k{font-size:.6rem;color:var(--ink-faint);letter-spacing:1.5px;text-transform:uppercase}
   .stat .v{font-size:1.05rem;font-weight:700}.stat .v b{color:var(--cyan)}
@@ -184,6 +185,13 @@
   .btn-video{background:transparent;color:var(--cyan);border-color:rgba(56,214,255,.45)}
   .btn-video:hover:not(:disabled){background:rgba(56,214,255,.1)}
   .btn:disabled{opacity:.5;cursor:default}
+
+  /* ===== Vídeo obrigatório no roteiro + modo revisão ===== */
+  .video-gate{margin:12px 0 4px;padding:14px 16px;border:1px dashed rgba(56,214,255,.5);border-radius:12px;background:rgba(56,214,255,.05)}
+  .video-gate .vg-eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:1px;color:var(--ink-faint);text-transform:uppercase}
+  .review-banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding:12px 16px;border:1px solid var(--cyan-deep);border-radius:12px;background:rgba(56,214,255,.08);color:var(--ink);font-family:var(--mono);font-size:.78rem;line-height:1.5}
+  .review-banner .btn{flex:0 0 auto}
+  .review-step{margin:14px 0 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--navy-800)}
 
   /* ===================== Reveal / processamento ========================= */
   .answer-reveal{margin:6px 0 12px;padding:14px 16px;border-radius:10px;font-weight:800;font-family:var(--mono);letter-spacing:.5px}
@@ -299,6 +307,7 @@
 <body>
 <div class="app">
   <button class="btn-fullscreen fullscreen-control" id="fullscreenBtn" type="button" aria-pressed="false" title="Entrar em tela cheia">⛶ Tela cheia</button>
+  <button class="btn-fullscreen nav-back-control" id="navBackBtn" type="button" title="Voltar à tela anterior" style="display:none">◂ Voltar</button>
   <header class="hud" id="hud" hidden>
     <div class="hud-top">
       <div class="brand">
@@ -320,7 +329,7 @@
   <main id="stage" aria-live="polite"></main>
   <footer class="site-footer">
     Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
-    Versão 1.0 · Última atualização: 27 de agosto de 2026
+    Versão 1.1 · Última atualização: 30 de agosto de 2026
   </footer>
 </div>
 
@@ -400,7 +409,7 @@ const FASES = [
   },
   /* ------------------------------- FASE 2 ------------------------------- */
   {
-    fase:2, titulo:"Regiões STR", status:"Marcadores STR reconhecidos", video:"fingerprint",
+    fase:2, titulo:"Regiões STR", status:"Marcadores STR reconhecidos", video:"fingerprint", videoAfter:1,
     introBlocos:[ b("narrador","A extração e a quantificação foram concluídas. A equipe agora precisa selecionar marcadores capazes de diferenciar os perfis dos envolvidos.","◇ NARRADOR · DIA 1 — NÚCLEO DE GENÉTICA FORENSE — 12:40"), b("principal","Não precisamos analisar todo o genoma. Precisamos identificar marcadores que variem entre indivíduos e possam ser comparados de forma confiável."), b("sistema","AURORA | SELEÇÃO DE MARCADORES: PENDENTE") ],
     passos:[
       {
@@ -434,7 +443,7 @@ const FASES = [
   },
   /* ------------------------------- FASE 3 ------------------------------- */
   {
-    fase:3, titulo:"Amplificação por PCR", status:"PCR concluída", video:"pcr",
+    fase:3, titulo:"Amplificação por PCR", status:"PCR concluída", video:"pcr", videoAfter:2,
     introBlocos:[ b("narrador","Há DNA detectável nas amostras, mas em concentração limitada. A análise direta dos marcadores pode não produzir sinal suficiente para comparação.","◇ NARRADOR · DIA 1 — SALA DE PREPARAÇÃO MOLECULAR — 14:20"), b("principal","Equipe auxiliar, precisamos aumentar as cópias das regiões STR sem alterar o perfil que já existe na amostra. Qual técnica atende a esse objetivo?"), b("sistema","AURORA | DNA ABAIXO DO LIMIAR DE ANÁLISE DIRETA") ],
     passos:[
       {
@@ -463,7 +472,7 @@ const FASES = [
   },
   /* ------------------------------- FASE 4 ------------------------------- */
   {
-    fase:4, titulo:"Eletroforese", status:"Fragmentos separados", video:"blot",
+    fase:4, titulo:"Eletroforese", status:"Fragmentos separados", video:"blot", videoAfter:2,
     introBlocos:[ b("narrador","As regiões STR foram amplificadas, mas os fragmentos ainda precisam ser separados por tamanho para que os perfis possam ser comparados.","◇ NARRADOR · DIA 2 — SETOR DE LEITURA INSTRUMENTAL — 08:30"), b("principal","Equipe auxiliar, qual método permite converter esses fragmentos em um padrão interpretável?"), b("sistema","AURORA | CAMPO ELÉTRICO DISPONÍVEL"), b("documento","Para fins didáticos, o jogo representa perfis como bandas em gel. Em laboratórios atuais, STRs costumam ser analisados com PCR multiplex, eletroforese capilar e detecção fluorescente.","▤ NOTA DIDÁTICA") ],
     passos:[
       {
@@ -570,7 +579,7 @@ function el(tag,props={},...kids){
   return n;
 }
 const stage=$("#stage"), hud=$("#hud");
-function voltarAoTopo(){ window.scrollTo({top:0,left:0,behavior:"auto"}); }
+function voltarAoTopo(){ window.scrollTo({top:0,left:0,behavior:"auto"}); atualizarNavBotoes(); }
 function atualizarBotaoTelaCheia(){
   const btn=$("#fullscreenBtn"), ativa=Boolean(document.fullscreenElement);
   if(!btn) return;
@@ -585,6 +594,7 @@ $("#fullscreenBtn")?.addEventListener("click",async()=>{
   }catch(_){ /* Alguns navegadores podem bloquear tela cheia fora de interação direta. */ }
 });
 document.addEventListener("fullscreenchange",atualizarBotaoTelaCheia);
+$("#navBackBtn")?.addEventListener("click",()=>cenaAnterior());
 const normalizarCodigo = s => String(s||"").trim().toLowerCase();
 function construirMapaInverso(codigos){ const m={}; for(const[l,c] of Object.entries(codigos)) m[normalizarCodigo(c)]=l; return m; }
 
@@ -604,7 +614,10 @@ function renderBlocos(container, blocos){ if(!blocos) return; blocos.forEach(bl=
    Avança por: clique no botão "Continuar", ou tecla Espaço/Enter/→/↓.
    Ao terminar, chama onDone() (que monta o próximo elemento da tela).
 --------------------------------------------------------------------------- */
+let _seqLimpar=null;
+function encerrarSequenciaAtiva(){ if(_seqLimpar){ const f=_seqLimpar; _seqLimpar=null; f(); } }
 function sequencia(host, blocos, onDone){
+  encerrarSequenciaAtiva();
   if(!blocos || !blocos.length){ onDone && onDone(); return; }
   const wrap=el("div",{class:"seq-blocos"}); host.append(wrap);
   const cue=el("div",{class:"seq-cue"},"▸ toque em Continuar ou pressione Espaço");
@@ -622,9 +635,10 @@ function sequencia(host, blocos, onDone){
     if(document.activeElement===btn) return;                 // evita duplo disparo
     if([" ","Enter","ArrowRight","ArrowDown"].includes(e.key)){ e.preventDefault(); avancar(); }
   }
-  function limpar(){ cue.remove(); btn.remove(); document.removeEventListener("keydown",onKey); }
+  function limpar(){ cue.remove(); btn.remove(); document.removeEventListener("keydown",onKey); if(_seqLimpar===limpar) _seqLimpar=null; }
   btn.addEventListener("click",e=>{ e.stopPropagation(); btn.blur(); avancar(); });
   document.addEventListener("keydown",onKey);
+  _seqLimpar=limpar;
   mostrar();                                                 // revela o primeiro bloco
 }
 
@@ -635,16 +649,134 @@ FASES.forEach(f=>f.passos.forEach(p=>{ if(p.tipo==="decisao") INDICE_ETAPAS[norm
 /* ============================================================================
    9) ESTADO + CONTROLE DE CENAS
    ============================================================================ */
-const estado={ faseIndex:0, passoIndex:0, score:0, statuses:[], videosConsultados:new Set() };
+const estado={ faseIndex:0, passoIndex:0, score:0, statuses:[], videosConsultados:new Set(), respostas:{}, maxScenePos:0 };
 let modoJogo="multiplayer";
 const SEQ=[ {k:"prologo"},{k:"fase",i:0},{k:"fase",i:1},{k:"fase",i:2},
   {k:"inter",id:"d1_1810"},{k:"fase",i:3},{k:"fase",i:4},{k:"inter",id:"d3_5"},{k:"final"} ];
 let scenePos=0;
 function renderScene(){ const s=SEQ[scenePos];
+  encerrarSequenciaAtiva();
   voltarAoTopo();
-  if(s.k==="prologo") renderPrologo(); else if(s.k==="fase") renderFase(s.i);
-  else if(s.k==="inter") renderInterstitial(s.id); else renderFinal(); }
-function proximaCena(){ scenePos++; renderScene(); }
+  const emRevisao = scenePos < estado.maxScenePos;
+  if(s.k==="prologo") renderPrologo();
+  else if(s.k==="fase"){ emRevisao ? renderFaseReview(s.i) : renderFase(s.i); }
+  else if(s.k==="inter") renderInterstitial(s.id);
+  else renderFinal();
+  if(emRevisao) mostrarBannerRevisao();
+  atualizarNavBotoes();
+}
+function proximaCena(){ scenePos++; if(scenePos>estado.maxScenePos) estado.maxScenePos=scenePos; renderScene(); }
+
+/* Navegação para trás — revisão (só leitura) de etapas já concluídas. */
+function cenaAnterior(){
+  if(hud.hidden || scenePos<=0) return;
+  if(videoOverlay && videoOverlay.classList.contains("open")){ closeVideo(); return; }
+  scenePos--;
+  renderScene();
+}
+function retomarInvestigacao(){ scenePos=estado.maxScenePos; renderScene(); }
+function atualizarNavBotoes(){
+  const b=document.getElementById("navBackBtn");
+  if(b) b.style.display=(!hud.hidden && scenePos>0)?"inline-flex":"none";
+}
+function mostrarBannerRevisao(){
+  stage.prepend(el("div",{class:"review-banner"},
+    el("span",{},"🔎 Modo revisão — você está revendo uma etapa já concluída. Pontuação e progresso não mudam aqui."),
+    el("button",{class:"btn btn-ghost",type:"button",onclick:retomarInvestigacao},"Retomar investigação  ▸")));
+}
+
+/* Tela obrigatória de arquivo audiovisual, inserida no meio das falas da fase.
+   O botão "Continuar" só é liberado depois que o aluno abre o vídeo. */
+function renderVideoGate(faseIdx, host, onDone){
+  const fase=FASES[faseIdx], v=VIDEOS[fase.video];
+  if(!v){ onDone && onDone(); return; }
+  const box=el("div",{class:"video-gate"});
+  box.append(
+    el("section",{class:"dialogo documento",role:"note"},
+      el("span",{class:"rotulo"},"🎬 ARQUIVO AUDIOVISUAL — OBRIGATÓRIO"),
+      el("p",{},"Antes de prosseguir, a equipe precisa assistir ao arquivo “"+v.titulo+"”. "+v.contexto)),
+    el("div",{class:"video-guide"},
+      el("div",{class:"vg-eyebrow"},"Pergunta-guia"),
+      el("div",{class:"g-q"},v.perguntaGuia))
+  );
+  const acoes=el("div",{class:"actions"});
+  const abrir=el("a",{class:"btn btn-primary",href:v.url,target:"_blank",rel:"noopener"},"🎬 Abrir vídeo em nova aba");
+  acoes.append(abrir); box.append(acoes);
+  const hint=el("p",{class:"seq-cue"},"▸ abra o vídeo para liberar o avanço");
+  box.append(hint);
+  const contBtn=el("button",{class:"btn btn-primary",type:"button"},"Continuar  ▸");
+  function liberar(){
+    if(acoes.contains(contBtn)) return;
+    hint.remove(); acoes.append(contBtn); contBtn.focus();
+  }
+  abrir.addEventListener("click",()=>{ estado.videosConsultados.add(faseIdx); liberar(); });
+  if(estado.videosConsultados.has(faseIdx)) liberar();
+  contBtn.addEventListener("click",()=>{ box.remove(); onDone && onDone(); });
+  host.append(box);
+  voltarAoTopo();
+}
+
+/* Revisão (só leitura) de uma fase inteira já concluída. */
+function renderFaseReview(i){
+  const fase=FASES[i]; stage.innerHTML=""; atualizarHUD();
+  const panel=el("section",{class:"panel"},
+    el("p",{class:"eyebrow"},"Modo revisão · Dia "+dayFor(i)+" · Fase "+fase.fase+" de 5 · "+fase.titulo),
+    el("h2",{class:"title"},fase.titulo));
+  stage.append(panel);
+  renderBlocos(panel, fase.introBlocos);
+  if(fase.showProfile) panel.append(buildProfile());
+  if(fase.video && VIDEOS[fase.video]){
+    const v=VIDEOS[fase.video];
+    panel.append(el("section",{class:"dialogo documento",role:"note"},
+      el("span",{class:"rotulo"},"🎬 ARQUIVO AUDIOVISUAL"),
+      el("p",{}, v.titulo+" — "+v.contexto)));
+    panel.append(el("div",{class:"actions"},
+      el("a",{class:"btn btn-video",href:v.url,target:"_blank",rel:"noopener"},"🎬 Abrir vídeo em nova aba")));
+  }
+  fase.passos.forEach((passo,p)=>{
+    if(passo.cenaIntro && passo.cenaIntro.length) renderBlocos(panel, passo.cenaIntro);
+    panel.append(construirRevisaoPasso(passo, estado.respostas[i+"-"+p]));
+  });
+  panel.append(el("div",{class:"actions"},
+    el("button",{class:"btn btn-primary",type:"button",onclick:retomarInvestigacao},"Retomar investigação  ▸"),
+    el("button",{class:"btn btn-ghost",type:"button",onclick:proximaCena},"Próxima etapa  ▸")));
+  voltarAoTopo();
+}
+
+/* Cartão de resumo de um passo já resolvido (usado na revisão e ao reabrir um passo). */
+function construirRevisaoPasso(passo, resp){
+  const box=el("div",{class:"review-step"});
+  box.append(el("p",{class:"eyebrow",style:"color:var(--ink-faint)"},
+    passo.miniatividade?"Miniatividade complementar":(passo.tipo==="ordenar"?"Atividade de ordenação":"Decisão")));
+  box.append(el("p",{class:"prompt"},passo.pergunta));
+  if(passo.preformatado) box.append(el("pre",{class:"seq"},passo.preformatado));
+  if(passo.tipo==="ordenar"){
+    const ul=el("ul",{class:"order-list correct"});
+    passo.itens.forEach((n,k)=>ul.append(el("li",{class:"order-item"},
+      el("span",{class:"idx","aria-hidden":"true"},String(k+1)), el("span",{class:"name"},n))));
+    box.append(ul);
+    box.append(el("div",{class:"answer-reveal correct"}, el("div",{class:"big"},"✓ Sequência validada")));
+    renderBlocos(box, passo.okBlocos);
+    return box;
+  }
+  const letra = resp && resp.letra;
+  const certa = resp ? !!resp.correta : (letra===passo.correta);
+  const group=el("div",{class:"options"});
+  ["A","B","C","D"].forEach(L=>{
+    const o=el("div",{class:"opt","data-letter":L},
+      el("span",{class:"letter","aria-hidden":"true"},L), el("span",{class:"body"},passo.alternativas[L]));
+    if(L===passo.correta) o.classList.add("correct");
+    else if(L===letra) o.classList.add("wrong");
+    else o.classList.add("dim");
+    group.append(o);
+  });
+  box.append(group);
+  box.append(el("div",{class:"answer-reveal "+(certa?"correct":"wrong")},
+    el("div",{class:"big"}, (certa?"✓":"✗")+" Decisão registrada: alternativa "+(letra||"—")),
+    certa?null:el("div",{},"Alternativa correta: "+passo.correta+" — "+passo.alternativas[passo.correta])));
+  renderBlocos(box, certa?passo.okBlocos:passo.wrongBlocos);
+  return box;
+}
 
 /* ============================================================================
    10) TELA-TÍTULO RETRÔ (PRESS START) + FAKE LOAD (5 s)
@@ -770,6 +902,7 @@ function iniciarSingle(){ iniciarPartida("single"); }
 function iniciarPartida(modo){
   modoJogo=modo;
   estado.faseIndex=0; estado.passoIndex=0; estado.score=0; estado.statuses=[]; estado.videosConsultados=new Set();
+  estado.respostas={}; estado.maxScenePos=0;
   $("#roleTag").textContent=modo==="single"?"Single Player":"Pesquisador Principal";
   construirChips(); hud.hidden=false; scenePos=0; atualizarHUD(); renderScene();
 }
@@ -811,7 +944,14 @@ function renderInterstitial(id){
 
 /* -------------------------------- Fase ---------------------------------- */
 function renderFase(i){
-  estado.faseIndex=i; estado.passoIndex=0; atualizarHUD();
+  // Retomar uma fase que já estava em andamento (voltou e avançou de novo):
+  // pula a introdução/vídeo e vai direto para o passo em que o aluno parou.
+  const temResposta = Object.keys(estado.respostas).some(k=>k.startsWith(i+"-"));
+  const retomando = (i===estado.faseIndex && (estado.passoIndex>0 || temResposta));
+  if(!retomando){ estado.faseIndex=i; estado.passoIndex=0; }
+  atualizarHUD();
+  if(retomando){ renderPassoInterno(); return; }
+
   const fase=FASES[i]; stage.innerHTML="";
   const panel=el("section",{class:"panel"},
     el("p",{class:"eyebrow"},"Dia "+dayFor(i)+" · Fase "+fase.fase+" de 5 · "+fase.titulo),
@@ -822,9 +962,18 @@ function renderFase(i){
   }
   const introHost=el("div"); panel.append(introHost);
   stage.append(panel);
-  sequencia(introHost, fase.introBlocos, ()=>{
-    renderPassoInterno();
-  });
+
+  const blocos=fase.introBlocos||[];
+  if(fase.video && fase.videoAfter!=null){
+    const corte=Math.max(0,Math.min(blocos.length,fase.videoAfter));
+    sequencia(introHost, blocos.slice(0,corte), ()=>{
+      renderVideoGate(i, introHost, ()=>{
+        sequencia(introHost, blocos.slice(corte), renderPassoInterno);
+      });
+    });
+  }else{
+    sequencia(introHost, blocos, renderPassoInterno);
+  }
   voltarAoTopo();
 }
 function renderPassoInterno(){
@@ -848,6 +997,14 @@ function renderTelaPergunta(){
     el("h2",{class:"title"},fase.titulo));
   if(fase.showProfile) panel.append(buildProfile());
   const box=el("div",{id:"passoBox"}); panel.append(box); stage.append(panel);
+  const chave=estado.faseIndex+"-"+estado.passoIndex;
+  if(estado.respostas[chave]){
+    // passo já respondido nesta partida — mostra em revisão e segue sem repontuar
+    box.append(construirRevisaoPasso(passo, estado.respostas[chave]));
+    adicionarAvanco(box);
+    voltarAoTopo();
+    return;
+  }
   if(passo.tipo==="decisao"){
     if(modoJogo==="single") renderDecisaoSingle(box,passo);
     else renderDecisao(box,passo);
@@ -902,6 +1059,9 @@ function renderDecisao(container,passo){
     resultZone.innerHTML="";
     if(acertou){
       local.resolvido=true;
+      const chave=estado.faseIndex+"-"+estado.passoIndex;
+      const jaPontuado=!!estado.respostas[chave];
+      estado.respostas[chave]={letra:letra,correta:true};
       // Evidencia MUITO a escolha (que coincide com a correta).
       group.querySelectorAll(".opt").forEach(o=>{ const L=o.dataset.letter;
         if(L===letra) o.classList.add("correct"); else o.classList.add("dim"); });
@@ -910,13 +1070,13 @@ function renderDecisao(container,passo){
         el("div",{}, passo.alternativas[letra]),
         el("div",{style:"margin-top:6px"},"Alternativa CORRETA.")));
       let pts=0;
-      if(passo.pontuacaoMaxima>0){
+      if(passo.pontuacaoMaxima>0 && !jaPontuado){
         const penalVideo=CONFIG.usarPontuacaoPorConsulta && estado.videosConsultados.has(estado.faseIndex);
         let f=1; if(penalVideo) f=Math.min(f,0.7); if(local.errouAntes) f=0.4;
         pts=Math.round(passo.pontuacaoMaxima*f);
         estado.score=Math.min(CONFIG.pontuacaoMaxima, estado.score+pts); atualizarHUD();
       }
-      const ptsEl = passo.pontuacaoMaxima>0 ? el("div",{class:"pts"},"+"+pts+" pontos") : null;
+      const ptsEl = (passo.pontuacaoMaxima>0 && !jaPontuado) ? el("div",{class:"pts"},"+"+pts+" pontos") : null;
       sequencia(resultZone, passo.okBlocos, ()=>{ if(ptsEl) resultZone.append(ptsEl); adicionarAvanco(resultZone); });
     }else{
       // ERRO: não revela a correta nem dá dica. Só avisa e reabre para nova escolha.
@@ -978,6 +1138,9 @@ function renderDecisaoSingle(container,passo){
 
   function revelar(letra){
     const acertou=(letra===passo.correta);
+    const chave=estado.faseIndex+"-"+estado.passoIndex;
+    const jaPontuado=!!estado.respostas[chave];
+    estado.respostas[chave]={letra:letra,correta:acertou};
     resultZone.innerHTML="";
     group.querySelectorAll(".opt").forEach(o=>{
       const L=o.dataset.letter;
@@ -990,13 +1153,13 @@ function renderDecisaoSingle(container,passo){
         el("div",{class:"big"},"✓ Resposta correta — alternativa "+letra),
         el("div",{}, passo.alternativas[letra])));
       let pts=0;
-      if(passo.pontuacaoMaxima>0){
+      if(passo.pontuacaoMaxima>0 && !jaPontuado){
         const penalVideo=CONFIG.usarPontuacaoPorConsulta && estado.videosConsultados.has(estado.faseIndex);
         const f=penalVideo?0.7:1;
         pts=Math.round(passo.pontuacaoMaxima*f);
         estado.score=Math.min(CONFIG.pontuacaoMaxima, estado.score+pts); atualizarHUD();
       }
-      const ptsEl = passo.pontuacaoMaxima>0 ? el("div",{class:"pts"},"+"+pts+" pontos") : null;
+      const ptsEl = (passo.pontuacaoMaxima>0 && !jaPontuado) ? el("div",{class:"pts"},"+"+pts+" pontos") : null;
       sequencia(resultZone, passo.okBlocos, ()=>{ if(ptsEl) resultZone.append(ptsEl); adicionarAvanco(resultZone); });
     }else{
       resultZone.append(el("div",{class:"answer-reveal wrong"},
@@ -1062,6 +1225,7 @@ function renderOrdenar(container,passo){
     if(local.ok) return;
     const ok=order.join("|")===passo.itens.join("|"); resultZone.innerHTML="";
     if(ok){ local.ok=true; list.classList.add("correct");
+      estado.respostas[estado.faseIndex+"-"+estado.passoIndex]={tipo:"ordenar",correta:true};
       list.querySelectorAll(".mv").forEach(x=>x.disabled=true); list.querySelectorAll(".order-item").forEach(li=>li.setAttribute("draggable","false"));
       $("#checkOrder",container).disabled=true;
       sequencia(resultZone, passo.okBlocos, ()=>adicionarAvanco(resultZone));
