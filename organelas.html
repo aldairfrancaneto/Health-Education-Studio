@@ -17,6 +17,10 @@
   --ink:#2B1B0E; --paper:#FFF8E7; --paper-2:#FFEFC7; --outline:#2B1B0E;
   --font-pixel:'Press Start 2P',monospace;
   --font-serif:'Cinzel',serif;
+  /* largura padrao dos cartoes/encaixes (padronizado como no morte.html) */
+  --card-w:clamp(60px, 12vw, 76px);
+  /* cartas do acervo (mao): 15% maiores que os encaixes do tabuleiro */
+  --card-w-mao:calc(var(--card-w) * 1.15);
 }
 *{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -289,8 +293,8 @@ body{
   .mor-sel-trilhas .c-r{ background:#C9524C; }
 
   /* elementos que somem conforme o percurso/conjunto escolhido */
-  #orgInstrucoes.oculto, #orgTabuleiro.oculto, .org-legenda span.oculto,
-  #lesInstrucoes.oculto, #lesTabuleiro.oculto,
+  #orgTabuleiro.oculto, .org-legenda span.oculto,
+  #lesTabuleiro.oculto,
   .zona.oculto, .subzona.oculto, .deck.oculto,
   #morInstrucoes.oculto, #morTabuleiro.oculto,
   .mor-campo.oculto, .mor-monte.oculto, .mor-legenda span.oculto,
@@ -345,12 +349,6 @@ body{
     .deck{ padding:9px 8px 10px; }
   }
 
-  .instrucoes{
-    background:var(--paper); border:3px solid var(--outline); border-radius:10px;
-    box-shadow:5px 5px 0 var(--outline); padding:16px 20px; margin:0 0 22px; font-size:16px;
-    color:var(--ink);
-  }
-  .instrucoes b{ color:var(--red-dark); }
   /* ============================================================
      ATIVIDADE 5 — EXPEDIÇÃO CELULAR (trios de cartas)
      Mesmo tabuleiro do jogo de associação, repaginado em tons de
@@ -365,8 +363,8 @@ body{
   }
 
   .org-campo{
-    display:grid; gap:22px; margin:0 0 26px;
-    grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+    display:grid; gap:16px; justify-content:center; margin:0 0 26px;
+    grid-template-columns:repeat(auto-fit,calc(var(--card-w) * 3 + 24px));
   }
   .org-estacao{
     background:linear-gradient(180deg, rgba(23,64,42,.55), rgba(8,23,15,.55));
@@ -382,10 +380,10 @@ body{
   /* --------- o leque: verde fixa + 2 encaixes abertos --------- */
   .org-leque{
     display:flex; justify-content:center; align-items:flex-end;
-    padding:14px 4px 6px; min-height:150px;
+    padding:12px 4px 6px; min-height:118px;
   }
   .org-leque > *{
-    width:33%; aspect-ratio:560/830; flex:0 0 auto;
+    width:var(--card-w); aspect-ratio:560/830; flex:0 0 auto;
     transition:transform .18s, box-shadow .18s, border-color .18s;
     transform-origin:bottom center;
   }
@@ -394,7 +392,7 @@ body{
   .org-leque > *:nth-child(2){ transform:translateY(-9px); z-index:2; }
   .org-leque > *:nth-child(3){ transform:rotate(13deg) translateX(-14%); z-index:1; }
   /* leque de DUAS pecas (conjunto so verde + azul) */
-  .org-leque.duo > *{ width:42%; }
+  .org-leque.duo > *{ width:var(--card-w); }
   .org-leque.duo > *:nth-child(1){ transform:rotate(-9deg) translateX(9%); z-index:2; }
   .org-leque.duo > *:nth-child(2){ transform:rotate(9deg) translateX(-9%); z-index:1; }
   .org-leque.duo > *:nth-child(1):hover{ transform:rotate(-9deg) translateX(9%) translateY(-9px); z-index:6; }
@@ -422,8 +420,8 @@ body{
     display:flex; align-items:center; justify-content:center;
   }
   .org-slot .vazio{
-    font-family:var(--font-serif); font-weight:700; font-size:9px;
-    letter-spacing:.06em; text-align:center; padding:4px; line-height:1.45;
+    font-family:var(--font-serif); font-weight:700; font-size:7px;
+    letter-spacing:.04em; text-align:center; padding:2px; line-height:1.35;
   }
   .org-slot img{ width:100%; height:100%; object-fit:contain; display:block; background:var(--slot); }
   .org-slot.tipo-azul{ border-color:rgba(120,190,235,.65); }
@@ -435,7 +433,7 @@ body{
   .org-slot.errado{ border-color:var(--red); box-shadow:0 0 0 3px rgba(229,57,53,.5); animation:tremer .45s; }
   .org-slot.certo::after, .org-slot.errado::after{
     content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:34px; font-weight:700; color:#fff; text-shadow:0 2px 6px #000;
+    font-size:22px; font-weight:700; color:#fff; text-shadow:0 2px 6px #000;
     background:rgba(30,110,45,.45);
   }
   .org-slot.errado::after{ content:"✗"; background:rgba(180,30,26,.55); }
@@ -444,8 +442,8 @@ body{
 
   /* --------- acervo: 22 cartas (azuis + vermelhas) --------- */
   .org-mao{
-    display:grid; gap:12px;
-    grid-template-columns:repeat(auto-fill,minmax(112px,1fr));
+    display:grid; gap:9px; justify-content:center;
+    grid-template-columns:repeat(auto-fit,var(--card-w-mao));
   }
   .org-mao:empty{ display:block; }
   .org-mao:empty::after{
@@ -480,9 +478,8 @@ body{
   #orgResultado .grande{ display:block; font-size:19px; margin-bottom:6px; color:#fff; }
 
   @media (max-width:600px){
-    .org-campo{ grid-template-columns:1fr; gap:16px; }
-    .org-mao{ grid-template-columns:repeat(auto-fill,minmax(94px,1fr)); gap:9px; }
-    .org-leque{ min-height:128px; }
+    .org-campo{ grid-template-columns:1fr; gap:14px; }
+    .org-leque{ min-height:104px; }
   }
 .site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
   color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
@@ -515,9 +512,32 @@ body{
 .tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dim) 10px 14px); }
 .tc-pct{ font-family:var(--font-pixel); font-size:11px; letter-spacing:.06em; color:var(--gold-soft); }
 .tc-dica{ font-family:var(--font-pixel); font-size:7.5px; letter-spacing:.05em; line-height:1.9; color:rgba(232,238,247,.6); max-width:320px; }
+  /* ===== BOTAO TELA CHEIA (cabecalho, lado direito) ===== */
+  #btnTelaCheia{
+    position:fixed; top:12px; right:12px; z-index:90;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--font-serif); font-weight:700; font-size:12.5px; letter-spacing:.03em;
+    color:var(--gold-soft); background:rgba(10,20,36,.82);
+    border:2px solid var(--gold-dim); border-radius:8px; padding:8px 11px;
+    cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+    box-shadow:0 3px 0 #0A1424, 0 6px 16px rgba(0,0,0,.45);
+    transition:filter .15s ease, transform .1s ease, border-color .15s ease;
+  }
+  #btnTelaCheia:hover{ filter:brightness(1.2); border-color:var(--gold); }
+  #btnTelaCheia:active{ transform:translateY(2px); box-shadow:0 1px 0 #0A1424; }
+  #btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
+  @media (max-width:560px){
+    #btnTelaCheia{ padding:9px; }
+    #btnTelaCheia .btn-tc-txt{ display:none; }
+  }
 </style>
 </head>
 <body>
+
+<button id="btnTelaCheia" type="button" title="Tela cheia" aria-label="Entrar em tela cheia">
+  <span class="btn-tc-ico" aria-hidden="true">&#9974;</span>
+  <span class="btn-tc-txt">Tela cheia</span>
+</button>
 
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Toque ou pressione qualquer tecla para começar.">
   <div class="tt-ico" aria-hidden="true">🧬</div>
@@ -573,18 +593,6 @@ body{
         </button>
 
       </div>
-    </div>
-
-    <div class="instrucoes" id="orgInstrucoes">
-      <b>Como jogar:</b> cada estação já traz a carta <b>verde</b> (a estrutura celular)
-      encaixada no leque. Faltam as outras duas: a <b>azul</b> (definição e função molecular)
-      e, no conjunto completo, a <b>vermelha</b> (correlação médica). O Acervo é separado por
-      cor: cada monte traz só as cartas da sua família. Toque numa carta do monte e depois no
-      <b>encaixe vazio</b> da estação certa — cada encaixe só aceita cartas da sua cor. Para
-      trocar, toque na carta já encaixada. Com todos os encaixes
-      preenchidos, toque em <b>FECHAR OS TRIOS</b>: os acertos ficam
-      <b>verdes</b> e os erros <b>vermelhos</b> — sem revelar a resposta certa.
-      Use a <b>🔍 lupa</b> para ler qualquer carta.
     </div>
 
     <div class="tabuleiro org-tabuleiro" id="orgTabuleiro">
@@ -702,10 +710,47 @@ body{
   lb.addEventListener('click', function(e){ if (e.target === lb) fecharLightbox(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fecharLightbox(); });
 
-  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, { capture:true });
   document.addEventListener('dragstart', function(e){
     if (e.target && e.target.tagName === 'IMG') e.preventDefault();
   });
+
+  /* ------------------ tela cheia ------------------ */
+  (function(){
+    var btn = document.getElementById('btnTelaCheia');
+    if (!btn) return;
+    var ico = btn.querySelector('.btn-tc-ico');
+    var txt = btn.querySelector('.btn-tc-txt');
+    function emTelaCheia(){
+      return document.fullscreenElement || document.webkitFullscreenElement ||
+             document.mozFullScreenElement || document.msFullscreenElement || null;
+    }
+    function entrar(){
+      var el = document.documentElement;
+      var fn = el.requestFullscreen || el.webkitRequestFullscreen ||
+               el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (fn){ try { fn.call(el); } catch(err){} }
+    }
+    function sair(){
+      var fn = document.exitFullscreen || document.webkitExitFullscreen ||
+               document.mozCancelFullScreen || document.msExitFullscreen;
+      if (fn){ try { fn.call(document); } catch(err){} }
+    }
+    function atualizar(){
+      var on = !!emTelaCheia();
+      if (ico) ico.innerHTML = on ? '&#10005;' : '&#9974;';
+      if (txt) txt.textContent = on ? 'Sair' : 'Tela cheia';
+      btn.title = on ? 'Sair da tela cheia' : 'Tela cheia';
+      btn.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Entrar em tela cheia');
+    }
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (emTelaCheia()) sair(); else entrar();
+    });
+    ['fullscreenchange','webkitfullscreenchange','mozfullscreenchange','MSFullscreenChange']
+      .forEach(function(ev){ document.addEventListener(ev, atualizar); });
+    atualizar();
+  })();
 
   /* ==============================================================
      ATIVIDADE 5 — EXPEDIÇÃO CELULAR (trios de cartas)
@@ -987,19 +1032,16 @@ body{
 
   /* ---------- tela de selecao do conjunto ---------- */
   const orgSelecao    = document.getElementById('orgSelecao');
-  const orgInstrucoes = document.getElementById('orgInstrucoes');
   const orgTabuleiro  = document.getElementById('orgTabuleiro');
 
   function orgMostrarSelecao(){
     orgSelecao.classList.add('on');
-    orgInstrucoes.classList.add('oculto');
     orgTabuleiro.classList.add('oculto');
   }
 
   function orgEscolher(modo){
     orgModo = modo;
     orgSelecao.classList.remove('on');
-    orgInstrucoes.classList.remove('oculto');
     orgTabuleiro.classList.remove('oculto');
     orgMontar();
     somClique();
