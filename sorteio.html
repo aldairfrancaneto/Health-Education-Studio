@@ -344,7 +344,7 @@ body{
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Toque ou pressione qualquer tecla para começar.">
   <div class="tt-ico" aria-hidden="true">🎲</div>
   <div class="tt-caso">Atividade 08</div>
-  <div class="tt-titulo">Sorteio da<br>Turma</div>
+  <div class="tt-titulo">Diário de<br>Classe</div>
   <div class="tt-sub">Ferramenta do professor</div>
   <div class="tt-start">▶ Press Start</div>
   <div class="tt-rodape">toque ou pressione qualquer tecla</div>
@@ -410,6 +410,9 @@ body{
       <label class="srt-campo-rot" for="diarioData">Data da aula</label>
       <div class="srt-dia-lista" id="diarioDatas"></div>
       <input type="date" id="diarioData" class="srt-texto" value="">
+
+      <label class="srt-campo-rot" for="diarioTema">Tema / título da aula</label>
+      <input type="text" id="diarioTema" class="srt-texto" placeholder="Ex.: Revisão para a prova, Regra de três, ..." autocomplete="off">
 
       <div class="srt-freq-lista" id="diarioLista"></div>
 
@@ -611,6 +614,7 @@ body{
     btnVoltarEntrada:document.getElementById('srtVoltarEntrada'),
     diarioTitulo:document.getElementById('diarioTitulo'),
     diarioData:document.getElementById('diarioData'),
+    diarioTema:document.getElementById('diarioTema'),
     diarioDatas:document.getElementById('diarioDatas'),
     diarioLista:document.getElementById('diarioLista'),
     diarioHistorico:document.getElementById('diarioHistorico')
@@ -1169,6 +1173,13 @@ body{
     });
   }
 
+  function diarioCarregarTema(){
+    const dia = srtLerDiario();
+    const bloco = dia[diarioTurmaId] || {datas:{}};
+    const dados = bloco.datas[diarioDataAtual] || {};
+    srtEl.diarioTema.value = dados.tema || '';
+  }
+
   function diarioPintarLista(){
     const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
     srtEl.diarioLista.innerHTML = '';
@@ -1176,6 +1187,7 @@ body{
     const dia = srtLerDiario();
     const bloco = dia[diarioTurmaId] || {datas:{}};
     const faltas = (bloco.datas[diarioDataAtual] || {});
+    diarioCarregarTema();
     turma.alunos.forEach(function(al){
       const valor = faltas[al.matricula || al.nome];
       const nFaltas = (typeof valor === 'number') ? valor : (valor ? 1 : 0);
@@ -1213,21 +1225,25 @@ body{
     }
     datas.forEach(function(k){
       const faltas = bloco.datas[k] || {};
-      const chaves = Object.keys(faltas);
+      const tema = faltas.tema;
+      const chaves = Object.keys(faltas).filter(function(c){ return c !== 'tema'; });
       const totalDia = chaves.reduce(function(s, c){ return s + (Number(faltas[c]) || 1); }, 0);
       const chip = document.createElement('span');
       chip.className = 'srt-dia-btn';
       chip.innerHTML = srtDataLegivel(k) + ' · ' + totalDia + ' falta(s) no dia';
       const quem = document.createElement('div');
       quem.style.cssText = 'margin:2px 0 10px; font-size:13.5px; color:var(--srt-tinta3);';
+      let txt = '';
+      if (tema) txt += '<b style="color:var(--srt-sol);">Tema:</b> ' + srtEscapar(tema) + '<br>';
       if (!chaves.length){
-        quem.textContent = 'Todos presentes.';
+        txt += 'Todos presentes.';
       } else {
-        quem.textContent = 'Faltas: ' + chaves.map(function(c){
+        txt += 'Faltas: ' + chaves.map(function(c){
           const n = Number(faltas[c]) || 1;
           return c + ' (' + n + (n > 1 ? ' faltas' : ' falta') + ')';
         }).join(', ');
       }
+      quem.innerHTML = txt;
       srtEl.diarioHistorico.appendChild(chip);
       srtEl.diarioHistorico.appendChild(quem);
     });
@@ -1287,6 +1303,8 @@ body{
     const bloco = dia[diarioTurmaId];
     if (!bloco.datas[diarioDataAtual]) bloco.datas[diarioDataAtual] = {};
     const faltas = bloco.datas[diarioDataAtual];
+    const tema = (srtEl.diarioTema.value || '').trim();
+    if (tema) faltas.tema = tema; else delete faltas.tema;
     srtEl.diarioLista.querySelectorAll('.srt-freq-linha').forEach(function(linha, i){
       const al = turma.alunos[i];
       if (!al) return;
