@@ -20,7 +20,7 @@ body{
   font-family:var(--font-body); font-weight:600; line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-.pagina{ max-width:1180px; margin:0 auto; padding:14px; }
+.pagina{ max-width:1180px; margin:0 auto; padding:14px; padding-bottom:70px; }
   /* ============================================================
      ATIVIDADE 8 — SORTEIO DA TURMA (ferramenta do professor)
      Prefixo "srt-" para não colidir com as demais atividades.
@@ -70,6 +70,13 @@ body{
   }
   #srtLista:focus{ outline:none; border-color:var(--srt-agua); }
   #srtLista::placeholder{ color:rgba(243,247,255,.38); }
+  .srt-texto{
+    width:100%; padding:12px 14px; margin:0 0 14px;
+    font-family:var(--font-body); font-size:15px; font-weight:600;
+    color:var(--srt-tinta); background:rgba(9,16,30,.72);
+    border:2px solid var(--srt-linha); border-radius:12px;
+  }
+  .srt-texto:focus{ outline:none; border-color:var(--srt-agua); }
   .srt-dica{ margin:9px 0 16px; font-size:14px; line-height:1.5; color:var(--srt-tinta3); }
   .srt-dica b{ color:var(--srt-sol); }
 
@@ -201,9 +208,103 @@ body{
   }
 
 
-.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+  /* ============================================================
+     MENU INICIAL — CARREGAR TURMA / DIÁRIO / NOVO CADASTRO
+     ============================================================ */
+  #srtMenu{ padding:6px 0 40px; }
+  .srt-menu-card{ text-align:center; margin:0 0 22px; }
+  .srt-menu-opcoes{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+  .srt-menu-btn{
+    flex:1 1 240px; max-width:340px; text-align:center;
+    font-family:var(--font-pixel); font-size:11px; line-height:1.7;
+    padding:20px 16px; cursor:pointer; color:var(--srt-tinta); background:var(--srt-painel);
+    border:2px solid var(--srt-linha); border-radius:16px;
+    box-shadow:0 5px 0 rgba(0,0,0,.3);
+    transition:transform .1s, border-color .15s, box-shadow .15s;
+  }
+  .srt-menu-btn em{ display:block; font-style:normal; font-size:26px; margin-bottom:9px; }
+  .srt-menu-btn small{ display:block; font-family:var(--font-body); font-size:13px; font-weight:600; line-height:1.5; color:var(--srt-tinta3); margin-top:8px; text-transform:none; letter-spacing:0; }
+  .srt-menu-btn:hover{ transform:translateY(-3px); border-color:var(--srt-agua); box-shadow:0 7px 0 rgba(0,0,0,.3); }
+  .srt-menu-btn.sol{ border-color:var(--srt-sol); color:#2B2004; background:var(--srt-sol); }
+  .srt-menu-btn.menta{ border-color:var(--srt-menta); color:#08210F; background:var(--srt-menta); }
+
+  /* lista de turmas já salvas */
+  .srt-lista-turmas{ display:grid; gap:10px; margin-top:18px; }
+  .srt-btn-nova{
+    display:block; width:100%; margin:20px 0 4px; text-align:center;
+    font-family:var(--font-pixel); font-size:11px; line-height:1.7;
+    padding:16px 14px; cursor:pointer; color:var(--srt-sol);
+    background:rgba(9,16,30,.4); border:2px dashed var(--srt-linha); border-radius:16px;
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .srt-btn-nova:hover{ border-color:var(--srt-sol); background:rgba(255,197,61,.10); }
+  .srt-btn-nova:active{ transform:translateY(2px); }
+  .srt-turma-item{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    padding:13px 15px; border-radius:14px; cursor:pointer;
+    border:2px solid var(--srt-linha); background:rgba(9,16,30,.5);
+    transition:border-color .15s, background .15s;
+  }
+  .srt-turma-item:hover{ border-color:var(--srt-sol); background:rgba(255,197,61,.10); }
+  .srt-turma-item .t-nome{ font-weight:800; font-size:17px; color:var(--srt-tinta); min-width:0; flex:1 1 200px; word-break:break-word; }
+  .srt-turma-item .t-meta{ font-size:13px; color:var(--srt-tinta3); }
+  .srt-turma-item .t-acoes{ display:flex; gap:8px; flex-wrap:wrap; }
+  .srt-turma-item .srt-btn{ font-size:9px; padding:9px 11px; }
+
+  /* diário de frequência */
+  .srt-dia-lista{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 8px; }
+  .srt-dia-btn{
+    font-family:var(--font-pixel); font-size:9px; line-height:1.8; padding:9px 12px;
+    cursor:pointer; color:var(--srt-tinta); background:var(--srt-painel);
+    border:2px solid var(--srt-linha); border-radius:10px;
+  }
+  .srt-dia-btn.sel{ border-color:var(--srt-sol); background:var(--srt-sol); color:#2B2004; }
+  .srt-freq-lista{ display:grid; gap:8px; margin:6px 0 16px; }
+  .srt-freq-linha{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 13px; border-radius:12px;
+    border:2px solid var(--srt-linha); background:rgba(9,16,30,.42);
+  }
+  .srt-freq-linha .f-mat{ font-family:var(--font-pixel); font-size:8.5px; color:var(--srt-tinta3); min-width:74px; }
+  .srt-freq-linha .f-nome{ flex:1; font-weight:700; font-size:15px; color:var(--srt-tinta); word-break:break-word; }
+  .srt-freq-linha .f-rot{
+    font-family:var(--font-pixel); font-size:8.5px; color:var(--srt-tinta3);
+    white-space:nowrap;
+  }
+  .srt-freq-linha .f-num{
+    width:64px; padding:8px 6px; text-align:center;
+    font-family:var(--font-pixel); font-size:12px; color:var(--srt-tinta);
+    background:rgba(9,16,30,.72); border:2px solid var(--srt-linha); border-radius:10px;
+  }
+  .srt-freq-linha .f-num:focus{ outline:none; border-color:var(--srt-agua); }
+  .srt-freq-linha .f-num::placeholder{ color:rgba(255,255,255,.3); }
+  .srt-freq-linha.falta{ border-color:var(--srt-coral); background:rgba(255,107,122,.12); }
+  .srt-freq-linha.falta .f-num{ border-color:var(--srt-coral); }
+  .srt-freq-linha.presente{ border-color:rgba(63,221,149,.4); }
+
+  @media (max-width:600px){
+    .srt-menu-btn{ flex-basis:100%; max-width:100%; }
+    .srt-turma-item{ flex-direction:column; align-items:stretch; }
+    .srt-turma-item .t-acoes{ justify-content:flex-end; }
+  }
+
+  /* histórico do diário */
+  .srt-hist{ margin-top:8px; }
+  .srt-hist .srt-dia-btn{ margin:0 5px 5px 0; }
+
+  .srt-diario-acoes{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+
+.site-footer{position:fixed; left:0; right:0; bottom:0; z-index:50;
+  padding:10px 14px; border-top:1px solid rgba(255,255,255,.15);
+  background:#12203A;
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:left; line-height:1.7;}
+.site-footer .site-footer-linha{ max-width:1180px; margin:0 auto; }
 .site-footer strong{ color:rgba(255,255,255,.8); }
+.site-footer-linha{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; }
+.site-footer-verso{ margin-left:auto; color:rgba(255,255,255,.45); }
+@media (max-width:600px){
+  .site-footer-verso{ margin-left:0; width:100%; }
+}
 
 /* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
 .tela-titulo, .tela-carregando{
@@ -253,26 +354,70 @@ body{
   <div class="tc-dica">Distribuindo os avatares…</div>
 </div>
 
-    <div class="srt-caixa" id="srtEntrada" style="display:none;">
+    <div class="srt-caixa oculto" id="srtEntrada">
       <div class="srt-cab">
-        <span class="srt-titulo">Sorteio da Turma</span>
-        <span class="srt-sub">Cole a lista e distribua os avatares</span>
+        <span class="srt-titulo">Cadastro de turma</span>
+        <span class="srt-sub">Cole a lista com nome e número acadêmico</span>
       </div>
+
+      <label class="srt-campo-rot" for="srtNomeTurma">Nome da turma (ex.: "Medicina 2026.1")</label>
+      <input type="text" id="srtNomeTurma" class="srt-texto" placeholder="Ex.: Medicina 2026.1" autocomplete="off">
 
       <label class="srt-campo-rot" for="srtLista">Lista de alunos — um por linha</label>
       <textarea id="srtLista" spellcheck="false"
-        placeholder="Ana Beatriz Souza&#10;Carlos Eduardo Lima&#10;Fernanda Rocha&#10;João Pedro Alves&#10;..."></textarea>
+        placeholder="2024001 - Ana Beatriz Souza&#10;2024002 - Carlos Eduardo Lima&#10;Fernanda Rocha (sem número)&#10;..."></textarea>
       <p class="srt-dica">
-        Aceita colar direto de uma planilha ou lista de chamada. Números de matrícula no
-        começo da linha, marcadores e espaços em excesso são removidos automaticamente; linhas
-        repetidas são descartadas. <b>Até 70 alunos</b> cada um recebe um avatar exclusivo;
-        acima disso, os avatares passam a se repetir.
+        <b>Formato:</b> o número acadêmico pode vir no começo da linha (<i>2024001 - Nome</i>)
+        ou a linha pode trazer só o nome (o número fica em branco). Marcadores e espaços em
+        excesso são removidos; linhas repetidas são descartadas. <b>Até 70 alunos</b> cada um
+        recebe um avatar exclusivo; acima disso, os avatares passam a se repetir.
       </p>
 
       <div class="srt-acoes">
-        <button class="srt-btn sol" id="srtMontar" type="button">🎲 Montar a turma</button>
+        <button class="srt-btn sol" id="srtMontar" type="button">🎲 Cadastrar e abrir</button>
         <button class="srt-btn" id="srtExemplo" type="button">Ver um exemplo</button>
+        <button class="srt-btn" id="srtVoltarEntrada" type="button">← Menu</button>
       </div>
+    </div>
+
+    <!-- ---------- MENU INICIAL (após o start screen) ---------- -->
+    <div class="srt-caixa oculto" id="srtMenu">
+      <div class="srt-cab">
+        <span class="srt-titulo">Ferramentas do professor</span>
+        <span class="srt-sub">Escolha uma turma para começar</span>
+      </div>
+
+      <div class="srt-lista-turmas" id="srtListaTurmas"></div>
+
+      <button class="srt-btn-nova" id="srtBtnNovaTurma" type="button">➕&nbsp; Cadastrar nova turma</button>
+    </div>
+
+    <!-- ---------- DIÁRIO DE FREQUÊNCIA ---------- -->
+    <div class="srt-caixa oculto" id="srtDiario">
+      <div class="srt-cab">
+        <span class="srt-titulo" id="diarioTitulo">Diário de frequência</span>
+        <span class="srt-sub">Digite as faltas do dia (1 a 4). Vazio = presente</span>
+      </div>
+
+      <div class="srt-diario-acoes">
+        <button class="srt-btn" id="diarioEditarNome" type="button">✏️ Editar nome da turma</button>
+        <button class="srt-btn" id="diarioAddAluno" type="button">➕ Inserir aluno</button>
+      </div>
+
+      <label class="srt-campo-rot" for="diarioData">Data da aula</label>
+      <div class="srt-dia-lista" id="diarioDatas"></div>
+      <input type="date" id="diarioData" class="srt-texto" value="">
+
+      <div class="srt-freq-lista" id="diarioLista"></div>
+
+      <div class="srt-acoes">
+        <button class="srt-btn menta" id="diarioSalvar" type="button">💾 Salvar frequência</button>
+        <button class="srt-btn" id="diarioBaixar" type="button">⬇ Baixar planilha</button>
+        <button class="srt-btn" id="diarioVoltar" type="button">← Voltar ao menu</button>
+      </div>
+
+      <div class="srt-faixa"><span>Histórico de faltas</span><span></span></div>
+      <div class="srt-hist" id="diarioHistorico"></div>
     </div>
 
     <!-- ---------- 2. sorteio ---------- -->
@@ -308,13 +453,16 @@ body{
       <div class="srt-acoes">
         <button class="srt-btn menta" id="srtBaixar" type="button" disabled>⬇ Baixar planilha (.xls)</button>
         <button class="srt-btn" id="srtLimparReg" type="button" disabled>🗑 Limpar registro</button>
+        <button class="srt-btn" id="srtVoltarMenu" type="button">← Menu</button>
       </div>
     </div>
 </div>
 
 <footer class="site-footer">
-  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
-  Versão 1.0 · Última atualização: 27 de agosto de 2026
+  <div class="site-footer-linha">
+    <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
+    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 2 de setembro de 2026</span>
+  </div>
 </footer>
 
 <script>
@@ -442,7 +590,11 @@ body{
   const srtEl = {
     entrada:  document.getElementById('srtEntrada'),
     painel:   document.getElementById('srtPainel'),
+    menu:     document.getElementById('srtMenu'),
+    diario:   document.getElementById('srtDiario'),
     lista:    document.getElementById('srtLista'),
+    nomeTurma:document.getElementById('srtNomeTurma'),
+    listaTurmas:document.getElementById('srtListaTurmas'),
     palco:    document.getElementById('srtPalco'),
     grade:    document.getElementById('srtGrade'),
     corpo:    document.getElementById('srtCorpoTabela'),
@@ -451,7 +603,14 @@ body{
     hudRod:   document.getElementById('srtHudRod'),
     btnSort:  document.getElementById('srtSortear'),
     btnBaixar:document.getElementById('srtBaixar'),
-    btnLimpar:document.getElementById('srtLimparReg')
+    btnLimpar:document.getElementById('srtLimparReg'),
+    btnVoltarMenu:document.getElementById('srtVoltarMenu'),
+    btnVoltarEntrada:document.getElementById('srtVoltarEntrada'),
+    diarioTitulo:document.getElementById('diarioTitulo'),
+    diarioData:document.getElementById('diarioData'),
+    diarioDatas:document.getElementById('diarioDatas'),
+    diarioLista:document.getElementById('diarioLista'),
+    diarioHistorico:document.getElementById('diarioHistorico')
   };
 
   let srtTurma = [];      /* {nome, avatar, participou, passou, chamadas} */
@@ -459,30 +618,81 @@ body{
   let srtUltimo = -1;     /* índice do último sorteado, para não repetir em seguida */
   let srtGirando = false;
 
-  /* ---------- leitura da lista colada ---------- */
+  let turmaAtual = null;  /* a turma carregada: {id, nome, criadaEm, alunos:[{nome, matricula}]} */
+  let diarioTurmaId = null;  /* turma aberta no diário */
+  let diarioDataAtual = null;/* data "AAAA-MM-DD" em edição no diário */
+
+  /* ==============================================================
+     TURMAS CADASTRADAS (localStorage)
+     ============================================================== */
+  function srtLerTurmas(){
+    try{ return JSON.parse(localStorage.getItem('srt.turmas') || '[]'); }
+    catch(e){ return []; }
+  }
+  function srtSalvarTurmas(lista){
+    try{ localStorage.setItem('srt.turmas', JSON.stringify(lista)); }catch(e){}
+  }
+  function srtLerDiario(){
+    try{ return JSON.parse(localStorage.getItem('srt.diario') || '{}'); }
+    catch(e){ return {}; }
+  }
+  function srtSalvarDiario(obj){
+    try{ localStorage.setItem('srt.diario', JSON.stringify(obj)); }catch(e){}
+  }
+  function srtHojeKey(){
+    const d = new Date();
+    return String(d.getFullYear()) + '-' +
+           String(d.getMonth()+1).padStart(2,'0') + '-' +
+           String(d.getDate()).padStart(2,'0');
+  }
+  function srtDataLegivel(key){ /* AAAA-MM-DD -> DD/MM/AAAA */
+    const p = key.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+
+  function srtMostrar(idEl){ /* mostra um bloco .srt-caixa e esconde os outros */
+    ['entrada','menu','painel','diario'].forEach(function(k){
+      const el = srtEl[k];
+      if (el) el.classList.toggle('oculto', k !== idEl);
+    });
+    if (idEl === 'painel') srtFocarPalco();
+  }
+
+  /* ---------- leitura da lista colada (com número acadêmico) ---------- */
   function srtLimparNome(linha){
     let s = linha.replace(/\t+/g, ' ').trim();
     s = s.replace(/^[-•*–—]+\s*/, '');            /* marcadores */
     s = s.replace(/^\d{1,4}\s*[).\-:]\s*/, '');   /* "12) Fulano", "07 - Fulano" */
-    s = s.replace(/^\d{4,}\s+/, '');              /* matrícula solta no começo */
     s = s.replace(/\s{2,}/g, ' ').trim();
     return s;
+  }
+  /* extrai matrícula e nome de uma linha */
+  function srtLerLinha(l){
+    let s = l.replace(/\t+/g, ' ').trim();
+    /* número no começo, separado por hífen, ponto ou espaço: "2024001 - Nome" */
+    const m = s.match(/^(\d{4,})\s*([\-–.—]\s*)?(.*)$/);
+    if (m && m[1]){
+      const nome = srtLimparNome(m[3] || '');
+      return {matricula:m[1], nome:nome || m[1]};
+    }
+    return {matricula:'', nome:srtLimparNome(s)};
   }
 
   function srtLerLista(texto){
     const vistos = new Set();
-    const nomes = [];
+    const alunos = [];
     texto.split(/\r?\n/).forEach(function(l){
-      const n = srtLimparNome(l);
-      if (!n) return;
-      const chave = n.toLocaleLowerCase('pt-BR');
+      const r = srtLerLinha(l);
+      if (!r.nome) return;
+      const chave = r.nome.toLocaleLowerCase('pt-BR');
       if (vistos.has(chave)) return;
       vistos.add(chave);
-      nomes.push(n);
+      alunos.push(r);
     });
-    return nomes;
+    return alunos;
   }
 
+  /* ---------- leitura da lista colada ---------- */
   function srtEmbaralhar(a){
     const b = a.slice();
     for (let i = b.length - 1; i > 0; i--){
@@ -495,14 +705,14 @@ body{
   /* ---------- distribuição dos avatares ----------
      até 70 alunos, cada um recebe um avatar exclusivo; acima disso o
      baralho é reembaralhado e as repetições começam, sempre sorteadas */
-  function srtDistribuir(nomes){
+  function srtDistribuir(alunos){
     const total = SORT_AVATARES.length;
     let baralho = [];
-    while (baralho.length < nomes.length){
+    while (baralho.length < alunos.length){
       baralho = baralho.concat(srtEmbaralhar(SORT_AVATARES.map(function(_, i){ return i; })));
     }
-    return nomes.map(function(nome, i){
-      return {nome:nome, avatar:baralho[i] % total, participou:0, passou:0, chamadas:0};
+    return alunos.map(function(al, i){
+      return {nome:al.nome, matricula:al.matricula || '', avatar:baralho[i] % total, participou:0, passou:0, chamadas:0};
     });
   }
 
@@ -780,21 +990,32 @@ body{
 
   /* ---------- montagem e controles ---------- */
   function srtMontarTurma(){
-    const nomes = srtLerLista(srtEl.lista.value);
-    if (nomes.length < 2){
+    if (srtGirando) return;
+    const alunos = srtLerLista(srtEl.lista.value);
+    if (alunos.length < 2){
       srtEl.palco.innerHTML = '';
       alert('Cole a lista com pelo menos 2 alunos, um por linha.');
       return;
     }
-    srtTurma = srtDistribuir(nomes);
+    const nomeTurma = (srtEl.nomeTurma.value || '').trim() || ('Turma ' + new Date().toLocaleDateString('pt-BR'));
+    srtTurma = srtDistribuir(alunos);
     srtRegistro = [];
     srtUltimo = -1;
-    srtEl.entrada.classList.add('oculto');
-    srtEl.painel.classList.remove('oculto');
+    turmaAtual = {
+      id: 't' + Date.now() + Math.floor(Math.random()*1000),
+      nome: nomeTurma,
+      criadaEm: srtHojeKey(),
+      alunos: alunos
+    };
+    const turmas = srtLerTurmas();
+    turmas.unshift(turmaAtual);
+    srtSalvarTurmas(turmas);
+    srtEl.hudTurma.textContent = nomeTurma;
+    srtMostrar('painel');
     srtEl.palco.className = 'srt-palco';
     srtEl.palco.innerHTML =
-      '<p class="srt-vazio">Turma montada com <b>' + nomes.length + '</b> alunos. ' +
-      'Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>';
+      '<p class="srt-vazio">Turma <b>' + srtEscapar(nomeTurma) + '</b> cadastrada com <b>' +
+      alunos.length + '</b> alunos. Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>';
     srtPintarGrade();
     srtPintarTabela();
     srtAtualizarHud();
@@ -822,22 +1043,304 @@ body{
 
   document.getElementById('srtExemplo').addEventListener('click', function(){
     srtEl.lista.value = [
-      'Ana Beatriz Souza','Bruno Carvalho Dias','Camila Ferreira Nunes',
-      'Daniel Oliveira Prado','Eduarda Martins Rocha','Felipe Andrade Gomes',
-      'Gabriela Teixeira Lima','Henrique Barros Melo','Isabela Cardoso Pinto',
-      'João Vitor Ribeiro','Karina Mendes Alves','Lucas Moreira Castro',
-      'Mariana Duarte Freitas','Nicolas Ramos Pereira','Olívia Santana Correia',
-      'Pedro Henrique Vasconcelos','Rafaela Nogueira Brito','Samuel Lopes Aguiar',
-      'Tatiana Vieira Macedo','Vinícius Almeida Fontes'
+      '20241001 - Ana Beatriz Souza','Bruno Carvalho Dias',
+      '20241003 - Camila Ferreira Nunes','Daniel Oliveira Prado',
+      '20241005 - Eduarda Martins Rocha','Felipe Andrade Gomes',
+      '20241007 - Gabriela Teixeira Lima','Henrique Barros Melo',
+      '20241009 - Isabela Cardoso Pinto','João Vitor Ribeiro',
+      '20241011 - Karina Mendes Alves','Lucas Moreira Castro',
+      '20241013 - Mariana Duarte Freitas','Nicolas Ramos Pereira',
+      '20241015 - Olívia Santana Correia','Pedro Henrique Vasconcelos',
+      '20241017 - Rafaela Nogueira Brito','Samuel Lopes Aguiar',
+      '20241019 - Tatiana Vieira Macedo','Vinícius Almeida Fontes'
     ].join('\n');
     srtEl.lista.focus();
   });
 
-  function iniciarSorteio(){
-    if (!srtTurma.length){
-      srtEl.painel.classList.add('oculto');
-      srtEl.entrada.classList.remove('oculto');
+  /* ==============================================================
+     MENU INICIAL E NAVEGAÇÃO ENTRE MÓDULOS
+     ============================================================== */
+  function srtEntrarDiario(turma){
+    diarioTurmaId = turma.id;
+    srtEl.diarioTitulo.textContent = 'Diário de frequência — ' + turma.nome;
+    diarioDataAtual = srtHojeKey();
+    srtEl.diarioData.value = diarioDataAtual;
+    srtMostrar('diario');
+    diarioPintarDatas();
+    diarioPintarLista();
+    srtEl.diario.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function srtCarregarTurma(turma){
+    turmaAtual = turma;
+    srtTurma = srtDistribuir(turma.alunos || []);
+    srtRegistro = [];
+    srtUltimo = -1;
+    srtEl.hudTurma.textContent = turma.nome;
+    srtMostrar('painel');
+    srtEl.palco.className = 'srt-palco';
+    srtEl.palco.innerHTML =
+      '<p class="srt-vazio">Turma <b>' + srtEscapar(turma.nome) + '</b> carregada com <b>' +
+      (turma.alunos ? turma.alunos.length : 0) + '</b> alunos. ' +
+      'Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>';
+    srtPintarGrade();
+    srtPintarTabela();
+    srtAtualizarHud();
+  }
+
+  function srtPintarListaTurmas(){
+    const turmas = srtLerTurmas();
+    srtEl.listaTurmas.innerHTML = '';
+    if (!turmas.length){
+      srtEl.listaTurmas.innerHTML =
+        '<div class="srt-vazio" style="padding:20px;font-size:13.5px;text-align:center;">' +
+        'Nenhuma turma cadastrada ainda.<br>Use o botão <b>+ Cadastrar nova turma</b> abaixo para começar.</div>';
+      return;
     }
+    turmas.forEach(function(t){
+      const div = document.createElement('div');
+      div.className = 'srt-turma-item';
+      const n = t.alunos ? t.alunos.length : 0;
+      div.innerHTML =
+        '<div class="t-nome">' + srtEscapar(t.nome) + '</div>' +
+        '<div class="t-meta">' + n + ' aluno(s) · criada em ' + srtDataLegivel(t.criadaEm || srtHojeKey()) + '</div>' +
+        '<div class="t-acoes">' +
+          '<button class="srt-btn menta" data-acao="diario">📓 Diário</button>' +
+          '<button class="srt-btn sol" data-acao="sorteio">🎲 Sortear</button>' +
+          '<button class="srt-btn" data-acao="apagar">🗑</button>' +
+        '</div>';
+      div.querySelector('[data-acao="diario"]').addEventListener('click', function(e){
+        e.stopPropagation(); srtEntrarDiario(t);
+      });
+      div.querySelector('[data-acao="sorteio"]').addEventListener('click', function(e){
+        e.stopPropagation(); srtCarregarTurma(t);
+      });
+      div.querySelector('[data-acao="apagar"]').addEventListener('click', function(e){
+        e.stopPropagation();
+        if (!confirm('Apagar a turma "' + t.nome + '" e seu diário?')) return;
+        const restantes = srtLerTurmas().filter(function(x){ return x.id !== t.id; });
+        srtSalvarTurmas(restantes);
+        const dia = srtLerDiario();
+        delete dia[t.id];
+        srtSalvarDiario(dia);
+        srtPintarListaTurmas();
+      });
+      srtEl.listaTurmas.appendChild(div);
+    });
+  }
+
+  srtEl.btnVoltarMenu.addEventListener('click', function(){
+    srtPintarListaTurmas();
+    srtMostrar('menu');
+  });
+  srtEl.btnVoltarEntrada.addEventListener('click', function(){
+    srtPintarListaTurmas();
+    srtMostrar('menu');
+  });
+  document.getElementById('srtBtnNovaTurma').addEventListener('click', function(){
+    srtEl.nomeTurma.value = '';
+    srtEl.lista.value = '';
+    srtMostrar('entrada');
+  });
+
+  /* ==============================================================
+     DIÁRIO DE FREQUÊNCIA
+     ============================================================== */
+  function diarioPintarDatas(){
+    const dia = srtLerDiario();
+    const dados = (dia[diarioTurmaId] && dia[diarioTurmaId].datas) || {};
+    const chaves = Object.keys(dados).sort();
+    srtEl.diarioDatas.innerHTML = '';
+    chaves.forEach(function(k){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'srt-dia-btn' + (k === diarioDataAtual ? ' sel' : '');
+      btn.textContent = srtDataLegivel(k);
+      btn.addEventListener('click', function(){
+        diarioDataAtual = k;
+        srtEl.diarioData.value = k;
+        diarioPintarDatas();
+        diarioPintarLista();
+      });
+      srtEl.diarioDatas.appendChild(btn);
+    });
+  }
+
+  function diarioPintarLista(){
+    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    srtEl.diarioLista.innerHTML = '';
+    if (!turma || !turma.alunos || !turma.alunos.length) return;
+    const dia = srtLerDiario();
+    const bloco = dia[diarioTurmaId] || {datas:{}};
+    const faltas = (bloco.datas[diarioDataAtual] || {});
+    turma.alunos.forEach(function(al){
+      const valor = faltas[al.matricula || al.nome];
+      const nFaltas = (typeof valor === 'number') ? valor : (valor ? 1 : 0);
+      const linha = document.createElement('div');
+      linha.className = 'srt-freq-linha' + (nFaltas ? ' falta' : ' presente');
+      linha.innerHTML =
+        '<div class="f-mat">' + srtEscapar(al.matricula || '—') + '</div>' +
+        '<div class="f-nome">' + srtEscapar(al.nome) + '</div>' +
+        '<label class="f-rot">Faltas</label>' +
+        '<input type="number" class="f-num" min="1" max="4" step="1" inputmode="numeric" placeholder="0" value="' +
+        (nFaltas ? nFaltas : '') + '">';
+      const inp = linha.querySelector('input');
+      inp.addEventListener('input', function(){
+        let v = parseInt(inp.value, 10);
+        if (inp.value !== '' && (isNaN(v) || v < 1)) inp.value = '';
+        if (v > 4) inp.value = '4';
+        const n = inp.value === '' ? 0 : parseInt(inp.value, 10);
+        linha.classList.toggle('falta', n > 0);
+        linha.classList.toggle('presente', n === 0);
+      });
+      srtEl.diarioLista.appendChild(linha);
+    });
+  }
+
+  function diarioPintarHistorico(){
+    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const dia = srtLerDiario();
+    const bloco = (dia[diarioTurmaId] || {datas:{}});
+    const datas = Object.keys(bloco.datas).sort();
+    srtEl.diarioHistorico.innerHTML = '';
+    if (!datas.length){
+      srtEl.diarioHistorico.innerHTML =
+        '<p class="srt-vazio" style="padding:12px;font-size:13px;">Ainda não há registros salvos.</p>';
+      return;
+    }
+    datas.forEach(function(k){
+      const faltas = bloco.datas[k] || {};
+      const chaves = Object.keys(faltas);
+      const totalDia = chaves.reduce(function(s, c){ return s + (Number(faltas[c]) || 1); }, 0);
+      const chip = document.createElement('span');
+      chip.className = 'srt-dia-btn';
+      chip.innerHTML = srtDataLegivel(k) + ' · ' + totalDia + ' falta(s) no dia';
+      const quem = document.createElement('div');
+      quem.style.cssText = 'margin:2px 0 10px; font-size:13.5px; color:var(--srt-tinta3);';
+      if (!chaves.length){
+        quem.textContent = 'Todos presentes.';
+      } else {
+        quem.textContent = 'Faltas: ' + chaves.map(function(c){
+          const n = Number(faltas[c]) || 1;
+          return c + ' (' + n + (n > 1 ? ' faltas' : ' falta') + ')';
+        }).join(', ');
+      }
+      srtEl.diarioHistorico.appendChild(chip);
+      srtEl.diarioHistorico.appendChild(quem);
+    });
+    void turma;
+  }
+
+  srtEl.diarioData.addEventListener('change', function(){
+    if (!srtEl.diarioData.value) return;
+    diarioDataAtual = srtEl.diarioData.value;
+    diarioPintarDatas();
+    diarioPintarLista();
+  });
+
+  /* edita o nome da turma aberta no diário */
+  document.getElementById('diarioEditarNome').addEventListener('click', function(){
+    const turmas = srtLerTurmas();
+    const turma = turmas.filter(function(t){ return t.id === diarioTurmaId; })[0];
+    if (!turma){ alert('Turma não encontrada.'); return; }
+    const novo = (prompt('Novo nome da turma:', turma.nome) || '').trim();
+    if (!novo || novo === turma.nome) return;
+    turma.nome = novo;
+    srtSalvarTurmas(turmas);
+    srtEl.diarioTitulo.textContent = 'Diário de frequência — ' + novo;
+    if (turmaAtual && turmaAtual.id === turma.id) turmaAtual.nome = novo;
+  });
+
+  /* insere um aluno manualmente na turma aberta no diário */
+  document.getElementById('diarioAddAluno').addEventListener('click', function(){
+    const turmas = srtLerTurmas();
+    const turma = turmas.filter(function(t){ return t.id === diarioTurmaId; })[0];
+    if (!turma){ alert('Turma não encontrada.'); return; }
+    if (!turma.alunos) turma.alunos = [];
+    const nome = (prompt('Nome do aluno:') || '').trim();
+    if (!nome){ return; }
+    const nomeL = nome.toLocaleLowerCase('pt-BR');
+    const jaExiste = turma.alunos.some(function(a){ return a.nome.toLocaleLowerCase('pt-BR') === nomeL; });
+    if (jaExiste){ alert('Já existe um aluno com esse nome nesta turma.'); return; }
+    const matricula = (prompt('Número acadêmico (opcional):') || '').trim();
+    turma.alunos.push({nome:nome, matricula:matricula});
+    srtSalvarTurmas(turmas);
+    /* atualiza o sorteio se esta for a turma aberta lá */
+    if (turmaAtual && turmaAtual.id === turma.id){
+      turmaAtual = turma;
+      srtTurma = srtDistribuir(turma.alunos);
+      srtPintarGrade();
+      srtPintarTabela();
+      srtAtualizarHud();
+    }
+    diarioPintarLista();
+  });
+
+  document.getElementById('diarioSalvar').addEventListener('click', function(){
+    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    if (!turma){ alert('Turma não encontrada.'); return; }
+    const dia = srtLerDiario();
+    if (!dia[diarioTurmaId]) dia[diarioTurmaId] = {datas:{}};
+    const bloco = dia[diarioTurmaId];
+    if (!bloco.datas[diarioDataAtual]) bloco.datas[diarioDataAtual] = {};
+    const faltas = bloco.datas[diarioDataAtual];
+    srtEl.diarioLista.querySelectorAll('.srt-freq-linha').forEach(function(linha, i){
+      const al = turma.alunos[i];
+      if (!al) return;
+      const inp = linha.querySelector('input');
+      const chave = al.matricula || al.nome;
+      const v = inp.value === '' ? 0 : parseInt(inp.value, 10);
+      if (v > 0) faltas[chave] = v; else delete faltas[chave];
+    });
+    srtSalvarDiario(dia);
+    diarioPintarDatas();
+    diarioPintarHistorico();
+    alert('Frequência do dia ' + srtDataLegivel(diarioDataAtual) + ' salva!');
+  });
+
+  document.getElementById('diarioBaixar').addEventListener('click', function(){
+    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    if (!turma) return;
+    const dia = srtLerDiario();
+    const bloco = (dia[diarioTurmaId] || {datas:{}});
+    const datas = Object.keys(bloco.datas).sort().map(srtDataLegivel);
+    let h = '<table border="1"><tr><th>Matrícula</th><th>Aluno</th>';
+    datas.forEach(function(d){ h += '<th>' + d + '</th>'; });
+    h += '<th>Total faltas</th></tr>';
+    (turma.alunos || []).forEach(function(al){
+      let total = 0;
+      h += '<tr><td>' + srtEscapar(al.matricula || '') + '</td><td>' + srtEscapar(al.nome) + '</td>';
+      datas.forEach(function(d){
+        const k = Object.keys(bloco.datas).find(function(dd){ return srtDataLegivel(dd) === d; });
+        const val = (k && bloco.datas[k][(al.matricula || al.nome)]) || 0;
+        const n = Number(val) || 0;
+        total += n;
+        h += '<td>' + (n ? n : '') + '</td>';
+      });
+      h += '<td>' + total + '</td></tr>';
+    });
+    h += '</table>';
+    const blob = new Blob(['\ufeff' + '<html><head><meta charset="utf-8"></head><body>' +
+      '<h3>' + srtEscapar(turma.nome) + '</h3>' + h + '</body></html>'],
+      {type:'application/vnd.ms-excel;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'diario-' + turma.nome.replace(/[^\w\-]+/g,'_') + '.xls';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  });
+
+  document.getElementById('diarioVoltar').addEventListener('click', function(){
+    diarioTurmaId = null;
+    srtPintarListaTurmas();
+    srtMostrar('menu');
+  });
+
+  function iniciarSorteio(){
+    srtPintarListaTurmas();
   }
 
   iniciarSorteio();
@@ -875,7 +1378,7 @@ body{
   "use strict";
   var titulo = document.getElementById('telaTitulo');
   var carregando = document.getElementById('telaCarregando');
-  var conteudo = document.getElementById('srtEntrada');
+  var conteudo = document.getElementById('srtMenu');
   var fill = document.getElementById('tcPreenchimento');
   var pct = document.getElementById('tcPct');
   var iniciado = false;
@@ -894,6 +1397,7 @@ body{
       if (p < 100){ requestAnimationFrame(passo); }
       else {
         carregando.style.display = 'none';
+        conteudo.classList.remove('oculto');
         conteudo.style.display = '';
       }
     }

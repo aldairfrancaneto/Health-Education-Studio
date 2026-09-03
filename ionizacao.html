@@ -37,7 +37,7 @@
     background-attachment:fixed;
     color:var(--tinta); font-family:var(--serif);
   }
-  .env{ max-width:1120px; margin:0 auto; }
+  .env{ max-width:1120px; margin:0 auto; padding-bottom:70px; }
 
   h1{
     font-family:var(--pixel); font-size:18px; line-height:1.7; margin:0 0 9px; color:#fff;
@@ -363,9 +363,17 @@
     .mol-c{ font-size:25px; }
     .ph-bolha{ font-size:16px; padding:10px 14px; }
   }
-.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+.site-footer{position:fixed; left:0; right:0; bottom:0; z-index:50;
+  padding:10px 14px; border-top:1px solid rgba(255,255,255,.15);
+  background:#122A3A;
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:left; line-height:1.7;}
+.site-footer .site-footer-linha{ max-width:1120px; margin:0 auto; }
 .site-footer strong{ color:rgba(255,255,255,.8); }
+.site-footer-linha{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; }
+.site-footer-verso{ margin-left:auto; color:rgba(255,255,255,.45); }
+@media (max-width:600px){
+  .site-footer-verso{ margin-left:0; width:100%; }
+}
 
 /* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
 .tela-titulo, .tela-carregando{
@@ -533,8 +541,10 @@
 </div>
 
 <footer class="site-footer">
-  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
-  Versão 1.0 · Última atualização: 27 de agosto de 2026
+  <div class="site-footer-linha">
+    <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
+    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 2 de setembro de 2026</span>
+  </div>
 </footer>
 
 <script>

@@ -34,7 +34,7 @@ body{
   font-family:var(--font-serif); line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-.pagina{ max-width:1180px; margin:0 auto; padding:14px; }
+.pagina{ max-width:1180px; margin:0 auto; padding:14px 14px 70px; }
   /* ================= TABULEIRO ================= */
   .tabuleiro{
     position:relative;
@@ -575,9 +575,17 @@ body{
     .mor-convergencia{ gap:6px; }
     .mor-convergencia .juncao{ font-size:10px; padding:5px 9px; letter-spacing:.05em; }
   }
-.site-footer{margin:24px 0 8px; padding:14px 10px 4px; border-top:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:center; line-height:1.7;}
+.site-footer{position:fixed; left:0; right:0; bottom:0; z-index:50;
+  padding:10px 14px; border-top:1px solid rgba(255,255,255,.15);
+  background:#0E1A2E;
+  color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:left; line-height:1.7;}
+.site-footer .site-footer-linha{ max-width:1180px; margin:0 auto; }
 .site-footer strong{ color:rgba(255,255,255,.8); }
+.site-footer-linha{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; }
+.site-footer-verso{ margin-left:auto; color:rgba(255,255,255,.45); }
+@media (max-width:600px){
+  .site-footer-verso{ margin-left:0; width:100%; }
+}
 
 /* ===== TELA DE TÍTULO / CARREGAMENTO (estilo 16-bit) ===== */
 .tela-titulo, .tela-carregando{
@@ -1364,8 +1372,8 @@ body{
       </div>
 
       <div class="chal-hud" id="chalHud">
-        <button class="btn-board" id="chalReiniciar" type="button">↺ Nova partida</button>
-        <button class="btn-board" id="chalTrocarModo" type="button">⇄ Trocar modo</button>
+        <button class="btn-board" id="chalReiniciar" type="button" disabled>↺ Nova partida</button>
+        <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
       </div>
 
       <div class="chal-vez" id="chalVez"></div>
@@ -1582,8 +1590,10 @@ body{
 </div>
 
 <footer class="site-footer">
-  Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong><br>
-  Versão 1.3 · Última atualização: 29 de agosto de 2026
+  <div class="site-footer-linha">
+    <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
+    <span class="site-footer-verso">Versão 1.4 &middot; Última atualização: 2 de setembro de 2026</span>
+  </div>
 </footer>
 
 <script>
@@ -2245,6 +2255,16 @@ body{
 
   function chalDesligar(){ CHAL.ativo = false; }
 
+  const chalReiniciarBtn  = document.getElementById('chalReiniciar');
+  const chalTrocarModoBtn = document.getElementById('chalTrocarModo');
+
+  /* "Nova partida" e "Trocar modo" só ficam disponíveis com a partida encerrada */
+  function chalAtualizarBotoesPartida(){
+    const encerrada = !CHAL.ativo;
+    chalReiniciarBtn.disabled  = !encerrada;
+    chalTrocarModoBtn.disabled = !encerrada;
+  }
+
   /* ---------- tela de sorteio animada (~5 s) ---------- */
   let chalSorteioToken = 0;
   function chalAnimarSorteio(vencedorIdx, cb){
@@ -2386,6 +2406,7 @@ body{
     chalRenderPlacar();
     chalRenderBandeja();
     chalAtualizarRest();
+    chalAtualizarBotoesPartida();
   }
 
   function chalEsc(s){ return String(s).replace(/[&<>"]/g, function(c){
@@ -3112,6 +3133,7 @@ body{
   /* ---------- fim de jogo ---------- */
   function chalFim(){
     CHAL.ativo = false;
+    chalAtualizarBotoesPartida();
     chalRenderBandeja();
     const permitidas = MOR_MODOS[morModo];
 
@@ -3178,18 +3200,13 @@ body{
   }
 
   /* botões do HUD de turno */
-  document.getElementById('chalReiniciar').addEventListener('click', function(){
+  chalReiniciarBtn.addEventListener('click', function(){
+    if (CHAL.ativo) return;   /* só disponível com a partida encerrada */
     somClique();
-    if (CHAL.ativo){
-      chalModalMsg('↺', 'Nova partida',
-        'Reembaralhar tudo e recomeçar esta partida?',
-        [
-          {txt:'Sim, recomeçar', tipo:'principal', fn:function(){ chalModalFechar(); chalIniciar(); }},
-          {txt:'Cancelar', tipo:'', fn:chalModalFechar}
-        ]);
-    } else { chalIniciar(); }
+    chalIniciar();
   });
-  document.getElementById('chalTrocarModo').addEventListener('click', function(){
+  chalTrocarModoBtn.addEventListener('click', function(){
+    if (CHAL.ativo) return;   /* só disponível com a partida encerrada */
     somClique(); morMostrarModo();
   });
 
