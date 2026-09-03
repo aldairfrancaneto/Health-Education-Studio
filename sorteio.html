@@ -276,6 +276,9 @@ body{
     font-family:var(--font-pixel); font-size:12px; color:var(--srt-tinta);
     background:rgba(9,16,30,.72); border:2px solid var(--srt-linha); border-radius:10px;
   }
+  .srt-freq-linha .f-num::-webkit-inner-spin-button,
+  .srt-freq-linha .f-num::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
+  .srt-freq-linha .f-num{-moz-appearance:textfield;}
   .srt-freq-linha .f-num:focus{ outline:none; border-color:var(--srt-agua); }
   .srt-freq-linha .f-num::placeholder{ color:rgba(255,255,255,.3); }
   .srt-freq-linha.falta{ border-color:var(--srt-coral); background:rgba(255,107,122,.12); }
