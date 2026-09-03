@@ -241,6 +241,71 @@ body{
     .nasc-palco,.nasc-bicho,.casca,.nasc-nome{ animation-duration:.6s; }
   }
 
+  /* ---------- sortear grupos ---------- */
+  .grp-config{ border:2px solid var(--srt-linha); border-radius:14px; padding:16px;
+    background:rgba(9,16,30,.42); margin-bottom:16px; }
+  .grp-config .srt-campo-rot{ margin-top:12px; }
+  .grp-config .srt-campo-rot:first-child{ margin-top:0; }
+  .grp-linha{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .grp-num{ width:92px; padding:9px 8px; text-align:center;
+    font-family:var(--font-pixel); font-size:13px; color:var(--srt-tinta);
+    background:rgba(9,16,30,.72); border:2px solid var(--srt-linha); border-radius:10px; }
+  .grp-num:focus{ outline:none; border-color:var(--srt-agua); }
+  .grp-check{ display:flex; align-items:center; gap:9px; font-size:14px; color:var(--srt-tinta2);
+    cursor:pointer; padding:6px 0; }
+  .grp-check input{ width:18px; height:18px; accent-color:var(--srt-uva); }
+
+  .grp-equipes{ display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); }
+  .grp-equipe{ border:2px solid var(--srt-linha); border-radius:14px; padding:12px;
+    background:rgba(9,16,30,.5); display:flex; flex-direction:column; gap:10px; }
+  .grp-equipe.alvo{ border-color:var(--srt-uva); background:rgba(199,125,255,.12); }
+  .grp-equipe-topo{ display:flex; gap:8px; align-items:center; }
+  .grp-nome-inp{ flex:1; min-width:0; padding:8px 9px; font-weight:800; font-size:15px;
+    color:var(--srt-tinta); background:rgba(9,16,30,.72);
+    border:2px solid var(--srt-linha); border-radius:10px; font-family:var(--font-body); }
+  .grp-nome-inp:focus{ outline:none; border-color:var(--srt-uva); }
+  .grp-mini{ font-family:var(--font-pixel); font-size:9px; cursor:pointer; padding:8px 9px;
+    border-radius:9px; color:var(--srt-tinta); background:var(--srt-painel);
+    border:2px solid var(--srt-linha); white-space:nowrap; }
+  .grp-mini:hover{ border-color:var(--srt-uva); }
+  .grp-mini.ativo{ background:var(--srt-uva); color:#1B0A2C; border-color:var(--srt-uva); }
+  .grp-membros{ display:flex; flex-direction:column; gap:7px; min-height:20px; }
+  .grp-vazio-eq{ font-size:12.5px; color:var(--srt-tinta3); font-style:italic; padding:4px 2px; }
+  .grp-membro{ display:flex; align-items:center; gap:8px; padding:5px 7px; border-radius:9px;
+    background:rgba(255,255,255,.06); cursor:pointer; }
+  .grp-membro:hover{ background:rgba(255,107,122,.16); }
+  .grp-membro img{ width:34px; height:34px; border-radius:7px; background:#fff; display:block; }
+  .grp-membro span{ font-size:13.5px; color:var(--srt-tinta2); line-height:1.25; word-break:break-word; }
+  .grp-membro .grp-x{ margin-left:auto; font-family:var(--font-pixel); font-size:8px;
+    color:var(--srt-coral); }
+  .grp-conta{ font-family:var(--font-pixel); font-size:7.5px; color:var(--srt-tinta3);
+    background:rgba(255,255,255,.1); border-radius:20px; padding:3px 8px; }
+
+  .grp-pool{ display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 14px; }
+  .grp-chip{ display:flex; align-items:center; gap:7px; padding:5px 9px 5px 5px; border-radius:22px;
+    background:rgba(9,16,30,.6); border:2px solid var(--srt-linha); cursor:pointer;
+    font-size:13.5px; color:var(--srt-tinta2); }
+  .grp-chip:hover{ border-color:var(--srt-uva); background:rgba(199,125,255,.12); }
+  .grp-chip img{ width:30px; height:30px; border-radius:50%; background:#fff; display:block; }
+  .grp-pool-vazio{ font-size:13.5px; color:var(--srt-menta); padding:4px 2px; }
+
+  /* ---------- impressão do PDF dos grupos ---------- */
+  #grpImpressao{ display:none; }
+  @media print{
+    body > *{ display:none !important; }
+    #grpImpressao{ display:block !important; color:#111; font-family:Arial,Helvetica,sans-serif; }
+    #grpImpressao h1{ font-size:20px; margin:0 0 4px; }
+    #grpImpressao .pr-sub{ font-size:12px; color:#555; margin:0 0 18px; }
+    #grpImpressao .pr-eq{ border:1.5px solid #333; border-radius:10px; padding:12px 14px;
+      margin:0 0 14px; page-break-inside:avoid; }
+    #grpImpressao .pr-eq h2{ font-size:15px; margin:0 0 10px; border-bottom:1.5px solid #999;
+      padding-bottom:6px; }
+    #grpImpressao .pr-membros{ display:flex; flex-wrap:wrap; gap:12px 18px; }
+    #grpImpressao .pr-m{ display:flex; align-items:center; gap:8px; width:220px; }
+    #grpImpressao .pr-m img{ width:42px; height:42px; border-radius:8px; border:1px solid #ccc; }
+    #grpImpressao .pr-m span{ font-size:13px; }
+  }
+
   @media (max-width:600px){
     .srt-caixa{ padding:16px 13px 18px; }
     .srt-titulo{ font-size:12.5px; }
@@ -520,14 +585,19 @@ body{
         <span class="srt-item" id="srtHudTurma">TURMA: <b>0</b></span>
         <span class="srt-item" id="srtHudRod">SORTEIOS: <b>0</b></span>
         <button class="srt-btn sol" id="srtSortear" type="button">🎯 Sortear aluno</button>
+        <button class="srt-btn uva" id="srtSortearGrupos" type="button">👥 Sortear grupos</button>
       </div>
 
-      <div class="srt-palco" id="srtPalco">
-        <p class="srt-vazio">Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>
+      <div id="srtSorteioArea">
+        <div class="srt-palco" id="srtPalco">
+          <p class="srt-vazio">Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>
+        </div>
+
+        <div class="srt-faixa"><span>A turma</span><span></span></div>
+        <div class="srt-grade" id="srtGrade"></div>
       </div>
 
-      <div class="srt-faixa"><span>A turma</span><span></span></div>
-      <div class="srt-grade" id="srtGrade"></div>
+      <div id="srtGrupos" class="oculto"></div>
 
       <div class="srt-acoes">
         <button class="srt-btn" id="srtVoltarMenu" type="button">← Menu</button>
@@ -535,10 +605,13 @@ body{
     </div>
 </div>
 
+<!-- área usada só para gerar o PDF (impressão) dos grupos -->
+<div id="grpImpressao" aria-hidden="true"></div>
+
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 2 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 3 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -677,6 +750,10 @@ body{
     hudTurma: document.getElementById('srtHudTurma'),
     hudRod:   document.getElementById('srtHudRod'),
     btnSort:  document.getElementById('srtSortear'),
+    btnGrupos:document.getElementById('srtSortearGrupos'),
+    sorteioArea:document.getElementById('srtSorteioArea'),
+    grupos:   document.getElementById('srtGrupos'),
+    impressao:document.getElementById('grpImpressao'),
     btnVoltarMenu:document.getElementById('srtVoltarMenu'),
     btnVoltarEntrada:document.getElementById('srtVoltarEntrada'),
     diarioTitulo:document.getElementById('diarioTitulo'),
@@ -729,7 +806,12 @@ body{
       const el = srtEl[k];
       if (el) el.classList.toggle('oculto', k !== idEl);
     });
-    if (idEl === 'painel') srtFocarPalco();
+    if (idEl === 'painel'){
+      /* sempre entra no painel pelo modo sorteio, nunca preso em grupos */
+      if (srtEl.grupos){ srtEl.grupos.classList.add('oculto'); srtEl.grupos.innerHTML = ''; }
+      if (srtEl.sorteioArea) srtEl.sorteioArea.classList.remove('oculto');
+      srtFocarPalco();
+    }
   }
 
   /* ---------- leitura da lista colada (com número acadêmico) ---------- */
@@ -1090,6 +1172,254 @@ body{
     if (btn) btn.addEventListener('click', function(){ clearTimeout(tempo); finalizar(); });
   }
 
+  /* ==============================================================
+     SORTEAR GRUPOS
+     ============================================================== */
+  /* 40 nomes temáticos de escola de magia para nomear equipes ao acaso */
+  const GRP_NOMES_MAGICOS = [
+    'Dragões de Prata', 'Fênix Flamejante', 'Guardiões do Grimório', 'Ordem da Coruja',
+    'Basiliscos de Jade', 'Sábios do Pergaminho', 'Alquimistas da Lua', 'Feiticeiros do Trovão',
+    'Serpentes de Esmeralda', 'Grifos Dourados', 'Corvos de Safira', 'Texugos de Bronze',
+    'Leões de Rubi', 'Poção Carmesim', 'Varinha de Salgueiro', 'Cálice de Cristal',
+    'Mapa dos Segredos', 'Vassouras Velozes', 'Elmo do Arquimago', 'Pena de Fênix',
+    'Caldeirão Borbulhante', 'Runas Ancestrais', 'Espelho Encantado', 'Chave Voadora',
+    'Torre dos Feitiços', 'Portal de Âmbar', 'Estrela de Merlin', 'Névoa Arcana',
+    'Chama Esmeralda', 'Trovão de Ametista', 'Lobos de Ônix', 'Unicórnios de Opala',
+    'Hipogrifos do Alvorecer', 'Salamandras de Fogo', 'Quimeras de Obsidiana', 'Golens de Granito',
+    'Bruxos do Crepúsculo', 'Videntes da Aurora', 'Sentinelas de Marfim', 'Encantadores do Vento'
+  ];
+
+  let grpEquipes = [];        /* [{nome, membros:[idx de srtTurma]}] */
+  let grpDisponiveis = [];    /* idx de srtTurma ainda sem equipe (modo manual) */
+  let grpModo = null;         /* 'aleatorio' | 'manual' */
+  let grpAlvo = 0;            /* equipe ativa para receber alunos (manual) */
+  let grpAutoNome = true;
+
+  function grpNomeSugestao(i){
+    return grpAutoNome ? grpNomesSorteados[i % grpNomesSorteados.length] : ('Equipe ' + (i + 1));
+  }
+  let grpNomesSorteados = [];
+  function grpEmbaralharNomes(){
+    grpNomesSorteados = srtEmbaralhar(GRP_NOMES_MAGICOS.slice());
+  }
+
+  function srtAbrirGrupos(){
+    if (!srtTurma.length) return;
+    grpModo = null;
+    grpEquipes = [];
+    grpEmbaralharNomes();
+    srtEl.sorteioArea.classList.add('oculto');
+    srtEl.grupos.classList.remove('oculto');
+    grpRenderConfig();
+    srtEl.grupos.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function srtFecharGrupos(){
+    srtEl.grupos.classList.add('oculto');
+    srtEl.grupos.innerHTML = '';
+    srtEl.sorteioArea.classList.remove('oculto');
+  }
+
+  /* ---- tela de configuração ---- */
+  function grpRenderConfig(){
+    const n = srtTurma.length;
+    const sugGrupos = Math.max(2, Math.round(n / 4));
+    srtEl.grupos.innerHTML =
+      '<div class="srt-faixa"><span>Sortear grupos</span><span></span></div>' +
+      '<div class="grp-config">' +
+        '<label class="grp-check"><input type="checkbox" id="grpAuto" ' +
+          (grpAutoNome ? 'checked' : '') + '> Dar nomes mágicos automáticos às equipes</label>' +
+
+        '<div class="srt-campo-rot">Divisão aleatória</div>' +
+        '<div class="grp-linha">' +
+          '<span style="font-size:14px;color:var(--srt-tinta2);">Quantidade de grupos:</span>' +
+          '<input type="number" class="grp-num" id="grpQtd" min="2" max="' + n + '" value="' + sugGrupos + '">' +
+          '<button class="srt-btn uva" id="grpBtnAleatorio" type="button">🎲 Sortear aleatoriamente</button>' +
+        '</div>' +
+        '<p class="srt-dica" style="margin:10px 0 0;">Cada grupo fica com um número parecido de integrantes, escolhidos ao acaso.</p>' +
+
+        '<div class="srt-campo-rot">Montagem manual</div>' +
+        '<div class="grp-linha">' +
+          '<span style="font-size:14px;color:var(--srt-tinta2);">Começar com:</span>' +
+          '<input type="number" class="grp-num" id="grpQtdMan" min="1" max="' + n + '" value="' + sugGrupos + '">' +
+          '<button class="srt-btn" id="grpBtnManual" type="button">✋ Montar manualmente</button>' +
+        '</div>' +
+        '<p class="srt-dica" style="margin:10px 0 0;">Você distribui cada aluno na equipe que quiser, entre os disponíveis.</p>' +
+      '</div>' +
+      '<div class="srt-acoes"><button class="srt-btn" id="grpVoltar" type="button">← Voltar ao sorteio</button></div>';
+
+    document.getElementById('grpAuto').addEventListener('change', function(e){ grpAutoNome = e.target.checked; });
+    document.getElementById('grpBtnAleatorio').addEventListener('click', function(){
+      const k = Math.min(srtTurma.length, Math.max(2, parseInt(document.getElementById('grpQtd').value, 10) || 2));
+      grpGerarAleatorio(k);
+    });
+    document.getElementById('grpBtnManual').addEventListener('click', function(){
+      const k = Math.min(srtTurma.length, Math.max(1, parseInt(document.getElementById('grpQtdMan').value, 10) || 1));
+      grpIniciarManual(k);
+    });
+    document.getElementById('grpVoltar').addEventListener('click', srtFecharGrupos);
+  }
+
+  /* ---- geração aleatória, tamanhos aproximadamente iguais ---- */
+  function grpGerarAleatorio(k){
+    grpModo = 'aleatorio';
+    const ordem = srtEmbaralhar(srtTurma.map(function(_, i){ return i; }));
+    grpEquipes = [];
+    for (let i = 0; i < k; i++) grpEquipes.push({ nome: grpNomeSugestao(i), membros: [] });
+    ordem.forEach(function(idx, i){ grpEquipes[i % k].membros.push(idx); });
+    grpDisponiveis = [];
+    grpRenderEquipes();
+    if (typeof somVitoria === 'function') somVitoria();
+  }
+
+  /* ---- montagem manual ---- */
+  function grpIniciarManual(k){
+    grpModo = 'manual';
+    grpEquipes = [];
+    for (let i = 0; i < k; i++) grpEquipes.push({ nome: grpNomeSugestao(i), membros: [] });
+    grpDisponiveis = srtTurma.map(function(_, i){ return i; });
+    grpAlvo = 0;
+    grpRenderEquipes();
+  }
+
+  /* ---- render das equipes (comum aos dois modos) ---- */
+  function grpRenderEquipes(){
+    let html = '<div class="srt-faixa"><span>Equipes</span><span></span></div>';
+
+    if (grpModo === 'manual'){
+      html += '<div class="srt-campo-rot">Disponíveis (clique num aluno para pôr na equipe destacada)</div>';
+      if (!grpDisponiveis.length){
+        html += '<div class="grp-pool-vazio">✔ Todos os alunos já foram distribuídos.</div>';
+      } else {
+        html += '<div class="grp-pool">' + grpDisponiveis.map(function(idx){
+          const a = srtTurma[idx];
+          return '<span class="grp-chip" data-add="' + idx + '">' +
+            '<img src="' + SORT_AVATARES[a.avatar] + '" alt=""><span>' + srtEscapar(a.nome) + '</span></span>';
+        }).join('') + '</div>';
+      }
+    }
+
+    html += '<div class="grp-equipes">';
+    grpEquipes.forEach(function(eq, ei){
+      const alvo = (grpModo === 'manual' && ei === grpAlvo) ? ' alvo' : '';
+      html += '<div class="grp-equipe' + alvo + '" data-eq="' + ei + '">' +
+        '<div class="grp-equipe-topo">' +
+          '<input class="grp-nome-inp" type="text" value="' + srtEscapar(eq.nome) + '" data-nome="' + ei + '" placeholder="Nome da equipe">' +
+          '<button class="grp-mini" data-dado="' + ei + '" title="Nome mágico ao acaso">🎲</button>' +
+        '</div>' +
+        (grpModo === 'manual'
+          ? '<button class="grp-mini' + (ei === grpAlvo ? ' ativo' : '') + '" data-alvo="' + ei + '">' +
+              (ei === grpAlvo ? '● recebendo aqui' : 'Selecionar') + '</button>'
+          : '') +
+        '<div class="grp-membros">' +
+          (eq.membros.length ? eq.membros.map(function(idx){
+            const a = srtTurma[idx];
+            return '<div class="grp-membro" data-rem="' + ei + '_' + idx + '" title="' +
+              (grpModo === 'manual' ? 'Clique para devolver aos disponíveis' : '') + '">' +
+              '<img src="' + SORT_AVATARES[a.avatar] + '" alt=""><span>' + srtEscapar(a.nome) + '</span>' +
+              (grpModo === 'manual' ? '<span class="grp-x">remover</span>' : '') +
+            '</div>';
+          }).join('') : '<div class="grp-vazio-eq">— sem integrantes —</div>') +
+        '</div>' +
+        '<span class="grp-conta">' + eq.membros.length + ' integrante(s)</span>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    html += '<div class="srt-acoes" style="margin-top:16px;">' +
+      '<button class="srt-btn uva" id="grpNomearTodas" type="button">🎲 Nomear todas ao acaso</button>' +
+      (grpModo === 'manual' ? '<button class="srt-btn" id="grpAddEquipe" type="button">➕ Nova equipe</button>' : '') +
+      '<button class="srt-btn" id="grpRefazer" type="button">↺ Refazer</button>' +
+      '<button class="srt-btn menta" id="grpPdf" type="button">📄 Salvar PDF dos grupos</button>' +
+      '<button class="srt-btn" id="grpVoltar2" type="button">← Voltar</button>' +
+    '</div>';
+
+    srtEl.grupos.innerHTML = html;
+    grpLigarEventos();
+  }
+
+  function grpLigarEventos(){
+    /* nomes editáveis */
+    srtEl.grupos.querySelectorAll('[data-nome]').forEach(function(inp){
+      inp.addEventListener('input', function(){ grpEquipes[+inp.dataset.nome].nome = inp.value; });
+    });
+    /* dado por equipe */
+    srtEl.grupos.querySelectorAll('[data-dado]').forEach(function(b){
+      b.addEventListener('click', function(){
+        const i = +b.dataset.dado;
+        grpEquipes[i].nome = GRP_NOMES_MAGICOS[Math.floor(Math.random() * GRP_NOMES_MAGICOS.length)];
+        grpRenderEquipes();
+      });
+    });
+    /* selecionar equipe alvo (manual) */
+    srtEl.grupos.querySelectorAll('[data-alvo]').forEach(function(b){
+      b.addEventListener('click', function(){ grpAlvo = +b.dataset.alvo; grpRenderEquipes(); });
+    });
+    /* adicionar aluno à equipe alvo (manual) */
+    srtEl.grupos.querySelectorAll('[data-add]').forEach(function(c){
+      c.addEventListener('click', function(){
+        const idx = +c.dataset.add;
+        if (!grpEquipes.length) return;
+        grpEquipes[grpAlvo].membros.push(idx);
+        grpDisponiveis = grpDisponiveis.filter(function(x){ return x !== idx; });
+        if (typeof somClique === 'function') somClique();
+        grpRenderEquipes();
+      });
+    });
+    /* remover integrante (manual devolve ao pool) */
+    srtEl.grupos.querySelectorAll('[data-rem]').forEach(function(m){
+      m.addEventListener('click', function(){
+        if (grpModo !== 'manual') return;
+        const p = m.dataset.rem.split('_');
+        const ei = +p[0], idx = +p[1];
+        grpEquipes[ei].membros = grpEquipes[ei].membros.filter(function(x){ return x !== idx; });
+        if (grpDisponiveis.indexOf(idx) === -1) grpDisponiveis.push(idx);
+        grpRenderEquipes();
+      });
+    });
+    /* nomear todas */
+    document.getElementById('grpNomearTodas').addEventListener('click', function(){
+      grpEmbaralharNomes();
+      grpEquipes.forEach(function(eq, i){ eq.nome = grpNomesSorteados[i % grpNomesSorteados.length]; });
+      grpRenderEquipes();
+    });
+    /* nova equipe (manual) */
+    const addEq = document.getElementById('grpAddEquipe');
+    if (addEq) addEq.addEventListener('click', function(){
+      grpEquipes.push({ nome: grpNomeSugestao(grpEquipes.length), membros: [] });
+      grpAlvo = grpEquipes.length - 1;
+      grpRenderEquipes();
+    });
+    /* refazer / voltar / pdf */
+    document.getElementById('grpRefazer').addEventListener('click', grpRenderConfig);
+    document.getElementById('grpVoltar2').addEventListener('click', grpRenderConfig);
+    document.getElementById('grpPdf').addEventListener('click', grpGerarPDF);
+  }
+
+  /* ---- PDF via impressão (Salvar como PDF na caixa de impressão) ---- */
+  function grpGerarPDF(){
+    if (!grpEquipes.length) return;
+    const nomeTurma = (turmaAtual && turmaAtual.nome) ? turmaAtual.nome : 'Turma';
+    let html = '<h1>Equipes — ' + srtEscapar(nomeTurma) + '</h1>' +
+      '<div class="pr-sub">Gerado em ' + new Date().toLocaleDateString('pt-BR') + '</div>';
+    grpEquipes.forEach(function(eq){
+      if (!eq.membros.length) return;
+      html += '<div class="pr-eq"><h2>' + srtEscapar(eq.nome || 'Equipe') +
+        ' — ' + eq.membros.length + ' integrante(s)</h2><div class="pr-membros">' +
+        eq.membros.map(function(idx){
+          const a = srtTurma[idx];
+          return '<div class="pr-m"><img src="' + SORT_AVATARES[a.avatar] + '"><span>' +
+            srtEscapar(a.nome) + '</span></div>';
+        }).join('') + '</div></div>';
+    });
+    srtEl.impressao.innerHTML = html;
+    const tituloAntigo = document.title;
+    document.title = 'Equipes - ' + nomeTurma;
+    setTimeout(function(){
+      window.print();
+      document.title = tituloAntigo;
+    }, 60);
+  }
+
   /* ---------- montagem e controles ---------- */
   function srtMontarTurma(){
     if (srtGirando) return;
@@ -1114,6 +1444,7 @@ body{
     srtSalvarTurmas(turmas);
     srtEl.hudTurma.textContent = nomeTurma;
     srtMostrar('painel');
+    if (typeof srtFecharGrupos === 'function') srtFecharGrupos();
     srtPintarGrade();
     srtAtualizarHud();
     if (typeof somClique === 'function') somClique();
@@ -1129,6 +1460,7 @@ body{
 
   document.getElementById('srtMontar').addEventListener('click', srtMontarTurma);
   srtEl.btnSort.addEventListener('click', srtSortear);
+  srtEl.btnGrupos.addEventListener('click', srtAbrirGrupos);
 
   document.getElementById('srtExemplo').addEventListener('click', function(){
     srtEl.lista.value = [
@@ -1168,6 +1500,7 @@ body{
     srtUltimo = -1;
     srtEl.hudTurma.textContent = turma.nome;
     srtMostrar('painel');
+    if (typeof srtFecharGrupos === 'function') srtFecharGrupos();
     srtEl.palco.className = 'srt-palco';
     srtEl.palco.innerHTML =
       '<p class="srt-vazio">Turma <b>' + srtEscapar(turma.nome) + '</b> carregada com <b>' +
@@ -1580,8 +1913,13 @@ body{
     requestAnimationFrame(passo);
   }
   titulo.addEventListener('click', iniciar);
-  titulo.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
+  /* qualquer tecla inicia (não só Enter/Espaço), enquanto a tela inicial estiver visível */
+  document.addEventListener('keydown', function(e){
+    if (iniciado) return;
+    if (e.key === 'Tab') return;              /* deixa navegar por foco, se quiser */
+    if (e.ctrlKey || e.metaKey || e.altKey) return;  /* não sequestra atalhos do sistema */
+    e.preventDefault();
+    iniciar();
   });
 })();
 </script>
