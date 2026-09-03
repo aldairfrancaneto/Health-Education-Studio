@@ -138,9 +138,6 @@ body{
   }
   .srt-palco.girando .srt-nome-grande{ text-shadow:3px 3px 0 rgba(62,220,239,.45); }
 
-  .srt-decisao{ display:flex; flex-wrap:wrap; gap:11px; justify-content:center; margin-top:4px; }
-  .srt-decisao .srt-btn{ font-size:10px; padding:12px 15px; }
-
   .srt-aviso{
     font-size:14.5px; line-height:1.5; color:var(--srt-tinta2); text-align:center;
     padding:10px 14px; border-radius:12px; background:rgba(62,220,239,.12);
@@ -175,26 +172,9 @@ body{
   }
   .srt-aluno.destaque{ border-color:var(--srt-sol); background:rgba(255,197,61,.16);
     transform:translateY(-3px); }
-  .srt-aluno.participou{ border-color:var(--srt-menta); }
-  .srt-aluno.participou .srt-marca{ background:var(--srt-menta); color:#08210F; }
-  .srt-aluno.passou{ border-color:var(--srt-coral); }
-  .srt-aluno.passou .srt-marca{ background:var(--srt-coral); color:#3A0F0D; }
+  .srt-aluno.sorteado{ border-color:var(--srt-menta); }
+  .srt-aluno.sorteado .srt-marca{ background:var(--srt-menta); color:#08210F; }
 
-  /* ---------- registro ---------- */
-  .srt-tabela-caixa{ overflow-x:auto; margin:0 0 16px; border-radius:12px;
-    border:2px solid var(--srt-linha); }
-  .srt-tabela{ width:100%; border-collapse:collapse; font-size:14.5px; }
-  .srt-tabela th, .srt-tabela td{
-    padding:9px 12px; text-align:left; border-bottom:1px solid rgba(170,200,245,.18);
-    white-space:nowrap;
-  }
-  .srt-tabela th{
-    font-family:var(--font-pixel); font-size:8.5px; line-height:1.8; color:#12203A;
-    background:var(--srt-sol); position:sticky; top:0;
-  }
-  .srt-tabela tbody tr:nth-child(even){ background:rgba(255,255,255,.04); }
-  .srt-tabela .res-part{ color:#9BE0B0; font-weight:700; }
-  .srt-tabela .res-aluno{ color:#FFB3BB; font-weight:700; }
   .srt-vazia{ padding:18px 14px; text-align:center; color:var(--srt-tinta3); font-size:14.5px; }
 
   @media (max-width:600px){
@@ -203,8 +183,6 @@ body{
     .srt-avatar-grande{ width:165px; }
     .srt-nome-grande{ font-size:13px; }
     .srt-grade{ grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:9px; }
-    .srt-decisao{ flex-direction:column; align-items:stretch; }
-    .srt-decisao .srt-btn{ width:100%; }
   }
 
 
@@ -296,6 +274,15 @@ body{
   .srt-hist .srt-dia-btn{ margin:0 5px 5px 0; }
 
   .srt-diario-acoes{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+
+  /* configuração da planilha do Google */
+  .srt-sheets{ margin:14px 0 4px; border:2px solid var(--srt-linha);
+    border-radius:12px; background:rgba(9,16,30,.4); padding:10px 14px; }
+  .srt-sheets summary{ cursor:pointer; font-family:var(--font-pixel);
+    font-size:9.5px; letter-spacing:.04em; color:var(--srt-agua); line-height:1.8; }
+  .srt-sheets .srt-dica{ margin:10px 0 8px; }
+  .srt-sheets-status{ font-size:13px; line-height:1.5; color:var(--srt-menta); }
+  .srt-sheets-status.erro{ color:var(--srt-coral); }
 
 .site-footer{position:fixed; left:0; right:0; bottom:0; z-index:50;
   padding:10px 14px; border-top:1px solid rgba(255,255,255,.15);
@@ -417,10 +404,30 @@ body{
       <div class="srt-freq-lista" id="diarioLista"></div>
 
       <div class="srt-acoes">
-        <button class="srt-btn menta" id="diarioSalvar" type="button">💾 Salvar frequência</button>
-        <button class="srt-btn" id="diarioBaixar" type="button">⬇ Baixar planilha</button>
+        <button class="srt-btn menta" id="diarioSalvar" type="button">💾 Salvar frequência do dia</button>
+        <button class="srt-btn" id="diarioBaixar" type="button">⬇ Baixar histórico completo</button>
         <button class="srt-btn" id="diarioVoltar" type="button">← Voltar ao menu</button>
       </div>
+      <p class="srt-dica" style="margin-top:10px;">
+        Ao salvar, a frequência do dia é gravada no navegador, baixada como planilha (.xls)
+        e acrescentada na planilha do Google — uma aba para cada turma.
+      </p>
+
+      <details class="srt-sheets" id="sheetsBox">
+        <summary>☁️ Planilha do Google — já configurada</summary>
+        <p class="srt-dica">
+          A frequência de cada turma vai para uma aba própria da mesma planilha do Google.
+          Só mexa aqui se quiser apontar para <b>outra</b> planilha: cole a URL do App da Web
+          (termina em <b>/exec</b>) e salve. Deixe em branco e salve para voltar à planilha padrão.
+        </p>
+        <input type="url" id="sheetsUrl" class="srt-texto"
+          placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
+        <div class="srt-acoes" style="margin-top:8px;">
+          <button class="srt-btn menta" id="sheetsSalvarUrl" type="button">Salvar URL</button>
+          <button class="srt-btn" id="sheetsTestar" type="button">Enviar um teste</button>
+        </div>
+        <p class="srt-sheets-status" id="sheetsStatus"></p>
+      </details>
 
       <div class="srt-faixa"><span>Histórico de faltas</span><span></span></div>
       <div class="srt-hist" id="diarioHistorico"></div>
@@ -430,7 +437,6 @@ body{
     <div class="srt-caixa oculto" id="srtPainel">
       <div class="srt-hud">
         <span class="srt-item" id="srtHudTurma">TURMA: <b>0</b></span>
-        <span class="srt-item" id="srtHudPart">PARTICIPARAM: <b>0</b></span>
         <span class="srt-item" id="srtHudRod">SORTEIOS: <b>0</b></span>
         <button class="srt-btn sol" id="srtSortear" type="button">🎯 Sortear aluno</button>
       </div>
@@ -442,23 +448,7 @@ body{
       <div class="srt-faixa"><span>A turma</span><span></span></div>
       <div class="srt-grade" id="srtGrade"></div>
 
-      <div class="srt-faixa"><span>Registro da aula</span><span></span></div>
-      <div class="srt-tabela-caixa">
-        <table class="srt-tabela">
-          <thead>
-            <tr>
-              <th>#</th><th>Horário</th><th>Aluno</th><th>Desfecho</th><th>Participações</th>
-            </tr>
-          </thead>
-          <tbody id="srtCorpoTabela">
-            <tr><td colspan="5" class="srt-vazia">Nenhum sorteio ainda.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
       <div class="srt-acoes">
-        <button class="srt-btn menta" id="srtBaixar" type="button" disabled>⬇ Baixar planilha (.xls)</button>
-        <button class="srt-btn" id="srtLimparReg" type="button" disabled>🗑 Limpar registro</button>
         <button class="srt-btn" id="srtVoltarMenu" type="button">← Menu</button>
       </div>
     </div>
@@ -603,13 +593,9 @@ body{
     listaTurmas:document.getElementById('srtListaTurmas'),
     palco:    document.getElementById('srtPalco'),
     grade:    document.getElementById('srtGrade'),
-    corpo:    document.getElementById('srtCorpoTabela'),
     hudTurma: document.getElementById('srtHudTurma'),
-    hudPart:  document.getElementById('srtHudPart'),
     hudRod:   document.getElementById('srtHudRod'),
     btnSort:  document.getElementById('srtSortear'),
-    btnBaixar:document.getElementById('srtBaixar'),
-    btnLimpar:document.getElementById('srtLimparReg'),
     btnVoltarMenu:document.getElementById('srtVoltarMenu'),
     btnVoltarEntrada:document.getElementById('srtVoltarEntrada'),
     diarioTitulo:document.getElementById('diarioTitulo'),
@@ -620,8 +606,8 @@ body{
     diarioHistorico:document.getElementById('diarioHistorico')
   };
 
-  let srtTurma = [];      /* {nome, avatar, participou, passou, chamadas} */
-  let srtRegistro = [];   /* {n, hora, nome, desfecho} */
+  let srtTurma = [];      /* {nome, avatar, chamadas} */
+  let srtRegistro = [];   /* {nome, hora} — apenas contagem dos sorteios do dia */
   let srtUltimo = -1;     /* índice do último sorteado, para não repetir em seguida */
   let srtGirando = false;
 
@@ -719,7 +705,7 @@ body{
       baralho = baralho.concat(srtEmbaralhar(SORT_AVATARES.map(function(_, i){ return i; })));
     }
     return alunos.map(function(al, i){
-      return {nome:al.nome, matricula:al.matricula || '', avatar:baralho[i] % total, participou:0, passou:0, chamadas:0};
+      return {nome:al.nome, matricula:al.matricula || '', avatar:baralho[i] % total, chamadas:0};
     });
   }
 
@@ -753,18 +739,10 @@ body{
         '<div class="srt-avatar-grande"><img src="' + SORT_AVATARES[a.avatar] +
           '" alt="Avatar de ' + a.nome + '"></div>' +
         '<div class="srt-nome-grande">' + (girando ? '. . .' : a.nome) + '</div>' +
+        (girando ? '' :
+          '<p class="srt-aviso">Toque em <b>SORTEAR ALUNO</b> para chamar a próxima pessoa.</p>') +
       '</div>';
     if (girando) return;
-
-    const dec = document.createElement('div');
-    dec.className = 'srt-decisao';
-    dec.innerHTML =
-      '<button class="srt-btn menta" type="button" data-ato="participou">✓ Participou</button>' +
-      '<button class="srt-btn coral" type="button" data-ato="passou">🙋 Pediu para passar</button>';
-    srtEl.palco.querySelector('.srt-sorteado').appendChild(dec);
-    dec.querySelectorAll('button').forEach(function(b){
-      b.addEventListener('click', function(){ srtDecidir(idx, b.dataset.ato); });
-    });
     srtDestacar(idx);
   }
 
@@ -825,7 +803,15 @@ body{
         srtEl.btnSort.disabled = false;
         srtUltimo = alvo;
         srtTurma[alvo].chamadas++;
+        const agora = new Date();
+        srtRegistro.push({
+          nome: srtTurma[alvo].nome,
+          hora: String(agora.getHours()).padStart(2,'0') + ':' +
+                String(agora.getMinutes()).padStart(2,'0')
+        });
         srtPintarSorteado(alvo, false);
+        srtPintarGrade();
+        srtAtualizarHud();
         srtFocarPalco();
         if (typeof somVitoria === 'function') somVitoria();
         return;
@@ -839,60 +825,13 @@ body{
     })();
   }
 
-  /* ---------- desfecho de cada chamada ---------- */
-  const SRT_DESFECHOS = {
-    participou: {rotulo:'Participou',                     classe:'res-part'},
-    passou:     {rotulo:'Passou a vez (pedido do aluno)', classe:'res-aluno'}
-  };
-
-  function srtDecidir(idx, ato){
-    const a = srtTurma[idx];
-    if (ato === 'participou') a.participou++;
-    if (ato === 'passou') a.passou++;
-
-    const agora = new Date();
-    srtRegistro.push({
-      n: srtRegistro.length + 1,
-      hora: String(agora.getHours()).padStart(2,'0') + ':' +
-            String(agora.getMinutes()).padStart(2,'0') + ':' +
-            String(agora.getSeconds()).padStart(2,'0'),
-      nome: a.nome,
-      ato: ato,
-      participacoes: a.participou
-    });
-
-    srtPintarGrade();
-    srtPintarTabela();
-    srtAtualizarHud();
-
-    if (ato === 'participou'){
-      srtEl.palco.className = 'srt-palco';
-      srtEl.palco.innerHTML =
-        '<div class="srt-sorteado">' +
-          '<div class="srt-avatar-grande"><img src="' + SORT_AVATARES[a.avatar] +
-            '" alt="Avatar de ' + a.nome + '"></div>' +
-          '<div class="srt-nome-grande">' + a.nome + '</div>' +
-          '<p class="srt-aviso">Participação registrada. Toque em <b>SORTEAR ALUNO</b> ' +
-          'para a próxima pergunta.</p>' +
-        '</div>';
-      return;
-    }
-    /* nos outros dois casos o sorteio recomeça na hora */
-    srtSortear();
-  }
-
   /* ---------- grade da turma ---------- */
   function srtPintarGrade(){
     srtEl.grade.innerHTML = '';
-    srtTurma.forEach(function(a, i){
+    srtTurma.forEach(function(a){
       const d = document.createElement('div');
-      let cls = 'srt-aluno';
-      if (a.participou) cls += ' participou';
-      else if (a.passou) cls += ' passou';
-      d.className = cls;
-      const marca = a.participou ? ('✓ ' + a.participou + (a.participou > 1 ? 'x' : ''))
-                  : a.passou ? ('passou ' + a.passou + 'x')
-                  : 'aguardando';
+      d.className = 'srt-aluno' + (a.chamadas ? ' sorteado' : '');
+      const marca = a.chamadas ? ('sorteado ' + a.chamadas + 'x') : 'aguardando';
       d.innerHTML =
         '<img src="' + SORT_AVATARES[a.avatar] + '" alt="Avatar de ' + a.nome + '" loading="lazy">' +
         '<span class="srt-aluno-nome">' + a.nome + '</span>' +
@@ -901,33 +840,8 @@ body{
     });
   }
 
-  /* ---------- tabela ---------- */
-  function srtPintarTabela(){
-    if (!srtRegistro.length){
-      srtEl.corpo.innerHTML =
-        '<tr><td colspan="5" class="srt-vazia">Nenhum sorteio ainda.</td></tr>';
-      srtEl.btnBaixar.disabled = true;
-      srtEl.btnLimpar.disabled = true;
-      return;
-    }
-    srtEl.corpo.innerHTML = srtRegistro.map(function(r){
-      const d = SRT_DESFECHOS[r.ato];
-      return '<tr>' +
-        '<td>' + r.n + '</td>' +
-        '<td>' + r.hora + '</td>' +
-        '<td>' + r.nome + '</td>' +
-        '<td class="' + d.classe + '">' + d.rotulo + '</td>' +
-        '<td>' + r.participacoes + '</td>' +
-      '</tr>';
-    }).reverse().join('');
-    srtEl.btnBaixar.disabled = false;
-    srtEl.btnLimpar.disabled = false;
-  }
-
   function srtAtualizarHud(){
-    const part = srtTurma.filter(function(a){ return a.participou > 0; }).length;
     srtEl.hudTurma.innerHTML = 'TURMA: <b>' + srtTurma.length + '</b>';
-    srtEl.hudPart.innerHTML = 'PARTICIPARAM: <b>' + part + '/' + srtTurma.length + '</b>';
     srtEl.hudRod.innerHTML = 'SORTEIOS: <b>' + srtRegistro.length + '</b>';
   }
 
@@ -938,61 +852,100 @@ body{
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function srtGerarPlanilha(){
-    const agora = new Date();
-    const data = String(agora.getDate()).padStart(2,'0') + '/' +
-                 String(agora.getMonth()+1).padStart(2,'0') + '/' + agora.getFullYear();
-
-    let h = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head>' +
-      '<meta charset="utf-8"><style>' +
-      'td,th{border:1px solid #9AA6BF;padding:4px 8px;font-family:Calibri,Arial,sans-serif;font-size:11pt}' +
-      'th{background:#FFC53D;font-weight:bold}' +
-      '.tit{font-size:14pt;font-weight:bold;border:none}' +
-      '</style></head><body>';
-
-    h += '<table><tr><td class="tit" colspan="5">Sorteio da turma — registro de participação</td></tr>' +
-         '<tr><td colspan="5" style="border:none">Data: ' + data +
-         ' &nbsp;·&nbsp; Alunos: ' + srtTurma.length +
-         ' &nbsp;·&nbsp; Sorteios: ' + srtRegistro.length + '</td></tr></table><br>';
-
-    h += '<table><tr><th>#</th><th>Horário</th><th>Aluno</th><th>Desfecho</th>' +
-         '<th>Participações até aqui</th></tr>';
-    srtRegistro.forEach(function(r){
-      h += '<tr><td>' + r.n + '</td><td>' + r.hora + '</td><td>' + srtEscapar(r.nome) +
-           '</td><td>' + SRT_DESFECHOS[r.ato].rotulo + '</td><td>' + r.participacoes +
-           '</td></tr>';
-    });
-    h += '</table><br>';
-
-    h += '<table><tr><th>Aluno</th><th>Vezes sorteado</th><th>Participou</th>' +
-         '<th>Pediu para passar</th></tr>';
-    srtTurma.slice().sort(function(x,y){
-      return y.participou - x.participou || x.nome.localeCompare(y.nome, 'pt-BR');
-    }).forEach(function(a){
-      h += '<tr><td>' + srtEscapar(a.nome) + '</td><td>' + a.chamadas + '</td><td>' +
-           a.participou + '</td><td>' + a.passou + '</td></tr>';
-    });
-    h += '</table></body></html>';
-    return h;
-  }
-
-  function srtBaixar(){
-    const agora = new Date();
-    const carimbo = agora.getFullYear() +
-      String(agora.getMonth()+1).padStart(2,'0') +
-      String(agora.getDate()).padStart(2,'0') + '-' +
-      String(agora.getHours()).padStart(2,'0') +
-      String(agora.getMinutes()).padStart(2,'0');
-    const blob = new Blob(['\ufeff' + srtGerarPlanilha()],
-      {type:'application/vnd.ms-excel;charset=utf-8'});
+  function srtBaixarArquivo(nome, html){
+    const blob = new Blob(['﻿' + html], {type:'application/vnd.ms-excel;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'sorteio-turma-' + carimbo + '.xls';
+    a.download = nome;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  }
+
+  /* ---------- frequência do dia: coleta, download e envio ao Google ---------- */
+  function diarioColetarDia(turma, faltas){
+    const linhas = (turma.alunos || []).map(function(al){
+      const chave = al.matricula || al.nome;
+      const n = Number(faltas[chave]) || 0;
+      return { matricula: al.matricula || '', nome: al.nome, faltas: n };
+    });
+    return {
+      tema: (faltas.tema || '').trim(),
+      linhas: linhas,
+      totalFaltas: linhas.reduce(function(s, l){ return s + l.faltas; }, 0)
+    };
+  }
+
+  function diarioBaixarDia(turma, dataKey, faltas){
+    const info = diarioColetarDia(turma, faltas);
+    const dataBR = srtDataLegivel(dataKey);
+    let corpo = '';
+    info.linhas.forEach(function(l){
+      corpo += '<tr><td>' + srtEscapar(l.matricula) + '</td><td>' + srtEscapar(l.nome) +
+        '</td><td>' + (l.faltas ? 'Ausente' : 'Presente') + '</td><td>' + (l.faltas || '') + '</td></tr>';
+    });
+    const h = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8">' +
+      '<style>td,th{border:1px solid #9AA6BF;padding:4px 8px;font-family:Calibri,Arial,sans-serif;font-size:11pt}' +
+      'th{background:#FFC53D;font-weight:bold}</style></head><body>' +
+      '<h3>' + srtEscapar(turma.nome) + ' — frequência de ' + dataBR + '</h3>' +
+      (info.tema ? '<p><b>Tema da aula:</b> ' + srtEscapar(info.tema) + '</p>' : '') +
+      '<table><tr><th>Matrícula</th><th>Aluno</th><th>Situação</th><th>Faltas</th></tr>' + corpo +
+      '<tr><td colspan="3"><b>Total de faltas no dia</b></td><td><b>' + info.totalFaltas + '</b></td></tr>' +
+      '</table></body></html>';
+    srtBaixarArquivo('frequencia-' + turma.nome.replace(/[^\w\-]+/g,'_') + '-' + dataKey + '.xls', h);
+  }
+
+  /* ---------- Google Planilhas (Apps Script publicado como App da Web) ----------
+     URL padrão embutida: todas as turmas usam a mesma planilha, uma aba por turma.
+     O professor pode sobrescrever pelo campo do diário (fica salvo só neste navegador). */
+  const SHEETS_URL_PADRAO =
+    'https://script.google.com/macros/s/AKfycbyJGMw4DVXGVYHb5zDHzWwrKkbcyA5aAOMZ5thkcE3JLPGITUqdb7xg0JPgwb5ko8QC/exec';
+  function sheetsLerUrl(){
+    try{ return localStorage.getItem('srt.sheetsUrl') || SHEETS_URL_PADRAO; }
+    catch(e){ return SHEETS_URL_PADRAO; }
+  }
+  function sheetsSalvarUrl(u){
+    try{ localStorage.setItem('srt.sheetsUrl', u); }catch(e){}
+  }
+  function sheetsStatus(msg, erro){
+    const el = document.getElementById('sheetsStatus');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('erro', !!erro);
+  }
+  function sheetsMontarPayload(turma, dataKey, faltas){
+    const info = diarioColetarDia(turma, faltas);
+    return {
+      turma: turma.nome,
+      data: srtDataLegivel(dataKey),
+      dataISO: dataKey,
+      tema: info.tema,
+      totalAlunos: info.linhas.length,
+      totalFaltas: info.totalFaltas,
+      alunos: info.linhas
+    };
+  }
+  function sheetsEnviar(payload, okMsg){
+    const url = sheetsLerUrl();
+    if (!url) return;
+    sheetsStatus('Enviando para a planilha do Google…', false);
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    }).then(function(){
+      sheetsStatus(okMsg, false);
+    }).catch(function(){
+      sheetsStatus('Não foi possível falar com o Google agora. Confira a URL do App da Web e a conexão.', true);
+    });
+  }
+  function sheetsEnviarDia(turma, dataKey, faltas){
+    if (!sheetsLerUrl()) return;
+    const p = sheetsMontarPayload(turma, dataKey, faltas);
+    sheetsEnviar(p, 'Frequência de ' + p.data + ' enviada para a planilha do Google.');
   }
 
   /* ---------- montagem e controles ---------- */
@@ -1024,7 +977,6 @@ body{
       '<p class="srt-vazio">Turma <b>' + srtEscapar(nomeTurma) + '</b> cadastrada com <b>' +
       alunos.length + '</b> alunos. Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>';
     srtPintarGrade();
-    srtPintarTabela();
     srtAtualizarHud();
     if (typeof somClique === 'function') somClique();
     srtEl.painel.scrollIntoView({behavior:'smooth', block:'start'});
@@ -1032,21 +984,6 @@ body{
 
   document.getElementById('srtMontar').addEventListener('click', srtMontarTurma);
   srtEl.btnSort.addEventListener('click', srtSortear);
-  srtEl.btnBaixar.addEventListener('click', srtBaixar);
-
-  srtEl.btnLimpar.addEventListener('click', function(){
-    if (!confirm('Apagar o registro de sorteios desta aula?\n\n' +
-                 'Os avatares e a turma continuam como estão.')) return;
-    srtRegistro = [];
-    srtTurma.forEach(function(a){ a.participou = 0; a.passou = 0; a.chamadas = 0; });
-    srtUltimo = -1;
-    srtEl.palco.className = 'srt-palco';
-    srtEl.palco.innerHTML =
-      '<p class="srt-vazio">Registro limpo. Toque em <b>SORTEAR ALUNO</b> para recomeçar.</p>';
-    srtPintarGrade();
-    srtPintarTabela();
-    srtAtualizarHud();
-  });
 
   document.getElementById('srtExemplo').addEventListener('click', function(){
     srtEl.lista.value = [
@@ -1075,6 +1012,7 @@ body{
     srtMostrar('diario');
     diarioPintarDatas();
     diarioPintarLista();
+    sheetsStatus('', false);
     srtEl.diario.scrollIntoView({behavior:'smooth', block:'start'});
   }
 
@@ -1091,7 +1029,6 @@ body{
       (turma.alunos ? turma.alunos.length : 0) + '</b> alunos. ' +
       'Toque em <b>SORTEAR ALUNO</b> para chamar alguém.</p>';
     srtPintarGrade();
-    srtPintarTabela();
     srtAtualizarHud();
   }
 
@@ -1289,7 +1226,6 @@ body{
       turmaAtual = turma;
       srtTurma = srtDistribuir(turma.alunos);
       srtPintarGrade();
-      srtPintarTabela();
       srtAtualizarHud();
     }
     diarioPintarLista();
@@ -1316,7 +1252,16 @@ body{
     srtSalvarDiario(dia);
     diarioPintarDatas();
     diarioPintarHistorico();
-    alert('Frequência do dia ' + srtDataLegivel(diarioDataAtual) + ' salva!');
+
+    /* baixa a lista de frequência do dia e envia ao Google (aba da turma) */
+    diarioBaixarDia(turma, diarioDataAtual, faltas);
+    if (sheetsLerUrl()){
+      const box = document.getElementById('sheetsBox');
+      if (box) box.open = true;
+      sheetsEnviarDia(turma, diarioDataAtual, faltas);
+    }
+    alert('Frequência do dia ' + srtDataLegivel(diarioDataAtual) + ' salva e planilha baixada!' +
+      (sheetsLerUrl() ? '\n\nEnvio para a aba "' + turma.nome + '" da planilha do Google em andamento.' : ''));
   });
 
   document.getElementById('diarioBaixar').addEventListener('click', function(){
@@ -1359,6 +1304,46 @@ body{
     srtPintarListaTurmas();
     srtMostrar('menu');
   });
+
+  /* ---------- configuração da planilha do Google ---------- */
+  (function initSheetsConfig(){
+    const inp = document.getElementById('sheetsUrl');
+    const btnUrl = document.getElementById('sheetsSalvarUrl');
+    const btnTeste = document.getElementById('sheetsTestar');
+    const URL_OK = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/;
+    if (inp) inp.value = sheetsLerUrl();
+
+    if (btnUrl) btnUrl.addEventListener('click', function(){
+      const u = (inp.value || '').trim();
+      if (u && !URL_OK.test(u)){
+        sheetsStatus('URL inválida. Use o link do App da Web que termina em /exec.', true);
+        return;
+      }
+      sheetsSalvarUrl(u);
+      if (!u && inp) inp.value = sheetsLerUrl();
+      sheetsStatus(u
+        ? 'URL salva. As frequências passam a ir para esta planilha.'
+        : 'Campo limpo — voltou para a planilha padrão do site.', false);
+    });
+
+    if (btnTeste) btnTeste.addEventListener('click', function(){
+      const u = (inp.value || '').trim();
+      if (!URL_OK.test(u)){
+        sheetsStatus('Cole uma URL válida do App da Web antes de testar.', true);
+        return;
+      }
+      sheetsSalvarUrl(u === SHEETS_URL_PADRAO ? '' : u);
+      sheetsEnviar({
+        turma: 'Teste',
+        data: srtDataLegivel(srtHojeKey()),
+        dataISO: srtHojeKey(),
+        tema: 'Envio de teste — pode apagar a aba "Teste" depois',
+        totalAlunos: 0,
+        totalFaltas: 0,
+        alunos: []
+      }, 'Teste enviado. Confira a aba "Teste" na planilha do Google.');
+    });
+  })();
 
   function iniciarSorteio(){
     srtPintarListaTurmas();
