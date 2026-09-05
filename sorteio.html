@@ -272,12 +272,13 @@ body{
   .grp-membros{ display:flex; flex-direction:column; gap:7px; min-height:20px; }
   .grp-vazio-eq{ font-size:12.5px; color:var(--srt-tinta3); font-style:italic; padding:4px 2px; }
   .grp-membro{ display:flex; align-items:center; gap:8px; padding:5px 7px; border-radius:9px;
-    background:rgba(255,255,255,.06); cursor:pointer; }
-  .grp-membro:hover{ background:rgba(255,107,122,.16); }
+    background:rgba(255,255,255,.06); }
   .grp-membro img{ width:34px; height:34px; border-radius:7px; background:#fff; display:block; }
   .grp-membro span{ font-size:13.5px; color:var(--srt-tinta2); line-height:1.25; word-break:break-word; }
-  .grp-membro .grp-x{ margin-left:auto; font-family:var(--font-pixel); font-size:8px;
-    color:var(--srt-coral); }
+  .grp-mover{ margin-left:auto; max-width:150px; font-size:12px; padding:5px 6px;
+    color:var(--srt-tinta2); background:rgba(9,16,30,.72); cursor:pointer;
+    border:2px solid var(--srt-linha); border-radius:8px; font-family:var(--font-body); }
+  .grp-mover:focus{ outline:none; border-color:var(--srt-uva); }
   .grp-conta{ font-family:var(--font-pixel); font-size:7.5px; color:var(--srt-tinta3);
     background:rgba(255,255,255,.1); border-radius:20px; padding:3px 8px; }
 
@@ -323,6 +324,22 @@ body{
      MENU INICIAL — CARREGAR TURMA / DIÁRIO / NOVO CADASTRO
      ============================================================ */
   #srtMenu{ padding:6px 0 40px; }
+  .srt-prof-bar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    padding:12px; margin:0 0 18px; border:2px solid var(--srt-uva); border-radius:14px;
+    background:rgba(199,125,255,.10); }
+  .srt-prof-lab{ font-family:var(--font-pixel); font-size:9px; color:var(--srt-uva);
+    text-transform:uppercase; letter-spacing:.04em; }
+  .srt-prof-sel{ flex:1; min-width:140px; padding:9px 10px; font-size:14.5px; font-weight:700;
+    color:var(--srt-tinta); background:rgba(9,16,30,.72);
+    border:2px solid var(--srt-linha); border-radius:10px; font-family:var(--font-body); }
+  .srt-prof-sel:focus{ outline:none; border-color:var(--srt-uva); }
+  .nuvem-toast{ position:fixed; right:16px; bottom:16px; z-index:9999; display:none;
+    max-width:280px; padding:12px 16px; border-radius:12px; font-size:14px; font-weight:600;
+    color:#fff; background:#334155; border:2px solid rgba(255,255,255,.15);
+    box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  .nuvem-toast.ok{ background:#0e7a4f; border-color:#12b06f; }
+  .nuvem-toast.erro{ background:#8a2436; border-color:#c74059; }
+  .nuvem-toast.load{ background:#334155; }
   .srt-menu-card{ text-align:center; margin:0 0 22px; }
   .srt-menu-opcoes{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
   .srt-menu-btn{
@@ -522,6 +539,8 @@ body{
         <span class="srt-titulo">Ferramentas do professor</span>
         <span class="srt-sub">Escolha uma turma para começar</span>
       </div>
+
+      <div class="srt-prof-bar" id="srtProfBar"></div>
 
       <div class="srt-lista-turmas" id="srtListaTurmas"></div>
 
@@ -771,24 +790,64 @@ body{
 
   let turmaAtual = null;  /* a turma carregada: {id, nome, criadaEm, alunos:[{nome, matricula}]} */
   let diarioTurmaId = null;  /* turma aberta no diário */
+  let diarioTurma = null;    /* objeto da turma aberta (vindo da nuvem/cache) */
   let diarioDataAtual = null;/* data "AAAA-MM-DD" em edição no diário */
 
   /* ==============================================================
      TURMAS CADASTRADAS (localStorage)
      ============================================================== */
+  /* --- perfis de professor: cada um tem suas turmas, diário e planilha --- */
+  function srtLerProfessores(){
+    try{ return JSON.parse(localStorage.getItem('srt.professores') || '[]'); }
+    catch(e){ return []; }
+  }
+  function srtSalvarProfessores(l){
+    try{ localStorage.setItem('srt.professores', JSON.stringify(l)); }catch(e){}
+  }
+  function srtProfAtualId(){
+    return localStorage.getItem('srt.prof.atual') || '';
+  }
+  function srtDefinirProfAtual(id){
+    try{ localStorage.setItem('srt.prof.atual', id); }catch(e){}
+  }
+  function srtGarantirProfessores(){
+    let profs = srtLerProfessores();
+    if (!profs.length){
+      const id = 'p' + Date.now();
+      profs = [{ id: id, nome: 'Professor(a)' }];
+      srtSalvarProfessores(profs);
+      srtDefinirProfAtual(id);
+      /* migra dados antigos (versões anteriores gravavam sem perfil) */
+      const legTur = localStorage.getItem('srt.turmas');
+      const legDia = localStorage.getItem('srt.diario');
+      const legUrl = localStorage.getItem('srt.sheetsUrl');
+      if (legTur) localStorage.setItem('srt.turmas::' + id, legTur);
+      if (legDia) localStorage.setItem('srt.diario::' + id, legDia);
+      if (legUrl) localStorage.setItem('srt.sheetsUrl::' + id, legUrl);
+    }
+    if (!srtProfAtualId() || !profs.some(function(p){ return p.id === srtProfAtualId(); })){
+      srtDefinirProfAtual(profs[0].id);
+    }
+    return profs;
+  }
+  function srtProfNome(){
+    const p = srtLerProfessores().find(function(x){ return x.id === srtProfAtualId(); });
+    return p ? p.nome : 'Professor(a)';
+  }
+
   function srtLerTurmas(){
-    try{ return JSON.parse(localStorage.getItem('srt.turmas') || '[]'); }
+    try{ return JSON.parse(localStorage.getItem('srt.turmas::' + srtProfAtualId()) || '[]'); }
     catch(e){ return []; }
   }
   function srtSalvarTurmas(lista){
-    try{ localStorage.setItem('srt.turmas', JSON.stringify(lista)); }catch(e){}
+    try{ localStorage.setItem('srt.turmas::' + srtProfAtualId(), JSON.stringify(lista)); }catch(e){}
   }
   function srtLerDiario(){
-    try{ return JSON.parse(localStorage.getItem('srt.diario') || '{}'); }
+    try{ return JSON.parse(localStorage.getItem('srt.diario::' + srtProfAtualId()) || '{}'); }
     catch(e){ return {}; }
   }
   function srtSalvarDiario(obj){
-    try{ localStorage.setItem('srt.diario', JSON.stringify(obj)); }catch(e){}
+    try{ localStorage.setItem('srt.diario::' + srtProfAtualId(), JSON.stringify(obj)); }catch(e){}
   }
   function srtHojeKey(){
     const d = new Date();
@@ -868,7 +927,10 @@ body{
       baralho = baralho.concat(srtEmbaralhar(SORT_AVATARES.map(function(_, i){ return i; })));
     }
     return alunos.map(function(al, i){
-      return {nome:al.nome, matricula:al.matricula || '', avatar:baralho[i] % total, chamadas:0};
+      const av = (typeof al.avatar === 'number' && !isNaN(al.avatar))
+        ? (al.avatar % total)
+        : (baralho[i] % total);
+      return {nome:al.nome, matricula:al.matricula || '', avatar:av, chamadas:0};
     });
   }
 
@@ -1092,11 +1154,14 @@ body{
   const SHEETS_URL_PADRAO =
     'https://script.google.com/macros/s/AKfycbyJGMw4DVXGVYHb5zDHzWwrKkbcyA5aAOMZ5thkcE3JLPGITUqdb7xg0JPgwb5ko8QC/exec';
   function sheetsLerUrl(){
-    try{ return localStorage.getItem('srt.sheetsUrl') || SHEETS_URL_PADRAO; }
+    try{
+      const k = 'srt.sheetsUrl::' + srtProfAtualId();
+      return localStorage.getItem(k) || localStorage.getItem('srt.sheetsUrl') || SHEETS_URL_PADRAO;
+    }
     catch(e){ return SHEETS_URL_PADRAO; }
   }
   function sheetsSalvarUrl(u){
-    try{ localStorage.setItem('srt.sheetsUrl', u); }catch(e){}
+    try{ localStorage.setItem('srt.sheetsUrl::' + srtProfAtualId(), u); }catch(e){}
   }
   function sheetsStatus(msg, erro){
     const el = document.getElementById('sheetsStatus');
@@ -1107,13 +1172,13 @@ body{
   function sheetsMontarPayload(turma, dataKey, faltas){
     const info = diarioColetarDia(turma, faltas);
     return {
-      turma: turma.nome,
-      data: srtDataLegivel(dataKey),
-      dataISO: dataKey,
+      acao: 'registrar_frequencia',
+      id_turma: turma.id,
+      data: dataKey,
       tema: info.tema,
-      totalAlunos: info.linhas.length,
-      totalFaltas: info.totalFaltas,
-      alunos: info.linhas
+      alunos: info.linhas.map(function(l){
+        return { matricula: l.matricula, nome: l.nome, situacao: l.situacao, faltas: l.faltas };
+      })
     };
   }
   function sheetsEnviar(payload, okMsg){
@@ -1134,8 +1199,56 @@ body{
   function sheetsEnviarDia(turma, dataKey, faltas){
     if (!sheetsLerUrl()) return;
     const p = sheetsMontarPayload(turma, dataKey, faltas);
-    sheetsEnviar(p, 'Frequência de ' + p.data + ' enviada para a planilha do Google.');
+    sheetsEnviar(p, 'Frequência de ' + srtDataLegivel(dataKey) + ' enviada para a nuvem.');
   }
+
+  /* ==============================================================
+     CAMADA DE NUVEM — conversa com o Google Sheets (via Apps Script)
+     nuvemGet  = buscar dados (usa JSONP p/ funcionar em qualquer PC)
+     nuvemPost = gravar dados (envio "cego", confirmamos relendo depois)
+     ============================================================== */
+  function nuvemGet(params){
+    return new Promise(function(resolve, reject){
+      const base = sheetsLerUrl();
+      if (!base){ reject(new Error('URL da planilha não configurada')); return; }
+      const cb = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+      const s = document.createElement('script');
+      let pronto = false;
+      window[cb] = function(data){ pronto = true; resolve(data); limpar(); };
+      function limpar(){
+        try{ delete window[cb]; }catch(e){ window[cb] = undefined; }
+        if (s.parentNode) s.parentNode.removeChild(s);
+      }
+      s.onerror = function(){ if (!pronto){ limpar(); reject(new Error('falha de rede')); } };
+      setTimeout(function(){ if (!pronto){ limpar(); reject(new Error('tempo esgotado')); } }, 15000);
+      s.src = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cb + '&' + params;
+      document.head.appendChild(s);
+    });
+  }
+  function nuvemPost(payload){
+    const url = sheetsLerUrl();
+    if (!url) return Promise.reject(new Error('URL da planilha não configurada'));
+    return fetch(url, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+  }
+
+  /* aviso flutuante no canto (Sincronizando / ✓ / ⚠) */
+  function nuvemToast(msg, tipo){
+    let t = document.getElementById('nuvemToast');
+    if (!t){ t = document.createElement('div'); t.id = 'nuvemToast'; document.body.appendChild(t); }
+    t.className = 'nuvem-toast ' + (tipo || '');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._tmr);
+    if (tipo !== 'load'){ t._tmr = setTimeout(function(){ t.style.display = 'none'; }, 3500); }
+  }
+
+  /* cache local (cópia rápida; a nuvem é a fonte oficial) */
+  function srtCacheTurmas(turmas){ try{ localStorage.setItem('srt.cache.turmas', JSON.stringify(turmas)); }catch(e){} }
+  function srtCacheLer(){ try{ return JSON.parse(localStorage.getItem('srt.cache.turmas') || '[]'); }catch(e){ return []; } }
 
   /* ---------- animação de eclosão: um ovo por aluno, todos ao mesmo tempo ---------- */
   function srtAnimarNascimento(aoFim){
@@ -1313,10 +1426,16 @@ body{
         '<div class="grp-membros">' +
           (eq.membros.length ? eq.membros.map(function(idx){
             const a = srtTurma[idx];
-            return '<div class="grp-membro" data-rem="' + ei + '_' + idx + '" title="' +
-              (grpModo === 'manual' ? 'Clique para devolver aos disponíveis' : '') + '">' +
+            let opts = grpEquipes.map(function(t, tj){
+              return '<option value="t' + tj + '"' + (tj === ei ? ' selected' : '') + '>' +
+                '➡ ' + srtEscapar(t.nome || ('Equipe ' + (tj + 1))) + '</option>';
+            }).join('');
+            if (grpModo === 'manual') opts += '<option value="pool">↩ Disponíveis</option>';
+            return '<div class="grp-membro">' +
               '<img src="' + SORT_AVATARES[a.avatar] + '" alt=""><span>' + srtEscapar(a.nome) + '</span>' +
-              (grpModo === 'manual' ? '<span class="grp-x">remover</span>' : '') +
+              '<select class="grp-mover" data-mov="' + ei + '_' + idx + '" title="Mover para outra equipe">' +
+                opts +
+              '</select>' +
             '</div>';
           }).join('') : '<div class="grp-vazio-eq">— sem integrantes —</div>') +
         '</div>' +
@@ -1365,14 +1484,20 @@ body{
         grpRenderEquipes();
       });
     });
-    /* remover integrante (manual devolve ao pool) */
-    srtEl.grupos.querySelectorAll('[data-rem]').forEach(function(m){
-      m.addEventListener('click', function(){
-        if (grpModo !== 'manual') return;
-        const p = m.dataset.rem.split('_');
+    /* mover integrante entre equipes (ou devolver aos disponíveis, no manual) */
+    srtEl.grupos.querySelectorAll('[data-mov]').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        const p = sel.dataset.mov.split('_');
         const ei = +p[0], idx = +p[1];
+        const dest = sel.value;
         grpEquipes[ei].membros = grpEquipes[ei].membros.filter(function(x){ return x !== idx; });
-        if (grpDisponiveis.indexOf(idx) === -1) grpDisponiveis.push(idx);
+        if (dest === 'pool'){
+          if (grpDisponiveis.indexOf(idx) === -1) grpDisponiveis.push(idx);
+        } else {
+          const tj = +dest.slice(1);
+          if (grpEquipes[tj]) grpEquipes[tj].membros.push(idx);
+        }
+        if (typeof somClique === 'function') somClique();
         grpRenderEquipes();
       });
     });
@@ -1437,11 +1562,25 @@ body{
       id: 't' + Date.now() + Math.floor(Math.random()*1000),
       nome: nomeTurma,
       criadaEm: srtHojeKey(),
-      alunos: alunos
+      alunos: srtTurma.map(function(a){ return {matricula:a.matricula, nome:a.nome, avatar:a.avatar}; })
     };
-    const turmas = srtLerTurmas();
-    turmas.unshift(turmaAtual);
-    srtSalvarTurmas(turmas);
+    /* salva na nuvem (turma + alunos) */
+    nuvemToast('Salvando turma na nuvem…', 'load');
+    nuvemPost({
+      acao: 'criar_turma',
+      id_turma: turmaAtual.id,
+      nome: turmaAtual.nome,
+      criada_em: turmaAtual.criadaEm,
+      alunos: turmaAtual.alunos
+    }).then(function(){
+      nuvemToast('✓ Turma salva na nuvem', 'ok');
+    }).catch(function(){
+      nuvemToast('⚠ Turma criada, mas não sincronizou. Verifique a conexão.', 'erro');
+    });
+    /* cópia local rápida */
+    const cache = srtCacheLer();
+    cache.unshift(turmaAtual);
+    srtCacheTurmas(cache);
     srtEl.hudTurma.textContent = nomeTurma;
     srtMostrar('painel');
     if (typeof srtFecharGrupos === 'function') srtFecharGrupos();
@@ -1483,6 +1622,7 @@ body{
      ============================================================== */
   function srtEntrarDiario(turma){
     diarioTurmaId = turma.id;
+    diarioTurma = turma;
     srtEl.diarioTitulo.textContent = 'Diário de frequência — ' + turma.nome;
     diarioDataAtual = srtHojeKey();
     srtEl.diarioData.value = diarioDataAtual;
@@ -1510,8 +1650,103 @@ body{
     srtAtualizarHud();
   }
 
-  function srtPintarListaTurmas(){
-    const turmas = srtLerTurmas();
+  function srtPintarProfessor(){
+    const bar = document.getElementById('srtProfBar');
+    if (bar){ bar.style.display = 'none'; bar.innerHTML = ''; }
+    return;
+    /* perfis de professor foram aposentados nesta versão (dados agora vêm da nuvem);
+       o código abaixo fica preservado para uma futura reativação. */
+    // eslint-disable-next-line no-unreachable
+    const profs = srtGarantirProfessores();
+    const atual = srtProfAtualId();
+    bar.innerHTML =
+      '<span class="srt-prof-lab">👩‍🏫 Perfil:</span>' +
+      '<select class="srt-prof-sel" id="srtProfSel" aria-label="Professor(a) atual">' +
+        profs.map(function(p){
+          return '<option value="' + p.id + '"' + (p.id === atual ? ' selected' : '') + '>' +
+            srtEscapar(p.nome) + '</option>';
+        }).join('') +
+      '</select>' +
+      '<button class="grp-mini" id="srtProfNovo" type="button">➕ Novo</button>' +
+      '<button class="grp-mini" id="srtProfRenomear" type="button">✏️ Renomear</button>' +
+      (profs.length > 1 ? '<button class="grp-mini" id="srtProfApagar" type="button">🗑</button>' : '');
+
+    document.getElementById('srtProfSel').addEventListener('change', function(e){
+      srtDefinirProfAtual(e.target.value);
+      const inp = document.getElementById('sheetsUrl');
+      if (inp) inp.value = sheetsLerUrl();
+      srtPintarProfessor();
+      srtPintarListaTurmas();
+    });
+    document.getElementById('srtProfNovo').addEventListener('click', function(){
+      const nome = (prompt('Nome do novo professor(a):', '') || '').trim();
+      if (!nome) return;
+      const lista = srtLerProfessores();
+      const id = 'p' + Date.now();
+      lista.push({ id: id, nome: nome });
+      srtSalvarProfessores(lista);
+      srtDefinirProfAtual(id);
+      const inp = document.getElementById('sheetsUrl');
+      if (inp) inp.value = sheetsLerUrl();
+      srtPintarProfessor();
+      srtPintarListaTurmas();
+    });
+    document.getElementById('srtProfRenomear').addEventListener('click', function(){
+      const lista = srtLerProfessores();
+      const p = lista.find(function(x){ return x.id === srtProfAtualId(); });
+      if (!p) return;
+      const nome = (prompt('Novo nome do perfil:', p.nome) || '').trim();
+      if (!nome) return;
+      p.nome = nome;
+      srtSalvarProfessores(lista);
+      srtPintarProfessor();
+    });
+    const ap = document.getElementById('srtProfApagar');
+    if (ap) ap.addEventListener('click', function(){
+      const lista = srtLerProfessores();
+      const p = lista.find(function(x){ return x.id === srtProfAtualId(); });
+      if (!p) return;
+      if (!confirm('Apagar o perfil "' + p.nome + '" com TODAS as suas turmas e diários? Esta ação não pode ser desfeita.')) return;
+      localStorage.removeItem('srt.turmas::' + p.id);
+      localStorage.removeItem('srt.diario::' + p.id);
+      localStorage.removeItem('srt.sheetsUrl::' + p.id);
+      const rest = lista.filter(function(x){ return x.id !== p.id; });
+      srtSalvarProfessores(rest);
+      srtDefinirProfAtual(rest[0].id);
+      const inp = document.getElementById('sheetsUrl');
+      if (inp) inp.value = sheetsLerUrl();
+      srtPintarProfessor();
+      srtPintarListaTurmas();
+    });
+  }
+
+  async function srtPintarListaTurmas(){
+    srtEl.listaTurmas.innerHTML =
+      '<div class="srt-vazio" style="padding:20px;text-align:center;font-size:13.5px;">⏳ Sincronizando com a nuvem…</div>';
+    let turmas = [];
+    try{
+      const r1 = await nuvemGet('acao=listar_turmas');
+      if (!r1 || !r1.ok) throw new Error((r1 && r1.erro) || 'resposta inválida');
+      const r2 = await nuvemGet('acao=listar_alunos');
+      const alunosAll = (r2 && r2.alunos) || [];
+      turmas = (r1.turmas || []).map(function(t){
+        const alunos = alunosAll.filter(function(a){ return a.id_turma === t.id_turma; })
+          .map(function(a){
+            return { matricula: a.matricula || '', nome: a.nome || '',
+                     avatar: a.avatar === '' ? undefined : Number(a.avatar) };
+          });
+        return { id: t.id_turma, nome: t.nome, criadaEm: t.criada_em, alunos: alunos };
+      });
+      srtCacheTurmas(turmas);
+      nuvemToast('✓ Sincronizado', 'ok');
+    }catch(err){
+      turmas = srtCacheLer();
+      nuvemToast('⚠ Sem conexão com a nuvem — mostrando a última cópia local.', 'erro');
+    }
+    srtRenderListaTurmas(turmas);
+  }
+
+  function srtRenderListaTurmas(turmas){
     srtEl.listaTurmas.innerHTML = '';
     if (!turmas.length){
       srtEl.listaTurmas.innerHTML =
@@ -1539,23 +1774,28 @@ body{
       });
       div.querySelector('[data-acao="apagar"]').addEventListener('click', function(e){
         e.stopPropagation();
-        if (!confirm('Apagar a turma "' + t.nome + '" e seu diário?')) return;
-        const restantes = srtLerTurmas().filter(function(x){ return x.id !== t.id; });
-        srtSalvarTurmas(restantes);
-        const dia = srtLerDiario();
-        delete dia[t.id];
-        srtSalvarDiario(dia);
-        srtPintarListaTurmas();
+        if (!confirm('Apagar a turma "' + t.nome + '"?')) return;
+        nuvemToast('Apagando…', 'load');
+        nuvemPost({ acao: 'apagar_turma', id_turma: t.id }).then(function(){
+          nuvemToast('✓ Turma apagada', 'ok');
+          const cache = srtCacheLer().filter(function(x){ return x.id !== t.id; });
+          srtCacheTurmas(cache);
+          srtPintarListaTurmas();
+        }).catch(function(){
+          nuvemToast('⚠ Não foi possível apagar na nuvem.', 'erro');
+        });
       });
       srtEl.listaTurmas.appendChild(div);
     });
   }
 
   srtEl.btnVoltarMenu.addEventListener('click', function(){
+    srtPintarProfessor();
     srtPintarListaTurmas();
     srtMostrar('menu');
   });
   srtEl.btnVoltarEntrada.addEventListener('click', function(){
+    srtPintarProfessor();
     srtPintarListaTurmas();
     srtMostrar('menu');
   });
@@ -1596,7 +1836,7 @@ body{
   }
 
   function diarioPintarLista(){
-    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     srtEl.diarioLista.innerHTML = '';
     if (!turma || !turma.alunos || !turma.alunos.length) return;
     const dia = srtLerDiario();
@@ -1643,7 +1883,7 @@ body{
   }
 
   function diarioPintarHistorico(){
-    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     const dia = srtLerDiario();
     const bloco = (dia[diarioTurmaId] || {datas:{}});
     const datas = Object.keys(bloco.datas).sort();
@@ -1695,21 +1935,19 @@ body{
 
   /* edita o nome da turma aberta no diário */
   document.getElementById('diarioEditarNome').addEventListener('click', function(){
-    const turmas = srtLerTurmas();
-    const turma = turmas.filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     if (!turma){ alert('Turma não encontrada.'); return; }
     const novo = (prompt('Novo nome da turma:', turma.nome) || '').trim();
     if (!novo || novo === turma.nome) return;
     turma.nome = novo;
-    srtSalvarTurmas(turmas);
     srtEl.diarioTitulo.textContent = 'Diário de frequência — ' + novo;
     if (turmaAtual && turmaAtual.id === turma.id) turmaAtual.nome = novo;
+    diarioSincronizarTurma(turma, 'Nome atualizado na nuvem');
   });
 
   /* insere um aluno manualmente na turma aberta no diário */
   document.getElementById('diarioAddAluno').addEventListener('click', function(){
-    const turmas = srtLerTurmas();
-    const turma = turmas.filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     if (!turma){ alert('Turma não encontrada.'); return; }
     if (!turma.alunos) turma.alunos = [];
     const nome = (prompt('Nome do aluno:') || '').trim();
@@ -1719,7 +1957,6 @@ body{
     if (jaExiste){ alert('Já existe um aluno com esse nome nesta turma.'); return; }
     const matricula = (prompt('Número acadêmico (opcional):') || '').trim();
     turma.alunos.push({nome:nome, matricula:matricula});
-    srtSalvarTurmas(turmas);
     /* atualiza o sorteio se esta for a turma aberta lá */
     if (turmaAtual && turmaAtual.id === turma.id){
       turmaAtual = turma;
@@ -1728,10 +1965,31 @@ body{
       srtAtualizarHud();
     }
     diarioPintarLista();
+    diarioSincronizarTurma(turma, 'Aluno adicionado e sincronizado');
   });
 
+  /* reenvia a turma inteira (turma + alunos) para a nuvem e atualiza o cache */
+  function diarioSincronizarTurma(turma, okMsg){
+    const cache = srtCacheLer().map(function(t){ return t.id === turma.id ? turma : t; });
+    srtCacheTurmas(cache);
+    nuvemToast('Sincronizando…', 'load');
+    nuvemPost({
+      acao: 'criar_turma',
+      id_turma: turma.id,
+      nome: turma.nome,
+      criada_em: turma.criadaEm || srtHojeKey(),
+      alunos: (turma.alunos || []).map(function(a){
+        return { matricula: a.matricula || '', nome: a.nome, avatar: a.avatar };
+      })
+    }).then(function(){
+      nuvemToast('✓ ' + (okMsg || 'Sincronizado'), 'ok');
+    }).catch(function(){
+      nuvemToast('⚠ Alteração salva localmente, mas não sincronizou.', 'erro');
+    });
+  }
+
   document.getElementById('diarioSalvar').addEventListener('click', function(){
-    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     if (!turma){ alert('Turma não encontrada.'); return; }
     const dia = srtLerDiario();
     if (!dia[diarioTurmaId]) dia[diarioTurmaId] = {datas:{}};
@@ -1756,7 +2014,7 @@ body{
     diarioPintarDatas();
     diarioPintarHistorico();
 
-    /* baixa a lista de frequência do dia e envia ao Google (aba da turma) */
+    /* baixa a lista de frequência do dia e envia à nuvem (aba FREQUENCIA) */
     diarioBaixarDia(turma, diarioDataAtual, faltas);
     if (sheetsLerUrl()){
       const box = document.getElementById('sheetsBox');
@@ -1764,11 +2022,11 @@ body{
       sheetsEnviarDia(turma, diarioDataAtual, faltas);
     }
     alert('Frequência do dia ' + srtDataLegivel(diarioDataAtual) + ' salva e planilha baixada!' +
-      (sheetsLerUrl() ? '\n\nEnvio para a aba "' + turma.nome + '" da planilha do Google em andamento.' : ''));
+      (sheetsLerUrl() ? '\n\nEnvio para a nuvem (aba FREQUENCIA) em andamento.' : ''));
   });
 
   document.getElementById('diarioBaixar').addEventListener('click', function(){
-    const turma = srtLerTurmas().filter(function(t){ return t.id === diarioTurmaId; })[0];
+    const turma = diarioTurma;
     if (!turma) return;
     const dia = srtLerDiario();
     const bloco = (dia[diarioTurmaId] || {datas:{}});
@@ -1804,6 +2062,7 @@ body{
 
   document.getElementById('diarioVoltar').addEventListener('click', function(){
     diarioTurmaId = null;
+    srtPintarProfessor();
     srtPintarListaTurmas();
     srtMostrar('menu');
   });
@@ -1849,7 +2108,11 @@ body{
   })();
 
   function iniciarSorteio(){
+    srtGarantirProfessores();
+    srtPintarProfessor();
     srtPintarListaTurmas();
+    const inp = document.getElementById('sheetsUrl');
+    if (inp) inp.value = sheetsLerUrl();
   }
 
   iniciarSorteio();
