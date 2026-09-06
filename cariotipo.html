@@ -189,7 +189,7 @@ body{
   #ativ-cariotipo /* no celular o roteiro vem ANTES do tabuleiro: é ele que conduz o jogo */
   @media (max-width:900px){
     .kcolunas{ display:flex; flex-direction:column; }
-    .kroteiro{ order:-1; position:static; max-height:none; }
+    .kroteiro{ order:-1; position:static; }
   }
   #ativ-cariotipo /* ---------------- grupos e encaixes ---------------- */
   /* os cartões acompanham a largura do grupo: o C (7 pares) ocupa uma
@@ -427,7 +427,7 @@ body{
   #ativ-cariotipo .kslot.kmedido{ outline:2px solid #C07A12; outline-offset:1px; }
   #ativ-cariotipo /* ---------------- painel de pistas ---------------- */
   .kroteiro{ border:3px solid var(--ciano); border-radius:16px; padding:12px 14px 14px; margin:0;
-    position:sticky; top:14px; max-height:calc(100vh - 40px); overflow-y:auto;
+    position:sticky; top:14px;
     background:linear-gradient(180deg, rgba(79,209,197,.09), rgba(10,19,34,.85)); }
   #ativ-cariotipo .kroteiro-cab{ font-family:var(--pixel); font-size:11.5px; color:var(--ciano); margin:0 0 10px; }
   #ativ-cariotipo .ketapa-atual{ border:3px solid var(--ambar); border-radius:14px; padding:13px 14px 14px;
@@ -558,6 +558,110 @@ body{
 .tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--ciano) 0 10px, #1E6E7A 10px 14px); }
 .tc-pct{ font-family:var(--pixel); font-size:11px; letter-spacing:.06em; color:var(--ciano); }
 .tc-dica{ font-family:var(--pixel); font-size:7.5px; letter-spacing:.05em; line-height:1.9; color:var(--tinta3); max-width:320px; }
+
+/* ===== TELA DE IDENTIFICAÇÃO DO JOGADOR ===== */
+.tela-nome{
+  min-height:70vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; text-align:center; gap:16px; padding:40px 20px;
+  position:relative; overflow:hidden;
+}
+.tela-nome::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px);
+  opacity:.4;
+}
+.tn-ico{ font-size:2.4rem; line-height:1; }
+.tn-titulo{
+  font-family:var(--pixel); font-size:clamp(12px,3vw,17px); line-height:1.7;
+  color:var(--ciano); text-shadow:3px 3px 0 rgba(0,0,0,.4);
+  text-transform:uppercase; letter-spacing:.03em;
+}
+.tn-sub{ font-family:var(--pixel); font-size:8.5px; letter-spacing:.06em; color:var(--tinta3);
+  text-transform:uppercase; line-height:1.8; max-width:340px; }
+.tn-campo{
+  position:relative; z-index:1; width:min(360px,84vw); margin-top:4px;
+  font-family:var(--pixel); font-size:12px; letter-spacing:.04em; color:#fff;
+  text-align:center; padding:13px 12px; background:var(--slot);
+  border:3px solid var(--ambar); border-radius:2px; outline:none;
+}
+.tn-campo::placeholder{ color:rgba(251,247,255,.35); }
+.tn-btn{
+  position:relative; z-index:1; cursor:pointer;
+  font-family:var(--pixel); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:#0B1220; background:var(--ciano); border:3px solid #B9EFE8; border-radius:2px;
+  padding:12px 20px; box-shadow:0 4px 0 rgba(0,0,0,.35);
+}
+.tn-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,.35); }
+.tn-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.35); }
+.tn-pular{ position:relative; z-index:1; background:none; border:none; cursor:pointer;
+  font-family:var(--pixel); font-size:8px; letter-spacing:.06em; color:var(--tinta3);
+  text-transform:uppercase; text-decoration:underline; }
+
+/* ===== SORTEIO DO CASO ÀS CEGAS ===== */
+#ativ-cariotipo .kdesafio-sorteio{
+  border:3px solid var(--vermelho); border-radius:22px; padding:38px 22px 34px; margin:0 0 26px;
+  background:linear-gradient(180deg, rgba(255,107,122,.14), rgba(42,30,92,.78));
+  box-shadow:0 8px 0 rgba(0,0,0,.22); text-align:center;
+}
+#ativ-cariotipo .kdesafio-sorteio.koculto{ display:none; }
+#ativ-cariotipo .kds-cab{ font-family:var(--pixel); font-size:13px; line-height:1.7; color:#F2A6A2;
+  text-transform:uppercase; letter-spacing:.04em; }
+#ativ-cariotipo .kds-nota{ font-size:14.5px; line-height:1.5; color:var(--tinta3);
+  max-width:440px; margin:8px auto 20px; }
+#ativ-cariotipo .kds-janela{
+  width:min(420px,90%); margin:0 auto; padding:22px 14px;
+  border:3px solid var(--ambar); border-radius:6px; background:var(--slot);
+  box-shadow:inset 0 0 22px rgba(0,0,0,.5);
+}
+#ativ-cariotipo .kds-reel{
+  font-family:var(--pixel); font-size:clamp(14px,4.5vw,22px); line-height:1.5;
+  color:var(--ambar); letter-spacing:.04em; min-height:1.5em;
+}
+#ativ-cariotipo .kds-reel.kds-final{ color:var(--vermelho); text-shadow:0 0 12px rgba(255,107,122,.6); }
+#ativ-cariotipo .kds-num{
+  display:block; margin-top:10px; font-family:var(--pixel); font-size:11px;
+  letter-spacing:.06em; color:var(--tinta2); min-height:1.2em;
+}
+#ativ-cariotipo .kds-perfil{ margin:16px auto 0; font-size:13px; line-height:1.7; color:var(--tinta3);
+  max-width:360px; }
+#ativ-cariotipo .kds-btn{
+  margin-top:22px; cursor:pointer;
+  font-family:var(--pixel); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:#0B1220; background:var(--vermelho); border:3px solid #FBD8D6; border-radius:2px;
+  padding:13px 22px; box-shadow:0 4px 0 rgba(0,0,0,.35);
+}
+#ativ-cariotipo .kds-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,.35); }
+#ativ-cariotipo .kds-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.35); }
+
+/* ===== RÉGUA SOBRE CROMOSSOMOS JÁ FIXADOS ===== */
+/* enquanto a régua está ativa, os encaixes fechados/travados continuam
+   inertes ao clique, mas a peça dentro deles volta a responder ao ponteiro
+   só para a leitura de tamanho */
+#ativ-cariotipo.kmedindo .kslot.kfechado .kpeca,
+#ativ-cariotipo.kmedindo .kslot.ktravado .kpeca{ pointer-events:auto; cursor:none; }
+
+/* ===== TIQUES NO ROTEIRO DE CONSULTA ===== */
+#ativ-cariotipo .kconsulta-prog{
+  font-family:var(--pixel); font-size:9px; line-height:1.8; color:var(--verde);
+  margin:0 0 10px; letter-spacing:.04em;
+}
+#ativ-cariotipo .kitem-chk{ cursor:pointer; align-items:flex-start; }
+#ativ-cariotipo .kitem-chk .kchk{
+  flex:0 0 auto; width:20px; height:20px; margin-top:3px; cursor:pointer;
+  accent-color:#3FDD95;
+}
+#ativ-cariotipo .kitem-chk.kmarcado .kitem-txt{ opacity:.55; }
+#ativ-cariotipo .kitem-chk.kmarcado .kitem-alvo::after{ content:' · identificado ✓'; color:var(--verde); }
+
+/* ===== LEMBRETE DE ORIENTAÇÃO — abre toda regra do roteiro ===== */
+#ativ-cariotipo .korienta{
+  display:block; margin:0 0 9px; padding:7px 10px; border-radius:8px;
+  font-family:var(--serif); font-weight:700; font-size:13px; line-height:1.4;
+  letter-spacing:.01em; text-transform:none;
+  color:#0B1220; background:var(--ambar); border:2px solid #F6DFAE;
+}
+#ativ-cariotipo .korienta b{ color:#3A0F0D; }
+#ativ-cariotipo .kitem-txt .korienta{ font-size:12px; margin-bottom:7px; }
 </style>
 </head>
 <body>
@@ -577,6 +681,18 @@ body{
   <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
   <div class="tc-pct" id="tcPct">0%</div>
   <div class="tc-dica">Preparando a lâmina e a régua…</div>
+</div>
+
+<div class="tela-nome" id="telaNome" style="display:none;">
+  <div class="tn-ico" aria-hidden="true">🧑‍🔬</div>
+  <div class="tn-titulo">Identifique-se</div>
+  <div class="tn-sub">Seu nome vai assinar o idiograma e acompanhar você nas conferências.</div>
+  <form id="formNome" autocomplete="off">
+    <input class="tn-campo" id="campoNome" type="text" name="nome" maxlength="32"
+           placeholder="Seu nome" aria-label="Seu nome" spellcheck="false">
+  </form>
+  <button class="tn-btn" id="btnNome" type="button">▶ Entrar no laboratório</button>
+  <button class="tn-pular" id="btnPularNome" type="button">entrar sem nome</button>
 </div>
 
 <div class="kenv" id="conteudoJogo" style="display:none;">
@@ -671,6 +787,20 @@ body{
       </div>
     </div>
   </div>
+
+  <!-- ============ SORTEIO DO CASO ÀS CEGAS ============ -->
+  <div class="kdesafio-sorteio koculto" id="kdesafioSorteio">
+    <div class="kds-cab">Sorteio do caso</div>
+    <p class="kds-nota">O laboratório recebeu uma lâmina anônima. O sistema está sorteando
+      qual amostra você vai investigar — o resultado fica <b>lacrado</b>: nem o sexo, nem o
+      número de cromossomos, nem a alteração são revelados.</p>
+    <div class="kds-janela">
+      <div class="kds-reel" id="kdsReel">— — —</div>
+      <span class="kds-num" id="kdsNum"></span>
+    </div>
+    <p class="kds-perfil" id="kdsPerfil"></p>
+    <button class="kds-btn" id="kdsBtn" type="button">🔍 Iniciar investigação</button>
+  </div>
 </div>
 
 <!-- ============ ROTEIRO DE CONSULTA (modo livre) ============ -->
@@ -693,7 +823,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 2 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 6 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -707,8 +837,8 @@ const raizAtiv = document.getElementById('ativ-cariotipo');
 
 /* ==================================================================
    TABELA DE CROMOSSOMOS
-   len  = comprimento relativo (unidades arbitrárias, escala real
-          aproximada do cariótipo humano)
+   len  = comprimento relativo; 1 unidade = U_EM_MB (~2,49) megabases,
+          então len × U_EM_MB dá o tamanho em Mb mostrado na tela
    cen  = posição do centrômero, como fração do comprimento total
           medida a partir da extremidade do braço curto (p)
    sat  = satélite no braço curto (acrocêntricos dos grupos D e G)
@@ -718,45 +848,56 @@ const raizAtiv = document.getElementById('ativ-cariotipo');
    foram desenhadas para que TODAS as pistas do roteiro sejam
    verificáveis no desenho.
    ================================================================== */
+/* len = comprimento relativo, escalonado a partir do tamanho de cada
+   cromossomo em megabases (Mb) no genoma de referência GRCh38, com o
+   cromossomo 1 (~249 Mb) fixado em 100 — ou seja, 1 unidade ≈ 2,49 Mb
+   (const U_EM_MB). Assim as proporções na tela reproduzem as do
+   cariótipo humano real (o 20 é maior que o 19, o 21 é o menor
+   autossomo, o X é o oitavo maior, etc.) e a régua e os rótulos podem
+   reconverter len para Mb, com erro < 1 Mb em todos os 24 cromossomos. */
 const CROMOS = [
   {id:'1', grupo:'A', len:100, cen:.48, bandas:[[.06,.11,2],[.17,.22,2],[.30,.36,2],[.40,.46,1],[.54,.60,1],[.66,.72,2],[.80,.86,2],[.92,.97,2]]},
-  {id:'2', grupo:'A', len:97, cen:.38, bandas:[[.05,.09,2],[.14,.19,2],[.24,.29,2],[.44,.50,2],[.56,.61,2],[.68,.73,2],[.80,.85,2],[.91,.96,2]]},
-  {id:'3', grupo:'A', len:82, cen:.46, bandas:[[.07,.13,2],[.20,.26,2],[.33,.39,2],[.40,.46,1],[.54,.60,1],[.65,.71,2],[.78,.84,2],[.90,.96,2]]},
+  {id:'2', grupo:'A', len:97.6, cen:.38, bandas:[[.05,.09,2],[.14,.19,2],[.24,.29,2],[.44,.50,2],[.56,.61,2],[.68,.73,2],[.80,.85,2],[.91,.96,2]]},
+  {id:'3', grupo:'A', len:79.8, cen:.46, bandas:[[.07,.13,2],[.20,.26,2],[.33,.39,2],[.40,.46,1],[.54,.60,1],[.65,.71,2],[.78,.84,2],[.90,.96,2]]},
   /* 4: faixa CINZENTA na região do centrômero — pista 2 */
-  {id:'4', grupo:'B', len:78, cen:.26, bandas:[[.06,.12,2],[.22,.32,1],[.40,.46,2],[.54,.60,2],[.66,.72,2],[.78,.84,2],[.90,.96,2]]},
-  {id:'5', grupo:'B', len:74, cen:.27, bandas:[[.07,.13,2],[.40,.47,2],[.55,.62,2],[.70,.77,2],[.86,.94,2]]},
+  {id:'4', grupo:'B', len:76.6, cen:.26, bandas:[[.06,.12,2],[.22,.32,1],[.40,.46,2],[.54,.60,2],[.66,.72,2],[.78,.84,2],[.90,.96,2]]},
+  {id:'5', grupo:'B', len:73, cen:.27, bandas:[[.07,.13,2],[.40,.47,2],[.55,.62,2],[.70,.77,2],[.86,.94,2]]},
   /* 6 e 7: maiores do grupo C; o 6 tem faixas mais ESTREITAS no braço curto — pista 6 */
-  {id:'6', grupo:'C', len:70, cen:.36, bandas:[[.05,.08,2],[.13,.16,2],[.22,.25,2],[.45,.52,2],[.60,.66,2],[.74,.80,2],[.88,.94,2]]},
-  {id:'7', grupo:'C', len:65, cen:.38, bandas:[[.04,.11,2],[.18,.25,2],[.46,.53,2],[.62,.69,2],[.80,.88,2]]},
+  {id:'6', grupo:'C', len:69, cen:.36, bandas:[[.05,.08,2],[.13,.16,2],[.22,.25,2],[.45,.52,2],[.60,.66,2],[.74,.80,2],[.88,.94,2]]},
+  {id:'7', grupo:'C', len:64.1, cen:.38, bandas:[[.04,.11,2],[.18,.25,2],[.46,.53,2],[.62,.69,2],[.80,.88,2]]},
   /* 8: faixas negras mais LARGAS no braço maior — pista 11 */
-  {id:'8', grupo:'C', len:60, cen:.31, bandas:[[.08,.14,2],[.40,.52,2],[.60,.72,2],[.80,.94,2]]},
+  {id:'8', grupo:'C', len:58.5, cen:.31, bandas:[[.08,.14,2],[.40,.52,2],[.60,.72,2],[.80,.94,2]]},
   /* 9: TRÊS faixas negras largas no braço curto — pista 10 */
-  {id:'9', grupo:'C', len:58, cen:.34, bandas:[[.03,.09,2],[.12,.18,2],[.22,.28,2],[.44,.50,2],[.60,.66,2],[.78,.85,2]]},
+  {id:'9', grupo:'C', len:55.6, cen:.34, bandas:[[.03,.09,2],[.12,.18,2],[.22,.28,2],[.44,.50,2],[.60,.66,2],[.78,.85,2]]},
   /* 10: centrômero mais deslocado para a extremidade — pista 11 */
-  {id:'10', grupo:'C', len:56, cen:.24, bandas:[[.07,.13,2],[.34,.41,2],[.50,.57,2],[.66,.73,2],[.84,.92,2]]},
-  {id:'11', grupo:'C', len:55, cen:.40, bandas:[[.09,.16,2],[.48,.55,2],[.66,.73,2],[.84,.92,2]]},
+  {id:'10', grupo:'C', len:54, cen:.24, bandas:[[.07,.13,2],[.34,.41,2],[.50,.57,2],[.66,.73,2],[.84,.92,2]]},
+  {id:'11', grupo:'C', len:54.4, cen:.40, bandas:[[.09,.16,2],[.48,.55,2],[.66,.73,2],[.84,.92,2]]},
   /* 12: UMA única faixa negra larga no braço curto — pista 10 */
-  {id:'12', grupo:'C', len:54, cen:.27, bandas:[[.08,.20,2],[.40,.47,2],[.56,.63,2],[.72,.79,2],[.88,.95,2]]},
+  {id:'12', grupo:'C', len:53.6, cen:.27, bandas:[[.08,.20,2],[.40,.47,2],[.56,.63,2],[.72,.79,2],[.88,.95,2]]},
   /* grupo D — acrocêntricos com satélite; faixas do 13 > 14 > 15 (pista 5) */
-  {id:'13', grupo:'D', len:47, cen:.16, sat:true, bandas:[[.26,.38,2],[.46,.58,2],[.68,.80,2],[.88,.98,2]]},
-  {id:'14', grupo:'D', len:44, cen:.17, sat:true, bandas:[[.28,.36,2],[.48,.56,2],[.68,.76,2],[.88,.95,2]]},
-  {id:'15', grupo:'D', len:42, cen:.18, sat:true, bandas:[[.30,.35,2],[.50,.55,2],[.70,.75,2],[.89,.94,2]]},
+  {id:'13', grupo:'D', len:46, cen:.16, sat:true, bandas:[[.26,.38,2],[.46,.58,2],[.68,.80,2],[.88,.98,2]]},
+  {id:'14', grupo:'D', len:43.1, cen:.17, sat:true, bandas:[[.28,.36,2],[.48,.56,2],[.68,.76,2],[.88,.95,2]]},
+  {id:'15', grupo:'D', len:41.1, cen:.18, sat:true, bandas:[[.30,.35,2],[.50,.55,2],[.70,.75,2],[.89,.94,2]]},
   /* grupo E — 16 tem faixa negra no braço curto MAIS LARGA que a do 17;
      18 NÃO tem faixa escura no braço curto (pista 7) */
-  {id:'16', grupo:'E', len:38, cen:.40, bandas:[[.10,.24,2],[.50,.58,2],[.68,.76,2],[.88,.96,2]]},
-  {id:'17', grupo:'E', len:35, cen:.29, bandas:[[.10,.18,2],[.44,.52,2],[.62,.70,2],[.84,.92,2]]},
-  {id:'18', grupo:'E', len:33, cen:.26, bandas:[[.40,.50,2],[.62,.72,2],[.84,.94,2]]},
+  {id:'16', grupo:'E', len:36.3, cen:.40, bandas:[[.10,.24,2],[.50,.58,2],[.68,.76,2],[.88,.96,2]]},
+  {id:'17', grupo:'E', len:33.5, cen:.29, bandas:[[.10,.18,2],[.44,.52,2],[.62,.70,2],[.84,.92,2]]},
+  {id:'18', grupo:'E', len:32.3, cen:.26, bandas:[[.40,.50,2],[.62,.72,2],[.84,.94,2]]},
   /* grupo F — 19 com faixa negra EM TORNO do centrômero; 20 com faixa larga
-     no braço menor e outra estreita no maior (pista 4) */
-  {id:'19', grupo:'F', len:28, cen:.45, bandas:[[.36,.56,2]]},
-  {id:'20', grupo:'F', len:27, cen:.44, bandas:[[.14,.32,2],[.70,.78,2]]},
-  /* grupo G — acrocêntricos com satélite; o 21 tem faixa negra MAIS LARGA (pista 3) */
-  {id:'21', grupo:'G', len:22, cen:.22, sat:true, bandas:[[.42,.72,2]]},
-  {id:'22', grupo:'G', len:23, cen:.25, sat:true, bandas:[[.48,.64,2],[.80,.90,2]]},
-  /* par sexual — X com faixa negra ESTREITA no braço curto (pista 9);
-     Y acrocêntrico com faixa CINZENTA larga no braço maior (pista 8) */
-  {id:'X', grupo:'S', len:63, cen:.37, unico:true, bandas:[[.12,.18,2],[.46,.54,2],[.62,.70,2],[.80,.90,2]]},
-  {id:'Y', grupo:'Y', len:25, cen:.20, unico:true, bandas:[[.50,.86,1]]}
+     no braço menor e outra estreita no maior (pista 4). O 20 (~64 Mb) é
+     ligeiramente MAIOR que o 19 (~59 Mb) */
+  {id:'19', grupo:'F', len:23.8, cen:.45, bandas:[[.36,.56,2]]},
+  {id:'20', grupo:'F', len:25.8, cen:.44, bandas:[[.14,.32,2],[.70,.78,2]]},
+  /* grupo G — acrocêntricos com satélite; o 21 (~47 Mb) é o MENOR autossomo,
+     um pouco menor que o 22 (~51 Mb); o 21 tem faixa negra MAIS LARGA (pista 3) */
+  {id:'21', grupo:'G', len:19, cen:.22, sat:true, bandas:[[.42,.72,2]]},
+  {id:'22', grupo:'G', len:20.6, cen:.25, sat:true, bandas:[[.48,.64,2],[.80,.90,2]]},
+  /* par sexual — X (~156 Mb, oitavo maior do cariótipo) com faixa negra
+     ESTREITA no braço curto junto ao centrômero (pista 9);
+     Y (~57 Mb, GRCh38) acrocêntrico com faixa CINZENTA larga no braço
+     maior (pista 8) — na mesma escala em Mb dos demais */
+  {id:'X', grupo:'S', len:62.5, cen:.37, unico:true, bandas:[[.27,.33,2],[.46,.54,2],[.62,.70,2],[.80,.90,2]]},
+  {id:'Y', grupo:'Y', len:23, cen:.20, unico:true, bandas:[[.50,.86,1]]}
 ];
 
 const GRUPOS = [
@@ -825,9 +966,12 @@ const ETAPAS = [
      'cinzenta larga no braço maior</b>. Repare que ele ocupa uma posição só.'},
 
   {ids:['X'], alvo:'Cromossomo X',
-   texto:'Dos onze cromossomos restantes, identifique o cromossomo sexual <b>X</b>. Ele ' +
-     'apresenta uma faixa negra <b>estreita no braço menor</b> e é o <b>único que sobrou sem ' +
-     'homólogo</b> — porque este é um cariótipo <b>masculino</b>.'},
+   texto:'Dos cromossomos restantes, identifique o cromossomo sexual <b>X</b>. Ele é o ' +
+     '<b>oitavo maior</b> do cariótipo, é <b>submetacêntrico</b> e apresenta uma <b>faixa ' +
+     'escura estreita no braço menor (p)</b>, próxima ao centrômero. Em cariótipos ' +
+     '<b>femininos (XX)</b> há <b>dois cromossomos X homólogos</b> com esse padrão; em ' +
+     '<b>masculinos (XY)</b> há <b>apenas um X</b>, sem homólogo — o outro cromossomo sexual ' +
+     'é o <b>Y</b>, bem menor.'},
 
   {ids:['9','12'], alvo:'Grupo C · pares 9 e 12',
    texto:'Selecione, dos restantes, o par que possui <b>três faixas negras largas no braço ' +
@@ -843,10 +987,11 @@ const ETAPAS = [
 /* no cariótipo feminino as duas etapas do par sexual (Y e depois X)
    dão lugar a uma só: reconhecer o PAR de cromossomos X */
 const ETAPA_XX = {ids:['X'], alvo:'Par sexual · X e X',
-  texto:'Falta o <b>par sexual</b>. Como esta é uma lâmina <b>feminina</b>, não há cromossomo ' +
-    'Y: procure <b>dois cromossomos X</b>, iguais entre si. São <b>submetacêntricos</b>, de ' +
-    'tamanho próximo ao dos maiores do grupo C, e apresentam uma faixa negra <b>estreita no ' +
-    'braço curto</b>. Diferentemente do cariótipo masculino, aqui eles formam um par.'};
+  texto:'Falta o <b>par sexual</b>. Como esta é uma lâmina <b>feminina (XX)</b>, não há ' +
+    'cromossomo Y: identifique <b>dois cromossomos X homólogos</b>, iguais entre si. O X é o ' +
+    '<b>oitavo maior</b> do cariótipo, é <b>submetacêntrico</b> e tem uma <b>faixa escura ' +
+    'estreita no braço menor (p)</b>, próxima ao centrômero. Diferentemente do cariótipo ' +
+    'masculino, aqui os dois X <b>formam um par</b>.'};
 
 /* ==================================================================
    CASOS DO MODO ÀS CEGAS
@@ -900,6 +1045,12 @@ const ESC = 1.35;          /* px por unidade de comprimento */
 const LARG = 9;            /* largura de cada cromátide */
 const VAO = 2.4;           /* vão entre as cromátides */
 const FENDA = 3;           /* constrição primária (centrômero) */
+/* cada unidade de "len" equivale a ~2,49 Mb: o cromossomo 1 (len 100)
+   mede 249 Mb no GRCh38. A conversão vale para os 24 cromossomos com
+   erro < 1 Mb, então tudo o que a régua e os rótulos mostram na tela
+   está em megabases reais — e é a MESMA coisa que o desenho representa. */
+const U_EM_MB = 2.49;
+function mbDe(c){ return Math.round(c.len * U_EM_MB); }
 /* bandas: cinzenta e negra. O contorno é CLARO porque a bancada é
    escura — com contorno escuro o cromossomo parece partido nas bandas */
 /* campo claro: corpo quase branco, contorno e bandas escuros — é assim
@@ -1061,6 +1212,28 @@ const el = {
 let modo = 'completo', sexo = 'XY';
 let selecionada = null, pontos = 1000, etapaAtual = 0, tentativas = 1;
 
+/* nome do jogador — recolhido na tela de identificação, antes do jogo */
+let jogador = '';
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+  });
+}
+/* "Fulano, você" no começo da frase, ou só "Você" quando não há nome */
+function voce(){ return jogador ? esc(jogador) + ', você' : 'Você'; }
+
+/* toda regra do roteiro abre com o mesmo lembrete de orientação:
+   os cromossomos entram no gabarito com o braço curto (p) para cima */
+const LEMBRETE_ORIENTA =
+  '<span class="korienta">↑ Posicione todos os cromossomos com o ' +
+  '<b>braço curto para cima</b>.</span>';
+window.registrarJogador = function(n){ jogador = String(n || '').trim().slice(0, 32); };
+
+/* número da lâmina fixado no sorteio do modo às cegas, para o rótulo */
+let numeroCasoDesafio = 0;
+/* grupos que o jogador marcou como identificados no roteiro de consulta */
+const marcadasConsulta = new Set();
+
 /* quantas cópias de cada cromossomo entram na lâmina */
 function nCopias(c){
   if (desafio() && caso){
@@ -1150,7 +1323,7 @@ function montarTabuleiro(){
         '</span>' +
       '</div>' +
       '<div class="kfolha-fita">' +
-        '<span class="kcampo">Montado por <i>&nbsp;</i></span>' +
+        '<span class="kcampo">Montado por <i>' + (jogador ? esc(jogador) : '&nbsp;') + '</i></span>' +
         '<span class="kcampo">Série <i>&nbsp;</i></span>' +
         '<span class="kcampo">Data <i>' + dd + '/' + mm + '/' + aa + '</i></span>' +
         '<span class="kcampo">Material <i>linfócitos · metáfase</i></span>' +
@@ -1210,8 +1383,8 @@ function montarTabuleiro(){
   pe.innerHTML =
     '<span>Padrão de bandeamento conforme as normas do <b>4º Congresso Internacional de ' +
       'Genética Humana</b>, Paris, 1971.</span>' +
-    '<span>Cole cada cromossomo com o <b>centrômero sobre a linha tracejada</b> e o braço ' +
-      'maior para baixo.</span>';
+    '<span>Cole cada cromossomo com o <b>centrômero sobre a linha tracejada</b> e o ' +
+      '<b>braço curto para cima</b>.</span>';
   el.tabuleiro.appendChild(pe);
 
   const selo = document.createElement('div');
@@ -1242,7 +1415,7 @@ function criarCarta(c, virado){
   d.innerHTML = '<div class="kdesenho">' + desenhar(c, virado) + '</div>' +
     '<div class="kcarta-pe">' +
       '<button class="kgirar" type="button" title="Virar 180°">⟳</button>' +
-      '<span class="kmedida">' + Math.round(c.len) + 'u</span>' +
+      '<span class="kmedida">' + mbDe(c) + ' Mb</span>' +
     '</div>';
   d.querySelector('.kgirar').addEventListener('click', function(e){
     e.stopPropagation();
@@ -1263,6 +1436,9 @@ function selecionar(d){
 }
 
 function clicarSlot(s){
+  /* etapa já fechada ou posição ainda travada: o clique não mexe na peça
+     (com a régua ativa a peça volta a receber o ponteiro só para a leitura) */
+  if (s.classList.contains('kfechado') || s.classList.contains('ktravado')) return;
   /* encaixe ocupado → devolve à metáfase */
   if (s.dataset.posto){
     const c = acharCromo(s.dataset.posto);
@@ -1333,6 +1509,7 @@ function pintarEtapa(){
   if (!guiado()){
     el.painelEtapa.innerHTML =
       '<div class="ketapa-atual klivre">' +
+        LEMBRETE_ORIENTA +
         (desafio()
           ? '<span class="ketapa-alvo ksemtopo">Monte primeiro. O laudo vem depois — e o ' +
             'roteiro de identificação continua disponível em “Consultar roteiro”.</span>'
@@ -1347,7 +1524,7 @@ function pintarEtapa(){
   el.painelEtapa.innerHTML =
     '<div class="ketapa-atual">' +
       '<span class="ketapa-num">ETAPA ' + (etapaAtual+1) + ' DE ' + tot + '</span>' +
-      '<div class="ketapa-texto">' + e.texto + '</div>' +
+      '<div class="ketapa-texto">' + LEMBRETE_ORIENTA + ' ' + e.texto + '</div>' +
       '<span class="ketapa-alvo">Libera: ' + e.alvo + '</span>' +
     '</div>';
 }
@@ -1425,8 +1602,8 @@ function conferir(){
     if (etapaAtual >= etapas().length){
       el.resultado.className = 'kon kvitoria';
       el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo</span>' +
-        'Você percorreu as ' + etapas().length + ' etapas do roteiro e fechou o idiograma com ' +
-        '<b>' + pontos + ' pontos</b>. Repare no caminho que acabou de percorrer: a ' +
+        voce() + ' percorreu as ' + etapas().length + ' etapas do roteiro e fechou o ' +
+        'idiograma com <b>' + pontos + ' pontos</b>. Repare no caminho que acabou de percorrer: a ' +
         'identificação nunca começa pelo cromossomo 1 e segue até o 22 — ela parte dos ' +
         '<b>extremos</b> (os maiores e os menores), fixa os que têm marcas inconfundíveis, e só ' +
         'no fim resolve o grupo C por eliminação. É assim que o citogeneticista trabalha diante ' +
@@ -1451,7 +1628,7 @@ function conferir(){
     let diag = '';
     if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
     if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
-      'baixo</b> — o braço maior fica abaixo da linha. ';
+      'baixo</b> — o braço curto (p) deve ficar para cima. ';
     el.resultado.className = 'kon kfalha';
     tocar('erro');
     el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
@@ -1493,7 +1670,7 @@ function conferirTudo(){
     tocar('kvitoria');
     el.resultado.className = 'kon kvitoria';
     el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo, sem roteiro</span>' +
-      'Você montou os 46 cromossomos por conta própria, com <b>' + pontos + ' pontos</b>. ' +
+      voce() + ' montou os 46 cromossomos por conta própria, com <b>' + pontos + ' pontos</b>. ' +
       'Sem instruções, cada decisão dependeu de comparar tamanho, posição do centrômero e ' +
       'bandeamento — que é o que o citogeneticista faz diante de uma lâmina real.';
     document.getElementById('kbtnConferir').disabled = true;
@@ -1504,7 +1681,7 @@ function conferirTudo(){
     let diag = '';
     if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
     if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
-      'baixo</b> — o braço maior fica abaixo da linha. ';
+      'baixo</b> — o braço curto (p) deve ficar para cima. ';
     tocar('erro');
     el.resultado.className = 'kon kfalha';
     el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
@@ -1563,12 +1740,24 @@ function responderDiagnostico(chave){
   }
 
   tocar('kdiagnostico');
+  /* deixa explícito o par sexual encontrado — em especial que num caso
+     feminino (XX) os dois X são homólogos e a alteração está num autossomo */
+  let notaSexo = '';
+  if (caso.chave === 'turner'){
+    notaSexo = '<p class="klaudo-fim">Par sexual: <b>um único cromossomo X</b>, sem homólogo ' +
+      'e sem Y — é essa ausência que fecha a contagem em 45.</p>';
+  } else if (sexo === 'XX'){
+    notaSexo = '<p class="klaudo-fim">Par sexual: <b>dois cromossomos X homólogos</b> — cariótipo ' +
+      'feminino. A trissomia está num <b>autossomo</b>, não no par sexual.</p>';
+  } else {
+    notaSexo = '<p class="klaudo-fim">Par sexual: <b>um X e um Y</b> — cariótipo masculino.</p>';
+  }
   el.resultado.className = 'kon kvitoria';
   el.resultado.innerHTML =
     '<span class="kgrande">🏆 Diagnóstico correto — ' + caso.nome + '</span>' +
     '<span class="klaudo">' + formula + '</span>' +
-    caso.nota +
-    '<p class="klaudo-fim">Você montou o idiograma e fechou o laudo com <b>' + pontos +
+    caso.nota + notaSexo +
+    '<p class="klaudo-fim">' + voce() + ' montou o idiograma e fechou o laudo com <b>' + pontos +
     ' pontos</b>. Nenhuma informação da lâmina antecipava esse resultado: ele veio da ' +
     'montagem, exatamente como no laboratório.</p>';
   el.tabuleiro.classList.add('kconferido');
@@ -1614,13 +1803,16 @@ function montar(){
     el.metafase.appendChild(criarCarta(c, Math.random() < .5));
   });
   selecionada = null; pontos = 1000; etapaAtual = 0; tentativas = 1;
+  marcadasConsulta.clear();
   el.feitas.innerHTML = '';
   el.resultado.className = ''; el.resultado.innerHTML = '';
   raizAtiv.classList.toggle('klivre', !guiado());
-  /* cada preparação recebe um número de caso, como no laboratório */
+  /* cada preparação recebe um número de caso, como no laboratório. No modo
+     às cegas o número é o mesmo que a tela de sorteio já mostrou (lacrado). */
+  const numLamina = (desafio() && numeroCasoDesafio)
+    ? numeroCasoDesafio : (2600 + Math.floor(Math.random()*400));
   document.getElementById('klaminaCaso').textContent =
-    'CASO ' + (2600 + Math.floor(Math.random()*400)) + '/26' +
-    (desafio() ? '' : ' · 46,' + sexo);
+    'CASO ' + numLamina + '/26' + (desafio() ? '' : ' · 46,' + sexo);
   document.getElementById('kbtnConferir').textContent =
     guiado() ? '✓ Conferir etapa' : '✓ Conferir idiograma';
   document.querySelector('.kfeitas-cab').style.display = guiado() ? '' : 'none';
@@ -1630,14 +1822,14 @@ function montar(){
   document.getElementById('kdicaAcervo').innerHTML = guiado()
     ? 'Siga o roteiro ao lado: cada etapa libera as posições do tabuleiro e diz o que ' +
       'procurar. Toque num cromossomo e depois no encaixe liberado; use ⟳ para virá-lo, ' +
-      'deixando o braço maior abaixo da linha do centrômero.'
+      'deixando o <b>braço curto para cima</b>.'
     : desafio()
     ? 'Lâmina sem identificação. Monte o idiograma inteiro e, ao conferir, você será ' +
       'convidado a dar o laudo. O gabarito traz mais posições do que cromossomos: nem todas ' +
       'serão usadas, e descobrir quais sobram faz parte da análise.'
     : 'O tabuleiro está todo aberto. Toque num cromossomo e depois na posição que julgar ' +
-      'certa, em qualquer grupo; use ⟳ para virá-lo, deixando o braço maior abaixo da linha ' +
-      'do centrômero. A régua ajuda a comparar tamanhos.';
+      'certa, em qualquer grupo; use ⟳ para virá-lo, deixando o <b>braço curto para cima</b>. ' +
+      'A régua ajuda a comparar tamanhos.';
   pintarEtapa();
   aplicarTravas();
   liberarSaidas(false);
@@ -1656,17 +1848,77 @@ document.querySelectorAll('.ksel-sexo-btn').forEach(function(b){
   });
 });
 
+const telaSorteio = document.getElementById('kdesafioSorteio');
+
 window.iniciarCariotipo = function(){
   el.selecao.classList.remove('koculto');
   el.bancada.classList.add('koculto');
+  telaSorteio.classList.add('koculto');
   modal.classList.remove('kon');
   raizAtiv.classList.remove('kmedindo');
 };
+
+/* ------------------------------------------------------------------
+   SORTEIO DO CASO ÀS CEGAS
+   Uma animação de "roleta" antes da montagem: cria a expectativa do
+   caso a investigar sem revelar nada — os rótulos que passam são
+   genéricos e o resultado fica sempre "lacrado".
+   ------------------------------------------------------------------ */
+function rodarSorteio(aoTerminar){
+  const reel = document.getElementById('kdsReel');
+  const numEl = document.getElementById('kdsNum');
+  const perfil = document.getElementById('kdsPerfil');
+  const btn = document.getElementById('kdsBtn');
+  const rotulos = ['46,??', '47,??,+?', '45,?', 'SEXO ?', '??,??,?', 'CARIÓTIPO ?',
+    'LINFÓCITOS', 'GIEMSA', 'METÁFASE', 'AMOSTRA ??', 'AUTOSSOMOS ?', 'PAR SEXUAL ?'];
+  numeroCasoDesafio = 2600 + Math.floor(Math.random()*400);
+  telaSorteio.classList.remove('koculto');
+  reel.classList.remove('kds-final');
+  reel.textContent = '— — —';
+  numEl.textContent = '';
+  perfil.textContent = '';
+  btn.style.visibility = 'hidden';
+  raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
+  tocar('selecionar');
+
+  let i = 0, atraso = 55;
+  function gira(){
+    reel.textContent = rotulos[Math.floor(Math.random()*rotulos.length)];
+    if (i % 2 === 0) tocar('alternar');
+    i++;
+    if (i > 13) atraso *= 1.32;
+    if (atraso < 360){
+      setTimeout(gira, atraso);
+    } else {
+      reel.textContent = 'CASO LACRADO';
+      reel.classList.add('kds-final');
+      numEl.textContent = 'Lâmina Nº ' + numeroCasoDesafio + '/26';
+      perfil.innerHTML = 'Sexo: <b>?</b> &nbsp;·&nbsp; Nº de cromossomos: <b>?</b> ' +
+        '&nbsp;·&nbsp; Alteração: <b>a determinar</b>';
+      btn.style.visibility = '';
+      tocar('etapa');
+    }
+  }
+  document.getElementById('kdsBtn').onclick = function(){
+    telaSorteio.classList.add('koculto');
+    reel.classList.remove('kds-final');
+    aoTerminar();
+  };
+  gira();
+}
 
 document.querySelectorAll('.ksel-card').forEach(function(b){
   b.addEventListener('click', function(){
     modo = b.dataset.modo;
     el.selecao.classList.add('koculto');
+    if (modo === 'desafio'){
+      rodarSorteio(function(){
+        el.bancada.classList.remove('koculto');
+        montar();
+        raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      return;
+    }
     el.bancada.classList.remove('koculto');
     montar();
     raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
@@ -1675,6 +1927,7 @@ document.querySelectorAll('.ksel-card').forEach(function(b){
 document.getElementById('kbtnTrocar').addEventListener('click', function(){
   modal.classList.remove('kon');
   el.bancada.classList.add('koculto');
+  telaSorteio.classList.add('koculto');
   el.selecao.classList.remove('koculto');
   raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
 });
@@ -1688,14 +1941,52 @@ const modal = document.getElementById('kmodalRoteiro');
 
 function preencherConsulta(){
   const corpo = document.getElementById('kmodalCorpo');
-  corpo.innerHTML = ETAPAS.map(function(e, i){
-    return '<div class="kitem">' +
-             '<span class="kitem-n">' + (i+1) + '</span>' +
-             '<div class="kitem-txt">' + e.texto +
-               '<span class="kitem-alvo">' + e.alvo + '</span>' +
-             '</div>' +
-           '</div>';
-  }).join('');
+  const seq = roteiroConsulta();
+  corpo.innerHTML =
+    '<div class="kconsulta-prog" id="kconsultaProg"></div>' +
+    seq.map(function(e, i){
+      const marc = marcadasConsulta.has(i);
+      return '<label class="kitem kitem-chk' + (marc ? ' kmarcado' : '') + '">' +
+               '<input type="checkbox" class="kchk" data-i="' + i + '"' +
+                 (marc ? ' checked' : '') + '>' +
+               '<span class="kitem-n">' + (i+1) + '</span>' +
+               '<div class="kitem-txt">' + LEMBRETE_ORIENTA + ' ' + e.texto +
+                 '<span class="kitem-alvo">' + e.alvo + '</span>' +
+               '</div>' +
+             '</label>';
+    }).join('');
+  corpo.querySelectorAll('.kchk').forEach(function(chk){
+    chk.addEventListener('change', function(){
+      const i = Number(chk.dataset.i);
+      if (chk.checked) marcadasConsulta.add(i); else marcadasConsulta.delete(i);
+      const item = chk.closest('.kitem-chk');
+      if (item) item.classList.toggle('kmarcado', chk.checked);
+      pintarProgConsulta(seq.length);
+    });
+  });
+  pintarProgConsulta(seq.length);
+}
+
+/* a sequência mostrada na consulta acompanha o sexo escolhido no modo
+   livre (par XX no lugar das etapas de Y e X); no modo às cegas mantém
+   as duas etapas genéricas, para não entregar o caso sorteado */
+function roteiroConsulta(){
+  if (sexo === 'XX' && !desafio()){
+    return ETAPAS.reduce(function(acc, e, idx){
+      if (idx === 7) return acc;                 /* pula a etapa do Y */
+      if (idx === 8){ acc.push(ETAPA_XX); return acc; }
+      acc.push(e); return acc;
+    }, []);
+  }
+  return ETAPAS.slice();
+}
+
+function pintarProgConsulta(total){
+  const p = document.getElementById('kconsultaProg');
+  if (!p) return;
+  let n = 0;
+  marcadasConsulta.forEach(function(i){ if (i < total) n++; });
+  p.textContent = 'Grupos identificados: ' + n + ' de ' + total;
 }
 
 function abrirConsulta(){
@@ -1715,30 +2006,45 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'Escape' && modal.classList.contains('kon')) fecharConsulta();
 });
 
-document.getElementById('kbtnRecomecar').addEventListener('click', montar);
+document.getElementById('kbtnRecomecar').addEventListener('click', function(){
+  /* no modo às cegas, "nova preparação" é uma nova lâmina anônima:
+     passa de novo pelo sorteio */
+  if (desafio()){
+    el.bancada.classList.add('koculto');
+    rodarSorteio(function(){
+      el.bancada.classList.remove('koculto');
+      montar();
+      raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    return;
+  }
+  montar();
+});
 document.getElementById('kbtnConferir').addEventListener('click', conferir);
 /* ==================================================================
    RÉGUA-CURSOR
    Uma régua retangular vertical acompanha o ponteiro; sobre um
-   cromossomo, mostra a leitura digital do comprimento. A escala é a
-   MESMA em que os cromossomos são desenhados (ESC px por unidade),
-   então a régua realmente mede o que está na tela.
+   cromossomo, mostra a leitura digital do comprimento em Mb. A escala
+   é a MESMA em que os cromossomos são desenhados (ESC px por unidade,
+   e 1 unidade = U_EM_MB megabases), então a régua realmente mede em
+   megabases o que está na tela.
    ================================================================== */
-const REGUA_U = 105;                    /* alcance em unidades */
-const REGUA_H = REGUA_U * ESC;          /* altura em px */
+const REGUA_MB = 260;                   /* alcance da régua, em Mb */
+const MB_ESC   = ESC / U_EM_MB;         /* px por Mb — mesma escala do desenho */
+const REGUA_H  = REGUA_MB * MB_ESC;     /* altura em px */
 
 function construirRegua(){
-  const larg = 30;
+  const larg = 36;
   let m = '';
-  for (let u = 0; u <= REGUA_U; u += 5){
-    const y = u * ESC;
-    const maior = (u % 20 === 0);
-    const comp = maior ? 13 : (u % 10 === 0 ? 9 : 5);
+  for (let mb = 0; mb <= REGUA_MB; mb += 10){
+    const y = mb * MB_ESC;
+    const maior = (mb % 50 === 0);
+    const comp = maior ? 13 : 6;
     m += '<line x1="0" y1="'+y+'" x2="'+comp+'" y2="'+y+'" stroke="#5C4715" stroke-width="'+
          (maior ? 1.4 : .9)+'"/>';
-    if (maior && u > 0){
+    if (maior && mb > 0){
       m += '<text x="'+(comp+2.5)+'" y="'+(y+3.4)+'" font-size="8" fill="#5C4715" ' +
-           'font-family="monospace">'+u+'</text>';
+           'font-family="monospace">'+mb+'</text>';
     }
   }
   const svg = '<svg width="'+larg+'" height="'+(REGUA_H+2)+'" viewBox="0 -1 '+larg+' '+
@@ -1785,7 +2091,7 @@ document.addEventListener('mousemove', function(e){
     const c = achado.c;
     const p = Math.round(c.cen * 100);
     leitura.className = 'kregua-leitura';
-    leitura.innerHTML = '<b>' + Math.round(c.len) + ' u</b>' +
+    leitura.innerHTML = '<b>' + mbDe(c) + ' Mb</b>' +
       '<span>p ' + p + '% · q ' + (100 - p) + '%</span>';
   } else {
     leitura.className = 'kregua-leitura kvazia';
@@ -1851,11 +2157,35 @@ document.getElementById('kbtnRegua').addEventListener('click', function(){
   "use strict";
   var titulo = document.getElementById('telaTitulo');
   var carregando = document.getElementById('telaCarregando');
+  var telaNome = document.getElementById('telaNome');
+  var campoNome = document.getElementById('campoNome');
   var conteudo = document.getElementById('conteudoJogo');
   var fill = document.getElementById('tcPreenchimento');
   var pct = document.getElementById('tcPct');
   var iniciado = false;
   var DURACAO = 2600;
+
+  function pedirNome(){
+    carregando.style.display = 'none';
+    telaNome.style.display = '';
+    try{ campoNome.focus(); }catch(e){}
+  }
+  function entrarNoJogo(){
+    if (typeof window.registrarJogador === 'function'){
+      window.registrarJogador(campoNome ? campoNome.value : '');
+    }
+    telaNome.style.display = 'none';
+    conteudo.style.display = '';
+  }
+  var btnNome = document.getElementById('btnNome');
+  var btnPularNome = document.getElementById('btnPularNome');
+  var formNome = document.getElementById('formNome');
+  if (btnNome) btnNome.addEventListener('click', entrarNoJogo);
+  if (btnPularNome) btnPularNome.addEventListener('click', function(){
+    if (campoNome) campoNome.value = '';
+    entrarNoJogo();
+  });
+  if (formNome) formNome.addEventListener('submit', function(e){ e.preventDefault(); entrarNoJogo(); });
 
   function iniciar(){
     if (iniciado) return;
@@ -1868,10 +2198,7 @@ document.getElementById('kbtnRegua').addEventListener('click', function(){
       fill.style.width = p + '%';
       pct.textContent = p + '%';
       if (p < 100){ requestAnimationFrame(passo); }
-      else {
-        carregando.style.display = 'none';
-        conteudo.style.display = '';
-      }
+      else { pedirNome(); }
     }
     requestAnimationFrame(passo);
   }
