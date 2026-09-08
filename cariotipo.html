@@ -128,7 +128,6 @@ body{
   #ativ-cariotipo .ksel-card[data-modo="completo"] .ksel-nome{ color:var(--ciano); }
   #ativ-cariotipo .ksel-card[data-modo="livre"] .ksel-nome{ color:#9BE0B0; }
   #ativ-cariotipo .ksel-card[data-modo="desafio"] .ksel-nome{ color:#F2A6A2; }
-  #ativ-cariotipo .ksel-desc{ font-size:15.5px; line-height:1.55; color:var(--tinta2); }
   #ativ-cariotipo .ksel-tag{
     align-self:flex-start; margin-top:auto;
     font-family:var(--pixel); font-size:9.5px; line-height:1.8; padding:6px 11px;
@@ -141,8 +140,12 @@ body{
   #ativ-cariotipo /* ---------------- bancada ---------------- */
   .kbancada.koculto{ display:none; }
   #ativ-cariotipo .khud{
-    display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:0 0 16px;
+    display:flex; flex-direction:column; align-items:stretch; gap:9px; margin:0 0 16px;
   }
+  #ativ-cariotipo .khud-linha{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  #ativ-cariotipo .khud-info{ display:flex; flex-wrap:wrap; gap:8px; }
+  #ativ-cariotipo .khud-ferramentas{ display:flex; flex-wrap:wrap; gap:8px; margin-left:auto; }
+  #ativ-cariotipo .khud-acoes{ display:flex; flex-wrap:wrap; gap:8px; }
   #ativ-cariotipo .khud-item{
     font-family:var(--pixel); font-size:10.5px; line-height:1.8; padding:10px 13px;
     border:2px solid var(--linha); border-radius:10px; background:var(--painel2);
@@ -593,9 +596,6 @@ body{
 }
 .tn-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,.35); }
 .tn-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.35); }
-.tn-pular{ position:relative; z-index:1; background:none; border:none; cursor:pointer;
-  font-family:var(--pixel); font-size:8px; letter-spacing:.06em; color:var(--tinta3);
-  text-transform:uppercase; text-decoration:underline; }
 
 /* ===== SORTEIO DO CASO ÀS CEGAS ===== */
 #ativ-cariotipo .kdesafio-sorteio{
@@ -662,6 +662,45 @@ body{
 }
 #ativ-cariotipo .korienta b{ color:#3A0F0D; }
 #ativ-cariotipo .kitem-txt .korienta{ font-size:12px; margin-bottom:7px; }
+
+/* ===== v1.4 — FERRAMENTAS, MENU E RODAPÉ ===== */
+
+/* botões de ferramenta no alto, à direita */
+#ativ-cariotipo .khud-ferramentas .kbtn:not(.kligado){ border-color:var(--uva); }
+
+/* peça já fixada, escolhida para mover de lugar */
+#ativ-cariotipo .kslot.kselslot{ outline:2px solid var(--ambar); outline-offset:2px;
+  box-shadow:0 0 0 3px rgba(255,197,61,.25); }
+
+/* modo inverter: o alvo do clique fica evidente */
+#ativ-cariotipo.kinverter .kcarta{ cursor:alias; }
+#ativ-cariotipo.kinverter .kcarta:hover{ border-color:var(--ambar);
+  background:rgba(255,197,61,.16); }
+#ativ-cariotipo.kinverter .kslot .kpeca{ cursor:alias; }
+
+/* lembrete de orientação: uma vez só, no alto do roteiro */
+#ativ-cariotipo .korienta-fixo{ margin:0 0 12px; }
+
+/* segunda tela da seleção — cariótipo da lâmina (some no caso às cegas) */
+#ativ-cariotipo .kselsexo.koculto{ display:none; }
+#ativ-cariotipo .kselsexo-acoes{ display:flex; flex-wrap:wrap; gap:12px; margin-top:20px;
+  justify-content:center; }
+
+/* cartões de modo compactos — só título + etiqueta */
+#ativ-cariotipo .ksel-opcoes{ gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr)); }
+#ativ-cariotipo .ksel-card{ gap:14px; padding:14px 14px 13px; min-height:112px; }
+#ativ-cariotipo .ksel-nome{ font-size:11px; line-height:1.6; }
+
+/* tela de nome: aviso quando o campo fica vazio */
+.tn-erro{ position:relative; z-index:1; margin:2px 0 0;
+  font-family:var(--pixel); font-size:8px; letter-spacing:.05em; line-height:1.7;
+  text-transform:uppercase; color:var(--vermelho); }
+.tn-campo.tn-campo-erro{ border-color:var(--vermelho); }
+
+/* tela cheia */
+#ativ-cariotipo:fullscreen{ overflow-y:auto; padding-bottom:120px; }
+#ativ-cariotipo:-webkit-full-screen{ overflow-y:auto; padding-bottom:120px; }
 </style>
 </head>
 <body>
@@ -689,10 +728,10 @@ body{
   <div class="tn-sub">Seu nome vai assinar o idiograma e acompanhar você nas conferências.</div>
   <form id="formNome" autocomplete="off">
     <input class="tn-campo" id="campoNome" type="text" name="nome" maxlength="32"
-           placeholder="Seu nome" aria-label="Seu nome" spellcheck="false">
+           placeholder="Seu nome" aria-label="Seu nome" spellcheck="false" required>
   </form>
+  <p class="tn-erro" id="tnErro" hidden>Digite seu nome para continuar.</p>
   <button class="tn-btn" id="btnNome" type="button">▶ Entrar no laboratório</button>
-  <button class="tn-pular" id="btnPularNome" type="button">entrar sem nome</button>
 </div>
 
 <div class="kenv" id="conteudoJogo" style="display:none;">
@@ -700,53 +739,48 @@ body{
   <!-- ============ TELA DE SELEÇÃO ============ -->
   <div class="kselecao" id="kselecao">
     <div class="ksel-cab">
-      <span class="ksel-titulo">Escolha a preparação</span>
-      <span class="ksel-sub">Primeiro o cariótipo, depois o modo de jogo</span>
-    </div>
-
-    <div class="ksel-sexo">
-      <span class="ksel-sexo-rot">Cariótipo da lâmina</span>
-      <p class="ksel-sexo-nota">Não se aplica ao <b>Caso às cegas</b>: nesse modo o cariótipo
-        da lâmina é sorteado e mantido em sigilo.</p>
-      <div class="ksel-sexo-ops">
-        <button class="ksel-sexo-btn kativo" type="button" data-sexo="XY">
-          <span class="ksexo-formula">46,XY</span>
-          <span class="ksexo-desc">Masculino — o X e o Y aparecem sozinhos, sem homólogo</span>
-        </button>
-        <button class="ksel-sexo-btn" type="button" data-sexo="XX">
-          <span class="ksexo-formula">46,XX</span>
-          <span class="ksexo-desc">Feminino — dois X formando par, e nenhum Y na lâmina</span>
-        </button>
-      </div>
+      <span class="ksel-titulo">Escolha o modo</span>
+      <span class="ksel-sub">O cariótipo da lâmina você define no passo seguinte</span>
     </div>
     <div class="ksel-opcoes">
       <button class="ksel-card" type="button" data-modo="abg">
         <span class="ksel-nome">Grupos A, B e G</span>
-        <span class="ksel-desc">Os maiores e os menores do conjunto, sem os grupos
-          intermediários. Três etapas para aprender o método: medir, ler a posição do
-          centrômero e comparar o bandeamento.</span>
         <span class="ksel-tag">14 cromossomos · 3 etapas</span>
       </button>
       <button class="ksel-card" type="button" data-modo="completo">
         <span class="ksel-nome">Cariótipo completo</span>
-        <span class="ksel-desc">Os 22 pares autossômicos mais o par sexual, guiado pelo roteiro
-          de identificação, etapa por etapa.</span>
-        <span class="ksel-tag" id="ktagCompleto">46 cromossomos · 11 etapas</span>
+        <span class="ksel-tag">46 cromossomos · roteiro guiado</span>
       </button>
       <button class="ksel-card" type="button" data-modo="desafio">
         <span class="ksel-nome">Caso às cegas</span>
-        <span class="ksel-desc">Uma lâmina sorteada, sem roteiro e sem qualquer informação
-          prévia: nem o sexo, nem o número de cromossomos. Monte o idiograma e, só então,
-          diga o que encontrou.</span>
         <span class="ksel-tag">diagnóstico ao final</span>
       </button>
       <button class="ksel-card" type="button" data-modo="livre">
         <span class="ksel-nome">Bancada livre</span>
-        <span class="ksel-desc">Os mesmos 46 cromossomos, sem roteiro e com o tabuleiro
-          inteiro aberto: comece pelo grupo que quiser, na ordem que quiser, e confira
-          tudo de uma vez no fim.</span>
-        <span class="ksel-tag">46 cromossomos · sem instruções</span>
+        <span class="ksel-tag">46 cromossomos · sem roteiro</span>
       </button>
+    </div>
+  </div>
+
+  <!-- ====== CARIÓTIPO DA LÂMINA — não aparece no caso às cegas ====== -->
+  <div class="kselecao kselsexo koculto" id="kselSexo">
+    <div class="ksel-cab">
+      <span class="ksel-titulo">Cariótipo da lâmina</span>
+      <span class="ksel-sub" id="kselSexoModo">Modo selecionado</span>
+    </div>
+    <div class="ksel-sexo-ops">
+      <button class="ksel-sexo-btn kativo" type="button" data-sexo="XY">
+        <span class="ksexo-formula">46,XY</span>
+        <span class="ksexo-desc">Masculino — X e Y sozinhos, sem homólogo</span>
+      </button>
+      <button class="ksel-sexo-btn" type="button" data-sexo="XX">
+        <span class="ksexo-formula">46,XX</span>
+        <span class="ksexo-desc">Feminino — dois X formando par, sem Y na lâmina</span>
+      </button>
+    </div>
+    <div class="kselsexo-acoes">
+      <button class="kbtn" type="button" id="kselSexoVoltar">← Voltar</button>
+      <button class="kbtn kprincipal" type="button" id="kselSexoOk">Montar a bancada →</button>
     </div>
   </div>
 
@@ -754,15 +788,26 @@ body{
   <div class="kbancada koculto" id="kbancada">
 
     <div class="khud">
-      <span class="khud-item" id="khudEtapa">ETAPA <b>1/11</b></span>
-      <span class="khud-item" id="khudPos">NESTA ETAPA: <b>0/6</b></span>
-      <span class="khud-item" id="khudPont">PONTOS: <b>1000</b></span>
-      <button class="kbtn kligado" id="kbtnSom" type="button">🔊 Som</button>
-      <button class="kbtn" id="kbtnRegua" type="button">📏 Régua</button>
-      <button class="kbtn kconsulta" id="kbtnConsulta" type="button">📖 Consultar roteiro</button>
-      <button class="kbtn kprincipal" id="kbtnConferir" type="button" disabled>✓ Conferir etapa</button>
-      <button class="kbtn" id="kbtnRecomecar" type="button" disabled>↻ Nova preparação</button>
-      <button class="kbtn" id="kbtnTrocar" type="button" disabled>⇄ Trocar lâmina</button>
+      <div class="khud-linha">
+        <div class="khud-info">
+          <span class="khud-item" id="khudEtapa">ETAPA <b>1/11</b></span>
+          <span class="khud-item" id="khudPos">NESTA ETAPA: <b>0/6</b></span>
+          <span class="khud-item" id="khudPont">PONTOS: <b>1000</b></span>
+        </div>
+        <div class="khud-ferramentas">
+          <button class="kbtn" id="kbtnModoSel" type="button" title="Selecionar um cromossomo e indicar para onde ele vai">✋ Selecionar</button>
+          <button class="kbtn" id="kbtnModoInv" type="button" title="Clicar num cromossomo para invertê-lo">⇅ Inverter</button>
+          <button class="kbtn" id="kbtnRegua" type="button" title="Régua — medir em Mb">📏 Régua</button>
+          <button class="kbtn" id="kbtnTela" type="button" title="Entrar ou sair da tela cheia">⛶ Tela cheia</button>
+        </div>
+      </div>
+      <div class="khud-acoes">
+        <button class="kbtn kprincipal" id="kbtnConferir" type="button" disabled>✓ Conferir</button>
+        <button class="kbtn kconsulta" id="kbtnConsulta" type="button">📖 Roteiro</button>
+        <button class="kbtn" id="kbtnRecomecar" type="button" disabled>↻ Nova lâmina</button>
+        <button class="kbtn" id="kbtnTrocar" type="button" disabled>⇄ Trocar modo</button>
+        <button class="kbtn kligado" id="kbtnSom" type="button" title="Ligar ou desligar o som">🔊 Som</button>
+      </div>
     </div>
 
     <div id="kresultado"></div>
@@ -781,6 +826,7 @@ body{
       <div id="ktabuleiro"></div>
       <div class="kroteiro">
         <div class="kroteiro-cab">Roteiro de identificação</div>
+        <div class="korienta korienta-fixo">↑ Oriente todos os cromossomos com o <b>braço p para cima</b>.</div>
         <div id="kpainelEtapa"></div>
         <div class="kfeitas-cab">Etapas concluídas</div>
         <div id="klistaFeitas"></div>
@@ -823,7 +869,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 6 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.4 &middot; Última atualização: 8 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -934,14 +980,14 @@ const ETAPAS = [
   {ids:['21','22'], alvo:'Grupo G · pares 21 e 22',
    texto:'Localize agora os pares <b>21</b> e <b>22</b>, que constituem o <b>grupo G</b>. São os ' +
      '<b>menores do conjunto</b> e do tipo <b>acrocêntrico</b> — centrômero perto da ' +
-     'extremidade. O braço menor tem uma pequena esfera terminal, o <b>satélite</b>. O que ' +
+     'extremidade. O braço p tem uma pequena esfera terminal, o <b>satélite</b>. O que ' +
      'apresenta a <b>faixa negra mais larga</b> é o <b>21</b>.'},
 
   {ids:['19','20'], alvo:'Grupo F · pares 19 e 20',
    texto:'Procure os pares <b>19</b> e <b>20</b>, do <b>grupo F</b>. São um pouco maiores que os ' +
      'do grupo G e <b>quase metacêntricos</b>. O <b>19</b> apresenta uma faixa negra <b>em torno ' +
-     'do centrômero</b>. O <b>20</b> tem uma faixa negra larga no braço ligeiramente menor e ' +
-     'outra mais estreita no braço maior.'},
+     'do centrômero</b>. O <b>20</b> tem uma faixa negra larga no <b>braço p</b> e ' +
+     'outra mais estreita no <b>braço q</b>.'},
 
   {ids:['13','14','15'], alvo:'Grupo D · pares 13, 14 e 15',
    texto:'Localize os pares <b>13</b>, <b>14</b> e <b>15</b>, que constituem o <b>grupo D</b>. São ' +
@@ -952,35 +998,34 @@ const ETAPAS = [
   {ids:['6','7'], alvo:'Grupo C · pares 6 e 7',
    texto:'Comece o <b>grupo C</b> pelos pares <b>6</b> e <b>7</b>: são os <b>maiores entre os que ' +
      'restaram</b> e do tipo <b>submetacêntrico</b>. O maior dos dois, com <b>faixas negras mais ' +
-     'estreitas no braço menor</b>, é o cromossomo <b>6</b>.'},
+     'estreitas no braço p</b>, é o cromossomo <b>6</b>.'},
 
   {ids:['16','17','18'], alvo:'Grupo E · pares 16, 17 e 18',
    texto:'Dos restantes, descubra os <b>três pares de menor tamanho</b>, do tipo ' +
      'submetacêntrico: são o <b>grupo E</b>. O <b>18</b> é o mais fácil — não apresenta ' +
-     '<b>nenhuma faixa escura no braço menor</b>. Entre os outros dois, o <b>16</b> tem, no ' +
-     'braço menor, uma faixa negra <b>mais larga</b> que a do 17.'},
+     '<b>nenhuma faixa escura no braço p</b>. Entre os outros dois, o <b>16</b> tem, no ' +
+     'braço p, uma faixa negra <b>mais larga</b> que a do 17.'},
 
   {ids:['Y'], alvo:'Cromossomo Y',
-   texto:'Selecione o <b>menor dos cromossomos restantes</b>: trata-se do cromossomo sexual ' +
-     '<b>Y</b>. Além de <b>não ter homólogo</b>, é <b>acrocêntrico</b> e tem uma <b>faixa ' +
-     'cinzenta larga no braço maior</b>. Repare que ele ocupa uma posição só.'},
+   texto:'Caso haja cromossomo <b>Y</b>, ele será o <b>menor dos cromossomos restantes</b>. ' +
+     'Além de <b>não ter homólogo</b>, é <b>acrocêntrico</b> e tem uma <b>faixa cinzenta larga ' +
+     'no braço q</b>. Repare que ele ocupa uma posição só.'},
 
   {ids:['X'], alvo:'Cromossomo X',
-   texto:'Dos cromossomos restantes, identifique o cromossomo sexual <b>X</b>. Ele é o ' +
-     '<b>oitavo maior</b> do cariótipo, é <b>submetacêntrico</b> e apresenta uma <b>faixa ' +
-     'escura estreita no braço menor (p)</b>, próxima ao centrômero. Em cariótipos ' +
-     '<b>femininos (XX)</b> há <b>dois cromossomos X homólogos</b> com esse padrão; em ' +
-     '<b>masculinos (XY)</b> há <b>apenas um X</b>, sem homólogo — o outro cromossomo sexual ' +
-     'é o <b>Y</b>, bem menor.'},
+   texto:'Dos cromossomos restantes, o cromossomo <b>X</b> é o <b>oitavo maior</b> do ' +
+     'cariótipo. Ele é <b>submetacêntrico</b> e apresenta uma <b>faixa escura estreita no ' +
+     'braço p</b>, próxima ao centrômero. Em cariótipos <b>femininos (XX)</b> há <b>dois ' +
+     'cromossomos X homólogos</b> com esse padrão; em <b>masculinos (XY)</b> há <b>apenas ' +
+     'um X</b>.'},
 
   {ids:['9','12'], alvo:'Grupo C · pares 9 e 12',
-   texto:'Selecione, dos restantes, o par que possui <b>três faixas negras largas no braço ' +
-     'curto</b>: é o cromossomo <b>9</b>. Procure agora o par que apresenta <b>apenas uma faixa ' +
-     'negra larga</b> no braço menor: trata-se do <b>12</b>.'},
+   texto:'Selecione, dos restantes, o par que possui <b>três faixas negras largas no ' +
+     'braço p</b>: é o cromossomo <b>9</b>. Procure agora o par que apresenta <b>apenas uma faixa ' +
+     'negra larga</b> no braço p: trata-se do <b>12</b>.'},
 
   {ids:['8','10','11'], alvo:'Grupo C · pares 8, 10 e 11',
-   texto:'Faltam apenas três pares. O que apresenta <b>faixas negras mais largas no braço ' +
-     'maior</b> é o <b>8</b>. Dos dois últimos, o que tem o <b>centrômero mais deslocado</b> ' +
+   texto:'Faltam apenas três pares. O que apresenta <b>faixas negras mais largas no ' +
+     'braço q</b> é o <b>8</b>. Dos dois últimos, o que tem o <b>centrômero mais deslocado</b> ' +
      'para a extremidade é o <b>10</b> — e o que sobrar é o <b>11</b>.'}
 ];
 
@@ -990,7 +1035,7 @@ const ETAPA_XX = {ids:['X'], alvo:'Par sexual · X e X',
   texto:'Falta o <b>par sexual</b>. Como esta é uma lâmina <b>feminina (XX)</b>, não há ' +
     'cromossomo Y: identifique <b>dois cromossomos X homólogos</b>, iguais entre si. O X é o ' +
     '<b>oitavo maior</b> do cariótipo, é <b>submetacêntrico</b> e tem uma <b>faixa escura ' +
-    'estreita no braço menor (p)</b>, próxima ao centrômero. Diferentemente do cariótipo ' +
+    'estreita no braço p</b>, próxima ao centrômero. Diferentemente do cariótipo ' +
     'masculino, aqui os dois X <b>formam um par</b>.'};
 
 /* ==================================================================
@@ -1166,27 +1211,74 @@ function toque(vol, corte){
   src.start(t);
 }
 
+/* um "chiado" curto de ar deslocado — para o giro do cromossomo */
+function sopro(vol, corte, dur){
+  const a = ctx(); if (!a) return;
+  const t = a.currentTime;
+  const n = a.sampleRate * (dur || 0.09);
+  const buf = a.createBuffer(1, n, a.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++){
+    const env = Math.sin(Math.PI * i / n);        /* sobe e desce */
+    d[i] = (Math.random()*2 - 1) * env * env;
+  }
+  const src = a.createBufferSource(); src.buffer = buf;
+  const filtro = a.createBiquadFilter();
+  filtro.type = 'bandpass'; filtro.frequency.value = corte; filtro.Q.value = .7;
+  const g = a.createGain(); g.gain.value = vol;
+  src.connect(filtro); filtro.connect(g); g.connect(a.destination);
+  src.start(t);
+}
+/* pequena variação aleatória de afinação: cada clique soa um pouco diferente */
+function vary(f){ return f * (1 + (Math.random()-.5) * .06); }
+
 const SONS = {
   /* pegar uma carta: clique curto e agudo, como pinça de vidro */
-  selecionar: function(){ nota('triangle', 880, 1180, .05, .05); },
+  selecionar: function(){ const f = vary(940); nota('triangle', f, f*1.3, .05, .05); },
+  /* largar a seleção sem encaixar */
+  soltar:     function(){ const f = vary(620); nota('sine', f, f*.72, .06, .038); },
   /* encaixar: toque seco de papel assentando */
   encaixe:    function(){ toque(.16, 2200); nota('sine', 520, 660, .07, .05); },
   /* devolver à lâmina: o mesmo toque, invertido */
-  devolver:   function(){ nota('sine', 620, 430, .08, .045); },
+  devolver:   function(){ nota('sine', 620, 430, .08, .045); toque(.06, 1400); },
+  /* deslizar uma peça de um encaixe para outro */
+  mover:      function(){ sopro(.05, 900, .07); nota('triangle', 480, 720, .06, .03); },
+  /* trocar duas peças de lugar */
+  trocar:     function(){ nota('triangle', 520, 700, .06, .04);
+                          nota('triangle', 700, 520, .06, .035, .06); },
+  /* virar 180°: chiado curto com duas notinhas opostas */
+  virar:      function(){ sopro(.06, 1300, .08);
+                          nota('square', 400, 320, .04, .026);
+                          nota('square', 560, 660, .05, .028, .05); },
   /* erro: dois graves curtos, sem estridência */
   erro:       function(){ nota('sawtooth', 200, 150, .10, .045);
                           nota('sawtooth', 150, 110, .13, .04, .10); },
-  /* etapa concluída: terça ascendente */
-  etapa:      function(){ nota('sine', 660, 660, .10, .05);
-                          nota('sine', 880, 880, .16, .05, .09); },
-  /* idiograma fechado: arpejo maior */
-  vitoria:    function(){ [523,659,784,1047].forEach(function(f,i){
-                          nota('sine', f, f, .30, .055, i*.10); }); },
-  /* laudo correto: o mesmo arpejo, mais alto e com quinta final */
+  /* etapa concluída: terça ascendente, agora com três graus */
+  etapa:      function(){ nota('sine', 587, 587, .10, .05);
+                          nota('sine', 740, 740, .10, .05, .08);
+                          nota('sine', 880, 880, .18, .05, .16); },
+  /* posições travadas ao fim de uma etapa: um "clac" de trava */
+  travar:     function(){ toque(.2, 760); nota('sine', 320, 200, .12, .05); },
+  /* idiograma fechado: arpejo maior com harmônico final */
+  vitoria:    function(){ [523,659,784,1047,1319].forEach(function(f,i){
+                          nota('sine', f, f, .32, .052, i*.10); });
+                          nota('triangle', 2093, 2093, .5, .022, .52); },
+  /* laudo correto: o mesmo arpejo, mais alto e com quinta e oitava finais */
   diagnostico:function(){ [659,784,988,1319].forEach(function(f,i){
                           nota('triangle', f, f, .34, .05, i*.11); });
-                          nota('sine', 1568, 1568, .5, .04, .46); },
-  /* régua ligando e desligando */
+                          nota('sine', 1568, 1568, .5, .04, .46);
+                          [1976,2637].forEach(function(f,i){
+                          nota('sine', f, f, .55, .018, .6 + i*.12); }); },
+  /* alternar a ferramenta selecionar / inverter */
+  ferramentaSel: function(){ nota('square', 520, 660, .05, .03); },
+  ferramentaInv: function(){ nota('square', 660, 520, .05, .03); },
+  /* abrir e fechar uma tela ou o roteiro */
+  abrir:      function(){ nota('sine', 440, 660, .09, .033); },
+  fechar:     function(){ nota('sine', 640, 440, .09, .033); },
+  /* entrar / sair da tela cheia */
+  tela:       function(){ nota('triangle', 320, 660, .12, .033);
+                          nota('triangle', 480, 900, .10, .028, .06); },
+  /* régua e som ligando / desligando */
   alternar:   function(){ nota('square', 440, 560, .05, .035); }
 };
 
@@ -1210,7 +1302,10 @@ const el = {
   resultado: document.getElementById('kresultado')
 };
 let modo = 'completo', sexo = 'XY';
-let selecionada = null, pontos = 1000, etapaAtual = 0, tentativas = 1;
+let selCarta = null;      /* carta escolhida na lâmina */
+let selSlot = null;       /* peça já fixada, escolhida para mover */
+let ferramenta = null;    /* null (nenhuma) | 'selecionar' | 'inverter' — começa desligada */
+let pontos = 1000, etapaAtual = 0, tentativas = 1;
 
 /* nome do jogador — recolhido na tela de identificação, antes do jogo */
 let jogador = '';
@@ -1222,11 +1317,12 @@ function esc(s){
 /* "Fulano, você" no começo da frase, ou só "Você" quando não há nome */
 function voce(){ return jogador ? esc(jogador) + ', você' : 'Você'; }
 
-/* toda regra do roteiro abre com o mesmo lembrete de orientação:
-   os cromossomos entram no gabarito com o braço curto (p) para cima */
+/* lembrete de orientação — mostrado UMA vez (no alto do roteiro fixo e
+   no topo do roteiro de consulta), nunca repetido a cada passo:
+   os cromossomos entram no gabarito com o braço p para cima */
 const LEMBRETE_ORIENTA =
-  '<span class="korienta">↑ Posicione todos os cromossomos com o ' +
-  '<b>braço curto para cima</b>.</span>';
+  '<span class="korienta">↑ Oriente todos os cromossomos com o ' +
+  '<b>braço p para cima</b>.</span>';
 window.registrarJogador = function(n){ jogador = String(n || '').trim().slice(0, 32); };
 
 /* número da lâmina fixado no sorteio do modo às cegas, para o rótulo */
@@ -1378,15 +1474,6 @@ function montarTabuleiro(){
     el.tabuleiro.appendChild(box);
   });
 
-  const pe = document.createElement('div');
-  pe.className = 'kfolha-pe';
-  pe.innerHTML =
-    '<span>Padrão de bandeamento conforme as normas do <b>4º Congresso Internacional de ' +
-      'Genética Humana</b>, Paris, 1971.</span>' +
-    '<span>Cole cada cromossomo com o <b>centrômero sobre a linha tracejada</b> e o ' +
-      '<b>braço curto para cima</b>.</span>';
-  el.tabuleiro.appendChild(pe);
-
   const selo = document.createElement('div');
   selo.className = 'kselo';
   selo.innerHTML = 'CONFERIDO<span>análise concluída</span>';
@@ -1413,55 +1500,52 @@ function criarCarta(c, virado){
   d.dataset.id = c.id;
   d.dataset.virado = virado ? '1' : '0';
   d.innerHTML = '<div class="kdesenho">' + desenhar(c, virado) + '</div>' +
-    '<div class="kcarta-pe">' +
-      '<button class="kgirar" type="button" title="Virar 180°">⟳</button>' +
-      '<span class="kmedida">' + mbDe(c) + ' Mb</span>' +
-    '</div>';
-  d.querySelector('.kgirar').addEventListener('click', function(e){
-    e.stopPropagation();
-    const v = d.dataset.virado === '1';
-    d.dataset.virado = v ? '0' : '1';
-    d.querySelector('.kdesenho').innerHTML = desenhar(c, !v);
-    tocar('alternar');
-  });
-  d.addEventListener('click', function(){ selecionar(d); });
+    '<span class="kmedida">' + mbDe(c) + ' Mb</span>';
+  d.addEventListener('click', function(){ clicarCarta(d); });
   return d;
 }
 
+/* clique numa carta da lâmina: depende da ferramenta ativa */
+function clicarCarta(d){
+  if (ferramenta === 'inverter'){ virarCarta(d); return; }
+  if (ferramenta === 'selecionar'){ selecionar(d); return; }
+  /* nenhuma ferramenta ligada: o clique não faz nada */
+}
+
+/* vira a carta 180° na própria lâmina */
+function virarCarta(d){
+  const c = acharCromo(d.dataset.id);
+  const v = d.dataset.virado === '1';
+  d.dataset.virado = v ? '0' : '1';
+  d.querySelector('.kdesenho').innerHTML = desenhar(c, !v);
+  tocar('virar');
+}
+
+/* ---------------- seleção e movimento ---------------- */
+function limparSelecao(){
+  if (selCarta){ selCarta.classList.remove('ksel'); selCarta = null; }
+  if (selSlot){ selSlot.classList.remove('kselslot'); selSlot = null; }
+}
+
 function selecionar(d){
-  if (selecionada === d){ d.classList.remove('ksel'); selecionada = null; return; }
-  if (selecionada) selecionada.classList.remove('ksel');
-  selecionada = d; d.classList.add('ksel');
+  if (selCarta === d){ limparSelecao(); tocar('soltar'); return; }
+  limparSelecao();
+  selCarta = d; d.classList.add('ksel');
   tocar('selecionar');
 }
 
-function clicarSlot(s){
-  /* etapa já fechada ou posição ainda travada: o clique não mexe na peça
-     (com a régua ativa a peça volta a receber o ponteiro só para a leitura) */
-  if (s.classList.contains('kfechado') || s.classList.contains('ktravado')) return;
-  /* encaixe ocupado → devolve à metáfase */
-  if (s.dataset.posto){
-    const c = acharCromo(s.dataset.posto);
-    const virado = s.dataset.viradoPosto === '1';
-    s.dataset.posto = ''; s.dataset.viradoPosto = '';
-    s.className = 'kslot'; s.innerHTML = '';
-    el.metafase.appendChild(criarCarta(c, virado));
-    tocar('devolver');
-    aplicarTravas();
-    atualizar();
-    return;
-  }
-  if (!selecionada) return;
+/* esvazia um encaixe (sem devolver a peça a lugar nenhum) */
+function esvaziarSlot(s){
+  s.dataset.posto = ''; s.dataset.viradoPosto = '';
+  s.className = 'kslot'; s.innerHTML = '';
+}
 
-  const c = acharCromo(selecionada.dataset.id);
-  const virado = selecionada.dataset.virado === '1';
+/* desenha a peça c dentro do encaixe s, alinhada pelo centrômero */
+function colocarPeca(s, c, virado){
   s.dataset.posto = c.id;
   s.dataset.viradoPosto = virado ? '1' : '0';
   s.classList.remove('kcerto','kerrado');
   s.classList.add('kcheio');
-
-  /* alinhamento pelo centrômero: é isto que a versão em papel pede
-     que o aluno faça à mão ao colar sobre a linha tracejada */
   const peca = document.createElement('div');
   peca.className = 'kpeca';
   peca.innerHTML = desenhar(c, virado);
@@ -1470,12 +1554,117 @@ function clicarSlot(s){
   peca.style.top = (Number(s.dataset.linha) - centroVisual(c, virado)) + 'px';
   s.innerHTML = '';
   s.appendChild(peca);
+}
 
-  selecionada.remove();
-  selecionada = null;
-  tocar('encaixe');
-  aplicarTravas();
+/* devolve a peça de um encaixe para a lâmina */
+function devolverPeca(s){
+  if (!s.dataset.posto) return;
+  const c = acharCromo(s.dataset.posto);
+  const virado = s.dataset.viradoPosto === '1';
+  esvaziarSlot(s);
+  el.metafase.appendChild(criarCarta(c, virado));
+}
+
+/* põe no encaixe s a peça da carta d (que sai da lâmina) */
+function colocarDaCarta(s, d){
+  colocarPeca(s, acharCromo(d.dataset.id), d.dataset.virado === '1');
+  d.remove();
+}
+
+/* move a peça de um encaixe para outro, vazio */
+function moverEntreSlots(origem, destino){
+  const c = acharCromo(origem.dataset.posto);
+  const virado = origem.dataset.viradoPosto === '1';
+  esvaziarSlot(origem);
+  colocarPeca(destino, c, virado);
+}
+
+/* troca de lugar as peças de dois encaixes ocupados */
+function trocarSlots(a, b){
+  const ca = acharCromo(a.dataset.posto), va = a.dataset.viradoPosto === '1';
+  const cb = acharCromo(b.dataset.posto), vb = b.dataset.viradoPosto === '1';
+  esvaziarSlot(a); esvaziarSlot(b);
+  colocarPeca(a, cb, vb);
+  colocarPeca(b, ca, va);
+}
+
+/* vira no lugar a peça já fixada num encaixe */
+function virarPeca(s){
+  const c = acharCromo(s.dataset.posto);
+  const virado = !(s.dataset.viradoPosto === '1');
+  s.dataset.viradoPosto = virado ? '1' : '0';
+  s.classList.remove('kcerto','kerrado');
+  const peca = s.querySelector('.kpeca');
+  if (peca){
+    peca.innerHTML = desenhar(c, virado);
+    peca.style.top = (Number(s.dataset.linha) - centroVisual(c, virado)) + 'px';
+  }
+  tocar('virar');
   atualizar();
+}
+
+function clicarSlot(s){
+  /* etapa já fechada ou posição ainda travada: o clique não mexe na peça
+     (com a régua ativa a peça volta a receber o ponteiro só para a leitura) */
+  if (s.classList.contains('kfechado') || s.classList.contains('ktravado')) return;
+
+  /* modo inverter: clicar numa peça fixada vira-a no lugar */
+  if (ferramenta === 'inverter'){
+    if (s.dataset.posto) virarPeca(s);
+    return;
+  }
+
+  /* sem ferramenta ligada: o clique não mexe em nada */
+  if (ferramenta !== 'selecionar') return;
+
+  /* --- modo selecionar --- */
+  if (s.dataset.posto){
+    if (selCarta){
+      /* a peça daqui volta à lâmina; entra a carta escolhida */
+      devolverPeca(s);
+      colocarDaCarta(s, selCarta);
+      limparSelecao();
+      tocar('encaixe');
+      aplicarTravas(); atualizar();
+      return;
+    }
+    if (selSlot === s){
+      /* clicou de novo na peça escolhida: devolve à lâmina */
+      devolverPeca(s);
+      limparSelecao();
+      tocar('devolver');
+      aplicarTravas(); atualizar();
+      return;
+    }
+    if (selSlot){
+      trocarSlots(selSlot, s);
+      limparSelecao();
+      tocar('trocar');
+      aplicarTravas(); atualizar();
+      return;
+    }
+    /* nada escolhido: escolhe esta peça para mover */
+    limparSelecao();
+    selSlot = s; s.classList.add('kselslot');
+    tocar('selecionar');
+    return;
+  }
+
+  /* encaixe vazio */
+  if (selCarta){
+    colocarDaCarta(s, selCarta);
+    limparSelecao();
+    tocar('encaixe');
+    aplicarTravas(); atualizar();
+    return;
+  }
+  if (selSlot){
+    moverEntreSlots(selSlot, s);
+    limparSelecao();
+    tocar('mover');
+    aplicarTravas(); atualizar();
+    return;
+  }
 }
 
 /* ---------------- HUD, pistas e conferência ---------------- */
@@ -1509,12 +1698,10 @@ function pintarEtapa(){
   if (!guiado()){
     el.painelEtapa.innerHTML =
       '<div class="ketapa-atual klivre">' +
-        LEMBRETE_ORIENTA +
         (desafio()
           ? '<span class="ketapa-alvo ksemtopo">Monte primeiro. O laudo vem depois — e o ' +
-            'roteiro de identificação continua disponível em “Consultar roteiro”.</span>'
-          : '<span class="ketapa-alvo ksemtopo">Em dúvida? Abra o roteiro em ' +
-            '“Consultar roteiro”</span>') +
+            'roteiro de identificação continua disponível em “Roteiro”.</span>'
+          : '<span class="ketapa-alvo ksemtopo">Em dúvida? Abra o roteiro em “Roteiro”.</span>') +
       '</div>';
     return;
   }
@@ -1524,7 +1711,7 @@ function pintarEtapa(){
   el.painelEtapa.innerHTML =
     '<div class="ketapa-atual">' +
       '<span class="ketapa-num">ETAPA ' + (etapaAtual+1) + ' DE ' + tot + '</span>' +
-      '<div class="ketapa-texto">' + LEMBRETE_ORIENTA + ' ' + e.texto + '</div>' +
+      '<div class="ketapa-texto">' + e.texto + '</div>' +
       '<span class="ketapa-alvo">Libera: ' + e.alvo + '</span>' +
     '</div>';
 }
@@ -1597,7 +1784,8 @@ function conferir(){
     registrarFeita(e, etapaAtual+1);
     etapaAtual++;
     tentativas = 1;
-    tocar(etapaAtual >= etapas().length ? 'kvitoria' : 'etapa');
+    if (etapaAtual >= etapas().length){ tocar('vitoria'); }
+    else { tocar('travar'); tocar('etapa'); }
 
     if (etapaAtual >= etapas().length){
       el.resultado.className = 'kon kvitoria';
@@ -1628,7 +1816,7 @@ function conferir(){
     let diag = '';
     if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
     if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
-      'baixo</b> — o braço curto (p) deve ficar para cima. ';
+      'baixo</b> — o braço p deve ficar para cima. ';
     el.resultado.className = 'kon kfalha';
     tocar('erro');
     el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
@@ -1661,13 +1849,14 @@ function conferirTudo(){
   if (certos === ss.length && desafio()){
     /* montagem correta: só agora vem a pergunta do diagnóstico */
     el.tabuleiro.classList.add('kconferido');
-    tocar('kvitoria');
+    tocar('vitoria');
+    encerrarRegua();
     pedirDiagnostico();
     return;
   }
 
   if (certos === ss.length){
-    tocar('kvitoria');
+    tocar('vitoria');
     el.resultado.className = 'kon kvitoria';
     el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo, sem roteiro</span>' +
       voce() + ' montou os 46 cromossomos por conta própria, com <b>' + pontos + ' pontos</b>. ' +
@@ -1681,7 +1870,7 @@ function conferirTudo(){
     let diag = '';
     if (trocados) diag += '<b>' + trocados + '</b> em posição errada. ';
     if (invertidos) diag += '<b>' + invertidos + '</b> na posição certa, mas <b>de cabeça para ' +
-      'baixo</b> — o braço curto (p) deve ficar para cima. ';
+      'baixo</b> — o braço p deve ficar para cima. ';
     tocar('erro');
     el.resultado.className = 'kon kfalha';
     el.resultado.innerHTML = '<span class="kgrande">✗ ' + (ss.length - certos) +
@@ -1739,7 +1928,7 @@ function responderDiagnostico(chave){
     return;
   }
 
-  tocar('kdiagnostico');
+  tocar('diagnostico');
   /* deixa explícito o par sexual encontrado — em especial que num caso
      feminino (XX) os dois X são homólogos e a alteração está num autossomo */
   let notaSexo = '';
@@ -1784,6 +1973,18 @@ function liberarSaidas(liberar){
     b.disabled = !liberar;
     b.title = liberar ? '' : 'Disponível depois de fechar o idiograma';
   });
+  /* a análise terminou: a régua se desliga sozinha */
+  if (liberar) encerrarRegua();
+}
+
+/* desliga a régua e limpa o realce da peça sob o ponteiro */
+function encerrarRegua(){
+  if (raizAtiv.classList.contains('kmedindo')){
+    raizAtiv.classList.remove('kmedindo');
+    const b = document.getElementById('kbtnRegua');
+    if (b) b.classList.remove('kligado');
+  }
+  if (medidoAtual){ medidoAtual.classList.remove('kmedido'); medidoAtual = null; }
 }
 
 function montar(){
@@ -1802,7 +2003,8 @@ function montar(){
   embaralhar(pecas).forEach(function(c){
     el.metafase.appendChild(criarCarta(c, Math.random() < .5));
   });
-  selecionada = null; pontos = 1000; etapaAtual = 0; tentativas = 1;
+  limparSelecao(); setFerramenta(null, true);
+  pontos = 1000; etapaAtual = 0; tentativas = 1;
   marcadasConsulta.clear();
   el.feitas.innerHTML = '';
   el.resultado.className = ''; el.resultado.innerHTML = '';
@@ -1821,15 +2023,15 @@ function montar(){
     guiado() ? 'Roteiro de identificação' : (desafio() ? 'Caso às cegas' : 'Bancada livre');
   document.getElementById('kdicaAcervo').innerHTML = guiado()
     ? 'Siga o roteiro ao lado: cada etapa libera as posições do tabuleiro e diz o que ' +
-      'procurar. Toque num cromossomo e depois no encaixe liberado; use ⟳ para virá-lo, ' +
-      'deixando o <b>braço curto para cima</b>.'
+      'procurar. Com <b>Selecionar</b> ativo, clique num cromossomo e depois no encaixe ' +
+      'liberado; para virá-lo, ligue <b>Inverter</b> e clique nele — o <b>braço p</b> fica para cima.'
     : desafio()
     ? 'Lâmina sem identificação. Monte o idiograma inteiro e, ao conferir, você será ' +
       'convidado a dar o laudo. O gabarito traz mais posições do que cromossomos: nem todas ' +
       'serão usadas, e descobrir quais sobram faz parte da análise.'
-    : 'O tabuleiro está todo aberto. Toque num cromossomo e depois na posição que julgar ' +
-      'certa, em qualquer grupo; use ⟳ para virá-lo, deixando o <b>braço curto para cima</b>. ' +
-      'A régua ajuda a comparar tamanhos.';
+    : 'O tabuleiro está todo aberto. Com <b>Selecionar</b> ativo, clique num cromossomo e ' +
+      'depois na posição que julgar certa, em qualquer grupo; para virá-lo, ligue ' +
+      '<b>Inverter</b> e clique nele — o <b>braço p</b> fica para cima. A régua ajuda a comparar tamanhos.';
   pintarEtapa();
   aplicarTravas();
   liberarSaidas(false);
@@ -1843,15 +2045,18 @@ document.querySelectorAll('.ksel-sexo-btn').forEach(function(b){
     document.querySelectorAll('.ksel-sexo-btn').forEach(function(o){
       o.classList.toggle('kativo', o === b);
     });
-    document.getElementById('ktagCompleto').textContent =
-      '46 cromossomos · ' + (sexo === 'XY' ? '11' : '10') + ' etapas';
+    tocar('selecionar');
   });
 });
 
 const telaSorteio = document.getElementById('kdesafioSorteio');
+const telaSexo = document.getElementById('kselSexo');
+const ROTULO_MODO = { abg:'Grupos A, B e G', completo:'Cariótipo completo',
+  livre:'Bancada livre', desafio:'Caso às cegas' };
 
 window.iniciarCariotipo = function(){
   el.selecao.classList.remove('koculto');
+  telaSexo.classList.add('koculto');
   el.bancada.classList.add('koculto');
   telaSorteio.classList.add('koculto');
   modal.classList.remove('kon');
@@ -1911,7 +2116,9 @@ document.querySelectorAll('.ksel-card').forEach(function(b){
   b.addEventListener('click', function(){
     modo = b.dataset.modo;
     el.selecao.classList.add('koculto');
+    tocar('abrir');
     if (modo === 'desafio'){
+      /* caso às cegas: sem escolha de cariótipo — ele é sorteado */
       rodarSorteio(function(){
         el.bancada.classList.remove('koculto');
         montar();
@@ -1919,15 +2126,29 @@ document.querySelectorAll('.ksel-card').forEach(function(b){
       });
       return;
     }
-    el.bancada.classList.remove('koculto');
-    montar();
+    /* demais modos: passo do cariótipo da lâmina (XX ou XY) */
+    document.getElementById('kselSexoModo').textContent =
+      'Modo: ' + (ROTULO_MODO[modo] || modo);
+    telaSexo.classList.remove('koculto');
     raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
   });
+});
+document.getElementById('kselSexoVoltar').addEventListener('click', function(){
+  telaSexo.classList.add('koculto');
+  el.selecao.classList.remove('koculto');
+  tocar('fechar');
+});
+document.getElementById('kselSexoOk').addEventListener('click', function(){
+  telaSexo.classList.add('koculto');
+  el.bancada.classList.remove('koculto');
+  montar();
+  raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
 });
 document.getElementById('kbtnTrocar').addEventListener('click', function(){
   modal.classList.remove('kon');
   el.bancada.classList.add('koculto');
   telaSorteio.classList.add('koculto');
+  telaSexo.classList.add('koculto');
   el.selecao.classList.remove('koculto');
   raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
 });
@@ -1943,6 +2164,7 @@ function preencherConsulta(){
   const corpo = document.getElementById('kmodalCorpo');
   const seq = roteiroConsulta();
   corpo.innerHTML =
+    LEMBRETE_ORIENTA +
     '<div class="kconsulta-prog" id="kconsultaProg"></div>' +
     seq.map(function(e, i){
       const marc = marcadasConsulta.has(i);
@@ -1950,7 +2172,7 @@ function preencherConsulta(){
                '<input type="checkbox" class="kchk" data-i="' + i + '"' +
                  (marc ? ' checked' : '') + '>' +
                '<span class="kitem-n">' + (i+1) + '</span>' +
-               '<div class="kitem-txt">' + LEMBRETE_ORIENTA + ' ' + e.texto +
+               '<div class="kitem-txt">' + e.texto +
                  '<span class="kitem-alvo">' + e.alvo + '</span>' +
                '</div>' +
              '</label>';
@@ -1992,10 +2214,12 @@ function pintarProgConsulta(total){
 function abrirConsulta(){
   preencherConsulta();
   modal.classList.add('kon');
+  tocar('abrir');
   document.getElementById('kbtnFechar').focus();
 }
 function fecharConsulta(){
   modal.classList.remove('kon');
+  tocar('fechar');
   document.getElementById('kbtnConsulta').focus();
 }
 
@@ -2117,6 +2341,54 @@ document.getElementById('kbtnRegua').addEventListener('click', function(){
   }
 });
 
+/* ---------------- ferramentas: selecionar / inverter ---------------- */
+const btnModoSel = document.getElementById('kbtnModoSel');
+const btnModoInv = document.getElementById('kbtnModoInv');
+
+function setFerramenta(f, silencioso){
+  ferramenta = f;
+  btnModoSel.classList.toggle('kligado', f === 'selecionar');
+  btnModoInv.classList.toggle('kligado', f === 'inverter');
+  raizAtiv.classList.toggle('kinverter', f === 'inverter');
+  limparSelecao();
+  if (!silencioso){
+    tocar(f === 'inverter' ? 'ferramentaInv' : f === 'selecionar' ? 'ferramentaSel' : 'fechar');
+  }
+}
+/* cada botão liga a sua ferramenta; clicar de novo desliga (nenhuma ativa) */
+btnModoSel.addEventListener('click', function(){
+  setFerramenta(ferramenta === 'selecionar' ? null : 'selecionar');
+});
+btnModoInv.addEventListener('click', function(){
+  setFerramenta(ferramenta === 'inverter' ? null : 'inverter');
+});
+
+/* ---------------- tela cheia ---------------- */
+const btnTela = document.getElementById('kbtnTela');
+function emTelaCheia(){
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+function alternarTela(){
+  try{
+    if (!emTelaCheia()){
+      const p = raizAtiv.requestFullscreen || raizAtiv.webkitRequestFullscreen;
+      if (p) p.call(raizAtiv);
+    } else {
+      const s = document.exitFullscreen || document.webkitExitFullscreen;
+      if (s) s.call(document);
+    }
+  }catch(e){}
+  tocar('tela');
+}
+function pintarBotaoTela(){
+  const on = !!emTelaCheia();
+  btnTela.classList.toggle('kligado', on);
+  btnTela.textContent = on ? '⤡ Sair da tela cheia' : '⛶ Tela cheia';
+}
+btnTela.addEventListener('click', alternarTela);
+document.addEventListener('fullscreenchange', pintarBotaoTela);
+document.addEventListener('webkitfullscreenchange', pintarBotaoTela);
+
 })();
 
 (function(){
@@ -2170,22 +2442,29 @@ document.getElementById('kbtnRegua').addEventListener('click', function(){
     telaNome.style.display = '';
     try{ campoNome.focus(); }catch(e){}
   }
+  var tnErro = document.getElementById('tnErro');
   function entrarNoJogo(){
-    if (typeof window.registrarJogador === 'function'){
-      window.registrarJogador(campoNome ? campoNome.value : '');
+    var nome = campoNome ? campoNome.value.trim() : '';
+    if (!nome){
+      /* identificação obrigatória: não há mais "entrar sem nome" */
+      if (tnErro) tnErro.hidden = false;
+      if (campoNome){ campoNome.classList.add('tn-campo-erro'); try{ campoNome.focus(); }catch(e){} }
+      return;
     }
+    if (typeof window.registrarJogador === 'function') window.registrarJogador(nome);
     telaNome.style.display = 'none';
     conteudo.style.display = '';
   }
   var btnNome = document.getElementById('btnNome');
-  var btnPularNome = document.getElementById('btnPularNome');
   var formNome = document.getElementById('formNome');
   if (btnNome) btnNome.addEventListener('click', entrarNoJogo);
-  if (btnPularNome) btnPularNome.addEventListener('click', function(){
-    if (campoNome) campoNome.value = '';
-    entrarNoJogo();
-  });
   if (formNome) formNome.addEventListener('submit', function(e){ e.preventDefault(); entrarNoJogo(); });
+  if (campoNome) campoNome.addEventListener('input', function(){
+    if (campoNome.value.trim()){
+      campoNome.classList.remove('tn-campo-erro');
+      if (tnErro) tnErro.hidden = true;
+    }
+  });
 
   function iniciar(){
     if (iniciado) return;
