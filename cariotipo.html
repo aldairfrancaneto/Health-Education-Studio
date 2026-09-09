@@ -686,11 +686,21 @@ body{
 #ativ-cariotipo .kselsexo-acoes{ display:flex; flex-wrap:wrap; gap:12px; margin-top:20px;
   justify-content:center; }
 
-/* cartões de modo compactos — só título + etiqueta */
+/* cartões de modo compactos — só título + etiqueta, tudo centralizado */
 #ativ-cariotipo .ksel-opcoes{ gap:12px;
   grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr)); }
-#ativ-cariotipo .ksel-card{ gap:14px; padding:14px 14px 13px; min-height:112px; }
+#ativ-cariotipo .ksel-card{ gap:14px; padding:14px 14px 13px; min-height:112px;
+  text-align:center; align-items:center; }
+#ativ-cariotipo .ksel-card .ksel-tag{ align-self:center; }
 #ativ-cariotipo .ksel-nome{ font-size:11px; line-height:1.6; }
+
+/* menu de seleção: subtítulos em caixa normal (só a inicial maiúscula) */
+#ativ-cariotipo .ksel-sub{ text-transform:none; }
+
+/* textos do roteiro com alinhamento justificado */
+#ativ-cariotipo .ketapa-texto,
+#ativ-cariotipo .kitem-txt,
+#ativ-cariotipo .kmodal-nota{ text-align:justify; }
 
 /* tela de nome: aviso quando o campo fica vazio */
 .tn-erro{ position:relative; z-index:1; margin:2px 0 0;
@@ -749,15 +759,15 @@ body{
       </button>
       <button class="ksel-card" type="button" data-modo="completo">
         <span class="ksel-nome">Cariótipo completo</span>
-        <span class="ksel-tag">46 cromossomos · roteiro guiado</span>
+        <span class="ksel-tag">46 cromossomos · Roteiro guiado</span>
       </button>
       <button class="ksel-card" type="button" data-modo="desafio">
         <span class="ksel-nome">Caso às cegas</span>
-        <span class="ksel-tag">diagnóstico ao final</span>
+        <span class="ksel-tag">Diagnóstico ao final</span>
       </button>
       <button class="ksel-card" type="button" data-modo="livre">
         <span class="ksel-nome">Bancada livre</span>
-        <span class="ksel-tag">46 cromossomos · sem roteiro</span>
+        <span class="ksel-tag">46 cromossomos · Sem roteiro</span>
       </button>
     </div>
   </div>
