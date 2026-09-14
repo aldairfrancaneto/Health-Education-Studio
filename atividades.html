@@ -63,6 +63,65 @@
   }
   .cloud.c1{ top:60px; left:6%; transform:scale(1.3); }
   .cloud.c2{ top:200px; right:8%; transform:scale(1.05); opacity:.7; }
+  .cloud.c3{ top:420px; left:3%; transform:scale(.9); opacity:.6; }
+  .cloud.c4{ top:600px; right:4%; transform:scale(1.2); opacity:.65; }
+  .cloud.c5{ top:900px; left:5%; transform:scale(1.05); opacity:.55; }
+  .cloud.c6{ top:1150px; right:3%; transform:scale(.85); opacity:.6; }
+  .cloud.c7{ top:1450px; left:4%; transform:scale(1.15); opacity:.5; }
+  .cloud.c8{ top:1700px; right:6%; transform:scale(.95); opacity:.6; }
+
+  /* ── "chão" de tijolos como divisor, com colinas e arbustos (decorativos) ── */
+  .brick-divider{
+    position:relative;
+    height:26px; margin:46px 0 0;
+    background-image:
+      linear-gradient(var(--outline) 2px, transparent 2px),
+      linear-gradient(90deg, var(--outline) 2px, transparent 2px);
+    background-size:44px 26px;
+    background-color:var(--brick, #C9642B);
+    border-top:3px solid var(--outline);
+    border-bottom:3px solid var(--outline);
+    box-shadow:0 4px 0 rgba(0,0,0,.2);
+  }
+  .hill{
+    position:absolute; bottom:100%; z-index:0; pointer-events:none;
+    border-radius:50% 50% 0 0;
+    border:3px solid var(--outline);
+  }
+  .hill.left{ width:200px; height:70px; left:2%; background:var(--green); opacity:.55; }
+  .hill.right{ width:160px; height:58px; right:4%; background:var(--green-dark); opacity:.45; }
+  @media (max-width:700px){ .hill{ display:none; } }
+  .bush{
+    position:absolute; z-index:1; pointer-events:none;
+    width:60px; height:30px; top:-26px;
+    background:var(--green);
+    border:3px solid var(--outline);
+    border-radius:50% 50% 6px 6px;
+  }
+  .bush::before, .bush::after{
+    content:""; position:absolute; bottom:0;
+    width:30px; height:26px;
+    background:inherit; border:3px solid var(--outline);
+    border-radius:50%;
+  }
+  .bush::before{ left:-14px; }
+  .bush::after{ right:-14px; }
+  .bush.left{ left:6%; }
+  .bush.right{ right:8%; }
+  @media (max-width:480px){ .bush{ display:none; } }
+  .qmark{
+    font-family:var(--font-pixel); font-size:13px; color:var(--ink);
+    width:34px; height:34px; flex:0 0 auto;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--coin); border:3px solid var(--outline); border-radius:5px;
+    box-shadow:3px 3px 0 var(--outline);
+    animation:qfloat 2.4s ease-in-out infinite;
+  }
+  @keyframes qfloat{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
   a{ color:var(--red-dark); text-decoration:none; }
   ::selection{ background:var(--coin); color:var(--ink); }
   .wrap{ max-width:1180px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
@@ -355,14 +414,14 @@
     background:var(--paper); border:3px solid var(--outline); border-radius:8px;
     box-shadow:4px 4px 0 var(--outline); padding:12px 15px; max-width:760px;
   }
-  .sum-grade{
-    display:grid; gap:16px; margin:18px 0 0;
-    grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  .sum-lista{
+    display:grid; grid-template-columns:repeat(2, minmax(0, 33.333%));
+    justify-content:center; row-gap:16px; column-gap:48px; margin:18px 0 0;
   }
-  /* cartao do sumario: e apenas um indice, nao abre a atividade.
+  /* item do sumario: e apenas um indice, nao abre a atividade.
      A entrada continua sendo exclusivamente pelo campo de senha. */
   .sum-card{
-    display:flex; flex-direction:column; gap:9px; text-align:left;
+    display:flex; flex-direction:column; align-items:center; gap:9px; text-align:center;
     background:var(--paper); border:4px solid var(--outline); border-radius:10px;
     box-shadow:5px 5px 0 var(--outline); padding:15px 16px 16px;
     font-family:var(--font-body); color:var(--ink);
@@ -370,21 +429,12 @@
   .sum-card .sum-num{
     font-family:var(--font-pixel); font-size:10px; color:#fff;
     background:var(--blue); border:2px solid var(--outline); border-radius:4px;
-    padding:5px 7px; align-self:flex-start; box-shadow:2px 2px 0 var(--outline);
+    padding:5px 7px; align-self:center; box-shadow:2px 2px 0 var(--outline);
   }
-  .sum-card .sum-nome{ font-weight:800; font-size:16.5px; line-height:1.35; }
-  .sum-card .sum-desc{
-    font-size:14px; line-height:1.55; opacity:.88;
-    text-align:justify; text-justify:inter-word; hyphens:auto;
-  }
-  /* etiqueta com o tipo de dinamica da atividade */
-  .sum-card .sum-tipo{
-    margin-top:2px; font-family:var(--font-pixel); font-size:8px; line-height:1.5;
-    background:var(--paper-2); border:2px solid var(--outline); border-radius:4px;
-    padding:6px 8px; align-self:flex-start; color:var(--ink);
-  }
+  .sum-card .sum-nome{ font-weight:800; font-size:16.5px; line-height:1.35; text-align:center; }
   /* referência bibliográfica, dobrada dentro do próprio cartão */
   .sum-card .sum-biblio{
+    align-self:stretch;
     margin-top:4px; border:2px solid var(--outline); border-radius:8px;
     background:var(--paper-2); overflow:hidden;
   }
@@ -411,8 +461,9 @@
     box-shadow:4px 4px 0 var(--outline); padding:13px 16px; max-width:760px;
   }
   .sum-aviso a{ color:var(--ink); text-decoration:underline; font-weight:800; word-break:break-word; }
-  @media (max-width:600px){
-    .sum-grade{ grid-template-columns:1fr; gap:13px; }
+  @media (max-width:700px){
+    .sum-lista{ grid-template-columns:1fr; gap:13px; }
+    .sum-card{ width:100%; }
   }
   /* ============================================================
      Cada atividade é um arquivo HTML próprio. Ao digitar a senha
@@ -424,6 +475,12 @@
 
 <div class="cloud c1"></div>
 <div class="cloud c2"></div>
+<div class="cloud c3"></div>
+<div class="cloud c4"></div>
+<div class="cloud c5"></div>
+<div class="cloud c6"></div>
+<div class="cloud c7"></div>
+<div class="cloud c8"></div>
 
 <header>
   <div class="nav-inner">
@@ -442,8 +499,16 @@
   <div class="level-tag">
     <span class="level-num">01</span>
     <span class="level-label">SALA DE AULA</span>
+    <span class="qmark" aria-hidden="true">?</span>
   </div>
   <h1 class="titulo">Atividade Presencial</h1>
+
+  <div class="brick-divider" style="margin-top:100px;">
+    <div class="hill left"></div>
+    <div class="hill right"></div>
+    <div class="bush left"></div>
+    <div class="bush right"></div>
+  </div>
 
   <!-- ===================== PORTÃO DE SENHA ===================== -->
   <div id="portao">
@@ -475,22 +540,16 @@
   <div id="sumario">
     <div class="sum-cab">
       <h2>Sumário das atividades</h2>
-      <p>
-        Estas são as atividades disponíveis nesta página. Cada uma é usada em uma aula
-        específica e abre com a sua própria senha, digitada no quadro acima.
-      </p>
       <p class="sum-aviso">
         🔑 <b>Precisa da senha?</b> As senhas são informadas em aula. Professores e
         estudantes que queiram utilizar estas atividades podem solicitá-la pelo e-mail
         <a href="mailto:prof.aldair.franca@gmail.com">prof.aldair.franca@gmail.com</a>.
       </p>
     </div>
-    <div class="sum-grade">
+    <div class="sum-lista">
       <div class="sum-card">
         <span class="sum-num">01</span>
         <span class="sum-nome">Hallmarks do Envelhecimento</span>
-        <span class="sum-desc">Em <b>Hallmarks do Envelhecimento</b>, o aluno associa cada uma das doze marcas do envelhecimento celular à sua respectiva definição. Ao completar o quadro, obtém o panorama dos mecanismos que conduzem à perda funcional dos tecidos.</span>
-        <span class="sum-tipo">associação de cartas</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -505,20 +564,16 @@
       <div class="sum-card">
         <span class="sum-num">02</span>
         <span class="sum-nome">A Trilha das Evidências</span>
-        <span class="sum-desc"><b>A Trilha das Evidências</b> propõe um percurso de afirmações que devem ser julgadas como verdadeiras ou falsas. As questões versam sobre os fatores de risco modificáveis e não modificáveis das doenças crônicas, e cada resposta é acompanhada da evidência que a sustenta.</span>
-        <span class="sum-tipo">quiz verdadeiro ou falso</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <!-- adicione aqui a referência bibliográfica desta atividade -->
+          </div>
+        </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">03</span>
-        <span class="sum-nome">Sistema Nervoso</span>
-        <span class="sum-desc">A atividade <b>Sistema Nervoso</b> percorre a organização anatômica e funcional do sistema nervoso. O aluno identifica as suas divisões e reconhece de que modo elas se integram para produzir as respostas do organismo.</span>
-        <span class="sum-tipo">atividade interativa</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">04</span>
         <span class="sum-nome">Lesões Celulares</span>
-        <span class="sum-desc">Em <b>Lesões Celulares</b>, o aluno distribui cada categoria de lesão na zona correspondente do tabuleiro, que se divide em degenerações, morte celular e padrões morfológicos de necrose. A cada categoria deve ser atribuída a definição adequada.</span>
-        <span class="sum-tipo">associação por zonas</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -535,10 +590,8 @@
         </details>
       </div>
       <div class="sum-card">
-        <span class="sum-num">05</span>
+        <span class="sum-num">04</span>
         <span class="sum-nome">Expedição Celular</span>
-        <span class="sum-desc">A <b>Expedição Celular</b> reúne, em trios, a estrutura de cada organela, a sua função molecular e a correlação médica correspondente. A dinâmica estabelece a ponte entre a biologia celular e a prática clínica.</span>
-        <span class="sum-tipo">associação de trios</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -560,10 +613,8 @@
         </details>
       </div>
       <div class="sum-card">
-        <span class="sum-num">06</span>
+        <span class="sum-num">05</span>
         <span class="sum-nome">O Destino da Célula</span>
-        <span class="sum-desc"><b>O Destino da Célula</b> reconstrói, lado a lado, os dois desfechos da lesão irreversível. De um lado, as duas vias da apoptose convergem para a fase de execução comum; do outro, corre em paralelo a linha do tempo da necrose.</span>
-        <span class="sum-tipo">ordenação em quatro trilhas</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -580,10 +631,8 @@
         </details>
       </div>
       <div class="sum-card">
-        <span class="sum-num">07</span>
+        <span class="sum-num">06</span>
         <span class="sum-nome">Laboratório de Citogenética</span>
-        <span class="sum-desc">No <b>Laboratório de Citogenética</b>, o aluno monta o idiograma humano a partir de uma metáfase, medindo os cromossomos, reconhecendo a posição do centrômero e interpretando o bandeamento. Há ainda um modo de caso às cegas, que se encerra com um diagnóstico.</span>
-        <span class="sum-tipo">montagem de cariótipo</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -597,16 +646,8 @@
         </details>
       </div>
       <div class="sum-card">
-        <span class="sum-num">08</span>
-        <span class="sum-nome">Sorteio da Turma</span>
-        <span class="sum-desc">O <b>Sorteio da Turma</b> é uma ferramenta destinada ao professor. Cada aluno recebe um avatar, e o sorteio convoca alguém para responder, atribuindo maior probabilidade a quem ainda não participou. O registro da aula é exportado em planilha.</span>
-        <span class="sum-tipo">ferramenta de sala</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">09</span>
+        <span class="sum-num">07</span>
         <span class="sum-nome">Ionização de Aminoácidos</span>
-        <span class="sum-desc">O simulador <b>Ionização de Aminoácidos</b> abrange os vinte aminoácidos. Para cada valor de pH, o aluno monta a forma da molécula, define o estado de cada grupo ionizável e determina a carga líquida. O modo guiado encerra-se no cálculo do ponto isoelétrico; o modo livre permite escolher o pH.</span>
-        <span class="sum-tipo">simulador</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
@@ -622,53 +663,44 @@
         </details>
       </div>
       <div class="sum-card">
-        <span class="sum-num">10</span>
-        <span class="sum-nome">Investigação Inflamatória</span>
-        <span class="sum-desc">A <b>Investigação Inflamatória</b> transcorre ao longo de um plantão dividido em três turnos. Casos clínicos, lâminas, imagens e revisões de laudo conduzem o aluno pelos mecanismos da inflamação aguda. O desempenho obtido em cada turno repercute no seguinte, e o laudo final pode ser exportado em planilha.</span>
-        <span class="sum-tipo">jogo investigativo</span>
+        <span class="sum-num">08</span>
+        <span class="sum-nome">CSI Genética: O Mistério da Herança</span>
         <details class="sum-biblio">
           <summary>📚 Referência bibliográfica</summary>
           <div class="sum-biblio-corpo">
-            <p>
-              KUMAR, Vinay; ABBAS, Abul K.; ASTER, Jon C. <em>Robbins &amp; Cotran Patologia: Bases
-              Patológicas das Doenças.</em> 10. ed. Rio de Janeiro: GEN Guanabara Koogan, 2023.
-            </p>
-            <p>
-              FILHO, Geraldo B. <em>Bogliolo — Patologia.</em> 10. ed. Rio de Janeiro:
-              Guanabara Koogan, 2021.
-            </p>
+            <!-- adicione aqui a referência bibliográfica desta atividade -->
+          </div>
+        </details>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num">09</span>
+        <span class="sum-nome">Curvas de Saturação da Hemoglobina</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <!-- adicione aqui a referência bibliográfica desta atividade -->
+          </div>
+        </details>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num">10</span>
+        <span class="sum-nome">A Ampulheta Óssea</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <!-- adicione aqui a referência bibliográfica desta atividade -->
           </div>
         </details>
       </div>
       <div class="sum-card">
         <span class="sum-num">11</span>
-        <span class="sum-nome">CSI Genética: O Mistério da Herança</span>
-        <span class="sum-desc">Em <b>CSI Genética: O Mistério da Herança</b>, a turma conduz uma investigação colaborativa de vínculo biológico (Caso 0147). O professor projeta os desafios como Pesquisador Principal e os alunos participam como Pesquisadores Auxiliares, decidindo em equipe cada etapa sobre cadeia de custódia, marcadores STR, PCR, eletroforese e interpretação de perfis.</span>
-        <span class="sum-tipo">jogo investigativo colaborativo</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">12</span>
-        <span class="sum-nome">Curvas de Saturação da Hemoglobina</span>
-        <span class="sum-desc">Em <b>Curvas de Saturação da Hemoglobina</b>, o aluno lê diretamente nos gráficos os valores de saturação e de P₅₀ em cinco situações — mioglobina versus hemoglobina, hemoglobina fetal versus materna e os efeitos do CO, do pH e do 2,3-BPG — e registra as medidas em um relatório. Uma régua de linhas-guia auxilia a leitura dos eixos, e o relatório preenchido pode ser salvo em PDF.</span>
-        <span class="sum-tipo">leitura de gráficos · relatório em PDF</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">13</span>
-        <span class="sum-nome">Insuficiência Cardíaca</span>
-        <span class="sum-desc">Em <b>Insuficiência Cardíaca</b>, o aluno reconhece as alterações macroscópicas e microscópicas que a insuficiência cardíaca produz no coração, no pulmão e no fígado. Para cada imagem, marca as três afirmações verdadeiras entre seis; uma lupa amplia as lâminas e peças, e a verificação devolve de imediato os acertos e os erros. Há ainda um modo professor, que exibe o gabarito.</span>
-        <span class="sum-tipo">reconhecimento de imagens · verdadeiro ou falso</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">14</span>
-        <span class="sum-nome">A Ampulheta Óssea</span>
-        <span class="sum-desc">Em <b>A Ampulheta Óssea</b>, o aluno reconstrói, ao redor da ampulheta, a cascata hormonal que fragiliza o osso no envelhecimento: do rim que perde filtração à retenção de fosfato, ao FGF23 liberado pelos osteócitos, à queda do α-Klotho e da vitamina D ativa, ao aumento do PTH e à reabsorção óssea. As cartas ocupam um ciclo, representando a retroalimentação do processo. Há modo individual (montar e conferir) e modo desafio para dois jogadores, além de uma revisão guiada carta a carta para o feedback da atividade.</span>
-        <span class="sum-tipo">montar sequência · individual ou 2 jogadores</span>
-      </div>
-      <div class="sum-card">
-        <span class="sum-num">15</span>
         <span class="sum-nome">Replicação do DNA</span>
-        <span class="sum-desc">Em <b>Replicação do DNA</b>, o aluno reúne, em trios, o conceito de cada etapa e elemento da forquilha de replicação, a sua definição molecular e a correlação clínica correspondente. Há modo individual (montar e conferir) e modo desafio para dois jogadores, no qual vence quem montar mais trios.</span>
-        <span class="sum-tipo">associação de trios · individual ou 2 jogadores</span>
+        <details class="sum-biblio">
+          <summary>📚 Referência bibliográfica</summary>
+          <div class="sum-biblio-corpo">
+            <!-- adicione aqui a referência bibliográfica desta atividade -->
+          </div>
+        </details>
       </div>
     </div>
   </div>
@@ -689,15 +721,6 @@
        MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
   <section class="atividade" id="ativ-fatores"></section>
-
-  <!-- ============================================================
-       ATIVIDADE 3 — SENESCÊNCIA DO SISTEMA NERVOSO
-       senha: nervoso
-       O jogo está no arquivo nervoso.html, ao lado deste, e é
-       carregado aqui dentro por iframe. Mantenha os arquivos na
-       MESMA PASTA ao publicar no GitHub Pages.
-       ============================================================ -->
-  <section class="atividade" id="ativ-nervoso"></section>
 
   <!-- ============================================================
        ATIVIDADE 4 — LESÕES CELULARES REVERSÍVEIS E IRREVERSÍVEIS
@@ -771,15 +794,6 @@
   <section class="atividade" id="ativ-ionizacao"></section>
 
   <!-- ============================================================
-       ATIVIDADE 10 — INVESTIGAÇÃO INFLAMATÓRIA
-       senha: inflamacao
-       O jogo está no arquivo inflamacao.html, ao lado deste, e é
-       carregado aqui dentro por iframe. Mantenha os arquivos na
-       MESMA PASTA ao publicar no GitHub Pages.
-       ============================================================ -->
-  <section class="atividade" id="ativ-inflamacao"></section>
-
-  <!-- ============================================================
        ATIVIDADE 11 — CSI GENÉTICA: O MISTÉRIO DA HERANÇA
        senha: polimerase
        O jogo está no arquivo csi-genetica-caso0147.html, ao lado
@@ -800,16 +814,6 @@
        os arquivos na MESMA PASTA ao publicar no GitHub Pages.
        ============================================================ -->
   <section class="atividade" id="ativ-curvas-hb"></section>
-
-  <!-- ============================================================
-       ATIVIDADE 13 — INSUFICIÊNCIA CARDÍACA (CORAÇÃO, PULMÃO, FÍGADO)
-       senha: insuficiencia
-       A atividade está no arquivo insuficiencia_cardiaca_atividade.html,
-       ao lado deste. Ao digitar a senha certa ela abre numa aba nova.
-       Traz modo aluno e modo professor (gabarito). Mantenha os
-       arquivos na MESMA PASTA ao publicar no GitHub Pages.
-       ============================================================ -->
-  <section class="atividade" id="ativ-insuf-cardiaca"></section>
 
   <!-- ============================================================
        ATIVIDADE 14 — A AMPULHETA ÓSSEA (EIXO FGF23 / KLOTHO / PTH)
@@ -843,6 +847,13 @@
        e registre a senha lá no final, dentro de const SENHAS.
        ============================================================ -->
 
+  <div class="brick-divider">
+    <div class="hill left"></div>
+    <div class="hill right"></div>
+    <div class="bush left"></div>
+    <div class="bush right"></div>
+  </div>
+
 </div>
 
 <footer>
@@ -863,17 +874,14 @@
   const SENHAS = {
     "envelhecimento": "ativ-hallmarks",
     "fatores": "ativ-fatores",
-    "nervoso": "ativ-nervoso",
     "lesoes": "ativ-lesoes",
     "organelas": "ativ-organelas",
     "irreversivel": "ativ-morte",
     "cariotipo": "ativ-cariotipo",
     "sorteio": "ativ-sorteio",
     "ionizacao": "ativ-ionizacao",
-    "inflamacao": "ativ-inflamacao",
     "polimerase": "ativ-csi",
     "hemoglobina": "ativ-curvas-hb",
-    "insuficiencia": "ativ-insuf-cardiaca",
     "klotho": "ativ-ampulheta",
     "helicase": "ativ-replicacao"
   };
@@ -886,17 +894,14 @@
   const ARQUIVOS = {
     "ativ-hallmarks": "hallmarks.html",
     "ativ-fatores": "fatores.html",
-    "ativ-nervoso": "nervoso.html",
     "ativ-lesoes": "lesoes.html",
     "ativ-organelas": "organelas.html",
     "ativ-morte": "morte.html",
     "ativ-cariotipo": "cariotipo.html",
     "ativ-sorteio": "sorteio.html",
     "ativ-ionizacao": "ionizacao.html",
-    "ativ-inflamacao": "inflamacao.html",
     "ativ-csi": "csi-genetica-caso0147.html",
     "ativ-curvas-hb": "curvas_saturacao_hemoglobina.html",
-    "ativ-insuf-cardiaca": "insuficiencia_cardiaca_atividade.html",
     "ativ-ampulheta": "ampulheta_ossea.html",
     "ativ-replicacao": "replicacao.html"
   };
