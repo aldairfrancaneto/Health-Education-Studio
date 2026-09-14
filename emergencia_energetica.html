@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Emergência Energética — Fase 1: Glicólise</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a1a;
+    --cytosol:#1a2f4a;
+    --cytosol2:#12233a;
+    --gold:#ffcc33;
+    --atp:#ff5b5b;
+    --nadh:#4fd0ff;
+    --green:#4caf6a;
+    --panel:#0f1424;
+    --panel-border:#ffcc33;
+    --ink:#eef1f8;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:#000;
+    font-family:'Press Start 2P', monospace;
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+    image-rendering: pixelated;
+  }
+  #gameContainer{
+    position:relative;
+    width:100%;
+    max-width:960px;
+    aspect-ratio:16/9;
+    margin:0 auto;
+    background:#000;
+    border:4px solid #333;
+    overflow:hidden;
+  }
+  canvas{
+    display:block;
+    width:100%;
+    height:100%;
+    image-rendering: pixelated;
+  }
+  .screen{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#000;
+    text-align:center;
+    padding:16px;
+    z-index:5;
+  }
+  .hidden{display:none !important;}
+
+  /* ---- Loading screen ---- */
+  #loadScreen{ background:#000; }
+  .load-title{
+    font-size:clamp(18px,3.6vw,34px);
+    color:var(--gold);
+    text-shadow:3px 3px 0 #7a3b00;
+    margin-bottom:28px;
+    line-height:1.7;
+  }
+  .press-start{
+    font-size:clamp(13px,2.4vw,22px);
+    color:#fff;
+    animation: blink 0.8s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{opacity:0;} }
+  .loadbar-wrap{
+    margin-top:30px;
+    width:78%;
+    max-width:480px;
+    height:24px;
+    border:4px solid var(--gold);
+    padding:2px;
+  }
+  .loadbar{
+    height:100%;
+    width:0%;
+    background:repeating-linear-gradient(90deg,var(--gold) 0 8px,#7a3b00 8px 10px);
+    transition:width .15s linear;
+  }
+
+  /* ---- Name screen ---- */
+  #nameScreen .box{
+    border:4px solid var(--gold);
+    background:var(--panel);
+    padding:28px 22px;
+    max-width:480px;
+  }
+  #nameScreen h1{
+    color:var(--gold);
+    font-size:clamp(11px,2vw,16px);
+    line-height:1.8;
+    margin:0 0 18px;
+  }
+  #nameScreen p{
+    font-size:clamp(8px,1.5vw,11px);
+    line-height:2;
+    color:#cfe;
+    margin:0 0 18px;
+  }
+  #nameInput{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(10px,2vw,14px);
+    padding:10px;
+    width:100%;
+    background:#000;
+    color:var(--gold);
+    border:3px solid #fff;
+    outline:none;
+    text-align:center;
+  }
+  .retro-btn{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(9px,1.6vw,13px);
+    margin-top:20px;
+    padding:12px 18px;
+    background:var(--green);
+    color:#032;
+    border:3px solid #fff;
+    cursor:pointer;
+  }
+  .retro-btn:hover{ background:#63d688; }
+  .retro-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  /* ---- Intro / briefing screen ---- */
+  #introScreen .box{
+    border:4px solid var(--nadh);
+    background:var(--panel);
+    padding:24px 20px;
+    max-width:600px;
+    max-height:85%;
+    overflow-y:auto;
+  }
+  #introScreen h1{
+    color:var(--nadh);
+    font-size:clamp(11px,2vw,16px);
+    margin:0 0 16px;
+    line-height:1.7;
+  }
+  #introScreen p{
+    font-size:clamp(8px,1.4vw,11px);
+    line-height:2.1;
+    text-align:left;
+    color:#dce7ff;
+    margin:0 0 14px;
+  }
+  #introScreen .stage-name{ color:var(--gold); }
+
+  /* ---- HUD ---- */
+  #hud{
+    position:absolute; top:0; left:0; width:100%;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:10px 14px;
+    font-size:clamp(7px,1.3vw,11px);
+    pointer-events:none;
+    z-index:4;
+    text-shadow:2px 2px 0 #000;
+  }
+  #hud .hud-left, #hud .hud-right{ display:flex; flex-direction:column; gap:6px; }
+  .hud-tag{ color:var(--gold); }
+  #hud .stat{ display:flex; gap:8px; align-items:center; }
+  .dot{ display:inline-block; width:10px; height:10px; }
+  .dot.atp{ background:var(--atp); }
+  .dot.nadh{ background:var(--nadh); }
+
+  /* ---- Dialog / info panel ---- */
+  #infoPanel{
+    position:absolute; left:5%; right:5%; bottom:6%;
+    background:var(--panel);
+    border:4px solid var(--panel-border);
+    padding:14px 16px;
+    font-size:clamp(7px,1.3vw,10.5px);
+    line-height:1.9;
+    z-index:6;
+    display:none;
+  }
+  #infoPanel h3{ margin:0 0 8px; color:var(--gold); font-size:clamp(8px,1.5vw,12px); }
+  #infoPanel .close-hint{ margin-top:10px; color:#9fb; font-size:0.85em; }
+
+  #promptTag{
+    position:absolute;
+    z-index:6;
+    background:var(--gold);
+    color:#111;
+    font-size:9px;
+    padding:4px 6px;
+    display:none;
+    white-space:nowrap;
+    transform:translate(-50%,-140%);
+  }
+
+  #transitionBanner{
+    position:absolute; top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.88);
+    display:none;
+    align-items:center;justify-content:center;
+    flex-direction:column;
+    z-index:8;
+    text-align:center;
+    padding:20px;
+  }
+  #transitionBanner h2{ color:var(--gold); font-size:clamp(11px,2vw,18px); line-height:1.8; margin-bottom:14px;}
+  #transitionBanner p{ color:#dce7ff; font-size:clamp(8px,1.4vw,11px); line-height:2; max-width:560px;}
+
+  #controlsHint{
+    position:absolute; bottom:6px; right:8px;
+    font-size:7px; color:#556; z-index:4; text-align:right; line-height:1.6;
+  }
+
+  /* ---- Aba de referência bibliográfica ---- */
+  #refTab{
+    position:absolute;
+    left:0; bottom:0;
+    z-index:9;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    max-width:70%;
+  }
+  #refToggle{
+    font-family:'Press Start 2P', monospace;
+    font-size:6.5px;
+    line-height:1.6;
+    background:var(--panel);
+    color:var(--gold);
+    border:2px solid var(--gold);
+    border-bottom:none;
+    padding:6px 9px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  #refToggle:hover{ background:#1a2038; }
+  #refToggle .arrow{ display:inline-block; transition:transform .2s ease; }
+  #refToggle[aria-expanded="true"] .arrow{ transform:rotate(180deg); }
+  #refContent{
+    max-height:0;
+    overflow:hidden;
+    background:var(--panel);
+    border:2px solid var(--gold);
+    border-bottom:none;
+    width:100%;
+    transition:max-height .25s ease, padding .25s ease;
+    padding:0 10px;
+  }
+  #refContent.open{
+    max-height:120px;
+    padding:10px 10px 12px;
+  }
+  #refContent p{
+    margin:0;
+    font-size:6.5px;
+    line-height:1.9;
+    color:#dce7ff;
+    text-align:left;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+
+  <!-- LOADING -->
+  <div id="loadScreen" class="screen">
+    <div class="load-title">EMERGÊNCIA<br>ENERGÉTICA</div>
+    <div class="press-start">PRESS START</div>
+    <div class="loadbar-wrap"><div class="loadbar" id="loadbar"></div></div>
+  </div>
+
+  <!-- NAME INPUT -->
+  <div id="nameScreen" class="screen hidden">
+    <div class="box">
+      <h1>IDENTIFICAÇÃO<br>DO AGENTE</h1>
+      <p>Uma célula apresenta queda progressiva na produção de ATP. Você foi convocado(a) para investigar a falha percorrendo o citosol e a mitocôndria.</p>
+      <input id="nameInput" type="text" maxlength="16" placeholder="SEU NOME" />
+      <br>
+      <button class="retro-btn" id="btnConfirmName">CONFIRMAR</button>
+    </div>
+  </div>
+
+  <!-- INTRO / BRIEFING -->
+  <div id="introScreen" class="screen hidden">
+    <div class="box">
+      <h1 id="introTitle">BRIEFING DA MISSÃO</h1>
+      <div id="introBody"></div>
+      <button class="retro-btn" id="btnStartLevel">ENTRAR NO CITOSOL</button>
+    </div>
+  </div>
+
+  <!-- TRANSITION BETWEEN SCREENS -->
+  <div id="transitionBanner">
+    <h2 id="transTitle"></h2>
+    <p id="transBody"></p>
+    <button class="retro-btn" id="btnTransContinue">CONTINUAR</button>
+  </div>
+
+  <!-- GAME -->
+  <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <div class="hud-tag" id="hudStage">FASE 1A — INVESTIMENTO</div>
+      <div class="stat"><span class="dot atp"></span> ATP: <span id="hudAtp">0</span></div>
+      <div class="stat"><span class="dot nadh"></span> NADH: <span id="hudNadh">0</span></div>
+    </div>
+    <div class="hud-right">
+      <div id="hudPlayer"></div>
+      <div id="hudProgress">Reação 0/5</div>
+    </div>
+  </div>
+
+  <div id="promptTag">[E] EXAMINAR</div>
+  <div id="infoPanel">
+    <h3 id="infoTitle"></h3>
+    <div id="infoBody"></div>
+    <div class="close-hint">[E] ou [ESPAÇO] para fechar</div>
+  </div>
+
+  <div id="controlsHint" class="hidden">← → mover · ↑/ESPAÇO pular · E examinar</div>
+
+  <!-- REFERÊNCIA BIBLIOGRÁFICA -->
+  <div id="refTab">
+    <button id="refToggle" aria-expanded="false" aria-controls="refContent">
+      <span class="arrow">▲</span> REFERÊNCIA BIBLIOGRÁFICA
+    </button>
+    <div id="refContent">
+      <p>MARZZOCO, A.; TORRES, B. B. <em>Bioquímica</em>. 5. ed. Rio de Janeiro: Grupo GEN, 2025.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     DADOS DAS REAÇÕES (baseados no texto de Bioquímica fornecido)
+     ============================================================ */
+  const REACTIONS_SCREEN1 = [
+    {
+      n:1, name:"Hexoquinase",
+      eq:"Glicose → Glicose 6-fosfato",
+      detail:"Fosforilação irreversível com gasto de 1 ATP. Impede que a glicose atravesse novamente a membrana plasmática, prendendo-a na célula.",
+      atp:-1, nadh:0
+    },
+    {
+      n:2, name:"Fosfoglicoisomerase",
+      eq:"Glicose 6-fosfato → Frutose 6-fosfato",
+      detail:"Reação de isomerização, sem consumo de ATP.",
+      atp:0, nadh:0
+    },
+    {
+      n:3, name:"Fosfofrutoquinase-1 (PFK-1)",
+      eq:"Frutose 6-fosfato → Frutose 1,6-bisfosfato",
+      detail:"Segunda fosforilação irreversível da via, com gasto de 1 ATP. Principal ponto de controle da glicólise.",
+      atp:-1, nadh:0
+    },
+    {
+      n:4, name:"Aldolase",
+      eq:"Frutose 1,6-bisfosfato → Di-hidroxiacetona-P + Gliceraldeído 3-P",
+      detail:"Clivagem da hexose de 6 carbonos em duas trioses fosforiladas isômeras (C3).",
+      atp:0, nadh:0
+    },
+    {
+      n:5, name:"Triose Fosfato Isomerase",
+      eq:"Di-hidroxiacetona-P → Gliceraldeído 3-fosfato",
+      detail:"A partir daqui, todos os intermediários e produtos da glicólise ficam duplicados: 1 glicose gera 2 gliceraldeído 3-fosfato.",
+      atp:0, nadh:0
+    }
+  ];
+
+  const REACTIONS_SCREEN2 = [
+    {
+      n:6, name:"Gliceraldeído 3-P Desidrogenase",
+      eq:"Gliceraldeído 3-P → 1,3-bisfosfoglicerato",
+      detail:"Oxidação com fosforilação por Pi (sem gasto de ATP). NAD+ é reduzido a NADH + H+. Ocorre 2x (uma para cada triose) → +2 NADH.",
+      atp:0, nadh:2, x2:true
+    },
+    {
+      n:7, name:"Fosfoglicerato Quinase",
+      eq:"1,3-bisfosfoglicerato → 3-fosfoglicerato",
+      detail:"Primeira fosforilação em nível de substrato da via. Ocorre 2x → +2 ATP.",
+      atp:2, nadh:0, x2:true
+    },
+    {
+      n:8, name:"Fosfoglicerato Mutase",
+      eq:"3-fosfoglicerato → 2-fosfoglicerato",
+      detail:"Transferência do grupo fosfato da posição 3 para a posição 2 da molécula.",
+      atp:0, nadh:0
+    },
+    {
+      n:9, name:"Enolase",
+      eq:"2-fosfoglicerato → Fosfoenolpiruvato (PEP)",
+      detail:"Desidratação que gera o fosfoenolpiruvato, composto de altíssima energia de transferência de fosfato.",
+      atp:0, nadh:0
+    },
+    {
+      n:10, name:"Piruvato Quinase",
+      eq:"Fosfoenolpiruvato → Piruvato",
+      detail:"Segunda fosforilação em nível de substrato, reação irreversível. Ocorre 2x → +2 ATP.",
+      atp:2, nadh:0, x2:true
+    }
+  ];
+
+  /* ============================================================
+     ESTADO GERAL
+     ============================================================ */
+  const state = {
+    playerName:"",
+    stage:"loading", // loading, name, intro, playing, transition, summary
+    screenIndex:0,   // 0 = investimento, 1 = pagamento
+    atp:0,
+    nadh:0,
+    visited:new Set()
+  };
+
+  const el = {
+    loadScreen: document.getElementById('loadScreen'),
+    loadbar: document.getElementById('loadbar'),
+    nameScreen: document.getElementById('nameScreen'),
+    nameInput: document.getElementById('nameInput'),
+    btnConfirmName: document.getElementById('btnConfirmName'),
+    introScreen: document.getElementById('introScreen'),
+    introTitle: document.getElementById('introTitle'),
+    introBody: document.getElementById('introBody'),
+    btnStartLevel: document.getElementById('btnStartLevel'),
+    transitionBanner: document.getElementById('transitionBanner'),
+    transTitle: document.getElementById('transTitle'),
+    transBody: document.getElementById('transBody'),
+    btnTransContinue: document.getElementById('btnTransContinue'),
+    canvas: document.getElementById('gameCanvas'),
+    hud: document.getElementById('hud'),
+    hudStage: document.getElementById('hudStage'),
+    hudAtp: document.getElementById('hudAtp'),
+    hudNadh: document.getElementById('hudNadh'),
+    hudPlayer: document.getElementById('hudPlayer'),
+    hudProgress: document.getElementById('hudProgress'),
+    promptTag: document.getElementById('promptTag'),
+    infoPanel: document.getElementById('infoPanel'),
+    infoTitle: document.getElementById('infoTitle'),
+    infoBody: document.getElementById('infoBody'),
+    controlsHint: document.getElementById('controlsHint')
+  };
+  const ctx = el.canvas.getContext('2d');
+
+  /* ============================================================
+     1) LOADING SCREEN (5s, estilo "press start")
+     ============================================================ */
+  let acLoad = null;
+  function actxLoad(){ if(!acLoad){ const A = window.AudioContext || window.webkitAudioContext; if(!A) return null; acLoad = new A(); } if (acLoad.state === 'suspended') acLoad.resume(); return acLoad; }
+  function bipLoad(freq, t0, dur, tipo, vol){
+    const a = actxLoad(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || 'triangle';
+    o.frequency.setValueAtTime(freq, a.currentTime + t0);
+    g.gain.setValueAtTime(0.0001, a.currentTime + t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.14, a.currentTime + t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t0 + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + 0.02);
+  }
+  function runLoadingScreen(){
+    const duration = 5000;
+    const t0 = performance.now();
+    const passos = 10; let idxAtual = -1;
+    function tick(now){
+      const p = Math.min(1, (now - t0) / duration);
+      el.loadbar.style.width = (p*100).toFixed(0) + '%';
+      const idx = Math.min(passos - 1, Math.floor(p * passos));
+      if (idx !== idxAtual){ idxAtual = idx; bipLoad(280 + idx * 45, 0, .05, 'square', .05); }
+      if(p < 1){
+        requestAnimationFrame(tick);
+      } else {
+        bipLoad(880, 0, .12, 'triangle', .12); bipLoad(1175, .1, .18, 'triangle', .12);
+        setTimeout(function(){
+          el.loadScreen.classList.add('hidden');
+          el.nameScreen.classList.remove('hidden');
+          state.stage = "name";
+        }, 420);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // permite também apertar qualquer tecla para pular o restante da barra
+  window.addEventListener('keydown', (e)=>{
+    if(state.stage === 'loading' && (e.code === 'Space' || e.code === 'Enter')){
+      el.loadbar.style.width = '100%';
+    }
+  });
+
+  /* ============================================================
+     2) TELA DE IDENTIFICAÇÃO
+     ============================================================ */
+  el.btnConfirmName.addEventListener('click', confirmName);
+  el.nameInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') confirmName(); });
+
+  function confirmName(){
+    const v = el.nameInput.value.trim();
+    state.playerName = v.length ? v : "AGENTE";
+    el.nameScreen.classList.add('hidden');
+    showIntro();
+  }
+
+  /* ============================================================
+     3) BRIEFING / INTRO
+     ============================================================ */
+  function showIntro(){
+    state.stage = "intro";
+    el.introTitle.innerHTML = `MISSÃO ACEITA, <span class="stage-name">${escapeHtml(state.playerName).toUpperCase()}</span>`;
+    el.introBody.innerHTML = `
+      <p>A produção de ATP da célula está caindo. Você vai percorrer o <span class="stage-name">citosol</span>, a <span class="stage-name">matriz mitocondrial</span> e a <span class="stage-name">membrana interna</span>, analisando cada etapa da respiração celular até achar a falha.</p>
+      <p>Fases da investigação:<br>
+      1) Glicólise &nbsp;→&nbsp; 2) Piruvato em Acetil-CoA &nbsp;→&nbsp; 3) Ciclo de Krebs &nbsp;→&nbsp; 4) Cadeia respiratória &nbsp;→&nbsp; 5) Gradiente de H⁺ &nbsp;→&nbsp; 6) ATP sintase.</p>
+      <p>Hoje: <span class="stage-name">FASE 1 — GLICÓLISE</span>, no citosol. Ela tem uma fase de investimento (gasto de ATP) e uma fase de pagamento (produção de ATP e NADH). Ande até o fim de cada tela e examine as reações na parede com [E].</p>
+    `;
+    el.introScreen.classList.remove('hidden');
+  }
+
+  el.btnStartLevel.addEventListener('click', ()=>{
+    el.introScreen.classList.add('hidden');
+    startScreen(0);
+  });
+
+  /* ============================================================
+     4) MUNDO / NÍVEL (side-scroller)
+     ============================================================ */
+  const GRAVITY = 0.62;
+  const MOVE_SPEED = 3.6;
+  const JUMP_VELOCITY = -12.2;
+  const GROUND_Y = 430;
+  const VIEW_W = 960, VIEW_H = 540;
+
+  const keys = {};
+  window.addEventListener('keydown', e=>{
+    keys[e.code] = true;
+    if(state.stage === 'playing'){
+      if(e.code === 'KeyE') tryInteract();
+    }
+  });
+  window.addEventListener('keyup', e=>{ keys[e.code] = false; });
+
+  const player = {
+    x:60, y:GROUND_Y-40, w:26, h:40, vx:0, vy:0, onGround:true, facing:1
+  };
+
+  let currentLevel = null;   // { width, stations:[], bgKey, label }
+  let camera = { x:0 };
+  let nearStation = null;
+  let infoOpen = false;
+
+  function buildLevel(reactions, label, widthPerStation, bgKey){
+    const width = 260 + reactions.length * widthPerStation + 260;
+    const stations = reactions.map((r,i)=>({
+      reaction:r,
+      x: 260 + i*widthPerStation + widthPerStation/2,
+      visited:false
+    }));
+    return { width, stations, label, bgKey, endX: width - 120 };
+  }
+
+  function startScreen(index){
+    state.screenIndex = index;
+    infoOpen = false;
+    el.infoPanel.style.display = 'none';
+    if(index === 0){
+      currentLevel = buildLevel(REACTIONS_SCREEN1, "FASE 1A — CITOSOL: FASE DE INVESTIMENTO", 210, 'cytosolA');
+      el.hudStage.textContent = "FASE 1A — INVESTIMENTO (glicólise)";
+    } else {
+      currentLevel = buildLevel(REACTIONS_SCREEN2, "FASE 1B — CITOSOL: FASE DE PAGAMENTO", 210, 'cytosolB');
+      el.hudStage.textContent = "FASE 1B — PAGAMENTO (glicólise)";
+    }
+    player.x = 60; player.y = GROUND_Y-40; player.vx=0; player.vy=0;
+    camera.x = 0;
+    state.stage = 'playing';
+    el.hud.classList.remove('hidden');
+    el.controlsHint.classList.remove('hidden');
+    el.hudPlayer.textContent = state.playerName.toUpperCase();
+    updateHud();
+    if(!animRunning){ animRunning = true; requestAnimationFrame(loop); }
+  }
+
+  function updateHud(){
+    el.hudAtp.textContent = state.atp;
+    el.hudNadh.textContent = state.nadh;
+    const visitedCount = currentLevel.stations.filter(s=>s.visited).length;
+    el.hudProgress.textContent = `Reação ${visitedCount}/${currentLevel.stations.length}`;
+  }
+
+  function tryInteract(){
+    if(infoOpen){
+      closeInfo();
+      return;
+    }
+    if(nearStation){
+      openInfo(nearStation);
+    }
+  }
+
+  function openInfo(station){
+    infoOpen = true;
+    const r = station.reaction;
+    el.infoTitle.textContent = `REAÇÃO ${r.n} — ${r.name}`;
+    let atpTxt = r.atp > 0 ? `+${r.atp} ATP` : (r.atp < 0 ? `${r.atp} ATP` : '—');
+    let nadhTxt = r.nadh > 0 ? `+${r.nadh} NADH` : '—';
+    el.infoBody.innerHTML = `
+      <div style="margin-bottom:8px;color:#fff;">${escapeHtml(r.eq)}</div>
+      <div style="margin-bottom:8px;">${escapeHtml(r.detail)}</div>
+      <div style="color:var(--gold);">Saldo: ${atpTxt} &nbsp; ${nadhTxt}${r.x2 ? ' &nbsp;(considerando as 2 trioses)' : ''}</div>
+    `;
+    el.infoPanel.style.display = 'block';
+    if(!station.visited){
+      station.visited = true;
+      state.atp += r.atp;
+      state.nadh += r.nadh;
+      updateHud();
+    }
+  }
+
+  function closeInfo(){
+    infoOpen = false;
+    el.infoPanel.style.display = 'none';
+  }
+
+  /* ============================================================
+     5) LOOP PRINCIPAL
+     ============================================================ */
+  let animRunning = false;
+
+  function physics(){
+    if(infoOpen) return; // pausa movimento enquanto lê o painel
+
+    let ax = 0;
+    if(keys['ArrowLeft']||keys['KeyA']) { ax = -1; player.facing = -1; }
+    if(keys['ArrowRight']||keys['KeyD']) { ax = 1; player.facing = 1; }
+    player.vx = ax * MOVE_SPEED;
+
+    if((keys['Space']||keys['ArrowUp']||keys['KeyW']) && player.onGround){
+      player.vy = JUMP_VELOCITY;
+      player.onGround = false;
+    }
+
+    player.vy += GRAVITY;
+    player.x += player.vx;
+    player.y += player.vy;
+
+    if(player.x < 20) player.x = 20;
+    if(player.x > currentLevel.width - player.w - 20) player.x = currentLevel.width - player.w - 20;
+
+    if(player.y + player.h >= GROUND_Y){
+      player.y = GROUND_Y - player.h;
+      player.vy = 0;
+      player.onGround = true;
+    }
+
+    // câmera segue o jogador, limitada à largura do nível
+    const targetCamX = player.x - VIEW_W/2;
+    camera.x = Math.max(0, Math.min(currentLevel.width - VIEW_W, targetCamX));
+
+    // proximidade de estação
+    nearStation = null;
+    let best = 60;
+    for(const s of currentLevel.stations){
+      const d = Math.abs((player.x+player.w/2) - s.x);
+      if(d < best){ best = d; nearStation = s; }
+    }
+    if(nearStation && !infoOpen){
+      const sx = nearStation.x - camera.x;
+      el.promptTag.style.left = sx + 'px';
+      el.promptTag.style.top = '210px';
+      el.promptTag.style.display = 'block';
+    } else {
+      el.promptTag.style.display = 'none';
+    }
+
+    // fim da tela -> transição
+    if(player.x + player.w/2 >= currentLevel.endX){
+      handleLevelEnd();
+    }
+  }
+
+  function handleLevelEnd(){
+    if(state.stage !== 'playing') return;
+    state.stage = 'transition';
+    el.hud.classList.add('hidden');
+    el.controlsHint.classList.add('hidden');
+    el.promptTag.style.display = 'none';
+
+    if(state.screenIndex === 0){
+      el.transTitle.textContent = "FASE DE INVESTIMENTO CONCLUÍDA";
+      el.transBody.innerHTML = `Saldo parcial: <b style="color:var(--atp)">${state.atp} ATP</b>. A glicose já virou 2 moléculas de gliceraldeído 3-fosfato (C3).<br><br>A fase de pagamento começa agora: cada uma das 2 trioses passará pelas 5 últimas reações da glicólise.`;
+      el.transitionBanner.style.display = 'flex';
+      el.btnTransContinue.onclick = ()=>{
+        el.transitionBanner.style.display = 'none';
+        startScreen(1);
+      };
+    } else {
+      showSummary();
+    }
+  }
+
+  function showSummary(){
+    el.transTitle.textContent = "GLICÓLISE CONCLUÍDA";
+    const netAtp = state.atp;
+    el.transBody.innerHTML = `
+      Saldo líquido da glicólise: <b style="color:var(--atp)">${netAtp} ATP</b> e <b style="color:var(--nadh)">${state.nadh} NADH</b> por glicose.<br><br>
+      2 moléculas de piruvato foram formadas e aguardam o transportador MPC para entrar na matriz mitocondrial.<br><br>
+      <span style="color:var(--gold)">Próximas fases (em construção):</span><br>
+      2) Piruvato → Acetil-CoA (Complexo PDH)<br>
+      3) Ciclo de Krebs<br>
+      4) Cadeia respiratória<br>
+      5) Gradiente de H⁺<br>
+      6) ATP sintase<br><br>
+      Envie o próximo texto-base para liberarmos a Fase 2.
+    `;
+    el.transitionBanner.style.display = 'flex';
+    el.btnTransContinue.style.display = 'none';
+  }
+
+  /* ============================================================
+     6) DESENHO (canvas)
+     ============================================================ */
+  const palettes = {
+    cytosolA: { sky:'#132038', floor:'#233f63', floorTop:'#3a6194', wall:'#0d1830' },
+    cytosolB: { sky:'#1a1430', floor:'#3a2963', floorTop:'#5b3f94', wall:'#150f28' }
+  };
+
+  function draw(){
+    const pal = palettes[currentLevel.bgKey];
+    ctx.fillStyle = pal.sky;
+    ctx.fillRect(0,0,VIEW_W,VIEW_H);
+
+    // fundo com "organelas" decorativas (paralaxe leve)
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    for(let i=0;i<14;i++){
+      const bx = (i*260 - camera.x*0.4) % (currentLevel.width+300);
+      ctx.beginPath();
+      ctx.fillStyle = i%2===0 ? '#ffcc3344' : '#4fd0ff33';
+      ctx.ellipse(bx, 120 + (i%3)*70, 46, 26, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // parede de fundo com as reações
+    ctx.fillStyle = pal.wall;
+    ctx.fillRect(0-camera.x+0, 60, currentLevel.width, GROUND_Y-60);
+    // redesenha alinhado ao mundo (usar translate seria mais simples)
+
+    ctx.save();
+    ctx.translate(-camera.x, 0);
+
+    // chão
+    ctx.fillStyle = pal.floorTop;
+    ctx.fillRect(0, GROUND_Y, currentLevel.width, 8);
+    ctx.fillStyle = pal.floor;
+    ctx.fillRect(0, GROUND_Y+8, currentLevel.width, VIEW_H-GROUND_Y-8);
+
+    // placas das reações
+    for(const s of currentLevel.stations){
+      drawStation(s);
+    }
+
+    // linha de chegada
+    ctx.fillStyle = '#ffcc33';
+    ctx.fillRect(currentLevel.endX, GROUND_Y-120, 6, 120);
+    ctx.fillStyle = '#ffcc33';
+    ctx.font = '10px "Press Start 2P"';
+    ctx.fillText(state.screenIndex===0 ? 'PAGAMENTO >>' : 'FIM DA FASE 1 >>', currentLevel.endX-90, GROUND_Y-130);
+
+    // jogador
+    drawPlayer();
+
+    ctx.restore();
+  }
+
+  function drawStation(s){
+    const r = s.reaction;
+    const baseY = GROUND_Y - 140;
+    // poste
+    ctx.fillStyle = '#556';
+    ctx.fillRect(s.x-3, baseY+40, 6, 100);
+    // placa
+    const w = 150, h = 92;
+    ctx.fillStyle = s.visited ? '#1b3b23' : '#241a3a';
+    ctx.strokeStyle = s.visited ? '#4caf6a' : '#ffcc33';
+    ctx.lineWidth = 3;
+    ctx.fillRect(s.x-w/2, baseY, w, h);
+    ctx.strokeRect(s.x-w/2, baseY, w, h);
+
+    ctx.fillStyle = '#ffcc33';
+    ctx.font = '9px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${r.n}. ${truncate(r.name,14)}`, s.x, baseY+20);
+
+    ctx.fillStyle = '#dce7ff';
+    ctx.font = '7px "Press Start 2P"';
+    wrapText(r.eq, s.x, baseY+38, w-16, 11);
+
+    ctx.fillStyle = s.visited ? '#8f8' : '#f88';
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillText(s.visited ? 'OK' : '?', s.x, baseY+h-8);
+    ctx.textAlign = 'left';
+  }
+
+  function wrapText(text, cx, y, maxWidth, lineHeight){
+    const words = text.split(' ');
+    let line = '';
+    let yy = y;
+    ctx.textAlign='center';
+    for(let n=0;n<words.length;n++){
+      const test = line + words[n] + ' ';
+      if(ctx.measureText(test).width > maxWidth && n>0){
+        ctx.fillText(line, cx, yy);
+        line = words[n] + ' ';
+        yy += lineHeight;
+      } else {
+        line = test;
+      }
+    }
+    ctx.fillText(line, cx, yy);
+  }
+
+  function truncate(str, n){ return str.length>n ? str.slice(0,n-1)+'.' : str; }
+
+  function drawPlayer(){
+    const p = player;
+    ctx.save();
+    ctx.translate(p.x + p.w/2, p.y);
+    ctx.scale(p.facing, 1);
+    // corpo
+    ctx.fillStyle = '#ff5b5b';
+    ctx.fillRect(-p.w/2, 10, p.w, p.h-10);
+    // cabeça
+    ctx.fillStyle = '#ffe0b2';
+    ctx.fillRect(-p.w/2+3, -6, p.w-6, 18);
+    // "boné"
+    ctx.fillStyle = '#4fd0ff';
+    ctx.fillRect(-p.w/2+1, -10, p.w-2, 8);
+    // pernas (simples alternância se andando)
+    ctx.fillStyle = '#233f63';
+    const walking = Math.abs(p.vx) > 0.1 && p.onGround;
+    const t = Math.floor(performance.now()/120)%2;
+    ctx.fillRect(-p.w/2, p.h-8, p.w/2-1, 8 + ((walking&&t===0)?2:0));
+    ctx.fillRect(1, p.h-8, p.w/2-1, 8 + ((walking&&t===1)?2:0));
+    ctx.restore();
+  }
+
+  function loop(){
+    if(state.stage === 'playing'){
+      physics();
+      draw();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ============================================================
+     ABA DE REFERÊNCIA BIBLIOGRÁFICA (contraída por padrão)
+     ============================================================ */
+  const refToggle = document.getElementById('refToggle');
+  const refContent = document.getElementById('refContent');
+  refToggle.addEventListener('click', ()=>{
+    const willOpen = !refContent.classList.contains('open');
+    refContent.classList.toggle('open', willOpen);
+    refToggle.setAttribute('aria-expanded', String(willOpen));
+    refToggle.querySelector('.arrow').textContent = willOpen ? '▼' : '▲';
+  });
+
+  /* ============================================================
+     BOOT
+     ============================================================ */
+  runLoadingScreen();
+
+})();
+</script>
+</body>
+</html>
