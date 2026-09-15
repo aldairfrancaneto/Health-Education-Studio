@@ -166,7 +166,7 @@
   #portao{ padding:6px 0 70px; }
   .cofre{
     background:var(--paper); border:4px solid var(--outline); border-radius:12px;
-    box-shadow:7px 7px 0 var(--outline); padding:30px 26px; max-width:520px;
+    box-shadow:7px 7px 0 var(--outline); padding:30px 26px; max-width:1040px;
   }
   .cofre .cadeado{ font-size:44px; line-height:1; margin-bottom:10px; }
   .cofre h2{ font-family:var(--font-pixel); font-size:14px; margin:0 0 12px; }
@@ -461,6 +461,8 @@
     box-shadow:4px 4px 0 var(--outline); padding:13px 16px; max-width:760px;
   }
   .sum-aviso a{ color:var(--ink); text-decoration:underline; font-weight:800; word-break:break-word; }
+  /* aviso duplicado no fim da página, entre os morros do divisor final */
+  .sum-aviso-final{ margin:50px auto 40px; text-align:center; }
   @media (max-width:700px){
     .sum-lista{ grid-template-columns:1fr; gap:13px; }
     .sum-card{ width:100%; }
@@ -540,11 +542,6 @@
   <div id="sumario">
     <div class="sum-cab">
       <h2>Sumário das atividades</h2>
-      <p class="sum-aviso">
-        🔑 <b>Precisa da senha?</b> As senhas são informadas em aula. Professores e
-        estudantes que queiram utilizar estas atividades podem solicitá-la pelo e-mail
-        <a href="mailto:prof.aldair.franca@gmail.com">prof.aldair.franca@gmail.com</a>.
-      </p>
     </div>
     <div class="sum-lista">
       <div class="sum-card">
@@ -846,6 +843,12 @@
 
        e registre a senha lá no final, dentro de const SENHAS.
        ============================================================ -->
+
+  <p class="sum-aviso sum-aviso-final">
+    🔑 <b>Precisa da senha?</b> As senhas são informadas em aula. Professores e
+    estudantes que queiram utilizar estas atividades podem solicitá-la pelo e-mail
+    <a href="mailto:prof.aldair.franca@gmail.com">prof.aldair.franca@gmail.com</a>.
+  </p>
 
   <div class="brick-divider">
     <div class="hill left"></div>
