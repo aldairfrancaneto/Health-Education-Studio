@@ -404,25 +404,34 @@ body{
 .rep-sorteio.parou .rep-sorteio-res{ opacity:1; animation:repResPulsa 1s ease-in-out infinite; }
 @keyframes repResPulsa{ 50%{ transform:scale(1.07); } }
 
-/* --- aviso animado de vez (Desafio, 3 s, some sozinho) --- */
-.rep-aviso{
-  position:fixed; left:0; right:0; top:0; z-index:115; pointer-events:none;
-  display:flex; align-items:center; justify-content:center; gap:12px;
-  padding:16px 20px; transform:translateY(-120%);
-  font-family:var(--font-pixel); font-size:14px; line-height:1.5; letter-spacing:.04em;
-  color:#0A1A0F; text-transform:uppercase; text-shadow:0 1px 0 rgba(255,255,255,.35);
-  box-shadow:0 8px 24px rgba(0,0,0,.5);
+/* --- aviso de vez (Desafio) — mesma linguagem visual do veredito: raios
+   girando + ícone + título, tingidos na cor do jogador da vez, 3 s --- */
+.chal-vez-ov{
+  position:fixed; inset:0; z-index:119; display:none;
+  align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
+  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
+    rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
 }
-.rep-aviso.jog0{ background:linear-gradient(180deg,var(--jog0-soft),var(--jog0)); }
-.rep-aviso.jog1{ background:linear-gradient(180deg,var(--jog1-soft),var(--jog1)); color:#1F0F02; }
-.rep-aviso.on{ animation:repAvisoAnim 3s ease forwards; }
-.rep-aviso .seta{ display:inline-block; animation:repSeta .6s ease-in-out infinite alternate; }
-@keyframes repSeta{ to{ transform:translateX(6px); } }
-@keyframes repAvisoAnim{
-  0%{ transform:translateY(-120%); }
-  12%{ transform:translateY(0); }
-  82%{ transform:translateY(0); }
-  100%{ transform:translateY(-120%); }
+.chal-vez-ov.on{ display:flex; animation:repVdFade 3s ease forwards; }
+.chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
+.chal-vez-ov.jog1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+.chal-vez-cx{ position:relative; text-align:center; animation:repVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
+.chal-vez-raios{
+  position:absolute; left:50%; top:50%; width:min(120vw,900px); height:min(120vw,900px);
+  transform:translate(-50%,-50%); border-radius:50%; opacity:.5; color:var(--chal-cor-claro);
+  background:conic-gradient(from 0deg,
+    currentColor 0 5deg, transparent 5deg 26deg,
+    currentColor 26deg 31deg, transparent 31deg 52deg);
+  animation:repVdGira 3s linear both;
+}
+.chal-vez-ico{
+  position:relative; font-size:clamp(48px,16vw,110px); line-height:1;
+  filter:drop-shadow(0 10px 26px #000);
+}
+.chal-vez-tit{
+  position:relative; margin:14px auto 0; max-width:min(560px,90vw);
+  font-family:var(--font-pixel); font-size:clamp(12px,3.4vw,20px); letter-spacing:.05em;
+  color:#fff; text-shadow:0 2px 12px #000, 0 0 18px rgba(0,0,0,.6);
 }
 
 /* --------- acervo --------- */
@@ -585,18 +594,25 @@ body{
 .rep-chal-jog.ativo.jog1{ box-shadow:0 0 0 3px rgba(217,121,30,.4), 0 0 18px rgba(217,121,30,.35); }
 .rep-chal-jog.ativo .pontos{ color:#fff; }
 
-/* ===== tabuleiro do Desafio pega a cor do jogador da vez ===== */
+/* ===== os dois quadros do Desafio pegam a cor do jogador da vez, cada um com
+   o próprio contorno (não mais o tabuleiro externo inteiro) ===== */
 #repChalTabuleiro[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
 #repChalTabuleiro[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
 
-#repChalTabuleiro.chal-ativo{
+#repChalTabuleiro.chal-ativo .chal-quadro{
   border-color:var(--chal-cor);
-  box-shadow:0 0 0 3px var(--board-1), 8px 8px 0 rgba(0,0,0,.35),
-             inset 0 0 90px rgba(0,0,0,.6), 0 0 30px -4px var(--chal-cor);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.3), 0 0 0 3px var(--board-1), 0 0 22px -6px var(--chal-cor);
+}
+
+/* --- os dois "quadros" do modo Desafio: painel de turno (placar, monte
+   único) e tabuleiro de posicionamento, cada um na própria moldura --- */
+.chal-quadro{
+  border:2px solid var(--gold-dim); border-radius:14px;
+  background:linear-gradient(180deg, rgba(10,20,36,.55), rgba(21,39,66,.35));
+  box-shadow:inset 0 0 40px rgba(0,0,0,.3);
+  padding:18px 16px 20px; margin:0 0 28px;
   transition:border-color .45s ease, box-shadow .45s ease;
 }
-#repChalTabuleiro.chal-ativo::before,
-#repChalTabuleiro.chal-ativo::after{ border-color:var(--chal-cor-claro); opacity:.95; }
 
 /* barra "Vez de …" ganha a faixa da cor do jogador */
 #repChalTabuleiro.chal-ativo .rep-chal-vez{
@@ -944,54 +960,64 @@ body{
 
   <div class="tabuleiro" id="repChalTabuleiro" style="display:none;">
 
-    <div class="hud">
-      <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
-      <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
-      <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
-    </div>
+    <!-- ---------- QUADRO 1: placar e monte único (Desafio) ---------- -->
+    <div class="chal-quadro chal-quadro-turno">
 
-    <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
-    <div class="rep-chal-cab">
-      <div class="rep-chal-vez" id="repChalVez"></div>
-      <button class="btn-board principal rep-chal-encerrar" id="repChalEncerrar" type="button" style="font-size:14px; padding:12px 22px;" disabled>Encerrar turno ▸</button>
-    </div>
-    <div class="rep-chal-placar" id="repChalPlacar"></div>
-
-    <!-- ---------- MONTE ÚNICO — SAQUE E POSICIONE ---------- -->
-    <div class="faixa">
-      <span class="faixa-titulo">Monte único — saque e posicione</span>
-      <span class="linha-ouro"></span>
-    </div>
-    <div class="rep-chal-mesa">
-      <div class="rep-chal-bloco">
-        <div class="rep-chal-bloco-tit">Monte de compra</div>
-        <button class="rep-chal-sacar" id="repChalSacar" type="button">
-          <span class="ico">🂠</span>
-          <span>Sacar carta</span>
-          <span class="rest" id="repChalRest">— cartas no monte</span>
-        </button>
+      <div class="hud">
+        <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
+        <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
       </div>
-      <div class="rep-chal-bloco">
-        <div class="rep-chal-bloco-tit">Carta em jogo</div>
-        <div class="rep-chal-carta-atual" id="repChalCartaAtual">
-          <div class="instr">Saque uma carta para começar o turno.</div>
+
+      <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
+      <div class="rep-chal-cab">
+        <div class="rep-chal-vez" id="repChalVez"></div>
+        <button class="btn-board principal rep-chal-encerrar" id="repChalEncerrar" type="button" style="font-size:14px; padding:12px 22px;" disabled>Encerrar turno ▸</button>
+      </div>
+      <div class="rep-chal-placar" id="repChalPlacar"></div>
+
+      <!-- ---------- MONTE ÚNICO — SAQUE E POSICIONE ---------- -->
+      <div class="faixa">
+        <span class="faixa-titulo">Monte único — saque e posicione</span>
+        <span class="linha-ouro"></span>
+      </div>
+      <div class="rep-chal-mesa">
+        <div class="rep-chal-bloco">
+          <div class="rep-chal-bloco-tit">Monte de compra</div>
+          <button class="rep-chal-sacar" id="repChalSacar" type="button">
+            <span class="ico">🂠</span>
+            <span>Sacar carta</span>
+            <span class="rest" id="repChalRest">— cartas no monte</span>
+          </button>
+        </div>
+        <div class="rep-chal-bloco">
+          <div class="rep-chal-bloco-tit">Carta em jogo</div>
+          <div class="rep-chal-carta-atual" id="repChalCartaAtual">
+            <div class="instr">Saque uma carta para começar o turno.</div>
+          </div>
         </div>
       </div>
+
     </div>
 
     <div id="repChalResultado"></div>
 
-    <div class="rep-legenda">
-      <span><i class="c-c"></i> Roxa · categoria</span>
-      <span><i class="c-d"></i> Azul · definição e função</span>
-      <span><i class="c-k"></i> Coral · conexão clínica</span>
-    </div>
+    <!-- ---------- QUADRO 2: tabuleiro onde as cartas são posicionadas ---------- -->
+    <div class="chal-quadro chal-quadro-jogo">
 
-    <div class="faixa">
-      <span class="faixa-titulo">Estações dos Trios</span>
-      <span class="linha-ouro"></span>
+      <div class="rep-legenda">
+        <span><i class="c-c"></i> Roxa · categoria</span>
+        <span><i class="c-d"></i> Azul · definição e função</span>
+        <span><i class="c-k"></i> Coral · conexão clínica</span>
+      </div>
+
+      <div class="faixa">
+        <span class="faixa-titulo">Estações dos Trios</span>
+        <span class="linha-ouro"></span>
+      </div>
+      <div class="rep-campo" id="repChalCampo"></div>
+
     </div>
-    <div class="rep-campo" id="repChalCampo"></div>
 
   </div>
 </div>
@@ -1032,8 +1058,14 @@ body{
   <div class="rep-sorteio-res" id="repSorteioRes"></div>
 </div>
 
-<!-- ---------- AVISO DE VEZ (Desafio, 3 s) ---------- -->
-<div class="rep-aviso" id="repChalAviso"></div>
+<!-- ---------- AVISO DE VEZ, no mesmo estilo do veredito (Desafio) ---------- -->
+<div class="chal-vez-ov" id="repChalAviso" aria-hidden="true">
+  <div class="chal-vez-cx">
+    <div class="chal-vez-raios"></div>
+    <div class="chal-vez-ico">▶️</div>
+    <div class="chal-vez-tit" id="repVezTit"></div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="site-footer-linha">
@@ -1618,17 +1650,19 @@ body{
     repChalVez.innerHTML = msg || ('▶ Vez de <b>' + repChalEsc(j.nome) + '</b>');
   }
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
-  function chalRepAnunciarVez(){
-    if (!CHAL_REP.ativo) return;
+  function chalRepAnunciarVez(cb){
+    if (!CHAL_REP.ativo){ if (cb) cb(); return; }
     const el = document.getElementById('repChalAviso');
     const j  = CHAL_REP.jogadores[CHAL_REP.turno];
-    el.className = 'rep-aviso jog' + CHAL_REP.turno;
-    el.innerHTML = '<span class="seta">▶</span> Vez de ' + repChalEsc(j.nome) +
-                   ' <span class="seta">◀</span>';
+    el.className = 'chal-vez-ov jog' + CHAL_REP.turno;
+    document.getElementById('repVezTit').innerHTML = 'Vez de <b>' + repChalEsc(j.nome) + '</b>';
     void el.offsetWidth;                                    /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
-    setTimeout(function(){ el.classList.remove('on'); }, 3000);
+    setTimeout(function(){
+      el.classList.remove('on');
+      if (cb) cb();
+    }, 3000);
   }
   function chalRepPintarTabuleiro(){
     if (CHAL_REP.ativo){
@@ -1714,6 +1748,7 @@ body{
   repChalCartaAtual.addEventListener('click', function(){
     if (!CHAL_REP.ativo) return;
     if (CHAL_REP.cartaSacada && !CHAL_REP.cartaMao){
+      chalRepDesmarcarSlot();   /* descarta marcação pendente de reposicionar, se houver */
       CHAL_REP.cartaMao = CHAL_REP.cartaSacada;
       CHAL_REP.cartaSacada = null;
       somClique();
@@ -1750,8 +1785,9 @@ body{
     if (repRevAtiva){ repRevSelecionarSlot(slot); return; }
     if (!CHAL_REP.ativo || slot.classList.contains('travado')) return;
 
-    /* carta recém-sacada ainda não foi pega: nada acontece no tabuleiro */
-    if (CHAL_REP.cartaSacada && !CHAL_REP.cartaMao){ somClique(); return; }
+    /* obs.: uma carta sacada e ainda não pega NÃO bloqueia o tabuleiro — o
+       jogador pode reposicionar cartas erradas antes de pegá-la (ou depois,
+       tanto faz); ela só sai da área de espera com um toque nela mesma. */
 
     /* segurando uma carta -> este clique tenta encaixar */
     if (CHAL_REP.cartaMao){
@@ -1769,8 +1805,8 @@ body{
       return;
     }
 
-    /* nada na mão: só pode reposicionar uma carta ainda não conferida antes de sacar */
-    if (CHAL_REP.fase !== 'sacar') return;
+    /* nada na mão: reposiciona uma carta ainda não conferida — a qualquer
+       momento do turno, antes ou depois de sacar */
     if (CHAL_REP.slotMarcado){
       if (CHAL_REP.slotMarcado === slot){ chalRepDesmarcarSlot(); somClique(); return; }
       if (slot.dataset.posto || slot.dataset.tipo !== CHAL_REP.slotMarcado.dataset.tipo){
@@ -1798,9 +1834,9 @@ body{
   }
 
   let repVdTok = 0;
-  function chalRepVeredito(nome, ganhos, erradas){
+  function chalRepVeredito(nome, ganhos, erradas, cb){
     const ov = document.getElementById('repChalVeredito');
-    if (!ov) return;
+    if (!ov){ if (cb) cb(); return; }
     const acerto = ganhos > 0;
     ov.classList.remove('acerto','erro');
     ov.classList.add(acerto ? 'acerto' : 'erro');
@@ -1813,7 +1849,11 @@ body{
       : (acerto ? 'Nenhuma carta fora do lugar até aqui.' : '');
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
     const meu = ++repVdTok;
-    setTimeout(function(){ if (meu === repVdTok) ov.classList.remove('on'); }, 5000);
+    setTimeout(function(){
+      if (meu !== repVdTok) return;
+      ov.classList.remove('on');
+      if (cb) cb();
+    }, 5000);
   }
 
   function chalRepEncerrarTurno(){
@@ -1821,6 +1861,11 @@ body{
     if (CHAL_REP.fase === 'sacar' && CHAL_REP.deck.length > 0) return;
     chalRepDesmarcarSlot();
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
+
+    /* trava os botões enquanto o veredito e o aviso de vez tocam em sequência —
+       evita clique duplo reabrindo o veredito no meio da animação */
+    repChalSacarBtn.disabled = true;
+    repChalEncerrarBtn.disabled = true;
 
     /* reavalia TODOS os encaixes ainda não confirmados — não só o que acabou
        de ser jogado, porque um reposicionamento também pode ter acertado
@@ -1847,18 +1892,19 @@ body{
     if (ganhos > 0) somEncaixe(); else somErro();
     trios.forEach(chalRepChecarTrio);
 
-    /* explosão de 5 s: deixa claro para o próximo jogador se a jogada acertou ou errou */
-    chalRepVeredito(j.nome, ganhos, erradas);
+    /* veredito (5 s) só então dá lugar ao aviso de vez do próximo jogador (3 s) —
+       antes os dois overlays apareciam sobrepostos */
+    chalRepVeredito(j.nome, ganhos, erradas, function(){
+      if (chalRepTudoCerto()){ chalRepFim(); return; }
 
-    if (chalRepTudoCerto()){ chalRepFim(); return; }
-
-    CHAL_REP.turno = (CHAL_REP.turno + 1) % CHAL_REP.jogadores.length;
-    CHAL_REP.fase = 'sacar';
-    chalRepAnunciarVez();
-    chalRepRenderPlacar();
-    chalRepRenderVez();
-    chalRepMostrarCarta();
-    chalRepAtualizarBotoes();
+      CHAL_REP.turno = (CHAL_REP.turno + 1) % CHAL_REP.jogadores.length;
+      CHAL_REP.fase = 'sacar';
+      chalRepRenderPlacar();
+      chalRepRenderVez();
+      chalRepMostrarCarta();
+      chalRepAtualizarBotoes();
+      chalRepAnunciarVez();
+    });
   }
   repChalEncerrarBtn.addEventListener('click', chalRepEncerrarTurno);
 

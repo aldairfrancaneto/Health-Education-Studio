@@ -19,6 +19,12 @@
   --green:#8aa662; --green-glow:#c3dd96; --green-dim:#5c703c;
   --red:#a83226; --red-soft:#e3a196;
   --slotline:#7c6238;
+  /* identidade de cor por jogador (mesma convenção --jogN/--jogN-claro usada
+     nos outros jogos da família) — reaproveita os tons já usados em .chal-vez.p0/p1 */
+  --jog0:#c08a24; --jog0-claro:#f0c260;
+  --jog1:#5f88bd; --jog1-claro:#9fc0e6;
+  --jog2:#8aa662; --jog2-claro:#c3dd96;
+  --jog3:#a83226; --jog3-claro:#e3a196;
   --font-serif:'Cinzel',serif;
   --f-body:'Source Serif 4',Georgia,serif;
   --font-pixel:'Press Start 2P',monospace;
@@ -43,7 +49,10 @@ button{font-family:inherit;}
 .tela-titulo{
   position:relative; text-align:center; margin:8px 0 22px; cursor:pointer;
   border:2px solid var(--gold-dim); border-radius:16px; overflow:hidden;
-  min-height:min(92vh,760px); display:flex; align-items:center; justify-content:center;
+  /* min-height contido para caber inteira na tela, descontando o padding do
+     .wrap (16px + 90px reservados para o rodapé fixo) e as margens acima —
+     antes usava 92vh e sempre sobrava barra de rolagem */
+  min-height:min(calc(100vh - 150px), 700px); display:flex; align-items:center; justify-content:center;
 }
 .press-bg{position:absolute; inset:0; z-index:0;}
 .press-bg img{width:100%; height:100%; object-fit:cover; filter:sepia(.25) brightness(.42) contrast(1.02);}
@@ -72,7 +81,7 @@ button{font-family:inherit;}
 /* ============ FAKE LOAD ============ */
 .tela-carregando{
   display:none; text-align:center; margin:8px 0 22px;
-  min-height:min(92vh,760px); align-items:center; justify-content:center;
+  min-height:min(calc(100vh - 150px), 700px); align-items:center; justify-content:center;
   border:2px solid var(--gold-dim); border-radius:16px;
   background:radial-gradient(700px 380px at 50% 30%, rgba(201,162,39,.08), transparent 60%), linear-gradient(180deg, rgba(36,26,15,.55), rgba(16,11,6,.7));
 }
@@ -186,6 +195,8 @@ button{font-family:inherit;}
 .marca-dono{border:2px solid rgba(0,0,0,.5); color:#141414;}
 .marca-dono.p0{background:linear-gradient(180deg,#f0c260,#c08a24);}
 .marca-dono.p1{background:linear-gradient(180deg,#9fc0e6,#5f88bd); color:#0b1420;}
+.marca-dono.p2{background:linear-gradient(180deg,#c3dd96,#8aa662); color:#1a2410;}
+.marca-dono.p3{background:linear-gradient(180deg,#e3a196,#a83226); color:#2a0b06;}
 .slot.errado .carta,.slot.fora .carta{border-color:#c0432f; box-shadow:0 0 0 2px rgba(192,67,47,.55), 0 6px 16px rgba(0,0,0,.6);}
 .slot.marcado .carta{border-color:var(--gold-soft); box-shadow:0 0 0 3px rgba(236,212,137,.6), 0 8px 20px rgba(0,0,0,.55);}
 .slot.errou .carta{animation:tremer .42s;}
@@ -273,6 +284,8 @@ button{font-family:inherit;}
 .nomes-campo .ficha{width:34px; height:34px; border-radius:50%; flex:none; border:2px solid rgba(0,0,0,.4); font-family:var(--font-pixel); font-size:11px; display:flex; align-items:center; justify-content:center;}
 .nomes-campo.j0 .ficha{background:linear-gradient(180deg,#f0c260,#c08a24); color:#241206;}
 .nomes-campo.j1 .ficha{background:linear-gradient(180deg,#9fc0e6,#5f88bd); color:#0b1420;}
+.nomes-campo.j2 .ficha{background:linear-gradient(180deg,#c3dd96,#8aa662); color:#1a2410;}
+.nomes-campo.j3 .ficha{background:linear-gradient(180deg,#e3a196,#a83226); color:#2a0b06;}
 .nomes-campo input{
   flex:1; font-family:var(--f-body); font-size:16px; color:#efe4cc; padding:11px 13px;
   border-radius:9px; border:2px solid var(--gold-dim); background:rgba(16,11,6,.7);
@@ -291,6 +304,8 @@ button{font-family:inherit;}
 .chal-vez .quem{padding:2px 10px; border-radius:6px; margin-left:6px;}
 .chal-vez.p0 .quem{background:linear-gradient(180deg,#f0c260,#c08a24); color:#241206;}
 .chal-vez.p1 .quem{background:linear-gradient(180deg,#9fc0e6,#5f88bd); color:#0b1420;}
+.chal-vez.p2 .quem{background:linear-gradient(180deg,#c3dd96,#8aa662); color:#1a2410;}
+.chal-vez.p3 .quem{background:linear-gradient(180deg,#e3a196,#a83226); color:#2a0b06;}
 
 /* vez + Encerrar turno na mesma linha, no topo, canto direito */
 .chal-cab{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
@@ -317,6 +332,7 @@ button{font-family:inherit;}
 .chal-sacar[disabled]:active{transform:none; box-shadow:0 4px 0 #120c06;}
 .chal-jogo{display:flex; align-items:center; justify-content:center; gap:12px; min-height:96px;}
 .chal-jogo .carta-jogo{position:relative; width:72px; border-radius:8px; overflow:hidden; border:2px solid var(--gold-soft); box-shadow:0 4px 12px rgba(0,0,0,.5); cursor:zoom-in;}
+.chal-jogo .carta-jogo.aguardando{cursor:pointer; border-color:#FFD23F;}
 .chal-jogo .carta-jogo img{width:100%; aspect-ratio:5/7; object-fit:cover; display:block;}
 .chal-jogo .carta-jogo .lupa{
   position:absolute; top:3px; right:3px; z-index:3; width:20px; height:20px; border-radius:5px;
@@ -326,6 +342,66 @@ button{font-family:inherit;}
 .chal-jogo .instr{font-size:13px; color:#dccba4; font-style:italic; max-width:22ch;}
 .chal-jogo .carta-jogo .tit{font-family:var(--font-serif); font-weight:700; font-size:9px; color:#e7d3a6; padding:3px 2px; background:rgba(20,13,7,.85); text-align:center; line-height:1.1;}
 .chal-log{margin-top:10px; font-size:12.5px; color:#c8b485; text-align:center; min-height:1.3em;}
+
+/* ===== dois quadros do modo Desafio, no mesmo padrão da família de jogos:
+   um para o painel de turno (vez/encerrar, monte, carta em jogo), outro para
+   o tabuleiro onde as cartas são de fato posicionadas — cada um com contorno
+   próprio na cor do jogador da vez, em vez do palco inteiro tingido. ===== */
+.chal-quadro{
+  border:2px solid var(--gold-dim); border-radius:14px;
+  background:linear-gradient(180deg, rgba(58,42,23,.5), rgba(36,26,15,.4));
+  box-shadow:inset 0 0 40px rgba(0,0,0,.3);
+  padding:18px 16px 20px; margin:0 0 22px;
+  transition:border-color .45s ease, box-shadow .45s ease;
+}
+#palco[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
+#palco[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-claro); }
+#palco[data-turno="2"]{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-claro); }
+#palco[data-turno="3"]{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-claro); }
+#palco.chal-ativo .chal-quadro{
+  border-color:var(--chal-cor);
+  box-shadow:inset 0 0 40px rgba(0,0,0,.3), 0 0 0 3px var(--bg-1), 0 0 22px -6px var(--chal-cor);
+}
+/* quadro do painel de turno só existe no modo Desafio — no modo solo some
+   por completo (o quadro do tabuleiro/mesa fica sempre visível, os dois modos
+   usam a mesma mesa de cartas) */
+.chal-quadro-turno{ display:none; }
+.chal-quadro-turno.on{ display:block; }
+
+/* ===== aviso de vez em tela cheia, no mesmo estilo/nome de classe usado nos
+   outros jogos da família (raios girando + ícone + título, cor do jogador) ===== */
+.chal-vez-ov{
+  position:fixed; inset:0; z-index:56; display:none;
+  align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
+  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor, var(--gold)) 32%, transparent),
+    rgba(16,11,6,.68) 58%, rgba(16,11,6,.84));
+}
+.chal-vez-ov.on{ display:flex; animation:chalVezFade 3s ease forwards; }
+.chal-vez-ov.p0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
+.chal-vez-ov.p1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-claro); }
+.chal-vez-ov.p2{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-claro); }
+.chal-vez-ov.p3{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-claro); }
+.chal-vez-cx{ position:relative; text-align:center; animation:chalVezPop .55s cubic-bezier(.16,1.2,.3,1) both; }
+.chal-vez-raios{
+  position:absolute; left:50%; top:50%; width:min(120vw,900px); height:min(120vw,900px);
+  transform:translate(-50%,-50%); border-radius:50%; opacity:.5; color:var(--chal-cor-claro, var(--gold-soft));
+  background:conic-gradient(from 0deg,
+    currentColor 0 5deg, transparent 5deg 26deg,
+    currentColor 26deg 31deg, transparent 31deg 52deg);
+  animation:chalVezGira 3s linear both;
+}
+.chal-vez-ico{
+  position:relative; font-size:clamp(48px,16vw,110px); line-height:1;
+  filter:drop-shadow(0 10px 26px #000);
+}
+.chal-vez-tit{
+  position:relative; margin:14px auto 0; max-width:min(560px,90vw);
+  font-family:var(--font-pixel); font-size:clamp(12px,3.4vw,20px); letter-spacing:.05em;
+  color:#fff; text-shadow:0 2px 12px #000, 0 0 18px rgba(0,0,0,.6);
+}
+@keyframes chalVezFade{ 0%,82%{ opacity:1; } 100%{ opacity:0; } }
+@keyframes chalVezPop{ from{ transform:scale(.2) rotate(-12deg); opacity:0; } 60%{ transform:scale(1.12) rotate(3deg); } to{ transform:scale(1) rotate(0); opacity:1; } }
+@keyframes chalVezGira{ from{ transform:translate(-50%,-50%) rotate(0); } to{ transform:translate(-50%,-50%) rotate(160deg); } }
 
 /* ============ LIGHTBOX ============ */
 .lb{
@@ -542,7 +618,7 @@ button{font-family:inherit;}
       </button>
       <button class="sel-card sel-chal" id="btModoChal" type="button">
         <span class="nome"><span class="em">⚔️</span> Desafio</span>
-        <span class="tag">2 jogadores · por turnos</span>
+        <span class="tag">2 a 4 jogadores · por turnos</span>
       </button>
     </div>
   </section>
@@ -550,13 +626,12 @@ button{font-family:inherit;}
   <!-- ===== ENTRADA DE NOMES (Challenger) ===== -->
   <section class="tela" id="chalNomes">
     <div class="sel-cab">
-      <div class="selo">◆ Desafio · 2 jogadores ◆</div>
+      <div class="selo">◆ Desafio · 2 a 4 jogadores ◆</div>
       <h2>Quem vai duelar?</h2>
-      <p>Digite os nomes (ou deixe como está).</p>
+      <p>Digite os nomes (os 2 primeiros são obrigatórios; os outros dois, opcionais).</p>
     </div>
     <div class="nomes-cx">
-      <div class="nomes-campo j0"><span class="ficha">J1</span><input id="nomeJ0" type="text" maxlength="16" placeholder="Jogador 1" value="Jogador 1"></div>
-      <div class="nomes-campo j1"><span class="ficha">J2</span><input id="nomeJ1" type="text" maxlength="16" placeholder="Jogador 2" value="Jogador 2"></div>
+      <div class="nomes-campos" id="nomesCampos"><!-- campos gerados via JS --></div>
       <div class="nomes-acoes">
         <button class="btn" id="btNomesVoltar" type="button">↩ Voltar</button>
         <button class="btn pri" id="btNomesOk" type="button">Começar duelo ▶</button>
@@ -568,34 +643,39 @@ button{font-family:inherit;}
   <section class="palco" id="palco">
     <div class="hud" id="hud"></div>
 
-    <!-- controles do modo Desafio -->
-    <div class="chal-ctrl" id="chalCtrl">
-      <div class="chal-cab">
-        <div class="chal-vez" id="chalVez"></div>
-        <button class="btn verd pri chal-encerrar" id="btEncerrar" type="button" style="font-size:14px; padding:12px 22px;">Encerrar turno ▸</button>
-      </div>
-      <div class="chal-mesa">
-        <div class="chal-bloco">
-          <div class="rot">Monte de compra</div>
-          <button class="chal-sacar" id="btSacar" type="button">
-            <span class="ico">🂠</span><span>Sacar carta</span>
-            <span class="rest" id="chalRest">— no monte</span>
-          </button>
+    <!-- QUADRO 1: painel de turno do modo Desafio -->
+    <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
+      <div class="chal-ctrl" id="chalCtrl">
+        <div class="chal-cab">
+          <div class="chal-vez" id="chalVez"></div>
+          <button class="btn verd pri chal-encerrar" id="btEncerrar" type="button" style="font-size:14px; padding:12px 22px;">Encerrar turno ▸</button>
         </div>
-        <div class="chal-bloco">
-          <div class="rot">Carta em jogo</div>
-          <div class="chal-jogo" id="chalJogo"><div class="instr">Saque uma carta para começar sua vez.</div></div>
+        <div class="chal-mesa">
+          <div class="chal-bloco">
+            <div class="rot">Monte de compra</div>
+            <button class="chal-sacar" id="btSacar" type="button">
+              <span class="ico">🂠</span><span>Sacar carta</span>
+              <span class="rest" id="chalRest">— no monte</span>
+            </button>
+          </div>
+          <div class="chal-bloco">
+            <div class="rot">Carta em jogo</div>
+            <div class="chal-jogo" id="chalJogo"><div class="instr">Saque uma carta para começar sua vez.</div></div>
+          </div>
         </div>
+        <div class="chal-log" id="chalLog"></div>
       </div>
-      <div class="chal-log" id="chalLog"></div>
     </div>
 
-    <div class="mesa-cx">
-      <div class="mesa" id="mesa">
-        <div class="fundo"><img id="imgMesa" alt="Tabuleiro: ampulheta entre estruturas ósseas e folhas de outono"></div>
-        <div class="brilho"></div>
-        <svg class="setas" id="setas" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"></svg>
-        <!-- slots injetados via JS -->
+    <!-- QUADRO 2: tabuleiro onde as cartas são de fato posicionadas (solo + Desafio) -->
+    <div class="chal-quadro chal-quadro-jogo">
+      <div class="mesa-cx">
+        <div class="mesa" id="mesa">
+          <div class="fundo"><img id="imgMesa" alt="Tabuleiro: ampulheta entre estruturas ósseas e folhas de outono"></div>
+          <div class="brilho"></div>
+          <svg class="setas" id="setas" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <!-- slots injetados via JS -->
+        </div>
       </div>
     </div>
 
@@ -642,6 +722,15 @@ button{font-family:inherit;}
   <div class="t" id="vdT"></div>
   <div class="s" id="vdS"></div>
 </div></div>
+
+<!-- ===== AVISO DE VEZ, no mesmo estilo dos outros jogos da família (Desafio) ===== -->
+<div class="chal-vez-ov" id="chalAviso" aria-hidden="true">
+  <div class="chal-vez-cx">
+    <div class="chal-vez-raios"></div>
+    <div class="chal-vez-ico">▶️</div>
+    <div class="chal-vez-tit" id="chalVezTit"></div>
+  </div>
+</div>
 
 <!-- ===== REVISÃO GUIADA ===== -->
 <div class="rev" id="rev"><div class="inner">
@@ -739,7 +828,10 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   function cartaHTML(idx){
     return '<div class="carta" data-carta="'+idx+'"><img src="'+D.cards[idx].img+'" alt="'+D.cards[idx].t+'"><span class="lupa" title="Ampliar">🔍</span></div>';
   }
-  function segurando(){ return (modo==='solo' && (selecionada!==null||slotMarcado!==null)) || (modo==='chal' && (CHAL.emJogo!==null||CHAL.mao!==null)); }
+  /* só CHAL.cartaMao conta como "segurando" no Desafio agora — uma carta sacada
+     que ainda não foi pega (CHAL.cartaSacada) não pode ser solta num slot vazio
+     ainda, então não deve destacar os slots como alvo válido */
+  function segurando(){ return (modo==='solo' && (selecionada!==null||slotMarcado!==null)) || (modo==='chal' && CHAL.cartaMao!==null); }
 
   function renderMesa(){
     for(let i=0;i<N;i++){
@@ -758,7 +850,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
         if(travado[i]){
           if(modo==='chal' && dono[i]!==null){
             const m=document.createElement('div'); m.className='marca marca-dono p'+dono[i];
-            m.textContent=(CHAL.jog[dono[i]].nome||'J').slice(0,1).toUpperCase(); s.appendChild(m);
+            m.textContent=(CHAL.jogadores[dono[i]].nome||'J').slice(0,1).toUpperCase(); s.appendChild(m);
           } else { const m=document.createElement('div'); m.className='marca marca-certo'; m.textContent='✓'; s.appendChild(m); }
         } else if(fora[i]){
           const m=document.createElement('div'); m.className='marca marca-fora'; m.textContent='FORA'; s.appendChild(m);
@@ -774,7 +866,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   }
 
   /* ================= INTERAÇÃO NO TABULEIRO ================= */
-  function onSlot(i){ if(modo==='solo') soloSlot(i); else if(modo==='chal') chalSlot(i); }
+  function onSlot(i){ if(modo==='solo') soloSlot(i); else if(modo==='chal') chalClicarSlot(i); }
 
   /* ---------- SOLO ---------- */
   function soloSlot(i){
@@ -840,20 +932,24 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   }
 
   /* ---------- CHALLENGER ---------- */
-  function chalSlot(i){
+  function chalClicarSlot(i){
     if(!CHAL.ativo || travado[i]) return;
-    if(CHAL.emJogo!==null){ if(slots[i]===null){ slots[i]=CHAL.emJogo; CHAL.emJogo=null; fora[i]=false; somPousa(); render(); } return; }
-    if(CHAL.mao!==null){ if(slots[i]===null){ slots[i]=CHAL.mao; CHAL.mao=null; fora[i]=false; somPousa(); render(); } return; }
-    if(slots[i]!==null && !travado[i]){ CHAL.mao=slots[i]; slots[i]=null; fora[i]=false; somPega(); render(); }
+    /* segurando uma carta (pega de outro slot) → um slot vazio a recebe */
+    if(CHAL.cartaMao!==null){ if(slots[i]===null){ slots[i]=CHAL.cartaMao; CHAL.cartaMao=null; fora[i]=false; somPousa(); render(); } return; }
+    /* slot ocupado → pega para reposicionar, MESMO com uma carta recém-sacada
+       ainda esperando (CHAL.cartaSacada) — antes isso ficava bloqueado */
+    if(slots[i]!==null){ CHAL.cartaMao=slots[i]; slots[i]=null; fora[i]=false; somPega(); render(); return; }
+    /* slot vazio: não faz nada sozinho — a carta sacada só entra em jogo depois
+       de o jogador tocar nela mesma (área "carta em jogo") para pegá-la primeiro */
   }
   function chalSacar(){
-    if(!CHAL.ativo || CHAL.fase!=='sacar' || CHAL.monte.length===0 || CHAL.emJogo!==null || CHAL.mao!==null) return;
-    CHAL.emJogo=CHAL.monte.shift(); CHAL.fase='jogar'; CHAL.sacou=true; somSaca(); render();
+    if(!CHAL.ativo || CHAL.fase!=='sacar' || CHAL.monte.length===0 || CHAL.cartaSacada!==null || CHAL.cartaMao!==null) return;
+    CHAL.cartaSacada=CHAL.monte.shift(); CHAL.fase='jogar'; CHAL.sacou=true; somSaca(); render();
   }
-  function chalPodeEncerrar(){ return CHAL.ativo && CHAL.emJogo===null && CHAL.mao===null && (CHAL.sacou || CHAL.monte.length===0); }
-  function chalEncerrar(){
+  function chalPodeEncerrar(){ return CHAL.ativo && CHAL.cartaSacada===null && CHAL.cartaMao===null && (CHAL.sacou || CHAL.monte.length===0); }
+  function chalEncerrarTurno(){
     if(!chalPodeEncerrar()) return;
-    const eu=CHAL.turno, jog=CHAL.jog[eu];
+    const eu=CHAL.turno, jog=CHAL.jogadores[eu];
     let ganhos=0, err=0;
     for(let i=0;i<N;i++){
       if(travado[i]||slots[i]===null) continue;
@@ -862,33 +958,66 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     }
     CHAL.semProg = ganhos>0 ? 0 : CHAL.semProg+1;
     render();
+    /* trava Sacar/Encerrar durante a sequência veredito → aviso de vez, para
+       não deixar clicar de novo enquanto os dois overlays ainda não passaram */
+    $('btEncerrar').disabled=true; $('btSacar').disabled=true;
     chalLog(ganhos>0 ? ('✅ '+jog.nome+' travou '+ganhos+' carta(s) e somou '+ganhos+' ponto(s).')
                      : ('… '+jog.nome+' encerrou sem acertos.'));
-    if(travado.every(t=>t)){ chalVeredito(jog.nome, ganhos, 0); setTimeout(chalFim, 1500); return; }
-    chalVeredito(jog.nome, ganhos, err);
-    // troca de vez
-    CHAL.turno=1-eu; CHAL.fase='sacar'; CHAL.sacou=false; CHAL.emJogo=null; CHAL.mao=null;
-    if(CHAL.monte.length===0 && CHAL.semProg>=2){ setTimeout(chalFim, 900); render(); return; }
-    render();
+    const fimDeCiclo=travado.every(t=>t);
+    /* só troca a vez / mostra fim de jogo DEPOIS que o veredito termina —
+       antes os dois apareciam sobrepostos */
+    chalVeredito(jog.nome, ganhos, fimDeCiclo?0:err, function(){
+      if(fimDeCiclo){ chalFim(); return; }
+      CHAL.turno=(eu+1)%CHAL.jogadores.length; CHAL.fase='sacar'; CHAL.sacou=false; CHAL.cartaSacada=null; CHAL.cartaMao=null;
+      if(CHAL.monte.length===0 && CHAL.semProg>=CHAL.jogadores.length){ chalFim(); return; }
+      chalAnunciarVez(render);
+    });
   }
   function chalFim(){
     CHAL.ativo=false; render();
-    const p0=CHAL.jog[0].pontos, p1=CHAL.jog[1].pontos;
+    const max=Math.max.apply(null, CHAL.jogadores.map(j=>j.pontos));
+    const vencedores=CHAL.jogadores.filter(j=>j.pontos===max);
+    const placar=CHAL.jogadores.map(j=>j.nome+' '+j.pontos).join(' · ');
     let ico, tit, sub;
-    if(p0===p1){ ico='🤝'; tit='Empate!'; sub=CHAL.jog[0].nome+' e '+CHAL.jog[1].nome+' — '+p0+' a '+p1+'. Ciclo completo!'; }
-    else { const v=p0>p1?0:1; ico='🏆'; tit=CHAL.jog[v].nome+' venceu!'; sub='Placar '+Math.max(p0,p1)+' a '+Math.min(p0,p1)+' · ciclo completo.'; }
+    if(vencedores.length===1){
+      ico='🏆'; tit=vencedores[0].nome+' venceu!'; sub='Placar: '+placar+' · ciclo completo.';
+    } else {
+      const nomes=vencedores.map(j=>j.nome);
+      const lista=nomes.length===2 ? nomes.join(' e ') : (nomes.slice(0,-1).join(', ')+' e '+nomes[nomes.length-1]);
+      ico='🤝'; tit='Empate!'; sub=lista+' — '+max+' ponto(s) cada. Ciclo completo!';
+    }
     fimDeJogo(ico, tit, sub);
   }
   function chalLog(txt){ $('chalLog').textContent=txt||''; }
+  function chalEsc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-  function chalVeredito(nome, ganhos, err){
+  function chalVeredito(nome, ganhos, err, cb){
     const v=$('veredito'); const bom=ganhos>0;
     v.className='veredito on'+(bom?' bom':'');
     $('vdIco').textContent=bom?'✅':'✗';
     $('vdT').textContent=bom?(nome+' acertou '+ganhos+'!'):(nome+' não acertou');
     $('vdS').textContent=err>0?(err+' carta(s) ainda fora do lugar.'):'';
     (bom?somTrava:somErro)();
-    clearTimeout(vdTimer); vdTimer=setTimeout(()=>{ v.className='veredito'; }, 1900);
+    clearTimeout(vdTimer); vdTimer=setTimeout(()=>{ v.className='veredito'; if(cb) cb(); }, 1900);
+  }
+
+  /* aviso de vez em tela cheia (3 s) — só entra depois que o veredito termina,
+     mesmo padrão visual/nomenclatura dos outros jogos da família */
+  let chalAvisoTok=0;
+  function chalAnunciarVez(cb){
+    if(!CHAL.ativo){ if(cb) cb(); return; }
+    const el=$('chalAviso');
+    el.className='chal-vez-ov p'+CHAL.turno;
+    $('chalVezTit').innerHTML='Vez de <b>'+chalEsc(CHAL.jogadores[CHAL.turno].nome)+'</b>';
+    void el.offsetWidth;
+    el.classList.add('on');
+    somClique();
+    const meu=++chalAvisoTok;
+    setTimeout(()=>{
+      if(meu!==chalAvisoTok) return;
+      el.classList.remove('on');
+      if(cb) cb();
+    }, 3000);
   }
 
   /* ================= HUD ================= */
@@ -907,15 +1036,15 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     $('btTrocar').addEventListener('click', trocarModo);
   }
   function montarHUDChal(){
-    hud.innerHTML =
-      '<div class="stat" id="chChip0"><span class="rot" id="chNome0"></span><span class="val" id="chPts0">0</span></div>' +
-      '<div class="stat" id="chChip1"><span class="rot" id="chNome1"></span><span class="val" id="chPts1">0</span></div>' +
+    let chips='';
+    CHAL.jogadores.forEach((j,i)=>{ chips+='<div class="stat" data-i="'+i+'"><span class="rot"></span><span class="val">0</span></div>'; });
+    hud.innerHTML = chips +
       '<div class="sp"></div>' +
       '<button class="btn" id="btNova" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>' +
       '<button class="btn" id="btTrocar" type="button">⇄ Trocar modo</button>';
-    $('btNova').addEventListener('click', ()=>{ somClique(); chalIniciar(CHAL.jog.map(j=>j.nome)); });
+    $('btNova').addEventListener('click', ()=>{ somClique(); chalIniciar(CHAL.jogadores.map(j=>j.nome)); });
     $('btTrocar').addEventListener('click', trocarModo);
-    $('chNome0').textContent=CHAL.jog[0].nome; $('chNome1').textContent=CHAL.jog[1].nome;
+    hud.querySelectorAll('.stat[data-i]').forEach((el)=>{ el.querySelector('.rot').textContent=CHAL.jogadores[+el.dataset.i].nome; });
   }
   function atualizarHUD(){
     if(modo==='solo'){
@@ -923,9 +1052,11 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
       $('hEncaixe').textContent=enc+'/'+N; $('hTent').textContent=tentativas;
       $('btConferir').disabled = !(soloTodasCheias() && !soloHaFora() && !travado.every(t=>t));
     } else if(modo==='chal'){
-      $('chPts0').textContent=CHAL.jog[0].pontos; $('chPts1').textContent=CHAL.jog[1].pontos;
-      $('chChip0').classList.toggle('ok', CHAL.ativo && CHAL.turno===0);
-      $('chChip1').classList.toggle('ok', CHAL.ativo && CHAL.turno===1);
+      hud.querySelectorAll('.stat[data-i]').forEach((el)=>{
+        const i=+el.dataset.i;
+        el.querySelector('.val').textContent=CHAL.jogadores[i].pontos;
+        el.classList.toggle('ok', CHAL.ativo && CHAL.turno===i);
+      });
     }
   }
 
@@ -933,21 +1064,22 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   function renderChalCtrl(){
     const vez=$('chalVez');
     vez.className='chal-vez p'+CHAL.turno;
-    if(CHAL.ativo) vez.innerHTML='É a vez de <span class="quem">'+CHAL.jog[CHAL.turno].nome+'</span>';
+    if(CHAL.ativo) vez.innerHTML='É a vez de <span class="quem">'+chalEsc(CHAL.jogadores[CHAL.turno].nome)+'</span>';
     else vez.innerHTML='Partida encerrada';
     // sacar
     const bs=$('btSacar');
-    bs.disabled = !(CHAL.ativo && CHAL.fase==='sacar' && CHAL.monte.length>0 && CHAL.emJogo===null && CHAL.mao===null);
+    bs.disabled = !(CHAL.ativo && CHAL.fase==='sacar' && CHAL.monte.length>0 && CHAL.cartaSacada===null && CHAL.cartaMao===null);
     $('chalRest').textContent = CHAL.monte.length+(CHAL.monte.length===1?' no monte':' no monte');
     // carta em jogo
     const cj=$('chalJogo');
     let idxJogo=null;
-    if(CHAL.emJogo!==null){
-      idxJogo=CHAL.emJogo;
-      cj.innerHTML='<div class="carta-jogo" data-carta="'+idxJogo+'"><img src="'+D.cards[idxJogo].img+'" alt=""><span class="lupa" title="Ampliar">🔍</span><div class="tit">'+D.cards[idxJogo].t+'</div></div>'+
-                   '<div class="instr">Leia a carta (toque na lupa para ampliar) e toque num campo vazio do ciclo para posicionar.</div>';
-    } else if(CHAL.mao!==null){
-      idxJogo=CHAL.mao;
+    let aguardandoPegar=false;
+    if(CHAL.cartaSacada!==null){
+      idxJogo=CHAL.cartaSacada; aguardandoPegar=true;
+      cj.innerHTML='<div class="carta-jogo aguardando" data-carta="'+idxJogo+'"><img src="'+D.cards[idxJogo].img+'" alt=""><span class="lupa" title="Ampliar">🔍</span><div class="tit">'+D.cards[idxJogo].t+'</div></div>'+
+                   '<div class="instr">Toque na carta para <b>pegá-la</b> (ou na lupa para ampliar), depois toque num campo vazio do ciclo para posicionar.</div>';
+    } else if(CHAL.cartaMao!==null){
+      idxJogo=CHAL.cartaMao;
       cj.innerHTML='<div class="carta-jogo" data-carta="'+idxJogo+'"><img src="'+D.cards[idxJogo].img+'" alt=""><span class="lupa" title="Ampliar">🔍</span><div class="tit">'+D.cards[idxJogo].t+'</div></div>'+
                    '<div class="instr">Reposicionando — toque num campo vazio.</div>';
     } else if(!CHAL.ativo){
@@ -961,7 +1093,11 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     }
     if(idxJogo!==null){
       const cjc=cj.querySelector('.carta-jogo');
-      if(cjc) cjc.addEventListener('click',()=>zoom(idxJogo));
+      const cjLupa=cjc&&cjc.querySelector('.lupa');
+      if(cjLupa) cjLupa.addEventListener('click',(ev)=>{ ev.stopPropagation(); zoom(idxJogo); });
+      if(cjc) cjc.addEventListener('click', aguardandoPegar
+        ? ()=>{ CHAL.cartaMao=CHAL.cartaSacada; CHAL.cartaSacada=null; somPega(); render(); }
+        : ()=>zoom(idxJogo));
     }
     // encerrar
     $('btEncerrar').disabled = !chalPodeEncerrar();
@@ -973,10 +1109,17 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     if(modo==='solo'){
       $('acervoFaixa').style.display='flex'; acervoEl.style.display='grid';
       $('chalCtrl').classList.remove('on');
+      $('chalQuadroTurno').classList.remove('on');
+      $('palco').classList.remove('chal-ativo');
+      $('palco').removeAttribute('data-turno');
       renderAcervo();
     } else if(modo==='chal'){
       $('acervoFaixa').style.display='none'; acervoEl.style.display='none';
       $('chalCtrl').classList.add('on');
+      $('chalQuadroTurno').classList.add('on');
+      $('palco').classList.toggle('chal-ativo', CHAL.ativo);
+      if(CHAL.ativo) $('palco').setAttribute('data-turno', String(CHAL.turno));
+      else $('palco').removeAttribute('data-turno');
       renderChalCtrl();
     }
     atualizarHUD();
@@ -998,7 +1141,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     const bn=$('btNova'); if(bn) bn.disabled=false;
     $('fim').classList.add('on');
   }
-  function novaPartida(){ if(modo==='solo') iniciarSolo(); else if(modo==='chal') chalIniciar(CHAL.jog.map(j=>j.nome)); }
+  function novaPartida(){ if(modo==='solo') iniciarSolo(); else if(modo==='chal') chalIniciar(CHAL.jogadores.map(j=>j.nome)); }
 
   /* ================= REVISÃO GUIADA ================= */
   let revIdx=0;
@@ -1054,13 +1197,15 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   }
   function chalIniciar(nomes){
     modo='chal'; encerrado=false; $('fim').classList.remove('on');
-    CHAL.jog=[{nome:(nomes[0]||'Jogador 1'), pontos:0},{nome:(nomes[1]||'Jogador 2'), pontos:0}];
+    const nP=Math.max(2, Math.min(4, nomes.length));
+    CHAL.jogadores=[];
+    for(let i=0;i<nP;i++) CHAL.jogadores.push({nome:(nomes[i]||('Jogador '+(i+1))), pontos:0});
     CHAL.monte=baralhar(D.cards.map((_,i)=>i));
-    CHAL.turno=Math.random()<.5?0:1; CHAL.fase='sacar'; CHAL.emJogo=null; CHAL.mao=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
+    CHAL.turno=Math.floor(Math.random()*nP); CHAL.fase='sacar'; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
     limparTabuleiro();
     fecharRev();
     montarHUDChal();
-    chalLog('Sorteio: '+CHAL.jog[CHAL.turno].nome+' começa.');
+    chalLog('Sorteio: '+CHAL.jogadores[CHAL.turno].nome+' começa.');
     mostrarPalco();
     render();
   }
@@ -1106,12 +1251,39 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   document.addEventListener('keydown', function(e){ if(!comecou && $('telaTitulo').style.display!=='none') pressStart(); });
 
   $('btModoSolo').addEventListener('click', ()=>{ somClique(); iniciarSolo(); });
-  $('btModoChal').addEventListener('click', ()=>{ somClique(); mostrarTela('chalNomes'); $('chalNomes').scrollIntoView({behavior:'smooth', block:'start'}); });
+  /* gera de 2 a 4 campos de nome (os 2 primeiros obrigatórios, os outros dois
+     opcionais — em branco não entram na partida), no mesmo espírito da tela
+     de nomes do morte.html */
+  function montarCamposNomes(){
+    const cx=$('nomesCampos'); cx.innerHTML='';
+    const fichas=['J1','J2','J3','J4'];
+    for(let i=0;i<4;i++){
+      const wrap=document.createElement('div');
+      wrap.className='nomes-campo j'+i;
+      wrap.innerHTML='<span class="ficha">'+fichas[i]+'</span>'+
+        '<input id="nomeJ'+i+'" type="text" maxlength="16" placeholder="Jogador '+(i+1)+(i>=2?' (opcional)':'')+'"'+
+        (i<2 ? (' value="Jogador '+(i+1)+'"') : '')+'>';
+      cx.appendChild(wrap);
+    }
+    const primeiro=$('nomeJ0');
+    primeiro.addEventListener('keydown',(e)=>{ if(e.key==='Enter') $('btNomesOk').click(); });
+  }
+  $('btModoChal').addEventListener('click', ()=>{ somClique(); montarCamposNomes(); mostrarTela('chalNomes'); $('chalNomes').scrollIntoView({behavior:'smooth', block:'start'}); });
   $('btNomesVoltar').addEventListener('click', ()=>{ somClique(); mostrarModo(); });
-  $('btNomesOk').addEventListener('click', ()=>{ somClique(); chalIniciar([$('nomeJ0').value.trim(), $('nomeJ1').value.trim()]); });
+  $('btNomesOk').addEventListener('click', ()=>{
+    somClique();
+    const nomes=[];
+    for(let i=0;i<4;i++){
+      const inp=$('nomeJ'+i); if(!inp) continue;
+      const v=(inp.value||'').trim();
+      if(v) nomes.push(v);
+      else if(i<2) nomes.push('Jogador '+(i+1));
+    }
+    chalIniciar(nomes);
+  });
 
   $('btSacar').addEventListener('click', chalSacar);
-  $('btEncerrar').addEventListener('click', chalEncerrar);
+  $('btEncerrar').addEventListener('click', chalEncerrarTurno);
 
   $('btFimRevisar').addEventListener('click', ()=>{ somClique(); iniciarRevisao(); });
   $('btFimNova').addEventListener('click', ()=>{ somClique(); encerrado=false; $('fim').classList.remove('on'); novaPartida(); });

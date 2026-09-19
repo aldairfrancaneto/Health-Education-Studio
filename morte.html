@@ -684,8 +684,8 @@ body{
     background:linear-gradient(180deg, rgba(30,53,87,.45), rgba(10,20,36,.55));
     transition:border-color .15s, box-shadow .15s, transform .1s;
   }
-  .chal-jog.p0{ border-color:#3E86C4; }
-  .chal-jog.p1{ border-color:#C9524C; }
+  .chal-jog.p0{ border-color:#3E86C4; --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
+  .chal-jog.p1{ border-color:#C9524C; --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-claro); }
   .chal-jog.ativo{ transform:translateY(-2px); box-shadow:0 0 0 3px rgba(255,210,63,.35), 0 6px 18px rgba(0,0,0,.4); }
   .chal-jog-topo{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 8px; }
   .chal-jog-nome{
@@ -720,17 +720,16 @@ body{
   }
   @keyframes pulezPisca{ 50%{ opacity:.45; } }
 
-  /* área própria e visível de cada jogador: cartas especiais guardadas (miniatura) */
+  /* área própria e visível de cada jogador: cartas especiais guardadas (miniatura).
+     uma única fileira — o monte pessoal ainda por sortear à esquerda, as cartas
+     já sacadas à direita dele (sem texto quando ainda não há nenhuma). */
   .chal-jog-esp{
     display:flex; gap:6px; flex-wrap:wrap; align-items:flex-start; margin:9px 0 0;
     padding-top:8px; border-top:1px dashed rgba(201,168,232,.28);
   }
-  .chal-esp-vazio{
-    font-family:var(--font-serif); font-size:10.5px; font-style:italic;
-    color:rgba(232,238,247,.4);
-  }
+  /* mesmo tamanho da miniatura da carta normal sacada (.chal-carta-atual .miniatura) */
   .chal-esp-carta{
-    position:relative; width:42px; aspect-ratio:900/1260; padding:0;
+    position:relative; width:calc(var(--mor-cw-mao) * 1.25); aspect-ratio:900/1260; padding:0;
     border:2px solid var(--gold-dim); border-radius:5px; overflow:hidden;
     background:var(--slot); cursor:zoom-in; flex:0 0 auto;
     transition:transform .1s, box-shadow .1s, border-color .1s;
@@ -742,48 +741,55 @@ body{
   .chal-esp-carta.k-amplificacao{ border-color:#E9982E; }
   .chal-esp-carta.k-sobrevivencia{ border-color:#C9A227; }
   .chal-esp-carta .chal-esp-ico{
-    position:absolute; top:2px; left:2px; font-size:10px; line-height:1;
-    background:rgba(6,10,20,.8); border-radius:3px; padding:1px 2px;
+    position:absolute; top:3px; left:3px; font-size:15px; line-height:1;
+    background:rgba(6,10,20,.8); border-radius:4px; padding:2px 4px;
   }
 
-  /* ===== BANDEJA de cartas especiais do jogador da vez ===== */
-  .chal-bandeja{ display:none; margin:16px 0 0; gap:12px; flex-wrap:wrap; }
-  .chal-bandeja.on{ display:flex; }
-  .chal-bandeja-tit{
-    flex:1 1 100%; font-family:var(--font-serif); font-weight:900; font-size:12px;
-    letter-spacing:.07em; text-transform:uppercase; color:var(--gold-soft); margin:0 0 2px;
+  /* miniatura do baralho pessoal de especiais ainda não sorteadas — carta virada
+     para baixo, à esquerda das cartas já sacadas, na mesma fileira, no quadro
+     de pontuação do jogador.
+     25% menor que a carta sacada normal e tematizada na cor do próprio jogador
+     (--chal-cor / --chal-cor-claro, herdadas de .chal-jog.p0..p3 — a mesma cor
+     do tabuleiro quando é a vez dele). Duas "sombras" de carta empilhada atrás
+     (::before/::after) dão a sensação de monte, e o verso ganha moldura e
+     textura em losango, como o verso de um baralho de verdade. */
+  .chal-esp-monte{
+    position:relative; width:calc(var(--mor-cw-mao) * .9375); aspect-ratio:900/1260;
+    flex:0 0 auto; margin:2px 3px 4px;
   }
-  .chal-bandeja-vazia{
-    flex:1 1 100%; font-family:var(--font-serif); font-size:12.5px; font-style:italic;
-    color:rgba(232,238,247,.45);
+  .chal-esp-monte::before, .chal-esp-monte::after{
+    content:''; position:absolute; inset:0; z-index:0; border-radius:6px;
+    border:1.5px solid color-mix(in srgb, var(--chal-cor, #C9A8E8) 55%, rgba(10,20,36,.9));
+    background:rgba(10,20,36,.9);
   }
-  .chal-carta-esp{
-    flex:1 1 210px; max-width:300px; display:flex; gap:12px; align-items:stretch;
-    border:2px solid var(--gold-dim); border-radius:12px; padding:10px;
-    background:linear-gradient(180deg, rgba(10,20,36,.8), rgba(21,39,66,.5));
-    text-align:left; cursor:pointer; color:#E8EEF7;
-    transition:transform .12s, box-shadow .12s, border-color .12s;
+  .chal-esp-monte::before{ transform:rotate(-7deg) translate(-3px,2px); }
+  .chal-esp-monte::after{  transform:rotate(6deg) translate(3px,2px); }
+  .chal-esp-monte .verso{
+    position:relative; z-index:1; width:100%; height:100%; border-radius:6px;
+    border:2px solid var(--chal-cor, var(--gold-dim));
+    background:
+      radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor, #C9A8E8) 40%, transparent) 0%, transparent 64%),
+      repeating-linear-gradient(45deg, color-mix(in srgb, var(--chal-cor, #C9A8E8) 25%, transparent) 0 3px, rgba(9,16,28,.95) 3px 9px),
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--chal-cor, #C9A8E8) 14%, transparent) 0 3px, transparent 3px 9px);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 4px 12px rgba(0,0,0,.5);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .chal-carta-esp:hover{ transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.5); }
-  .chal-carta-esp.k-sentenca{ border-color:#E5484D; }
-  .chal-carta-esp.k-inibidor{ border-color:#3DD8D0; }
-  .chal-carta-esp.k-amplificacao{ border-color:#E9982E; }
-  .chal-carta-esp.k-sobrevivencia{ border-color:#C9A227; }
-  .chal-carta-esp.pronta{ box-shadow:0 0 0 2px rgba(255,210,63,.5), 0 0 16px rgba(255,210,63,.3); }
-  .chal-carta-esp > img{
-    width:64px; flex:0 0 auto; aspect-ratio:900/1260; object-fit:cover;
-    border-radius:7px; border:1px solid rgba(0,0,0,.4);
+  .chal-esp-monte .verso::before{
+    content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+    border:1px solid color-mix(in srgb, var(--chal-cor-claro, #E8CE7A) 60%, transparent);
   }
-  .chal-carta-esp-info{ display:flex; flex-direction:column; gap:4px; min-width:0; }
-  .chal-carta-esp-nome{ font-family:var(--font-serif); font-weight:900; font-size:13px; line-height:1.25; }
-  .chal-carta-esp-efeito{ font-family:var(--font-serif); font-size:11.5px; line-height:1.4; color:rgba(232,238,247,.82); }
-  .chal-carta-esp-estado{
-    margin-top:auto; font-family:var(--font-pixel); font-size:7.5px; letter-spacing:.03em;
-    padding:4px 6px; border-radius:5px; align-self:flex-start;
+  .chal-esp-monte .ico{
+    position:relative; font-size:26px; opacity:.9; color:var(--chal-cor-claro, #E8CE7A);
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));
   }
-  .chal-carta-esp-estado.pronta{ color:#1A1206; background:#FFD23F; }
-  .chal-carta-esp-estado.espera{ color:#9BE0B0; background:rgba(62,158,94,.22); border:1px solid #3E9E5E; }
-  .chal-carta-esp-estado.combo{ color:#F2C88C; background:rgba(233,152,46,.2); border:1px solid #E9982E; }
+  .chal-esp-monte .qtd{
+    position:absolute; bottom:1px; right:2px; z-index:2; font-family:var(--font-pixel); font-size:9px;
+    background:rgba(6,10,20,.9); border:1px solid color-mix(in srgb, var(--chal-cor, #C9A8E8) 55%, transparent);
+    border-radius:4px; padding:2px 4px; color:var(--gold-soft);
+  }
+  .chal-esp-monte.vazio{ opacity:.4; }
+  .chal-esp-monte.vazio::before, .chal-esp-monte.vazio::after{ display:none; }
+  .chal-esp-monte.vazio .qtd{ color:rgba(232,238,247,.5); }
 
   /* carta especial ampliada dentro do modal */
   .chal-esp-grande{
@@ -887,12 +893,12 @@ body{
   @keyframes chalBoomTremer{ 50%{ transform:translate(-3px,1px); } }
   @keyframes chalBoomCarta{ from{ transform:translateY(34px) scale(.5); opacity:0; } to{ transform:translateY(0) scale(1); opacity:1; } }
 
-  /* veredito de 5 s ao encerrar o turno: a jogada anterior acertou ou errou? */
+  /* veredito de 3 s ao encerrar o turno: a jogada anterior acertou ou errou? */
   .chal-vd{
     position:fixed; inset:0; z-index:119; display:none;
     align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
   }
-  .chal-vd.on{ display:flex; animation:chalVdFade 5s ease forwards; }
+  .chal-vd.on{ display:flex; animation:chalVdFade 3s ease forwards; }
   .chal-vd.acerto{ background:radial-gradient(circle at 50% 44%, rgba(60,200,120,.32), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
   .chal-vd.erro{ background:radial-gradient(circle at 50% 44%, rgba(255,80,60,.34), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
   .chal-vd-cx{ position:relative; text-align:center; animation:chalBoomPop .55s cubic-bezier(.16,1.2,.3,1) both; }
@@ -902,7 +908,7 @@ body{
     background:conic-gradient(from 0deg,
       currentColor 0 5deg, transparent 5deg 26deg,
       currentColor 26deg 31deg, transparent 31deg 52deg);
-    animation:chalBoomGira 5s linear both;
+    animation:chalBoomGira 3s linear both;
   }
   .chal-vd.acerto .chal-vd-raios{ color:rgba(120,240,170,.85); }
   .chal-vd.erro .chal-vd-raios{ color:rgba(255,140,90,.9); }
@@ -968,6 +974,21 @@ body{
     .mor-rev-status{ font-size:12px; }
   }
 
+  /* --- os dois "quadros" do modo Desafio: um para o painel de turno (placar,
+     monte único, cartas especiais), outro para o tabuleiro onde as cartas são
+     posicionadas — mesma disposição de sempre, agora cada um na sua moldura,
+     com contorno próprio (ver .tabuleiro.chal-ativo .chal-quadro mais abaixo)
+     e uma área de respiro entre os dois (margin-bottom). --- */
+  .chal-quadro{
+    border:2px solid var(--gold-dim); border-radius:14px;
+    background:linear-gradient(180deg, rgba(10,20,36,.55), rgba(21,39,66,.35));
+    box-shadow:inset 0 0 40px rgba(0,0,0,.3);
+    padding:18px 16px 20px; margin:0 0 28px;
+    transition:border-color .45s ease, box-shadow .45s ease;
+  }
+  .chal-quadro-turno{ display:none; }
+  .chal-quadro-turno.on{ display:block; }
+
   /* --- painel de saque / carta atual --- */
   .chal-painel{ display:none; margin:0 0 22px; }
   .chal-painel.on{ display:block; }
@@ -1029,20 +1050,6 @@ body{
   }
   .chal-carta-atual.aguardando .instr{ color:#FFD23F; opacity:1; }
   @keyframes chalBob{ 50%{ transform:translateY(-5px); } }
-  .chal-carta-atual.nudge{ animation:chalNudge .4s ease; }
-  @keyframes chalNudge{ 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
-
-
-  /* log de eventos */
-  .chal-log{
-    margin:14px 0 0; border:1px dashed rgba(201,168,232,.4); border-radius:10px;
-    padding:10px 12px; background:rgba(10,20,36,.5); max-height:120px; overflow-y:auto;
-    font-family:var(--font-serif); font-size:12.5px; color:rgba(232,238,247,.85); line-height:1.6;
-  }
-  .chal-log p{ margin:0 0 5px; }
-  .chal-log b{ color:#FFD23F; }
-  .chal-log .verde{ color:#9BE0B0; }
-  .chal-log .vermelho{ color:#F5B4B0; }
 
   /* dono da carta travada (inicial + cor) */
   .mor-slot .chal-dono{
@@ -1087,31 +1094,27 @@ body{
   }
 
   /* cores dos jogadores 3 e 4 (placar, sorteio, aviso, dono) */
-  .chal-jog.p2{ border-color:#3E9E5E; } .chal-jog.p2 .pino{ background:#3E9E5E; }
-  .chal-jog.p3{ border-color:#E0982E; } .chal-jog.p3 .pino{ background:#E0982E; }
+  .chal-jog.p2{ border-color:#3E9E5E; --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-claro); } .chal-jog.p2 .pino{ background:#3E9E5E; }
+  .chal-jog.p3{ border-color:#E0982E; --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-claro); } .chal-jog.p3 .pino{ background:#E0982E; }
   .chal-linha-final.p2 .pino{ background:#3E9E5E; }
   .chal-linha-final.p3 .pino{ background:#E0982E; }
   .chal-sorteio-nome.p2{ border-color:#3E9E5E; } .chal-sorteio-nome.p2 .pino{ background:#3E9E5E; }
   .chal-sorteio-nome.p3{ border-color:#E0982E; } .chal-sorteio-nome.p3 .pino{ background:#E0982E; }
   .mor-slot .chal-dono.p2{ background:#3E9E5E; }
   .mor-slot .chal-dono.p3{ background:#E0982E; }
-  .chal-aviso.p2{ background:linear-gradient(180deg,#8FD7AB,#3E9E5E); }
-  .chal-aviso.p3{ background:linear-gradient(180deg,#F2C88C,#E0982E); }
 
-  /* ===== tabuleiro pega a cor do jogador da vez (Challenger) ===== */
+  /* ===== os dois quadros pegam a cor do jogador da vez, cada um com o próprio
+     contorno (não mais o tabuleiro externo inteiro) — a cor em si continua
+     vindo do data-turno no tabuleiro, só herdada pelos quadros dentro dele ===== */
   .tabuleiro[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
   .tabuleiro[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-claro); }
   .tabuleiro[data-turno="2"]{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-claro); }
   .tabuleiro[data-turno="3"]{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-claro); }
 
-  .tabuleiro.chal-ativo{
+  .tabuleiro.chal-ativo .chal-quadro{
     border-color:var(--chal-cor);
-    box-shadow:0 0 0 3px var(--board-1), 8px 8px 0 rgba(0,0,0,.35),
-               inset 0 0 90px rgba(0,0,0,.6), 0 0 30px -4px var(--chal-cor);
-    transition:border-color .45s ease, box-shadow .45s ease;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.3), 0 0 0 3px var(--board-1), 0 0 22px -6px var(--chal-cor);
   }
-  .tabuleiro.chal-ativo::before,
-  .tabuleiro.chal-ativo::after{ border-color:var(--chal-cor-claro); opacity:.95; }
 
   /* barra "Vez de …" ganha a faixa da cor do jogador */
   .chal-ativo .chal-vez{
@@ -1120,14 +1123,11 @@ body{
     background:linear-gradient(90deg, color-mix(in srgb, var(--chal-cor) 26%, rgba(10,20,36,.7)), rgba(10,20,36,.7) 60%);
   }
 
-  /* cartão do jogador ativo brilha na própria cor, não mais no dourado genérico */
+  /* cartão do jogador ativo brilha na própria cor, não mais no dourado genérico
+     (--chal-cor-claro já vem definida em .chal-jog.p0..p3, ver acima) */
   .chal-jog.ativo{
     box-shadow:0 0 0 3px var(--chal-cor-claro, rgba(255,210,63,.35)), 0 6px 18px rgba(0,0,0,.45);
   }
-  .chal-jog.p0.ativo{ --chal-cor-claro:var(--jog0-claro); }
-  .chal-jog.p1.ativo{ --chal-cor-claro:var(--jog1-claro); }
-  .chal-jog.p2.ativo{ --chal-cor-claro:var(--jog2-claro); }
-  .chal-jog.p3.ativo{ --chal-cor-claro:var(--jog3-claro); }
 
   /* --- tela de sorteio animada (challenger) --- */
   .chal-sorteio{
@@ -1170,25 +1170,36 @@ body{
   .chal-sorteio.parou .chal-sorteio-res{ opacity:1; animation:chalResPulsa 1s ease-in-out infinite; }
   @keyframes chalResPulsa{ 50%{ transform:scale(1.07); } }
 
-  /* --- aviso animado de vez (challenger) --- */
-  .chal-aviso{
-    position:fixed; left:0; right:0; top:0; z-index:115; pointer-events:none;
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    padding:16px 20px; transform:translateY(-120%);
-    font-family:var(--font-pixel); font-size:14px; line-height:1.5; letter-spacing:.04em;
-    color:#1A1206; text-transform:uppercase; text-shadow:0 1px 0 rgba(255,255,255,.35);
-    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  /* --- aviso de vez (challenger) — mesma linguagem visual do veredito:
+     raios girando + ícone + título, tingidos na cor do jogador da vez --- */
+  .chal-vez-ov{
+    position:fixed; inset:0; z-index:119; display:none;
+    align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
+    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
+      rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
   }
-  .chal-aviso.p0{ background:linear-gradient(180deg,#8FC8F6,#3E86C4); }
-  .chal-aviso.p1{ background:linear-gradient(180deg,#F0A9A4,#C9524C); }
-  .chal-aviso.on{ animation:chalAvisoAnim 3s ease forwards; }
-  .chal-aviso .seta{ display:inline-block; animation:chalSeta .6s ease-in-out infinite alternate; }
-  @keyframes chalSeta{ to{ transform:translateX(6px); } }
-  @keyframes chalAvisoAnim{
-    0%{ transform:translateY(-120%); }
-    12%{ transform:translateY(0); }
-    82%{ transform:translateY(0); }
-    100%{ transform:translateY(-120%); }
+  .chal-vez-ov.on{ display:flex; animation:chalVdFade 3s ease forwards; }
+  .chal-vez-ov.p0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
+  .chal-vez-ov.p1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-claro); }
+  .chal-vez-ov.p2{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-claro); }
+  .chal-vez-ov.p3{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-claro); }
+  .chal-vez-cx{ position:relative; text-align:center; animation:chalBoomPop .55s cubic-bezier(.16,1.2,.3,1) both; }
+  .chal-vez-raios{
+    position:absolute; left:50%; top:50%; width:min(120vw,900px); height:min(120vw,900px);
+    transform:translate(-50%,-50%); border-radius:50%; opacity:.5; color:var(--chal-cor-claro);
+    background:conic-gradient(from 0deg,
+      currentColor 0 5deg, transparent 5deg 26deg,
+      currentColor 26deg 31deg, transparent 31deg 52deg);
+    animation:chalBoomGira 3s linear both;
+  }
+  .chal-vez-ico{
+    position:relative; font-size:clamp(48px,16vw,110px); line-height:1;
+    filter:drop-shadow(0 10px 26px #000);
+  }
+  .chal-vez-tit{
+    position:relative; margin:14px auto 0; max-width:min(560px,90vw);
+    font-family:var(--font-pixel); font-size:clamp(12px,3.4vw,20px); letter-spacing:.05em;
+    color:#fff; text-shadow:0 2px 12px #000, 0 0 18px rgba(0,0,0,.6);
   }
 
   /* --- modal genérico (sorteio, bloqueio, resultado) --- */
@@ -1388,59 +1399,67 @@ body{
         <button class="btn-board" id="morTrocar" type="button" disabled title="Disponível ao concluir o percurso">⇄ Trocar conjunto</button>
       </div>
 
-      <div class="chal-hud" id="chalHud">
-        <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
-        <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
-      </div>
+      <!-- ---------- QUADRO 1: placar, monte único e cartas especiais (Challenger) ---------- -->
+      <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
 
-      <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
-      <div class="chal-cab" id="chalCab">
-        <div class="chal-vez" id="chalVez"></div>
-        <button class="btn-board principal chal-encerrar" id="chalEncerrar" type="button">✔ Encerrar turno</button>
-      </div>
-
-      <div class="chal-placar" id="chalPlacar"></div>
-
-      <!-- ---------- PAINEL DE TURNO (Challenger): monte, carta em jogo, bandeja, log ---------- -->
-      <div class="chal-painel" id="chalPainel">
-        <div class="faixa">
-          <span class="faixa-titulo">Monte único — saque e posicione</span>
-          <span class="linha-ouro"></span>
+        <div class="chal-hud" id="chalHud">
+          <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
         </div>
-        <div class="chal-mesa">
-          <div class="chal-bloco">
-            <div class="chal-bloco-tit">Monte de compra</div>
-            <button class="chal-monte-btn" id="chalSacar" type="button">
-              <span class="ico">🂠</span>
-              <span>Sacar carta</span>
-              <span class="rest" id="chalRest">— cartas no monte</span>
-            </button>
+
+        <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
+        <div class="chal-cab" id="chalCab">
+          <div class="chal-vez" id="chalVez"></div>
+          <button class="btn-board principal chal-encerrar" id="chalEncerrar" type="button">✔ Encerrar turno</button>
+        </div>
+
+        <div class="chal-placar" id="chalPlacar"></div>
+
+        <!-- ---------- PAINEL DE TURNO (Challenger): monte, carta em jogo, bandeja, log ---------- -->
+        <div class="chal-painel" id="chalPainel">
+          <div class="faixa">
+            <span class="faixa-titulo">Monte único — saque e posicione</span>
+            <span class="linha-ouro"></span>
           </div>
-          <div class="chal-bloco">
-            <div class="chal-bloco-tit">Carta em jogo</div>
-            <div class="chal-carta-atual" id="chalCartaAtual">
-              <div class="instr">Saque uma carta para começar o turno.</div>
+          <div class="chal-mesa">
+            <div class="chal-bloco">
+              <div class="chal-bloco-tit">Monte de compra</div>
+              <button class="chal-monte-btn" id="chalSacar" type="button">
+                <span class="ico">🂠</span>
+                <span>Sacar carta</span>
+                <span class="rest" id="chalRest">— cartas no monte</span>
+              </button>
+            </div>
+            <div class="chal-bloco">
+              <div class="chal-bloco-tit">Carta em jogo</div>
+              <div class="chal-carta-atual" id="chalCartaAtual">
+                <div class="instr">Saque uma carta para começar o turno.</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- BANDEJA DE CARTAS ESPECIAIS DO JOGADOR DA VEZ -->
-        <div class="chal-bandeja" id="chalBandeja"></div>
-
-        <div class="chal-log" id="chalLog"></div>
       </div>
 
       <div id="morResultado"></div>
 
-      <div class="mor-legenda">
-        <span data-leg="apo"><i class="c-int"></i> Apoptose — via intrínseca (mitocondrial)</span>
-        <span data-leg="apo"><i class="c-ext"></i> Apoptose — via extrínseca (receptores de morte)</span>
-        <span data-leg="apo"><i class="c-com"></i> Apoptose — fase de execução comum</span>
-        <span data-leg="nec"><i class="c-nec"></i> Necrose — curso temporal</span>
-      </div>
+      <!-- ---------- QUADRO 2: tabuleiro onde as cartas de fato são posicionadas ---------- -->
+      <div class="chal-quadro chal-quadro-jogo">
 
-      <!-- ---------- OS DOIS DESTINOS, LADO A LADO ---------- -->
-      <div class="mor-campos" id="morCampos">
+        <div class="faixa">
+          <span class="faixa-titulo">Tabuleiro — posicione as cartas</span>
+          <span class="linha-ouro"></span>
+        </div>
+
+        <div class="mor-legenda">
+          <span data-leg="apo"><i class="c-int"></i> Apoptose — via intrínseca (mitocondrial)</span>
+          <span data-leg="apo"><i class="c-ext"></i> Apoptose — via extrínseca (receptores de morte)</span>
+          <span data-leg="apo"><i class="c-com"></i> Apoptose — fase de execução comum</span>
+          <span data-leg="nec"><i class="c-nec"></i> Necrose — curso temporal</span>
+        </div>
+
+        <!-- ---------- OS DOIS DESTINOS, LADO A LADO ---------- -->
+        <div class="mor-campos" id="morCampos">
 
         <!-- CAMPO ESQUERDO: APOPTOSE -->
         <div class="mor-campo mor-campo-apo" id="morCampoApo">
@@ -1504,6 +1523,8 @@ body{
 
       </div>
 
+      </div>
+
       <div id="morAcervoClassico">
         <div class="faixa">
           <span class="faixa-titulo">Acervo de cartas</span>
@@ -1563,8 +1584,21 @@ body{
   <div class="chal-sorteio-res" id="chalSorteioRes"></div>
 </div>
 
-<!-- ---------- AVISO ANIMADO DE VEZ (challenger) ---------- -->
-<div class="chal-aviso" id="chalAviso"></div>
+<!-- ---------- SORTEIO DE CARTA ESPECIAL — a cada rodada, 25% de chance (challenger) ---------- -->
+<div class="chal-sorteio" id="chalSorteioEsp">
+  <div class="chal-sorteio-dado">🎲</div>
+  <div class="chal-sorteio-tit">Sorteando carta especial…</div>
+  <div class="chal-sorteio-res" id="chalSorteioEspRes"></div>
+</div>
+
+<!-- ---------- AVISO DE VEZ, no mesmo estilo do veredito (challenger) ---------- -->
+<div class="chal-vez-ov" id="chalAviso" aria-hidden="true">
+  <div class="chal-vez-cx">
+    <div class="chal-vez-raios"></div>
+    <div class="chal-vez-ico">▶️</div>
+    <div class="chal-vez-tit" id="chalVezTit"></div>
+  </div>
+</div>
 
 <!-- ---------- CARTA ESPECIAL JOGADA — FLIP NO CENTRO (challenger) ---------- -->
 <div class="chal-flip" id="chalFlip">
@@ -1657,6 +1691,10 @@ body{
   }
   function somClique(){ nota(880, 0, 0.06, 'square', 0.07); }
   function somEncaixe(){ nota(440,0,0.07,'triangle',0.12); nota(660,0.06,0.10,'triangle',0.10); }
+  function somDado(){      // clique seco e grave, tipo "tac" de dado batendo — usado no giro dos sorteios
+    nota(150 + Math.random()*70, 0, 0.045, 'square', 0.10);
+    nota(90  + Math.random()*40, 0.006, 0.05, 'triangle', 0.08);
+  }
 
   /* ------------------ lightbox ------------------ */
   const lb = document.getElementById('lightbox');
@@ -2240,17 +2278,16 @@ body{
     const turno = (morFluxo !== 'classico');
     document.getElementById('morHudClassico').style.display   = turno ? 'none' : '';
     document.getElementById('morAcervoClassico').style.display = turno ? 'none' : '';
+    document.getElementById('chalQuadroTurno').classList.toggle('on', turno);
     document.getElementById('chalHud').classList.toggle('on', turno);
     document.getElementById('chalCab').classList.toggle('on', turno);
     document.getElementById('chalPainel').classList.toggle('on', turno);
     document.getElementById('chalPlacar').classList.toggle('on', turno);
     document.getElementById('chalVez').classList.toggle('on', turno);
-    document.getElementById('chalBandeja').classList.toggle('on', turno);
     if (!turno){
       document.getElementById('chalCab').classList.remove('on');
       document.getElementById('chalVez').classList.remove('on');
       document.getElementById('chalPlacar').classList.remove('on');
-      document.getElementById('chalBandeja').classList.remove('on');
       morTabuleiro.classList.remove('chal-ativo');
       morTabuleiro.removeAttribute('data-turno');
     }
@@ -2288,26 +2325,22 @@ body{
     amplificacao:  { nome:'Amplificação da Cascata', tipo:'ataque', ico:'⚡', quando:'combo',
                      efeito:'Logo após uma Sentença, o alvo perde 2 vezes em vez de 1.' }
   };
-  const CHAL_ESP_ORDEM = ['sentenca','inibidor','sobrevivencia','amplificacao'];
 
-  /* Quais cartas especiais entram no monte, conforme o percurso e o nº de jogadores:
+  /* Baralho PESSOAL de cartas especiais — um por jogador, separado do monte de conteúdo:
        • Só a Necrose      → nenhuma (corrida curta de 6 cartas, sem duelo de cartas)
-       • Só a Apoptose     → Sentença x2 + Inibidor x2 (1v1 mais disputado)
-       • Os Dois Destinos  → as quatro cartas; Amplificação sempre 1 no jogo,
-                             as demais (nº de jogadores - 1), mínimo 1.
-     Devolve uma lista [{k, qtd}] — lista vazia = partida sem cartas especiais. */
-  function chalEspConfig(nP){
+       • Só a Apoptose     → mesmo baralho completo abaixo
+       • Os Dois Destinos  → mesmo baralho completo abaixo
+     Devolve uma lista [{k, qtd}] — lista vazia = partida sem cartas especiais.
+     A cada turno o dono tem CHAL_ESP_CHANCE de chance de sacar a carta do topo
+     do próprio baralho (ver chalTentarSorteEspecial). */
+  const CHAL_ESP_CHANCE = 0.25;
+  function chalEspPessoalConfig(){
     if (morModo === 'necrose') return [];
-    if (morModo === 'apoptose') return [
-      { k:'sentenca', qtd:2 },
-      { k:'inibidor', qtd:2 }
-    ];
-    const base = Math.max(1, nP - 1);
     return [
-      { k:'sentenca',      qtd:base },
-      { k:'inibidor',      qtd:base },
-      { k:'sobrevivencia', qtd:base },
-      { k:'amplificacao',  qtd:1 }   /* 1 no jogo, inclusive com 3–4 jogadores */
+      { k:'sentenca',      qtd:2 },
+      { k:'inibidor',      qtd:1 },
+      { k:'sobrevivencia', qtd:1 },
+      { k:'amplificacao',  qtd:1 }
     ];
   }
   const CHAL_ESP_IMG = {
@@ -2329,7 +2362,6 @@ body{
   const chalPlacarEl    = document.getElementById('chalPlacar');
   const chalVezEl       = document.getElementById('chalVez');
   const chalCartaEl     = document.getElementById('chalCartaAtual');
-  const chalLogEl       = document.getElementById('chalLog');
   const chalRestEl      = document.getElementById('chalRest');
   const chalSacarBtn    = document.getElementById('chalSacar');
   const chalEncerrarBtn = document.getElementById('chalEncerrar');
@@ -2399,38 +2431,42 @@ body{
   }
 
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
-  function chalAnunciarVez(){
-    if (!CHAL.ativo || CHAL.jogadores.length < 2) return;
+  function chalAnunciarVez(cb){
+    if (!CHAL.ativo || CHAL.jogadores.length < 2){ if (cb) cb(); return; }
     const el = document.getElementById('chalAviso');
     const j  = chalJogAtual();
-    el.className = 'chal-aviso p' + CHAL.turno;
-    el.innerHTML = '<span class="seta">▶</span> Vez de ' + chalEsc(j.nome) +
-                   ' <span class="seta">◀</span>';
+    el.className = 'chal-vez-ov p' + CHAL.turno;
+    document.getElementById('chalVezTit').innerHTML = 'Vez de <b>' + chalEsc(j.nome) + '</b>';
     void el.offsetWidth;                                  /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
-    setTimeout(function(){ el.classList.remove('on'); }, 3000);
+    setTimeout(function(){
+      el.classList.remove('on');
+      if (cb) cb();
+    }, 3000);
   }
 
-  function chalLog(html, cls){
-    const p = document.createElement('p');
-    if (cls) p.className = cls;
-    p.innerHTML = html;
-    chalLogEl.insertBefore(p, chalLogEl.firstChild);
-    while (chalLogEl.children.length > 40) chalLogEl.removeChild(chalLogEl.lastChild);
-  }
+  /* caixa de histórico removida do tabuleiro (poluía a tela) — chamadas mantidas
+     como no-op, já que várias outras animações (veredito, flip, boom) já cobrem
+     visualmente esses mesmos eventos. */
+  function chalLog(){}
 
   function chalIniciar(){
     morMontarCampos();
 
     /* nº de jogadores = quantos nomes foram registrados (2 a 4) */
     const nP = Math.max(2, Math.min(4, (chalNomes && chalNomes.length) || 2));
+    const cfgEsp = chalEspPessoalConfig();
     CHAL.jogadores = [];
     for (let i = 0; i < nP; i++){
+      /* baralho pessoal de cartas especiais deste jogador, embaralhado à parte */
+      let pessoal = [];
+      cfgEsp.forEach(function(c){ for (let n = 0; n < c.qtd; n++) pessoal.push(c.k); });
       CHAL.jogadores.push({
         nome: (chalNomes[i] || ('Jogador ' + (i+1))),
         pontos: 0, vias:{int:0,ext:0,com:0,nec:0},
-        especiais: []
+        especiais: [],
+        especiaisDeck: morEmbaralhar(pessoal)
       });
     }
     CHAL.registro = {};
@@ -2444,35 +2480,24 @@ body{
     CHAL.iniciativaPara = null;
     CHAL.ativo = true;
 
-    /* baralho: todas as cartas de conteúdo das trilhas ativas, embaralhadas */
+    /* baralho: apenas as cartas de conteúdo das trilhas ativas, embaralhadas
+       (as especiais não entram mais aqui — cada jogador tem o próprio baralho, ver acima) */
     let conteudo = [];
     morAtivas().forEach(function(t){
-      t.cartas.forEach(function(c){ conteudo.push({t:'carta', id:c[0]}); });
+      t.cartas.forEach(function(c){ conteudo.push(c[0]); });
     });
-    conteudo = morEmbaralhar(conteudo);
+    CHAL.deck = morEmbaralhar(conteudo);
 
-    /* cartas especiais conforme o percurso e o nº de jogadores (ver chalEspConfig).
-       Inseridas em posições aleatórias do monte. */
-    const especiais = [];
-    chalEspConfig(nP).forEach(function(cfg){
-      for (let i = 0; i < cfg.qtd; i++) especiais.push({t:'esp', k:cfg.k});
-    });
-    especiais.forEach(function(ec){
-      const idx = Math.floor(Math.random() * conteudo.length); /* 0..len-1 */
-      conteudo.splice(idx, 0, ec);
-    });
-    CHAL.deck = conteudo;
-
-    chalLogEl.innerHTML = '';
     chalCartaEl.classList.remove('segurando','alvo-espera');
 
-    /* resumo das cartas especiais desta partida (transparência p/ os jogadores) */
+    /* resumo do baralho pessoal de cartas especiais (transparência p/ os jogadores) */
     (function(){
-      const nomes = chalEspConfig(nP).map(function(c){
+      const nomes = cfgEsp.map(function(c){
         return CHAL_ESP[c.k].ico + ' ' + CHAL_ESP[c.k].nome + (c.qtd > 1 ? ' ×' + c.qtd : '');
       });
       chalLog(nomes.length
-        ? '🃏 Cartas especiais nesta partida: ' + nomes.join(', ') + '.'
+        ? '🃏 Cada jogador começa com um baralho pessoal de cartas especiais: ' + nomes.join(', ') +
+          '. A cada rodada há ' + Math.round(CHAL_ESP_CHANCE * 100) + '% de chance de sacar a carta do topo.'
         : '🃏 Percurso de necrose: partida sem cartas especiais — corrida pura pela ordem dos eventos.');
     })();
 
@@ -2485,7 +2510,6 @@ body{
       chalNovoTurno();
     }
     chalRenderPlacar();
-    chalRenderBandeja();
     chalAtualizarRest();
     chalAtualizarBotoesPartida();
   }
@@ -2552,23 +2576,39 @@ body{
         card.appendChild(p);
       }
 
-      /* área própria e visível: cartas especiais guardadas por este jogador (miniatura) */
-      const esp = document.createElement('div'); esp.className = 'chal-jog-esp';
-      if (!j.especiais.length){
-        esp.innerHTML = '<span class="chal-esp-vazio">sem cartas especiais</span>';
-      } else {
-        j.especiais.forEach(function(k){
-          const b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'chal-esp-carta k-' + k;
-          b.dataset.k = k;
-          b.title = CHAL_ESP[k].nome + ' — toque para ver a descrição';
-          b.innerHTML = '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">' +
-            '<span class="chal-esp-ico">' + CHAL_ESP[k].ico + '</span>';
-          esp.appendChild(b);
-        });
+      /* área própria e visível: cartas especiais guardadas por este jogador (miniatura).
+         só aparece no cartão do jogador DA VEZ — nos demais fica omitida, para não
+         poluir o placar com informação que não é da rodada atual. */
+      if (i === CHAL.turno){
+        const esp = document.createElement('div'); esp.className = 'chal-jog-esp';
+        /* miniatura do baralho pessoal ainda por sortear — à ESQUERDA, virada para
+           baixo, sem revelar a próxima carta, só a contagem de quanto ainda resta */
+        if (morModo !== 'necrose'){
+          const restam = j.especiaisDeck.length;
+          const monte = document.createElement('div');
+          monte.className = 'chal-esp-monte' + (restam === 0 ? ' vazio' : '');
+          monte.title = restam
+            ? restam + (restam === 1 ? ' carta especial ainda por sortear' : ' cartas especiais ainda por sortear')
+            : 'Baralho pessoal de cartas especiais esgotado';
+          monte.innerHTML = '<span class="verso"><span class="ico">🂠</span></span><span class="qtd">' + restam + '</span>';
+          esp.appendChild(monte);
+        }
+        /* cartas já sacadas — aguardam à DIREITA do monte, prontas para o
+           jogador usar (sem nenhuma ainda, só o monte aparece) */
+        if (j.especiais.length){
+          j.especiais.forEach(function(k){
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'chal-esp-carta k-' + k;
+            b.dataset.k = k;
+            b.title = CHAL_ESP[k].nome + ' — toque para ver a descrição';
+            b.innerHTML = '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">' +
+              '<span class="chal-esp-ico">' + CHAL_ESP[k].ico + '</span>';
+            esp.appendChild(b);
+          });
+        }
+        card.appendChild(esp);
       }
-      card.appendChild(esp);
 
       chalPlacarEl.appendChild(card);
     });
@@ -2576,53 +2616,6 @@ body{
     /* clique numa carta especial do placar → tela de detalhe com a descrição */
     chalPlacarEl.querySelectorAll('.chal-esp-carta').forEach(function(b){
       b.addEventListener('click', function(){ chalVerCartaEsp(b.dataset.k); });
-    });
-  }
-
-  /* ---------- BANDEJA: cartas especiais do jogador da vez ---------- */
-  const chalBandejaEl = document.getElementById('chalBandeja');
-  function chalRenderBandeja(){
-    chalBandejaEl.innerHTML = '';
-    const eu = CHAL.turno, j = CHAL.jogadores[eu];
-    /* só aparece quando o jogador da vez tem cartas especiais */
-    if (!CHAL.ativo || !j || !j.especiais.length){
-      chalBandejaEl.classList.remove('on');
-      return;
-    }
-    chalBandejaEl.classList.add('on');
-
-    const tit = document.createElement('div');
-    tit.className = 'chal-bandeja-tit';
-    tit.textContent = '🃏 Cartas especiais de ' + j.nome + ' — toque numa carta para ver o efeito';
-    chalBandejaEl.appendChild(tit);
-
-    /* contagem por tipo, na ordem canônica */
-    const contagem = {};
-    j.especiais.forEach(function(k){ contagem[k] = (contagem[k] || 0) + 1; });
-
-    CHAL_ESP_ORDEM.forEach(function(k){
-      const n = contagem[k]; if (!n) return;
-      const e = CHAL_ESP[k];
-      const pronta = (k === 'sentenca' && CHAL.fase === 'jogar');
-      const estado = (e.quando === 'turno')
-        ? (pronta ? { cls:'pronta', txt:'PRONTA — toque para usar' } : { cls:'espera', txt:'no seu turno, após sacar' })
-        : (e.quando === 'combo')
-          ? { cls:'combo', txt:'automática após uma Sentença' }
-          : { cls:'espera', txt:'guarde — usa quando te atacam' };
-
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = 'chal-carta-esp k-' + k + (pronta ? ' pronta' : '');
-      el.dataset.k = k;
-      el.innerHTML =
-        '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + e.nome + '">' +
-        '<span class="chal-carta-esp-info">' +
-          '<span class="chal-carta-esp-nome">' + e.ico + ' ' + e.nome + (n > 1 ? ' ×' + n : '') + '</span>' +
-          '<span class="chal-carta-esp-efeito">' + e.efeito + '</span>' +
-          '<span class="chal-carta-esp-estado ' + estado.cls + '">' + estado.txt + '</span>' +
-        '</span>';
-      el.addEventListener('click', function(){ chalVerCartaEsp(k); });
-      chalBandejaEl.appendChild(el);
     });
   }
 
@@ -2680,7 +2673,7 @@ body{
     const j = chalJogAtual();
     let txt = '▶ Vez de <b>' + chalEsc(j.nome) + '</b>';
     if (CHAL.fase === 'sacar') txt += ' — saque a carta nova ou reposicione as cartas fora do lugar.';
-    else if (CHAL.cartaSacada) txt += ' — toque na carta sacada para pegá-la.';
+    else if (CHAL.cartaSacada) txt += ' — toque na carta sacada para pegá-la, ou reposicione outras cartas erradas antes.';
     else if (CHAL.cartaMao) txt += ' — escolha o espaço em que a carta se encaixa.';
     else if (CHAL.deck.length === 0) txt += ' — reposicione as cartas erradas e encerre o turno.';
     else txt += ' — posicione a carta e encerre o turno.';
@@ -2690,7 +2683,6 @@ body{
   /* ---------- carta em jogo ---------- */
   function chalMostrarCarta(){
     chalCartaEl.innerHTML = '';
-    chalCartaEl.classList.remove('nudge');
     const emJogo = CHAL.cartaMao || CHAL.cartaSacada;   /* carta de conteúdo, pega ou ainda por pegar */
     chalCartaEl.classList.toggle('alvo-espera', !!CHAL.slotMarcado && !CHAL.cartaMao && !CHAL.cartaSacada);
 
@@ -2727,7 +2719,7 @@ body{
     const instr = document.createElement('div'); instr.className = 'instr';
     instr.innerHTML = pego
       ? 'Toque no <b>espaço vazio</b> da posição em que ela se encaixa — ou toque na carta de novo para soltá-la.'
-      : 'Toque na carta para <b>pegá-la</b> e então escolher onde ela se encaixa.';
+      : 'Toque na carta para <b>pegá-la</b>, ou primeiro reposicione outras cartas erradas no tabuleiro.';
     chalCartaEl.appendChild(instr);
   }
 
@@ -2742,7 +2734,7 @@ body{
   function chalRenderAcoes(){
     chalEncerrarBtn.disabled = !CHAL.ativo || CHAL.fase !== 'jogar' || CHAL.bloqueado ||
       CHAL.cartaMao !== null || CHAL.cartaSacada !== null;               /* precisa sacar+posicionar antes */
-    chalEncerrarBtn.title = CHAL.bloqueado ? 'Escolha a carta especial primeiro.'
+    chalEncerrarBtn.title = CHAL.bloqueado ? 'Aguarde o sorteio da carta especial…'
       : (CHAL.cartaMao || CHAL.cartaSacada) ? 'Pegue e posicione a carta sacada antes de encerrar.' : '';
     chalSacarBtn.disabled = (CHAL.fase !== 'sacar' || CHAL.deck.length === 0);
   }
@@ -2758,7 +2750,7 @@ body{
       chalLog('💀 <b>' + chalEsc(CHAL.jogadores[eu].nome) + '</b> lançou a <b>Sentença de Apoptose</b> contra <b>' +
         chalEsc(CHAL.jogadores[alvoIdx].nome) + '</b>.', 'vermelho');
       somErro();
-      chalRenderBandeja(); chalRenderPlacar();
+      chalRenderPlacar();
       chalResolverSentenca(eu, alvoIdx);
     });
   }
@@ -2807,7 +2799,7 @@ body{
           chalLog('🛡️ <b>' + alvoNome + '</b> gastou o <b>Inibidor de Apoptose</b> e bloqueou a Sentença.', 'verde');
         }
         somVitoria();
-        chalRenderPlacar(); chalRenderBandeja();
+        chalRenderPlacar();
       }};
     });
     botoes.push({ txt:'😞 Aceitar o ataque', tipo:'', fn:function(){
@@ -2838,13 +2830,12 @@ body{
                 chalFlipCarta('amplificacao', alvoNome + ' perde 2 vezes!');
                 chalLog('⚡ <b>Amplificação da Cascata</b>: <b>' + alvoNome + '</b> perderá 2 vezes!', 'vermelho');
                 somErro(); chalTremerJog(alvoIdx);
-                chalRenderPlacar(); chalRenderBandeja();
+                chalRenderPlacar();
             }},
             { txt:'Guardar a carta', tipo:'', fn: chalModalFechar }
           ]);
       }, 1000);
     }
-    chalRenderBandeja();
   }
 
   function chalNovoTurno(){
@@ -2865,13 +2856,80 @@ body{
         '</b> pode reposicionar as cartas erradas e encerrar o turno.');
     }
 
-    chalAnunciarVez();
     chalRenderVez();
     chalMostrarCarta();
     chalRenderAcoes();
     chalRenderPlacar();
-    chalRenderBandeja();
     chalAtualizarRest();
+
+    /* só depois do "Vez de…" (3 s) é que entra o sorteio da carta especial */
+    chalAnunciarVez(chalTentarSorteEspecial);
+  }
+
+  /* ---------- sorteio de carta especial, a cada rodada (25% de chance) ----------
+     Reaproveita a mesma animação de dado do sorteio de quem começa. Sorteia sobre
+     o baralho PESSOAL do jogador da vez; se vazio, não há o que sortear. */
+  let chalSorteioEspTok = 0;
+  function chalAnimarSorteioEsp(sucesso, e, cb){
+    const ov   = document.getElementById('chalSorteioEsp');
+    const resE = document.getElementById('chalSorteioEspRes');
+    const meu  = ++chalSorteioEspTok;
+
+    ov.classList.remove('parou');
+    resE.textContent = '';
+    ov.classList.add('on');
+
+    /* mesma duração total do sorteio original de quem começa (DUR = 5 s) —
+       durante o giro (REVELA), um "tac-tac" de dado que acelera e depois
+       desacelera até a revelação, igual ao ritmo do sorteio de quem começa */
+    const DUR = 5000, REVELA = 3600;
+    let t = 0;
+    function tique(){
+      if (meu !== chalSorteioEspTok) return;
+      if (t >= REVELA){
+        ov.classList.add('parou');
+        resE.textContent = sucesso ? ('✨ ' + e.ico + ' ' + e.nome + '!') : '🌀 Nenhuma carta desta vez.';
+        (sucesso ? somVitoria : somClique)();
+        setTimeout(function(){
+          if (meu !== chalSorteioEspTok) return;
+          ov.classList.remove('on');
+          cb();
+        }, DUR - REVELA);
+        return;
+      }
+      somDado();
+      const prog = t / REVELA;                            /* 0 -> 1: desacelera */
+      const intervalo = 70 + prog * prog * 380;
+      t += intervalo;
+      setTimeout(tique, intervalo);
+    }
+    setTimeout(tique, 150);
+  }
+
+  function chalTentarSorteEspecial(){
+    if (!CHAL.ativo) return;
+    const j = chalJogAtual();
+    if (!j.especiaisDeck || !j.especiaisDeck.length) return;   /* nada a sortear */
+
+    CHAL.bloqueado = true;
+    chalRenderAcoes();
+
+    const sucesso = Math.random() < CHAL_ESP_CHANCE;
+    const k = sucesso ? j.especiaisDeck.shift() : null;
+    if (sucesso) j.especiais.push(k);
+
+    chalAnimarSorteioEsp(sucesso, sucesso ? CHAL_ESP[k] : null, function(){
+      CHAL.bloqueado = false;
+      if (sucesso){
+        const e = CHAL_ESP[k];
+        chalLog('✨ <b>' + chalEsc(j.nome) + '</b> sacou do baralho pessoal: ' + e.ico + ' <b>' +
+          e.nome + '</b> — guardada na sua área.', e.tipo === 'ataque' ? 'vermelho' : 'verde');
+        chalBoomEsp([k], j.nome);
+      } else {
+        chalLog('🌀 <b>' + chalEsc(j.nome) + '</b> não sacou carta especial nesta rodada.');
+      }
+      chalRenderPlacar(); chalRenderAcoes();
+    });
   }
 
   /* ---------- explosão de destaque ao sacar carta(s) especial(is) ---------- */
@@ -2897,9 +2955,9 @@ body{
 
   /* ---------- veredito de 5 s: a jogada que acabou de encerrar acertou ou errou? ---------- */
   let chalVdTok = 0;
-  function chalVeredito(nome, ganhos, erradas){
+  function chalVeredito(nome, ganhos, erradas, cb){
     const ov = document.getElementById('chalVeredito');
-    if (!ov) return;
+    if (!ov){ if (cb) cb(); return; }
     const acerto = ganhos > 0;
     ov.classList.remove('acerto','erro');
     ov.classList.add(acerto ? 'acerto' : 'erro');
@@ -2913,26 +2971,11 @@ body{
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
     (acerto ? somVitoria : somErro)();
     const meu = ++chalVdTok;
-    setTimeout(function(){ if (meu === chalVdTok) ov.classList.remove('on'); }, 5000);
-  }
-
-  /* modal: 2+ especiais num saque → o jogador escolhe 1 (as outras voltam ao monte) */
-  function chalEscolherEspecial(tipos, cb){
-    const cartasHtml = '<div class="chal-modal-cartas">' +
-      tipos.map(function(k){ return '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">'; }).join('') +
-      '</div><div class="chal-modal-txt" style="font-size:13px;">Só pode ficar com <b>1 carta especial por turno</b>. ' +
-      'Escolha qual guardar — as demais voltam ao monte, que será <b>reembaralhado</b>.</div>' +
-      '<div class="chal-esp-lista">' +
-      tipos.map(function(k){
-        const e = CHAL_ESP[k];
-        return '<div class="chal-esp-lista-item"><b>' + e.ico + ' ' + e.nome + '</b><span>' + e.efeito + '</span></div>';
-      }).join('') +
-      '</div>';
-    const botoes = tipos.map(function(k){
-      const e = CHAL_ESP[k];
-      return { txt: e.ico + ' Ficar com ' + e.nome, tipo:'principal', fn:function(){ chalModalFechar(); cb(k); } };
-    });
-    chalModalMsgHTML('✨', 'Escolha uma carta especial', cartasHtml, botoes);
+    setTimeout(function(){
+      if (meu !== chalVdTok) return;
+      ov.classList.remove('on');
+      if (cb) cb();
+    }, 3000);
   }
 
   chalSacarBtn.addEventListener('click', chalSacar);
@@ -2940,63 +2983,11 @@ body{
   function chalSacar(){
     if (!CHAL.ativo || CHAL.fase !== 'sacar' || CHAL.bloqueado || CHAL.deck.length === 0) return;
     chalDesmarcarSlot();
-    const j = chalJogAtual();
-
-    /* saca até obter uma carta de conteúdo; as especiais do caminho ficam pendentes */
-    const espSacadas = [];
-    let achouCarta = false;
-    while (CHAL.deck.length > 0 && !achouCarta){
-      const tok = CHAL.deck.shift();
-      if (tok.t === 'carta'){ CHAL.cartaSacada = tok.id; achouCarta = true; }
-      else if (tok.t === 'esp'){ espSacadas.push(tok.k); }
-    }
+    CHAL.cartaSacada = CHAL.deck.shift();
     somEncaixe();
     CHAL.fase = 'jogar';
-
-    const repinta = function(){
-      chalRenderVez(); chalMostrarCarta(); chalRenderAcoes();
-      chalRenderPlacar(); chalRenderBandeja(); chalAtualizarRest();
-    };
-
-    if (espSacadas.length === 0){ repinta(); return; }
-
-    /* houve especial(is): explosão na tela informando quantas */
-    chalBoomEsp(espSacadas, j.nome);
-
-    if (espSacadas.length === 1){
-      const k = espSacadas[0], e = CHAL_ESP[k];
-      j.especiais.push(k);
-      chalLog('✨ <b>' + chalEsc(j.nome) + '</b> sacou 1 carta especial: ' + e.ico + ' <b>' +
-        e.nome + '</b> — guardada na sua área.', e.tipo === 'ataque' ? 'vermelho' : 'verde');
-      repinta();
-      return;
-    }
-
-    /* 2+ num único saque: fica com 1 só; as outras voltam ao monte reembaralhado */
-    chalLog('✨ <b>' + chalEsc(j.nome) + '</b> sacou <b>' + espSacadas.length +
-      '</b> cartas especiais de uma vez — o limite é 1 por turno.', 'vermelho');
-    CHAL.bloqueado = true;
-    repinta();   /* mostra o "Encerrar" desabilitado enquanto escolhe */
-    chalRenderVez('▶ <b>' + chalEsc(j.nome) + '</b> — escolha qual carta especial vai guardar…');
-
-    const finalizar = function(escolhida){
-      j.especiais.push(escolhida);
-      const devolvidas = espSacadas.slice();
-      devolvidas.splice(devolvidas.indexOf(escolhida), 1);
-      devolvidas.forEach(function(k){ CHAL.deck.push({t:'esp', k:k}); });
-      CHAL.deck = morEmbaralhar(CHAL.deck);
-      CHAL.bloqueado = false;
-      const e = CHAL_ESP[escolhida];
-      chalLog('✅ <b>' + chalEsc(j.nome) + '</b> ficou com ' + e.ico + ' <b>' + e.nome +
-        '</b>. As outras ' + devolvidas.length + ' voltaram ao monte, que foi reembaralhado.', 'verde');
-      repinta();
-    };
-
-    const tiposUnicos = espSacadas.filter(function(k, i){ return espSacadas.indexOf(k) === i; });
-    setTimeout(function(){
-      if (tiposUnicos.length === 1) finalizar(tiposUnicos[0]);   /* todas iguais: nada a escolher */
-      else chalEscolherEspecial(tiposUnicos, finalizar);
-    }, 1100);
+    chalRenderVez(); chalMostrarCarta(); chalRenderAcoes();
+    chalRenderPlacar(); chalAtualizarRest();
   }
 
   /* clique num slot durante o turno */
@@ -3004,13 +2995,9 @@ body{
     if (!CHAL.ativo || (CHAL.fase !== 'jogar' && CHAL.fase !== 'sacar') || CHAL.bloqueado) return;
     if (slot.classList.contains('travado')) return; /* já acertado, imóvel */
 
-    /* 0) a carta sacada ainda não foi pega → nada acontece no tabuleiro até pegá-la */
-    if (CHAL.cartaSacada && !CHAL.cartaMao){
-      chalCartaEl.classList.remove('nudge'); void chalCartaEl.offsetWidth;
-      chalCartaEl.classList.add('nudge');
-      somClique();
-      return;
-    }
+    /* obs.: uma carta sacada e ainda não pega (CHAL.cartaSacada) NÃO bloqueia o tabuleiro —
+       o jogador pode reposicionar cartas erradas antes de pegá-la (ou depois, tanto faz);
+       ela só é retirada da área de espera com um toque nela mesma (ver listener de chalCartaEl). */
 
     /* 1) segurando a carta recém-sacada → posiciona aqui */
     if (CHAL.cartaMao){
@@ -3069,8 +3056,11 @@ body{
   chalCartaEl.addEventListener('click', function(){
     if (!CHAL.ativo || CHAL.fase !== 'jogar' || CHAL.bloqueado) return;
 
-    /* a) carta recém-sacada, ainda não pega → este toque a seleciona */
+    /* a) carta recém-sacada, ainda não pega → este toque a seleciona
+       (qualquer marcação de reposicionamento pendente é descartada, como já
+       acontece ao sacar — evita deixar uma casa marcada "presa" na tela) */
     if (CHAL.cartaSacada && !CHAL.cartaMao){
+      chalDesmarcarSlot();
       CHAL.cartaMao = CHAL.cartaSacada;
       CHAL.cartaSacada = null;
       somClique();
@@ -3172,14 +3162,13 @@ body{
     CHAL.semProgresso = (ganhos > 0) ? 0 : (CHAL.semProgresso + 1);
     chalRenderPlacar();
 
-    /* explosão de 5 s: deixa claro para o próximo jogador se a jogada acertou ou errou */
-    chalVeredito(j.nome, ganhos, erradas);
-
-    /* fim de jogo? todos os slots travados */
-    const faltam = [].slice.call(morSlots()).some(function(s){ return !s.classList.contains('travado'); });
-    if (!faltam){ chalFim(); return; }
-
-    chalAvancarTurno();
+    /* veredito de 3 s: deixa claro se a jogada acertou ou errou — só depois dele
+       é que o jogo segue (fim de jogo ou vez do próximo, com seu próprio aviso) */
+    chalVeredito(j.nome, ganhos, erradas, function(){
+      const faltam = [].slice.call(morSlots()).some(function(s){ return !s.classList.contains('travado'); });
+      if (!faltam){ chalFim(); return; }
+      chalAvancarTurno();
+    });
   }
 
   function chalAvancarTurno(){
@@ -3208,7 +3197,6 @@ body{
   function chalFim(){
     CHAL.ativo = false;
     chalAtualizarBotoesPartida();
-    chalRenderBandeja();
     const permitidas = MOR_MODOS[morModo];
 
     /* bônus por via dominada (vale para 2, 3 ou 4 jogadores) */

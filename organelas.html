@@ -595,21 +595,28 @@ body{
   .org-chal-jog.ativo.jog1{ box-shadow:0 0 0 3px rgba(201,82,76,.4), 0 0 18px rgba(201,82,76,.35); }
   .org-chal-jog.ativo .pontos{ color:#fff; }
 
-  /* ===== tabuleiro do Desafio pega a cor do jogador da vez ===== */
+  /* ===== os dois quadros do Desafio pegam a cor do jogador da vez, cada um
+     com o próprio contorno (não mais o tabuleiro externo inteiro) ===== */
   #orgChalTabuleiro[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
   #orgChalTabuleiro[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
-  #orgChalTabuleiro.chal-ativo{
+  #orgChalTabuleiro.chal-ativo .chal-quadro{
     border-color:var(--chal-cor);
-    box-shadow:0 0 0 3px var(--board-1), 8px 8px 0 rgba(0,0,0,.35),
-               inset 0 0 90px rgba(0,0,0,.6), 0 0 30px -4px var(--chal-cor);
-    transition:border-color .45s ease, box-shadow .45s ease;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.3), 0 0 0 3px var(--board-1), 0 0 22px -6px var(--chal-cor);
   }
-  #orgChalTabuleiro.chal-ativo::before,
-  #orgChalTabuleiro.chal-ativo::after{ border-color:var(--chal-cor-claro); opacity:.95; }
   #orgChalTabuleiro.chal-ativo .org-chal-vez{
     border-left:6px solid var(--chal-cor); padding-left:10px;
     background:linear-gradient(90deg, color-mix(in srgb, var(--chal-cor) 26%, rgba(10,20,36,.7)), rgba(10,20,36,.7) 60%);
     border-radius:6px; padding-top:6px; padding-bottom:6px;
+  }
+
+  /* dois "quadros" do modo Desafio: painel de turno e tabuleiro de posicionamento,
+     cada um com moldura própria (ver contorno na cor do jogador logo acima) */
+  .chal-quadro{
+    border:2px solid var(--gold-dim); border-radius:14px;
+    background:linear-gradient(180deg, rgba(10,20,36,.55), rgba(21,39,66,.35));
+    box-shadow:inset 0 0 40px rgba(0,0,0,.3);
+    padding:18px 16px 20px; margin:0 0 28px;
+    transition:border-color .45s ease, box-shadow .45s ease;
   }
 
   /* --- selo do dono numa carta encaixada + estação fechada --- */
@@ -740,25 +747,34 @@ body{
   .org-sorteio.parou .org-sorteio-res{ opacity:1; animation:orgResPulsa 1s ease-in-out infinite; }
   @keyframes orgResPulsa{ 50%{ transform:scale(1.07); } }
 
-  /* --- aviso animado de vez (3 s, some sozinho) --- */
-  .org-aviso{
-    position:fixed; left:0; right:0; top:0; z-index:115; pointer-events:none;
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    padding:16px 20px; transform:translateY(-120%);
-    font-family:var(--font-pixel); font-size:14px; line-height:1.5; letter-spacing:.04em;
-    color:#0A1A20; text-transform:uppercase; text-shadow:0 1px 0 rgba(255,255,255,.35);
-    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  /* --- aviso de vez (3 s) — mesma linguagem visual do veredito: raios girando
+     + ícone + título, tingidos na cor do jogador da vez --- */
+  .chal-vez-ov{
+    position:fixed; inset:0; z-index:119; display:none;
+    align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
+    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
+      rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
   }
-  .org-aviso.jog0{ background:linear-gradient(180deg,var(--jog0-soft),var(--jog0)); }
-  .org-aviso.jog1{ background:linear-gradient(180deg,var(--jog1-soft),var(--jog1)); color:#2B0806; }
-  .org-aviso.on{ animation:orgAvisoAnim 3s ease forwards; }
-  .org-aviso .seta{ display:inline-block; animation:orgSeta .6s ease-in-out infinite alternate; }
-  @keyframes orgSeta{ to{ transform:translateX(6px); } }
-  @keyframes orgAvisoAnim{
-    0%{ transform:translateY(-120%); }
-    12%{ transform:translateY(0); }
-    82%{ transform:translateY(0); }
-    100%{ transform:translateY(-120%); }
+  .chal-vez-ov.on{ display:flex; animation:orgVdFade 3s ease forwards; }
+  .chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
+  .chal-vez-ov.jog1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+  .chal-vez-cx{ position:relative; text-align:center; animation:orgVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
+  .chal-vez-raios{
+    position:absolute; left:50%; top:50%; width:min(120vw,900px); height:min(120vw,900px);
+    transform:translate(-50%,-50%); border-radius:50%; opacity:.5; color:var(--chal-cor-claro);
+    background:conic-gradient(from 0deg,
+      currentColor 0 5deg, transparent 5deg 26deg,
+      currentColor 26deg 31deg, transparent 31deg 52deg);
+    animation:orgVdGira 3s linear both;
+  }
+  .chal-vez-ico{
+    position:relative; font-size:clamp(48px,16vw,110px); line-height:1;
+    filter:drop-shadow(0 10px 26px #000);
+  }
+  .chal-vez-tit{
+    position:relative; margin:14px auto 0; max-width:min(560px,90vw);
+    font-family:var(--font-pixel); font-size:clamp(12px,3.4vw,20px); letter-spacing:.05em;
+    color:#fff; text-shadow:0 2px 12px #000, 0 0 18px rgba(0,0,0,.6);
   }
 
 
@@ -979,52 +995,62 @@ body{
     <!-- ---------- TABULEIRO DO DESAFIO (2 jogadores, por turnos) ---------- -->
     <div class="tabuleiro org-tabuleiro" id="orgChalTabuleiro" style="display:none;">
 
-      <div class="hud">
-        <span class="hud-item" id="orgChalHudPos">TRIOS FECHADOS: <b>0/11</b></span>
-        <button class="btn-board" id="orgChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
-        <button class="btn-board" id="orgChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
-      </div>
+      <!-- ---------- QUADRO 1: painel de turno (placar, monte único, carta em jogo) ---------- -->
+      <div class="chal-quadro">
 
-      <div class="org-chal-cab">
-        <div class="org-chal-vez" id="orgChalVez"></div>
-        <button class="btn-board principal org-chal-encerrar" id="orgChalEncerrar" type="button" disabled>Encerrar turno ▸</button>
+        <div class="hud">
+          <span class="hud-item" id="orgChalHudPos">TRIOS FECHADOS: <b>0/11</b></span>
+          <button class="btn-board" id="orgChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board" id="orgChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+        </div>
+
+        <div class="org-chal-cab">
+          <div class="org-chal-vez" id="orgChalVez"></div>
+          <button class="btn-board principal org-chal-encerrar" id="orgChalEncerrar" type="button" disabled>Encerrar turno ▸</button>
+        </div>
+        <div class="org-chal-placar" id="orgChalPlacar"></div>
+
+        <div class="faixa">
+          <span class="faixa-titulo">Monte único — saque e posicione</span>
+          <span class="linha-ouro"></span>
+        </div>
+        <div class="org-chal-mesa">
+          <div class="org-chal-bloco">
+            <div class="org-chal-bloco-tit">Monte de compra</div>
+            <button class="org-chal-sacar" id="orgChalSacar" type="button">
+              <span class="ico">🂠</span>
+              <span>Sacar carta</span>
+              <span class="rest" id="orgChalRest">— cartas no monte</span>
+            </button>
+          </div>
+          <div class="org-chal-bloco">
+            <div class="org-chal-bloco-tit">Carta em jogo</div>
+            <div class="org-chal-carta-atual" id="orgChalCartaAtual">
+              <div class="instr">Saque uma carta para começar o turno.</div>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="org-chal-placar" id="orgChalPlacar"></div>
 
       <div id="orgChalResultado"></div>
 
-      <div class="org-legenda">
-        <span><i class="c-v"></i> Verde · estrutura</span>
-        <span><i class="c-a"></i> Azul · definição e função</span>
-        <span><i class="c-r"></i> Vermelha · correlação médica</span>
-      </div>
+      <!-- ---------- QUADRO 2: tabuleiro onde as cartas de fato são posicionadas ---------- -->
+      <div class="chal-quadro">
 
-      <div class="faixa">
-        <span class="faixa-titulo">Monte único — saque e posicione</span>
-        <span class="linha-ouro"></span>
-      </div>
-      <div class="org-chal-mesa">
-        <div class="org-chal-bloco">
-          <div class="org-chal-bloco-tit">Monte de compra</div>
-          <button class="org-chal-sacar" id="orgChalSacar" type="button">
-            <span class="ico">🂠</span>
-            <span>Sacar carta</span>
-            <span class="rest" id="orgChalRest">— cartas no monte</span>
-          </button>
+        <div class="org-legenda">
+          <span><i class="c-v"></i> Verde · estrutura</span>
+          <span><i class="c-a"></i> Azul · definição e função</span>
+          <span><i class="c-r"></i> Vermelha · correlação médica</span>
         </div>
-        <div class="org-chal-bloco">
-          <div class="org-chal-bloco-tit">Carta em jogo</div>
-          <div class="org-chal-carta-atual" id="orgChalCartaAtual">
-            <div class="instr">Saque uma carta para começar o turno.</div>
-          </div>
-        </div>
-      </div>
 
-      <div class="faixa">
-        <span class="faixa-titulo">Estações da Expedição</span>
-        <span class="linha-ouro"></span>
+        <div class="faixa">
+          <span class="faixa-titulo">Estações da Expedição</span>
+          <span class="linha-ouro"></span>
+        </div>
+        <div class="org-campo" id="orgChalCampo"></div>
+
       </div>
-      <div class="org-campo" id="orgChalCampo"></div>
 
     </div>
 
@@ -1048,8 +1074,14 @@ body{
   <div class="org-sorteio-res" id="orgSorteioRes"></div>
 </div>
 
-<!-- ---------- AVISO DE VEZ (Desafio, 3 s) ---------- -->
-<div class="org-aviso" id="orgChalAviso"></div>
+<!-- ---------- AVISO DE VEZ, no mesmo estilo do veredito (Desafio, 3 s) ---------- -->
+<div class="chal-vez-ov" id="orgChalAviso" aria-hidden="true">
+  <div class="chal-vez-cx">
+    <div class="chal-vez-raios"></div>
+    <div class="chal-vez-ico">▶️</div>
+    <div class="chal-vez-tit" id="orgVezTit"></div>
+  </div>
+</div>
 
 <div id="lightbox">
   <button id="lbFechar" type="button">✕ FECHAR</button>
@@ -1680,18 +1712,20 @@ body{
     const j = CHAL_ORG.jogadores[CHAL_ORG.turno];
     orgChalVez.innerHTML = msg || ('▶ Vez de <b>' + orgChalEsc(j.nome) + '</b>');
   }
-  /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
-  function chalOrgAnunciarVez(){
-    if (!CHAL_ORG.ativo) return;
+  /* ---------- aviso de vez, em tela cheia como o veredito (3 s) ---------- */
+  function chalOrgAnunciarVez(cb){
+    if (!CHAL_ORG.ativo){ if (cb) cb(); return; }
     const el = document.getElementById('orgChalAviso');
     const j  = CHAL_ORG.jogadores[CHAL_ORG.turno];
-    el.className = 'org-aviso jog' + CHAL_ORG.turno;
-    el.innerHTML = '<span class="seta">▶</span> Vez de ' + orgChalEsc(j.nome) +
-                   ' <span class="seta">◀</span>';
+    el.className = 'chal-vez-ov jog' + CHAL_ORG.turno;
+    document.getElementById('orgVezTit').innerHTML = 'Vez de <b>' + orgChalEsc(j.nome) + '</b>';
     void el.offsetWidth;                                    /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
-    setTimeout(function(){ el.classList.remove('on'); }, 3000);
+    setTimeout(function(){
+      el.classList.remove('on');
+      if (cb) cb();
+    }, 3000);
   }
   function chalOrgPintarTabuleiro(){
     if (CHAL_ORG.ativo){
@@ -1760,6 +1794,7 @@ body{
   orgChalCartaAtual.addEventListener('click', function(){
     if (!CHAL_ORG.ativo) return;
     if (CHAL_ORG.cartaSacada && !CHAL_ORG.cartaMao){
+      chalOrgDesmarcarSlot();  /* evita deixar uma casa "presa" marcada ao pegar a carta */
       CHAL_ORG.cartaMao = CHAL_ORG.cartaSacada;
       CHAL_ORG.cartaSacada = null;
       somClique();
@@ -1796,8 +1831,9 @@ body{
     if (orgRevAtiva){ orgRevSelecionarSlot(slot); return; }
     if (!CHAL_ORG.ativo || slot.classList.contains('travado')) return;
 
-    /* carta recém-sacada ainda não foi pega: nada acontece no tabuleiro */
-    if (CHAL_ORG.cartaSacada && !CHAL_ORG.cartaMao){ somClique(); return; }
+    /* obs.: uma carta sacada e ainda não pega NÃO bloqueia o tabuleiro — o
+       jogador pode reposicionar cartas erradas antes de pegá-la (ou depois,
+       tanto faz); ela só sai da área de espera com um toque nela mesma. */
 
     /* segurando uma carta -> este clique tenta encaixar */
     if (CHAL_ORG.cartaMao){
@@ -1815,8 +1851,8 @@ body{
       return;
     }
 
-    /* nada na mão: só pode reposicionar uma carta ainda não conferida antes de sacar */
-    if (CHAL_ORG.fase !== 'sacar') return;
+    /* nada na mão: reposiciona uma carta ainda não conferida — antes de sacar
+       OU com uma carta recém-sacada esperando na área de espera, tanto faz */
     if (CHAL_ORG.slotMarcado){
       if (CHAL_ORG.slotMarcado === slot){ chalOrgDesmarcarSlot(); somClique(); return; }
       if (slot.dataset.posto || slot.dataset.tipo !== CHAL_ORG.slotMarcado.dataset.tipo){
@@ -1844,9 +1880,9 @@ body{
   }
 
   let orgVdTok = 0;
-  function chalOrgVeredito(nome, ganhos, erradas){
+  function chalOrgVeredito(nome, ganhos, erradas, cb){
     const ov = document.getElementById('orgChalVeredito');
-    if (!ov) return;
+    if (!ov){ if (cb) cb(); return; }
     const acerto = ganhos > 0;
     ov.classList.remove('acerto','erro');
     ov.classList.add(acerto ? 'acerto' : 'erro');
@@ -1859,7 +1895,11 @@ body{
       : (acerto ? 'Nenhuma carta fora do lugar até aqui.' : '');
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
     const meu = ++orgVdTok;
-    setTimeout(function(){ if (meu === orgVdTok) ov.classList.remove('on'); }, 5000);
+    setTimeout(function(){
+      if (meu !== orgVdTok) return;
+      ov.classList.remove('on');
+      if (cb) cb();
+    }, 5000);
   }
 
   function chalOrgEncerrarTurno(){
@@ -1893,18 +1933,19 @@ body{
     if (ganhos > 0) somEncaixe(); else somErro();
     trios.forEach(chalOrgChecarTrio);
 
-    /* explosão de 5 s: deixa claro para o próximo jogador se a jogada acertou ou errou */
-    chalOrgVeredito(j.nome, ganhos, erradas);
+    /* veredito de 5 s — só depois dele é que o jogo segue (fim de jogo ou vez
+       do próximo, com seu próprio aviso de 3 s), sem os dois overlays juntos */
+    chalOrgVeredito(j.nome, ganhos, erradas, function(){
+      if (chalOrgTudoCerto()){ chalOrgFim(); return; }
 
-    if (chalOrgTudoCerto()){ chalOrgFim(); return; }
-
-    CHAL_ORG.turno = (CHAL_ORG.turno + 1) % CHAL_ORG.jogadores.length;
-    CHAL_ORG.fase = 'sacar';
-    chalOrgAnunciarVez();
-    chalOrgRenderPlacar();
-    chalOrgRenderVez();
-    chalOrgMostrarCarta();
-    chalOrgAtualizarBotoes();
+      CHAL_ORG.turno = (CHAL_ORG.turno + 1) % CHAL_ORG.jogadores.length;
+      CHAL_ORG.fase = 'sacar';
+      chalOrgRenderPlacar();
+      chalOrgRenderVez();
+      chalOrgMostrarCarta();
+      chalOrgAtualizarBotoes();
+      chalOrgAnunciarVez();
+    });
   }
   orgChalEncerrarBtn.addEventListener('click', chalOrgEncerrarTurno);
 
