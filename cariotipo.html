@@ -161,6 +161,30 @@ body{
     box-shadow:0 5px 0 rgba(0,0,0,.28); }
   #ativ-cariotipo .kbtn:active:not(:disabled){ transform:translateY(1px); box-shadow:0 1px 0 rgba(0,0,0,.28); }
   #ativ-cariotipo .kbtn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  /* ===== VOLUME DA MÚSICA — botão na barra de ações; ao clicar abre um painel com − / barra / + ===== */
+  #ativ-cariotipo .kmus-wrap{ position:relative; display:inline-block; }
+  #ativ-cariotipo #painelVolume{
+    position:absolute; top:calc(100% + 8px); right:0; z-index:90; display:none;
+    flex-direction:column; gap:12px; width:236px; padding:11px 13px 13px;
+    background:var(--painel2); border:2px solid var(--ciano); border-radius:12px;
+    box-shadow:0 6px 0 rgba(0,0,0,.28), 0 14px 28px rgba(0,0,0,.5);
+  }
+  #ativ-cariotipo #painelVolume.on{ display:flex; }
+  #ativ-cariotipo #painelVolume .pv-bloco{ display:flex; flex-direction:column; gap:7px; }
+  #ativ-cariotipo #painelVolume .pv-tit{
+    font-family:var(--pixel); font-size:9px; line-height:1.6; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ciano); display:flex; justify-content:space-between;
+  }
+  #ativ-cariotipo #painelVolume .pv-linha{ display:flex; align-items:center; gap:9px; }
+  #ativ-cariotipo #painelVolume .pv-passo{
+    flex:0 0 auto; width:32px; height:32px; padding:0; font-size:18px; font-weight:700; line-height:1;
+    color:var(--tinta); background:var(--painel); border:2px solid var(--linha); border-radius:9px; cursor:pointer;
+    box-shadow:0 3px 0 rgba(0,0,0,.28);
+  }
+  #ativ-cariotipo #painelVolume .pv-passo:hover:not([disabled]){ border-color:var(--ciano); }
+  #ativ-cariotipo #painelVolume .pv-passo[disabled]{ opacity:.4; cursor:not-allowed; }
+  #ativ-cariotipo #painelVolume input[type=range]{ flex:1 1 auto; min-width:0; accent-color:var(--ciano); cursor:pointer; }
   #ativ-cariotipo .kbtn.kprincipal{ border-color:var(--ambar); color:var(--ambar); }
   #ativ-cariotipo .kbtn.kligado{ background:var(--ciano); color:#0B1220; border-color:#B9EFE8; }
   #ativ-cariotipo #kresultado{ display:none; border:3px solid; border-radius:14px; padding:18px 20px; margin:0 0 18px;
@@ -845,6 +869,25 @@ body{
         <button class="kbtn" id="kbtnRecomecar" type="button" disabled>↻ Nova lâmina</button>
         <button class="kbtn" id="kbtnTrocar" type="button" disabled>⇄ Trocar modo</button>
         <button class="kbtn kligado" id="kbtnSom" type="button" title="Ligar ou desligar o som">🔊 Som</button>
+<span class="kmus-wrap"><button class="kbtn" id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266; Volume</button>
+<div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
+    </div>
+  </div>
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#128276; Efeitos</span><span id="pvPctEf">100%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos" aria-label="Reduzir o volume dos efeitos">&minus;</button>
+      <input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos">
+      <button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos" aria-label="Subir o volume dos efeitos">+</button>
+    </div>
+  </div>
+</div></span>
       </div>
     </div>
 
@@ -907,7 +950,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.4 &middot; Última atualização: 8 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 20 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1217,6 +1260,21 @@ function ctx(){
   return audio;
 }
 
+/* volume dos EFEITOS: todos os sons passam por um ganho mestre (1 = nível original) */
+let efeitosVol = 1, efeitosMestre = null;
+function saidaEfeitos(a){
+  if (!efeitosMestre || efeitosMestre.context !== a){
+    efeitosMestre = a.createGain();
+    efeitosMestre.gain.value = efeitosVol;
+    efeitosMestre.connect(a.destination);
+  }
+  return efeitosMestre;
+}
+const cariEfeitos = {
+  definir: function(v){ efeitosVol = v; if (efeitosMestre) efeitosMestre.gain.value = v; },
+  amostra: function(){ nota('triangle', 660, 0, 0.1, 0.12); nota('triangle', 880, 0, 0.1, 0.10, 0.08); }
+};
+
 /* uma nota simples: onda, frequência (ou glissando), duração, volume */
 function nota(tipo, f0, f1, dur, vol, atraso){
   const a = ctx(); if (!a) return;
@@ -1229,7 +1287,7 @@ function nota(tipo, f0, f1, dur, vol, atraso){
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  osc.connect(g); g.connect(a.destination);
+  osc.connect(g); g.connect(saidaEfeitos(a));
   osc.start(t); osc.stop(t + dur + 0.02);
 }
 
@@ -1245,7 +1303,7 @@ function toque(vol, corte){
   const filtro = a.createBiquadFilter();
   filtro.type = 'bandpass'; filtro.frequency.value = corte; filtro.Q.value = 1.2;
   const g = a.createGain(); g.gain.value = vol;
-  src.connect(filtro); filtro.connect(g); g.connect(a.destination);
+  src.connect(filtro); filtro.connect(g); g.connect(saidaEfeitos(a));
   src.start(t);
 }
 
@@ -1264,7 +1322,7 @@ function sopro(vol, corte, dur){
   const filtro = a.createBiquadFilter();
   filtro.type = 'bandpass'; filtro.frequency.value = corte; filtro.Q.value = .7;
   const g = a.createGain(); g.gain.value = vol;
-  src.connect(filtro); filtro.connect(g); g.connect(a.destination);
+  src.connect(filtro); filtro.connect(g); g.connect(saidaEfeitos(a));
   src.start(t);
 }
 /* pequena variação aleatória de afinação: cada clique soa um pouco diferente */
@@ -1822,7 +1880,7 @@ function conferir(){
     registrarFeita(e, etapaAtual+1);
     etapaAtual++;
     tentativas = 1;
-    if (etapaAtual >= etapas().length){ tocar('vitoria'); }
+    if (etapaAtual >= etapas().length){ tocar('vitoria'); cariMusica.encerrar(); }      /* fim do modo guiado */
     else { tocar('travar'); tocar('etapa'); }
 
     if (etapaAtual >= etapas().length){
@@ -1895,6 +1953,7 @@ function conferirTudo(){
 
   if (certos === ss.length){
     tocar('vitoria');
+    cariMusica.encerrar();                     /* fim do modo livre */
     el.resultado.className = 'kon kvitoria';
     el.resultado.innerHTML = '<span class="kgrande">🏆 Idiograma completo, sem roteiro</span>' +
       voce() + ' montou os 46 cromossomos por conta própria, com <b>' + pontos + ' pontos</b>. ' +
@@ -1967,6 +2026,7 @@ function responderDiagnostico(chave){
   }
 
   tocar('diagnostico');
+  cariMusica.encerrar();                       /* fim do modo às cegas: só com o laudo certo */
   /* deixa explícito o par sexual encontrado — em especial que num caso
      feminino (XX) os dois X são homólogos e a alteração está num autossomo */
   let notaSexo = '';
@@ -2025,7 +2085,147 @@ function encerrarRegua(){
   if (medidoAtual){ medidoAtual.classList.remove('kmedido'); medidoAtual = null; }
 }
 
+  /* ==============================================================
+     TRILHA SONORA DA PARTIDA (exclusiva deste jogo)
+     Toca em sequência, com 3 s de intervalo: A = Double Helix Beat; B = Arcane Focus - Calm Version.
+     Começa quando uma partida começa, REPETE SEM PARAR até o fim do jogo (vitória/fim
+     da partida, com uma descida rápida do volume) ou até o jogador sair para os menus.
+     As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
+     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     baixada enquanto a atual toca.
+     ============================================================== */
+  const cariMusica = (function(){
+    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
+    const PASTA = 'Músicas dos jogos/';
+    const FAIXAS = ['Double Helix Beat.mp3', 'Arcane Focus - Calm Version.mp3'];
+    const INTERVALO_MS = 3000;
+    const btn = document.getElementById('btnMusica');
+    const painel = document.getElementById('painelVolume');
+    const barra = document.getElementById('pvBarra');
+    const pct = document.getElementById('pvPct');
+    const menos = document.getElementById('pvMenos');
+    const mais = document.getElementById('pvMais');
+    const barraEf = document.getElementById('pvBarraEf');
+    const pctEf = document.getElementById('pvPctEf');
+    const menosEf = document.getElementById('pvMenosEf');
+    const maisEf = document.getElementById('pvMaisEf');
+    const pre = [];                                        /* faixas já pré-carregadas */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
+
+    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver */
+      const a = pre[i] || new Audio(url(i));
+      pre[i] = null;
+      return a;
+    }
+    function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
+      if (pre[i]) return;
+      try { const a = new Audio(url(i)); a.preload = 'auto'; pre[i] = a; } catch (e) {}
+    }
+    function tocar(i, meu){
+      if (meu !== tok) return;
+      let a;
+      try { a = abrir(i); } catch (e) { return; }
+      a.volume = volume;
+      a.muted = calado;
+      audio = a;
+      a.addEventListener('ended', function(){
+        if (meu !== tok) return;
+        /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
+        const prox = (i + 1) % FAIXAS.length;
+        preparar(prox);
+        timer = setTimeout(function(){ tocar(prox, meu); }, INTERVALO_MS);
+      });
+      const p = a.play();
+      if (p && p.catch) p.catch(function(){});             /* bloqueio de autoplay ou pasta ausente: segue sem música */
+      preparar((i + 1) % FAIXAS.length);                   /* já deixa a próxima faixa baixando */
+    }
+    function parar(){
+      tok++;
+      clearTimeout(timer); timer = null;
+      if (fade){ clearInterval(fade.iv); fade.a.pause(); fade = null; }
+      if (audio){ audio.pause(); audio = null; }
+      if (btn) btn.classList.remove('on');
+      fechar();
+    }
+    /* FIM DA PARTIDA: a música desce em ~1,5 s e para (a sequência só termina com o jogo) */
+    function encerrar(){
+      if (!audio){ parar(); return; }
+      const meu = ++tok;                                   /* cancela o intervalo/faixa seguinte */
+      clearTimeout(timer); timer = null;
+      const a = audio, v0 = a.volume;
+      audio = null;                                        /* o controle de volume deixa de mexer nela */
+      let n = 0;
+      const iv = setInterval(function(){
+        n++;
+        a.volume = Math.max(0, v0 * (1 - n / 15));
+        if (n >= 15){
+          clearInterval(iv); a.pause();
+          if (fade && fade.a === a) fade = null;
+          if (tok === meu){ if (btn) btn.classList.remove('on'); fechar(); }
+        }
+      }, 100);
+      fade = { a:a, iv:iv };
+    }
+    function iniciar(){
+      parar();
+      if (btn) btn.classList.add('on');
+      tocar(0, tok);
+    }
+    function fechar(){
+      if (!painel) return;
+      painel.classList.remove('on');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+    function definirVolume(v){
+      volume = Math.max(0, Math.min(1, v));
+      if (audio) audio.volume = volume;
+      const p = Math.round(volume * 100);
+      barra.value = String(p);
+      pct.textContent = p + '%';
+      menos.disabled = p <= 0;
+      mais.disabled = p >= 100;
+      btn.innerHTML = (p === 0 ? '&#128263;' : p < 50 ? '&#128265;' : '&#128266;') + ' Volume';   /* 🔇 / 🔉 / 🔊 */
+    }
+    /* volume dos EFEITOS (bips do jogo): 0..1, 100% = nível original; independe da música */
+    function definirEfeitos(v, ouvir){
+      volEf = Math.max(0, Math.min(1, v));
+      cariEfeitos.definir(volEf);
+      const p = Math.round(volEf * 100);
+      barraEf.value = String(p);
+      pctEf.textContent = p + '%';
+      menosEf.disabled = p <= 0;
+      maisEf.disabled = p >= 100;
+      if (ouvir) cariEfeitos.amostra();                            /* toca um bip para o jogador ouvir o nível */
+    }
+    if (btn && painel){
+      definirVolume(volume);
+      definirEfeitos(volEf, false);
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const abrir = !painel.classList.contains('on');
+        painel.classList.toggle('on', abrir);
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      });
+      painel.addEventListener('click', function(e){ e.stopPropagation(); });
+      barra.addEventListener('input', function(){ definirVolume(Number(barra.value) / 100); });
+      menos.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 - 10) / 100); });
+      mais.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 + 10) / 100); });
+      barraEf.addEventListener('input', function(){ definirEfeitos(Number(barraEf.value) / 100, false); });
+      barraEf.addEventListener('change', function(){ cariEfeitos.amostra(); });     /* soltou a barra → bip de amostra */
+      menosEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 - 10) / 100, true); });
+      maisEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 + 10) / 100, true); });
+      /* clicar fora do painel ou apertar Esc fecha */
+      document.addEventListener('click', fechar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fechar(); });
+    }
+    /* silencia/libera a trilha sem parar a sequência (ligado ao botão "Som" do cariótipo) */
+    function silenciar(sim){ calado = !!sim; if (audio) audio.muted = calado; }
+    return { iniciar:iniciar, parar:parar, encerrar:encerrar, silenciar:silenciar };
+  })();
+
 function montar(){
+  cariMusica.iniciar();                        /* começou a partida (também em "Nova lâmina") */
   if (desafio()){
     caso = CASOS[Math.floor(Math.random()*CASOS.length)];
     /* o sexo também é sorteado, menos no caso em que ele é a alteração */
@@ -2183,6 +2383,7 @@ document.getElementById('kselSexoOk').addEventListener('click', function(){
   raizAtiv.scrollIntoView({behavior:'smooth', block:'start'});
 });
 document.getElementById('kbtnTrocar').addEventListener('click', function(){
+  cariMusica.parar();                          /* voltar à escolha de modo para a trilha */
   modal.classList.remove('kon');
   el.bancada.classList.add('koculto');
   telaSorteio.classList.add('koculto');
@@ -2365,6 +2566,7 @@ document.getElementById('kbtnSom').addEventListener('click', function(){
   somLigado = !somLigado;
   this.classList.toggle('kligado', somLigado);
   this.textContent = somLigado ? '🔊 Som' : '🔇 Som';
+  cariMusica.silenciar(!somLigado);            /* o botão Som também cala/libera a trilha */
   if (somLigado) tocar('alternar');
 });
 

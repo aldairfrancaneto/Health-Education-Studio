@@ -31,7 +31,7 @@ body{
   font-family:var(--font-serif); line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-.pagina{ max-width:1180px; margin:0 auto; padding:14px 14px 70px; }
+.pagina{ max-width:1180px; margin:0 auto; padding:44px 14px 70px;   /* 44px no topo: faixa do botão de tela cheia */ }
   /* ================= TABULEIRO ================= */
   .tabuleiro{
     position:relative;
@@ -433,6 +433,12 @@ body{
   .org-slot.cheio{ border-style:solid; }
   .org-slot.certo{ border-color:var(--green); box-shadow:0 0 0 3px rgba(76,175,80,.45); }
   .org-slot.errado{ border-color:var(--red); box-shadow:0 0 0 3px rgba(229,57,53,.5); animation:tremer .45s; }
+  /* dentro do leque o tremor usa a propriedade `translate`, que se soma ao `transform` do
+     leque — com o `tremer` normal a carta perdia a inclinação por 0,45 s */
+  @keyframes tremerLeque{
+    0%,100%{translate:0;} 20%{translate:-6px;} 40%{translate:6px;} 60%{translate:-4px;} 80%{translate:4px;}
+  }
+  .org-leque > .org-slot.errado{ animation-name:tremerLeque; }
   .org-slot.certo::after, .org-slot.errado::after{
     content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:22px; font-weight:700; color:#fff; text-shadow:0 2px 6px #000;
@@ -520,24 +526,58 @@ body{
 .tc-barra{ width:min(480px,85vw); height:30px; border:4px solid var(--gold-dim); background:var(--slot); padding:3px; }
 .tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--gold) 0 10px, var(--gold-dim) 10px 14px); }
 .tc-pct{ font-family:var(--font-pixel); font-size:15px; letter-spacing:.06em; color:var(--gold-soft); }
-  /* ===== BOTAO TELA CHEIA (cabecalho, lado direito) ===== */
+  /* ===== BOTÃO TELA CHEIA — só o ícone, discreto, no canto superior direito.
+     Fica na página (não flutua ao rolar) e a página reserva uma faixa no topo,
+     então nunca cobre outro botão. ===== */
   #btnTelaCheia{
-    position:fixed; top:12px; right:12px; z-index:90;
-    display:inline-flex; align-items:center; gap:7px;
-    font-family:var(--font-serif); font-weight:700; font-size:12.5px; letter-spacing:.03em;
-    color:var(--gold-soft); background:rgba(10,20,36,.82);
-    border:2px solid var(--gold-dim); border-radius:8px; padding:8px 11px;
-    cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-    box-shadow:0 3px 0 #0A1424, 0 6px 16px rgba(0,0,0,.45);
-    transition:filter .15s ease, transform .1s ease, border-color .15s ease;
+    position:absolute; top:8px; right:10px; z-index:60;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
   }
-  #btnTelaCheia:hover{ filter:brightness(1.2); border-color:var(--gold); }
-  #btnTelaCheia:active{ transform:translateY(2px); box-shadow:0 1px 0 #0A1424; }
+  #btnTelaCheia:hover, #btnTelaCheia:focus-visible{
+    color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(10,20,36,.6);
+  }
   #btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
-  @media (max-width:560px){
-    #btnTelaCheia{ padding:9px; }
-    #btnTelaCheia .btn-tc-txt{ display:none; }
+  #btnTelaCheia .btn-tc-txt{ display:none; }
+
+/* ===== BOTÃO DE VOLUME DA MÚSICA — ao lado do de tela cheia; só aparece enquanto a trilha da
+     partida está ativa. Ao clicar, abre um painel com − / barra / + para reduzir ou subir. ===== */
+  #btnMusica{
+    position:absolute; top:8px; right:46px; z-index:60;
+    display:none; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0; font-size:15px; line-height:1;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
   }
+  #btnMusica.on{ display:inline-flex; }
+  #btnMusica:hover, #btnMusica:focus-visible, #btnMusica[aria-expanded="true"]{
+    color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(10,20,36,.6);
+  }
+  #painelVolume{
+    position:absolute; top:44px; right:10px; z-index:61; display:none;
+    flex-direction:column; gap:11px; align-items:stretch; width:212px; padding:9px 11px 11px;
+    background:rgba(10,20,36,.96); border:1px solid var(--gold-dim); border-radius:10px;
+    box-shadow:0 8px 22px rgba(0,0,0,.55);
+  }
+  #painelVolume.on{ display:flex; }
+  #painelVolume .pv-bloco{ display:flex; flex-direction:column; gap:6px; }
+  #painelVolume .pv-tit{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--gold-soft); display:flex; justify-content:space-between;
+  }
+  #painelVolume .pv-linha{ display:flex; align-items:center; gap:8px; }
+  #painelVolume .pv-passo{
+    flex:0 0 auto; width:28px; height:28px; padding:0; font-size:17px; font-weight:700; line-height:1;
+    color:var(--gold-soft); background:rgba(212,175,55,.10); border:1px solid var(--gold-dim);
+    border-radius:6px; cursor:pointer;
+  }
+  #painelVolume .pv-passo:hover, #painelVolume .pv-passo:focus-visible{ background:rgba(212,175,55,.24); }
+  #painelVolume .pv-passo[disabled]{ opacity:.35; cursor:not-allowed; }
+  #painelVolume input[type=range]{ flex:1 1 auto; min-width:0; accent-color:var(--gold); cursor:pointer; }
 
   /* ============ MODO DESAFIO (Challenger) ============ */
   .org-slot.tipo-verde{ border-color:rgba(130,200,150,.65); }
@@ -629,13 +669,21 @@ body{
   }
   .org-chal-dono.jog0{ background:var(--jog0); }
   .org-chal-dono.jog1{ background:var(--jog1); }
-  .org-estacao.org-chal-vencida{ position:relative; }
-  .org-estacao.org-chal-vencida::after{
-    content:"🏆"; position:absolute; top:-6px; right:6px; font-size:16px;
-    filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));
+  /* --- estação ganha: pintada com a cor do jogador que a venceu (borda, fundo, brilho e troféu) --- */
+  .org-estacao.org-chal-vencida.jog0{ --venc:var(--jog0); --venc-claro:var(--jog0-soft); }
+  .org-estacao.org-chal-vencida.jog1{ --venc:var(--jog1); --venc-claro:var(--jog1-soft); }
+  .org-estacao.org-chal-vencida{
+    position:relative; border-color:var(--venc);
+    background:linear-gradient(180deg, color-mix(in srgb, var(--venc) 34%, rgba(10,20,36,.6)), color-mix(in srgb, var(--venc) 14%, rgba(10,20,36,.6)));
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--venc) 45%, transparent), 0 0 18px -4px var(--venc);
   }
-  .org-estacao.org-chal-vencida.jog0 .org-rotulo{ color:var(--jog0-soft); }
-  .org-estacao.org-chal-vencida.jog1 .org-rotulo{ color:var(--jog1-soft); }
+  .org-estacao.org-chal-vencida::after{
+    content:"🏆"; position:absolute; top:-12px; right:-7px; z-index:7;
+    width:26px; height:26px; border-radius:50%; font-size:14px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--venc); border:2px solid var(--venc-claro);
+    box-shadow:0 2px 6px rgba(0,0,0,.55);
+  }
 
   /* --- monte de compra + carta em jogo --- */
   .org-chal-mesa{ display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:0 0 6px; }
@@ -644,17 +692,58 @@ body{
     font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em;
     text-transform:uppercase; color:rgba(232,238,247,.6);
   }
-  .org-chal-sacar{
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    border:3px solid var(--gold-dim); border-radius:12px; padding:14px 20px;
-    background:linear-gradient(180deg, rgba(21,39,66,.5), rgba(10,20,36,.6));
-    color:#E8EEF7; cursor:pointer; font:inherit;
-    transition:transform .12s, box-shadow .15s;
+  /* ---- montes de compra, UM POR TIPO DE CARTA. Miniatura no padrão do morte
+       (.chal-esp-monte): verso de carta com duas "sombras" empilhadas, losangos e
+       selo de quantidade no canto; aqui cada monte é um botão tingido com a cor do tipo ---- */
+  .org-chal-montes{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  .org-chal-monte{
+    --mc:#C9A8E8; --mc-claro:#E8CE7A;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    background:none; border:0; padding:4px 8px 2px; cursor:pointer;
+    font-family:var(--font-serif); font-weight:800; font-size:10px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--mc-claro); max-width:calc(var(--card-w-mao) * 1.7);
+    transition:transform .12s, filter .15s;
   }
-  .org-chal-sacar:hover{ transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.4); }
-  .org-chal-sacar[disabled]{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
-  .org-chal-sacar .ico{ font-size:26px; }
-  .org-chal-sacar .rest{ font-family:var(--font-pixel); font-size:8px; letter-spacing:.04em; color:rgba(232,238,247,.55); }
+  .org-chal-monte:hover:not([disabled]){ transform:translateY(-4px); filter:brightness(1.15); }
+  .org-chal-monte:active:not([disabled]){ transform:translateY(-1px); }
+  .org-chal-monte:focus-visible{ outline:2px solid var(--mc-claro); outline-offset:3px; border-radius:8px; }
+  .org-chal-monte[disabled]{ cursor:not-allowed; opacity:.55; }
+  .org-chal-monte.vazio{ opacity:.4; }
+  .org-chal-monte .pilha{
+    position:relative; width:calc(var(--card-w-mao) * 1.25); aspect-ratio:900/1260; margin:2px 3px 4px;
+  }
+  .org-chal-monte .pilha::before, .org-chal-monte .pilha::after{
+    content:''; position:absolute; inset:0; z-index:0; border-radius:6px;
+    border:1.5px solid color-mix(in srgb, var(--mc) 55%, rgba(10,20,36,.9));
+    background:rgba(10,20,36,.9);
+  }
+  .org-chal-monte .pilha::before{ transform:rotate(-7deg) translate(-3px,2px); }
+  .org-chal-monte .pilha::after{ transform:rotate(6deg) translate(3px,2px); }
+  .org-chal-monte.vazio .pilha::before, .org-chal-monte.vazio .pilha::after{ display:none; }
+  .org-chal-monte .verso{
+    position:relative; z-index:1; width:100%; height:100%; border-radius:6px;
+    border:2px solid var(--mc);
+    background:
+      radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--mc) 40%, transparent) 0%, transparent 64%),
+      repeating-linear-gradient(45deg, color-mix(in srgb, var(--mc) 25%, transparent) 0 3px, rgba(9,16,28,.95) 3px 9px),
+      repeating-linear-gradient(-45deg, color-mix(in srgb, var(--mc) 14%, transparent) 0 3px, transparent 3px 9px);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 4px 12px rgba(0,0,0,.5);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .org-chal-monte .verso::before{
+    content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+    border:1px solid color-mix(in srgb, var(--mc-claro) 60%, transparent);
+  }
+  .org-chal-monte .ico{
+    position:relative; font-size:30px; opacity:.9; color:var(--mc-claro);
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));
+  }
+  .org-chal-monte .qtd{
+    position:absolute; bottom:1px; right:2px; z-index:2; font-family:var(--font-pixel); font-size:9px;
+    background:rgba(6,10,20,.9); border:1px solid color-mix(in srgb, var(--mc) 55%, transparent);
+    border-radius:4px; padding:2px 4px; color:#F4E7B8;
+  }
+  .org-chal-monte .rot{ text-align:center; line-height:1.25; }
   .org-chal-carta-atual{
     display:flex; flex-direction:column; align-items:center; gap:8px;
     min-height:calc(var(--card-w-mao) * 1.6 * 830 / 560 + 40px);
@@ -674,6 +763,8 @@ body{
   }
   .org-vd.on{ display:flex; animation:orgVdFade 5s ease forwards; }
   .org-vd.acerto{ background:radial-gradient(circle at 50% 44%, rgba(60,200,120,.32), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
+  .org-vd.neutro{ background:radial-gradient(circle at 50% 44%, rgba(120,170,235,.28), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
+  .org-vd.neutro .org-vd-raios{ color:rgba(150,190,245,.8); }
   .org-vd.erro{ background:radial-gradient(circle at 50% 44%, rgba(255,80,60,.34), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
   .org-vd-cx{ position:relative; text-align:center; animation:orgVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
   .org-vd-raios{
@@ -709,7 +800,7 @@ body{
   /* --- sorteio animado de quem começa (~5 s) --- */
   .org-sorteio{
     position:fixed; inset:0; z-index:130; display:none;
-    background:radial-gradient(circle at 50% 38%, rgba(46,22,74,.97), rgba(6,10,20,.98));
+    background:radial-gradient(circle at 50% 38%, #2E164A, #060A14);
     flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:24px;
     text-align:center;
   }
@@ -752,8 +843,7 @@ body{
   .chal-vez-ov{
     position:fixed; inset:0; z-index:119; display:none;
     align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
-    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
-      rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
+    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, #060A14), #060A14 70%);   /* opaco: o tabuleiro não aparece por trás */
   }
   .chal-vez-ov.on{ display:flex; animation:orgVdFade 3s ease forwards; }
   .chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
@@ -802,13 +892,48 @@ body{
   .cl-copyright{ font-size:10.5px; }
 }
 
+  /* enquanto uma animação de tela cheia está no ar, a página não rola (nem por roda/toque/teclado) */
+  html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
+
+  /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  .chal-emb-pilhas{ display:flex; justify-content:center; margin:34px 0 6px; }
+  .chal-emb-pilha{ position:relative; width:128px; aspect-ratio:900/1260; margin:0 44px; }
+  .chal-emb-c{
+    position:absolute; left:0; right:0; bottom:calc(var(--n) * 1.6px); top:calc(var(--n) * -1.6px);
+    border-radius:9px; border:2px solid #F2E4B2; box-shadow:0 3px 8px rgba(0,0,0,.55);
+    background:linear-gradient(145deg,#2A78BC,#0E2E52);
+    display:flex; align-items:center; justify-content:center; font-size:48px;
+    animation:embEsq .9s ease-in-out infinite; animation-delay:calc(var(--n) * -.13s);
+  }
+  .chal-emb-c.d{ animation-name:embDir; }
+  @keyframes embEsq{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(-68%,-8%) rotate(-11deg); }
+    62%{ transform:translate(-6%,-22%) rotate(-2deg); }
+  }
+  @keyframes embDir{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(68%,-8%) rotate(11deg); }
+    62%{ transform:translate(6%,-22%) rotate(2deg); }
+  }
+  .org-sorteio.parou .chal-emb-c{ animation:none; }
+
 /* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-.org-campo.org-rev-on .org-slot,
-.org-campo.org-rev-on .org-fixa{
-  pointer-events:auto; cursor:pointer; opacity:.3; filter:grayscale(.4);
+.org-rev-on .org-slot{
+  pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
   transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
+  border-color:var(--gold-dim) !important; border-style:solid !important;   /* neutraliza verde/vermelho de certo/errado */
 }
-.org-campo.org-rev-on .org-slot.org-rev-atual{
+.org-rev-on .org-slot:not(.org-rev-atual){ box-shadow:none !important; }
+.org-rev-on .org-slot::after{ display:none !important; }
+/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
+.org-rev-correta{ display:none; }
+.org-rev-on .org-slot .org-rev-correta{
+  display:block; position:absolute; inset:0; z-index:8; background:var(--slot);
+  border-radius:inherit; overflow:hidden;
+}
+.org-rev-correta > img{ width:100%; height:100%; object-fit:cover; display:block; }
+.org-rev-on .org-slot.org-rev-atual{
   opacity:1; filter:none; outline:3px solid var(--gold); outline-offset:3px;
   box-shadow:0 0 0 7px rgba(212,175,55,.28), 0 12px 34px rgba(0,0,0,.6);
   transform:scale(1.07); z-index:6;
@@ -820,7 +945,19 @@ body{
   border-top:2px solid var(--gold-dim); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
 }
 .org-rev-bar.on{ transform:translateY(0); }
-.org-rev-inner{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+:root{ --rev-img-h:min(34vh,300px); }
+.org-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+.org-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
+.org-rev-cartas{ display:flex; gap:12px; justify-content:center; align-items:flex-start; }
+.org-rev-fig{ margin:0; position:relative; opacity:.6; transition:opacity .2s; }
+.org-rev-fig.atual{ opacity:1; }
+.org-rev-fig > img{
+  height:var(--rev-img-h); width:auto; max-width:30vw; object-fit:contain; cursor:zoom-in; display:block;
+  border-radius:10px; border:3px solid var(--gold-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
+}
+.org-rev-fig.atual > img{ border-color:var(--gold-soft); }
+.org-rev-texto{ flex:1 1 240px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
+.org-rev-on .org-slot{ scroll-margin-top:16px; scroll-margin-bottom:calc(var(--rev-img-h) + 200px); }
 .org-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .org-rev-nav{
   background:var(--gold-dim); color:#1B0A2C; border:none; border-radius:8px;
@@ -834,13 +971,9 @@ body{
 }
 .org-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
 .org-rev-tit b{ color:var(--gold); }
-.org-rev-status{ font-family:var(--font-serif); font-size:13px; line-height:1.5; border-radius:8px; padding:7px 10px; }
-.org-rev-status.ok{ color:#9BE0B0; background:rgba(62,158,94,.18); border:1px solid #3E9E5E; }
-.org-rev-status.erro{ color:#F5B4B0; background:rgba(201,82,76,.16); border:1px solid #C9524C; }
 .org-rev-cta{ margin-top:12px; }
 @media (max-width:600px){
   .org-rev-tit{ font-size:13px; }
-  .org-rev-status{ font-size:12px; }
 }
 </style>
 </head>
@@ -850,6 +983,26 @@ body{
   <span class="btn-tc-ico" aria-hidden="true">&#9974;</span>
   <span class="btn-tc-txt">Tela cheia</span>
 </button>
+
+<button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
+<div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
+    </div>
+  </div>
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#128276; Efeitos</span><span id="pvPctEf">100%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos" aria-label="Reduzir o volume dos efeitos">&minus;</button>
+      <input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos">
+      <button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos" aria-label="Subir o volume dos efeitos">+</button>
+    </div>
+  </div>
+</div>
 
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
   <div class="tt-ico" aria-hidden="true">🧬</div>
@@ -1011,17 +1164,13 @@ body{
         <div class="org-chal-placar" id="orgChalPlacar"></div>
 
         <div class="faixa">
-          <span class="faixa-titulo">Monte único — saque e posicione</span>
+          <span class="faixa-titulo">Montes de compra — escolha, saque e posicione</span>
           <span class="linha-ouro"></span>
         </div>
         <div class="org-chal-mesa">
           <div class="org-chal-bloco">
-            <div class="org-chal-bloco-tit">Monte de compra</div>
-            <button class="org-chal-sacar" id="orgChalSacar" type="button">
-              <span class="ico">🂠</span>
-              <span>Sacar carta</span>
-              <span class="rest" id="orgChalRest">— cartas no monte</span>
-            </button>
+            <div class="org-chal-bloco-tit">Montes de compra</div>
+            <div class="org-chal-montes" id="orgChalMontes"></div>
           </div>
           <div class="org-chal-bloco">
             <div class="org-chal-bloco-tit">Carta em jogo</div>
@@ -1066,6 +1215,13 @@ body{
   </div>
 </div>
 
+<!-- ---------- EMBARALHAMENTO ANIMADO DO BARALHO, 5 s (Desafio) ---------- -->
+<div class="org-sorteio" id="orgChalEmbaralho">
+  <div class="org-sorteio-tit">Embaralhando o baralho…</div>
+  <div class="chal-emb-pilhas" id="orgChalEmbaralhoPilha"></div>
+  <div class="org-sorteio-res" id="orgChalEmbaralhoRes"></div>
+</div>
+
 <!-- ---------- SORTEIO DE QUEM COMEÇA (Desafio) ---------- -->
 <div class="org-sorteio" id="orgChalSorteio">
   <div class="org-sorteio-dado" id="orgSorteioDado">🎲</div>
@@ -1096,15 +1252,17 @@ body{
       <button class="org-rev-nav" id="orgRevNext" type="button" aria-label="Próxima estação">&#8250;</button>
       <button class="org-rev-fechar" id="orgRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
     </div>
-    <div class="org-rev-tit" id="orgRevTit"></div>
-    <div class="org-rev-status" id="orgRevStatus"></div>
+    <div class="org-rev-corpo">
+      <div class="org-rev-cartas" id="orgRevCartas"></div>
+      <div class="org-rev-texto"><div class="org-rev-tit" id="orgRevTit"></div></div>
+    </div>
   </div>
 </div>
 
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 16 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 20 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1125,6 +1283,21 @@ body{
     if (ctxAudio.state === 'suspended') ctxAudio.resume();
     return ctxAudio;
   }
+  /* volume dos EFEITOS: todos os bips do jogo passam por um ganho mestre (1 = nível original).
+     Ajustado no painel do botão de volume, separado do volume da música. */
+  let efeitosVol = 1, efeitosMestre = null;
+  function saidaEfeitos(ac){
+    if (!efeitosMestre || efeitosMestre.context !== ac){
+      efeitosMestre = ac.createGain();
+      efeitosMestre.gain.value = efeitosVol;
+      efeitosMestre.connect(ac.destination);
+    }
+    return efeitosMestre;
+  }
+  const orgEfeitos = {
+    definir: function(v){ efeitosVol = v; if (efeitosMestre) efeitosMestre.gain.value = v; },
+    amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
+  };
   function nota(freq, inicio, dur, tipo, vol){
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
@@ -1133,7 +1306,7 @@ body{
     g.gain.setValueAtTime(0.0001, ac.currentTime + inicio);
     g.gain.exponentialRampToValueAtTime(vol || 0.22, ac.currentTime + inicio + 0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + inicio + dur);
-    o.connect(g); g.connect(ac.destination);
+    o.connect(g); g.connect(saidaEfeitos(ac));
     o.start(ac.currentTime + inicio); o.stop(ac.currentTime + inicio + dur + 0.02);
   }
   function somVitoria(){   // arpejo ascendente triunfal
@@ -1499,6 +1672,7 @@ body{
       orgBtnTrocar.disabled = false;
       var _orb = document.getElementById('orgRevBtn');
       if (_orb) _orb.addEventListener('click', function(){ orgRevisaoAbrir(orgCampo); });
+      orgMusica.encerrar();                    /* fim da partida do Single Player */
       somVitoria();
     } else {
       /* apenas marca certo/errado: a combinacao correta NAO e revelada,
@@ -1568,7 +1742,147 @@ body{
   const orgModoJogo   = document.getElementById('orgModoJogo');
   const orgChalNomesEl = document.getElementById('orgChalNomes');
 
+  /* ==============================================================
+     TRILHA SONORA DA PARTIDA (exclusiva deste jogo)
+     Toca em sequência, com 3 s de intervalo: A = Ignite the Spark - Energetic Version; B = Helicase Groove.
+     Começa quando uma partida começa, REPETE SEM PARAR até o fim do jogo (vitória/fim
+     da partida, com uma descida rápida do volume) ou até o jogador sair para os menus.
+     As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
+     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     baixada enquanto a atual toca.
+     ============================================================== */
+  const orgMusica = (function(){
+    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
+    const PASTA = 'Músicas dos jogos/';
+    const FAIXAS = ['Ignite the Spark - Energetic Version.mp3', 'Helicase Groove.mp3'];
+    const INTERVALO_MS = 3000;
+    const btn = document.getElementById('btnMusica');
+    const painel = document.getElementById('painelVolume');
+    const barra = document.getElementById('pvBarra');
+    const pct = document.getElementById('pvPct');
+    const menos = document.getElementById('pvMenos');
+    const mais = document.getElementById('pvMais');
+    const barraEf = document.getElementById('pvBarraEf');
+    const pctEf = document.getElementById('pvPctEf');
+    const menosEf = document.getElementById('pvMenosEf');
+    const maisEf = document.getElementById('pvMaisEf');
+    const pre = [];                                        /* faixas já pré-carregadas */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
+
+    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver */
+      const a = pre[i] || new Audio(url(i));
+      pre[i] = null;
+      return a;
+    }
+    function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
+      if (pre[i]) return;
+      try { const a = new Audio(url(i)); a.preload = 'auto'; pre[i] = a; } catch (e) {}
+    }
+    function tocar(i, meu){
+      if (meu !== tok) return;
+      let a;
+      try { a = abrir(i); } catch (e) { return; }
+      a.volume = volume;
+      a.muted = calado;
+      audio = a;
+      a.addEventListener('ended', function(){
+        if (meu !== tok) return;
+        /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
+        const prox = (i + 1) % FAIXAS.length;
+        preparar(prox);
+        timer = setTimeout(function(){ tocar(prox, meu); }, INTERVALO_MS);
+      });
+      const p = a.play();
+      if (p && p.catch) p.catch(function(){});             /* bloqueio de autoplay ou pasta ausente: segue sem música */
+      preparar((i + 1) % FAIXAS.length);                   /* já deixa a próxima faixa baixando */
+    }
+    function parar(){
+      tok++;
+      clearTimeout(timer); timer = null;
+      if (fade){ clearInterval(fade.iv); fade.a.pause(); fade = null; }
+      if (audio){ audio.pause(); audio = null; }
+      if (btn) btn.classList.remove('on');
+      fechar();
+    }
+    /* FIM DA PARTIDA: a música desce em ~1,5 s e para (a sequência só termina com o jogo) */
+    function encerrar(){
+      if (!audio){ parar(); return; }
+      const meu = ++tok;                                   /* cancela o intervalo/faixa seguinte */
+      clearTimeout(timer); timer = null;
+      const a = audio, v0 = a.volume;
+      audio = null;                                        /* o controle de volume deixa de mexer nela */
+      let n = 0;
+      const iv = setInterval(function(){
+        n++;
+        a.volume = Math.max(0, v0 * (1 - n / 15));
+        if (n >= 15){
+          clearInterval(iv); a.pause();
+          if (fade && fade.a === a) fade = null;
+          if (tok === meu){ if (btn) btn.classList.remove('on'); fechar(); }
+        }
+      }, 100);
+      fade = { a:a, iv:iv };
+    }
+    function iniciar(){
+      parar();
+      if (btn) btn.classList.add('on');
+      tocar(0, tok);
+    }
+    function fechar(){
+      if (!painel) return;
+      painel.classList.remove('on');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+    function definirVolume(v){
+      volume = Math.max(0, Math.min(1, v));
+      if (audio) audio.volume = volume;
+      const p = Math.round(volume * 100);
+      barra.value = String(p);
+      pct.textContent = p + '%';
+      menos.disabled = p <= 0;
+      mais.disabled = p >= 100;
+      btn.innerHTML = p === 0 ? '&#128263;' : p < 50 ? '&#128265;' : '&#128266;';   /* 🔇 / 🔉 / 🔊 */
+    }
+    /* volume dos EFEITOS (bips do jogo): 0..1, 100% = nível original; independe da música */
+    function definirEfeitos(v, ouvir){
+      volEf = Math.max(0, Math.min(1, v));
+      orgEfeitos.definir(volEf);
+      const p = Math.round(volEf * 100);
+      barraEf.value = String(p);
+      pctEf.textContent = p + '%';
+      menosEf.disabled = p <= 0;
+      maisEf.disabled = p >= 100;
+      if (ouvir) orgEfeitos.amostra();                            /* toca um bip para o jogador ouvir o nível */
+    }
+    if (btn && painel){
+      definirVolume(volume);
+      definirEfeitos(volEf, false);
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const abrir = !painel.classList.contains('on');
+        painel.classList.toggle('on', abrir);
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      });
+      painel.addEventListener('click', function(e){ e.stopPropagation(); });
+      barra.addEventListener('input', function(){ definirVolume(Number(barra.value) / 100); });
+      menos.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 - 10) / 100); });
+      mais.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 + 10) / 100); });
+      barraEf.addEventListener('input', function(){ definirEfeitos(Number(barraEf.value) / 100, false); });
+      barraEf.addEventListener('change', function(){ orgEfeitos.amostra(); });     /* soltou a barra → bip de amostra */
+      menosEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 - 10) / 100, true); });
+      maisEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 + 10) / 100, true); });
+      /* clicar fora do painel ou apertar Esc fecha */
+      document.addEventListener('click', fechar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fechar(); });
+    }
+    /* silencia/libera a trilha sem parar a sequência (ligado ao botão "Som" do cariótipo) */
+    function silenciar(sim){ calado = !!sim; if (audio) audio.muted = calado; }
+    return { iniciar:iniciar, parar:parar, encerrar:encerrar, silenciar:silenciar };
+  })();
+
   function orgEsconderTudo(){
+    orgMusica.parar();                         /* voltar aos menus para a trilha */
     orgModoJogo.classList.remove('on');
     orgChalNomesEl.classList.remove('on');
     orgSelecao.classList.remove('on');
@@ -1589,6 +1903,7 @@ body{
     orgSelecao.classList.remove('on');
     orgTabuleiro.classList.remove('oculto');
     orgMontar();
+    orgMusica.iniciar();                       /* começou a partida do Single Player */
     somClique();
     orgTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
   }
@@ -1632,8 +1947,7 @@ body{
   const orgChalPlacar      = document.getElementById('orgChalPlacar');
   const orgChalResultado   = document.getElementById('orgChalResultado');
   const orgChalCartaAtual  = document.getElementById('orgChalCartaAtual');
-  const orgChalSacarBtn    = document.getElementById('orgChalSacar');
-  const orgChalRestEl      = document.getElementById('orgChalRest');
+  const orgChalMontesEl = document.getElementById('orgChalMontes');
   const orgChalEncerrarBtn = document.getElementById('orgChalEncerrar');
   const orgChalReiniciarBtn  = document.getElementById('orgChalReiniciar');
   const orgChalTrocarModoBtn = document.getElementById('orgChalTrocarModo');
@@ -1642,10 +1956,11 @@ body{
     ativo: false,
     jogadores: [],   /* [{nome, pontos}] */
     turno: 0,
-    deck: [],        /* [{tipo, chave}] */
+    montes: {},      /* {tipo: [{tipo, chave}]} — um monte de compra por tipo de carta */
     cartaSacada: null,
     cartaMao: null,
     slotMarcado: null,
+    movidos: new Set(),   /* encaixes preenchidos/movidos neste turno */
     fase: 'sacar'    /* 'sacar' | 'jogar' */
   };
 
@@ -1665,10 +1980,9 @@ body{
     return d;
   }
 
-  function chalOrgCriarSlot(chave, tipo){
+  function chalOrgCriarSlot(tipo){
     const s = document.createElement('div');
     s.className = 'org-slot tipo-' + tipo;
-    s.dataset.alvo = chave;
     s.dataset.tipo = tipo;
     s.dataset.posto = '';
     s.innerHTML = orgSlotVazioHTML(tipo);
@@ -1676,18 +1990,15 @@ body{
     return s;
   }
   function chalOrgCriarEstacao(trio){
-    const chave = trio[0], nome = trio[1];
     const est = document.createElement('div');
     est.className = 'org-estacao';
-    const rot = document.createElement('div');
-    rot.className = 'org-rotulo';
-    rot.textContent = nome;
-    est.appendChild(rot);
+    /* sem título e sem "alvo": qualquer trio completo e coerente na mesma
+       estação é acerto, em qualquer posição do campo */
     const leque = document.createElement('div');
     leque.className = 'org-leque';
-    leque.appendChild(chalOrgCriarSlot(chave, 'azul'));
-    leque.appendChild(chalOrgCriarSlot(chave, 'verde'));
-    leque.appendChild(chalOrgCriarSlot(chave, 'verm'));
+    leque.appendChild(chalOrgCriarSlot('azul'));
+    leque.appendChild(chalOrgCriarSlot('verde'));
+    leque.appendChild(chalOrgCriarSlot('verm'));
     est.appendChild(leque);
     return est;
   }
@@ -1702,12 +2013,50 @@ body{
       deck.push({tipo:'azul', chave:t[0]});
       deck.push({tipo:'verm', chave:t[0]});
     });
-    return orgEmbaralhar(deck);
+    /* um monte por tipo de carta, cada um embaralhado por dentro */
+    const montes = {};
+    deck.forEach(function(c){ (montes[c.tipo] = montes[c.tipo] || []).push(c); });
+    Object.keys(montes).forEach(function(t){ montes[t] = orgEmbaralhar(montes[t]); });
+    return montes;
   }
+  /* ---------- montes de compra: um por tipo de carta ---------- */
+  const CHAL_ORG_TIPOS_MONTE = [
+    {tipo:'verde', rot:'Estrutura', cor:'#6FBF8E', claro:'#B8ECCF'},
+    {tipo:'azul', rot:'Definição e função', cor:'#4F9BD9', claro:'#A0D7F5'},
+    {tipo:'verm', rot:'Correlação médica', cor:'#E0706A', claro:'#F5B4AF'}
+  ];
+  function chalTotalMonte(){
+    let n = 0;
+    Object.keys(CHAL_ORG.montes).forEach(function(t){ n += CHAL_ORG.montes[t].length; });
+    return n;
+  }
+  function chalMontarMontes(){
+    orgChalMontesEl.innerHTML = '';
+    CHAL_ORG_TIPOS_MONTE.forEach(function(t){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'org-chal-monte';
+      b.dataset.tipo = t.tipo;
+      b.style.setProperty('--mc', t.cor);
+      b.style.setProperty('--mc-claro', t.claro);
+      b.setAttribute('aria-label', 'Sacar do monte: ' + t.rot);
+      b.innerHTML = '<span class="pilha"><span class="verso"><span class="ico">🂠</span></span>' +
+        '<span class="qtd">0</span></span><span class="rot">' + t.rot + '</span>';
+      orgChalMontesEl.appendChild(b);
+    });
+  }
+  /* atualiza contagem, "vazio" e se dá pra sacar: só na fase de sacar, e de monte com carta */
   function chalOrgAtualizarResto(){
-    const n = CHAL_ORG.deck.length;
-    orgChalRestEl.textContent = n + (n === 1 ? ' carta no monte' : ' cartas no monte');
+    const podeSacar = CHAL_ORG.ativo && CHAL_ORG.fase === 'sacar';
+    Array.prototype.forEach.call(orgChalMontesEl.querySelectorAll('.org-chal-monte'), function(b){
+      const n = (CHAL_ORG.montes[b.dataset.tipo] || []).length;
+      b.querySelector('.qtd').textContent = n;
+      b.classList.toggle('vazio', n === 0);
+      b.disabled = !podeSacar || n === 0;
+      b.title = n ? n + (n === 1 ? ' carta neste monte' : ' cartas neste monte') : 'Monte esgotado';
+    });
   }
+  chalMontarMontes();
   function chalOrgRenderVez(msg){
     const j = CHAL_ORG.jogadores[CHAL_ORG.turno];
     orgChalVez.innerHTML = msg || ('▶ Vez de <b>' + orgChalEsc(j.nome) + '</b>');
@@ -1758,19 +2107,19 @@ body{
       p.className = 'instr';
       if (CHAL_ORG.fase === 'jogar'){
         p.textContent = 'Carta posicionada — encerre o turno quando terminar.';
-      } else if (!CHAL_ORG.deck.length){
+      } else if (!chalTotalMonte()){
         p.textContent = 'O monte acabou — corrija as cartas erradas ou encerre o turno.';
       } else {
-        p.textContent = 'Saque uma carta para continuar o turno.';
+        p.textContent = 'Escolha um dos montes e saque uma carta para continuar o turno.';
       }
       orgChalCartaAtual.appendChild(p);
     }
   }
   function chalOrgAtualizarBotoes(){
     const semCartaNaMao = !CHAL_ORG.cartaSacada && !CHAL_ORG.cartaMao;
-    orgChalSacarBtn.disabled = !CHAL_ORG.ativo || CHAL_ORG.fase !== 'sacar' || !CHAL_ORG.deck.length;
+    chalOrgAtualizarResto();
     orgChalEncerrarBtn.disabled = !CHAL_ORG.ativo || !semCartaNaMao ||
-      (CHAL_ORG.fase === 'sacar' && CHAL_ORG.deck.length > 0);
+      (CHAL_ORG.fase === 'sacar' && chalTotalMonte() > 0);
   }
 
   function chalOrgDesmarcarSlot(){
@@ -1778,10 +2127,10 @@ body{
     CHAL_ORG.slotMarcado = null;
   }
 
-  function chalOrgSacar(){
-    if (!CHAL_ORG.ativo || CHAL_ORG.fase !== 'sacar' || !CHAL_ORG.deck.length) return;
+  function chalOrgSacar(tipo){
+    if (!CHAL_ORG.ativo || CHAL_ORG.fase !== 'sacar' || !CHAL_ORG.montes[tipo] || !CHAL_ORG.montes[tipo].length) return;
     chalOrgDesmarcarSlot();
-    CHAL_ORG.cartaSacada = CHAL_ORG.deck.pop();
+    CHAL_ORG.cartaSacada = CHAL_ORG.montes[tipo].pop();
     CHAL_ORG.fase = 'jogar';
     chalOrgAtualizarResto();
     somClique();
@@ -1789,7 +2138,10 @@ body{
     chalOrgRenderVez();
     chalOrgAtualizarBotoes();
   }
-  orgChalSacarBtn.addEventListener('click', chalOrgSacar);
+  orgChalMontesEl.addEventListener('click', function(e){
+    const b = e.target.closest('.org-chal-monte');
+    if (b && !b.disabled) chalOrgSacar(b.dataset.tipo);
+  });
 
   orgChalCartaAtual.addEventListener('click', function(){
     if (!CHAL_ORG.ativo) return;
@@ -1813,18 +2165,23 @@ body{
     const feitos = orgChalCampo.querySelectorAll('.org-estacao.org-chal-vencida').length;
     orgChalHudPos.innerHTML = 'TRIOS FECHADOS: <b>' + feitos + '/' + ORG_TRIOS.length + '</b>';
   }
-  function chalOrgChecarTrio(chave){
-    const slots = orgChalCampo.querySelectorAll('.org-slot[data-alvo="' + chave + '"]');
-    const travados = Array.prototype.filter.call(slots, function(s){ return s.classList.contains('travado'); });
-    if (travados.length < 3) return;
+  /* trio recém-fechado: a estação (1 ponto) é de quem acertou mais cartas dela — maioria de 2 das 3;
+     cada carta fica registrada com quem a posicionou (selo numerado) */
+  function chalOrgChecarTrio(est){
+    const slots = est.querySelectorAll('.org-slot');
     const contagem = [0, 0];
-    travados.forEach(function(s){ contagem[Number(s.dataset.dono)]++; });
+    Array.prototype.forEach.call(slots, function(s){ contagem[Number(s.dataset.dono)]++; });
     const vencedor = contagem[0] >= contagem[1] ? 0 : 1;
     CHAL_ORG.jogadores[vencedor].pontos++;
-    const est = slots[0].closest('.org-estacao');
     est.classList.add('org-chal-vencida', 'jog' + vencedor);
     chalOrgAtualizarHud();
     somVitoria();
+  }
+  /* encaixa uma carta (mesmo motor do Single Player) e registra quem a posicionou e que foi mexida neste turno */
+  function chalOrgPreencher(slot, chave){
+    orgPreencherSlot(slot, chave);
+    slot.dataset.autor = String(CHAL_ORG.turno);     /* quem posicionou (conta na maioria do trio) */
+    CHAL_ORG.movidos.add(slot);
   }
 
   function chalOrgClicarSlot(slot){
@@ -1843,7 +2200,7 @@ body{
         somErro();
         return;
       }
-      orgPreencherSlot(slot, CHAL_ORG.cartaMao.chave);
+      chalOrgPreencher(slot, CHAL_ORG.cartaMao.chave);
       CHAL_ORG.cartaMao = null;
       somEncaixe();
       chalOrgMostrarCarta();
@@ -1855,14 +2212,19 @@ body{
        OU com uma carta recém-sacada esperando na área de espera, tanto faz */
     if (CHAL_ORG.slotMarcado){
       if (CHAL_ORG.slotMarcado === slot){ chalOrgDesmarcarSlot(); somClique(); return; }
-      if (slot.dataset.posto || slot.dataset.tipo !== CHAL_ORG.slotMarcado.dataset.tipo){
+      if (slot.dataset.tipo !== CHAL_ORG.slotMarcado.dataset.tipo){
         somErro();
         return;
       }
-      const chave = CHAL_ORG.slotMarcado.dataset.posto;
-      orgEsvaziarSlot(CHAL_ORG.slotMarcado);
+      /* encaixe ocupado do mesmo tipo: as duas cartas trocam de lugar (sem isso,
+         com o monte vazio e tudo preenchido, ninguém conseguiria corrigir nada) */
+      const chaveA = CHAL_ORG.slotMarcado.dataset.posto;
+      const chaveB = slot.dataset.posto;
+      const origem = CHAL_ORG.slotMarcado;
+      orgEsvaziarSlot(origem);
       chalOrgDesmarcarSlot();
-      orgPreencherSlot(slot, chave);
+      if (chaveB){ orgEsvaziarSlot(slot); chalOrgPreencher(origem, chaveB); }
+      chalOrgPreencher(slot, chaveA);
       somEncaixe();
       return;
     }
@@ -1880,19 +2242,23 @@ body{
   }
 
   let orgVdTok = 0;
-  function chalOrgVeredito(nome, ganhos, erradas, cb){
+  /* tipo: 'acerto' (fechou trio), 'erro' (posicionou carta que não combina) ou
+     'neutro' (carta posicionada numa estação que ainda não tem com o que comparar) */
+  function chalOrgVeredito(nome, tipo, trios, erradas, cb){
     const ov = document.getElementById('orgChalVeredito');
     if (!ov){ if (cb) cb(); return; }
-    const acerto = ganhos > 0;
-    ov.classList.remove('acerto','erro');
-    ov.classList.add(acerto ? 'acerto' : 'erro');
-    document.getElementById('orgVdIco').textContent = acerto ? '✅' : '❌';
-    document.getElementById('orgVdTit').innerHTML = acerto
-      ? '<b>' + orgChalEsc(nome) + '</b> ACERTOU ' + ganhos + (ganhos === 1 ? ' CARTA!' : ' CARTAS!')
-      : '<b>' + orgChalEsc(nome) + '</b> ERROU A POSIÇÃO!';
+    ov.classList.remove('acerto','erro','neutro');
+    ov.classList.add(tipo);
+    document.getElementById('orgVdIco').textContent = tipo === 'acerto' ? '✅' : tipo === 'erro' ? '❌' : '📌';
+    document.getElementById('orgVdTit').innerHTML = tipo === 'acerto'
+      ? '<b>' + orgChalEsc(nome) + '</b> FECHOU ' + trios + (trios === 1 ? ' TRIO!' : ' TRIOS!')
+      : tipo === 'erro'
+        ? '<b>' + orgChalEsc(nome) + '</b> ERROU O TRIO!'
+        : '<b>' + orgChalEsc(nome) + '</b> POSICIONOU A CARTA';
     document.getElementById('orgVdSub').textContent = erradas > 0
       ? erradas + (erradas === 1 ? ' carta ainda fora do lugar.' : ' cartas ainda fora do lugar.')
-      : (acerto ? 'Nenhuma carta fora do lugar até aqui.' : '');
+      : (tipo === 'acerto' ? 'Nenhuma carta fora do lugar até aqui.'
+        : tipo === 'neutro' ? 'Ainda não há trio para conferir nessa estação.' : '');
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
     const meu = ++orgVdTok;
     setTimeout(function(){
@@ -1904,38 +2270,60 @@ body{
 
   function chalOrgEncerrarTurno(){
     if (!CHAL_ORG.ativo || CHAL_ORG.cartaSacada || CHAL_ORG.cartaMao) return;
-    if (CHAL_ORG.fase === 'sacar' && CHAL_ORG.deck.length > 0) return;
+    if (CHAL_ORG.fase === 'sacar' && chalTotalMonte() > 0) return;
     chalOrgDesmarcarSlot();
     const j = CHAL_ORG.jogadores[CHAL_ORG.turno];
 
-    /* reavalia TODOS os encaixes ainda não confirmados — não só o que acabou
-       de ser jogado, porque um reposicionamento também pode ter acertado
-       uma carta que estava errada desde um turno anterior */
-    let ganhos = 0, erradas = 0;
-    const trios = new Set();
-    orgChalCampo.querySelectorAll('.org-slot').forEach(function(slot){
-      if (!slot.dataset.posto || slot.classList.contains('travado')) return;
-      if (slot.dataset.posto === slot.dataset.alvo){
-        ganhos++;
-        slot.dataset.dono = CHAL_ORG.turno;
-        slot.classList.remove('errado');
-        slot.classList.add('certo', 'travado', 'dono' + CHAL_ORG.turno);
-        const badge = document.createElement('span');
-        badge.className = 'org-chal-dono jog' + CHAL_ORG.turno;
-        badge.textContent = CHAL_ORG.turno + 1;
-        slot.appendChild(badge);
-        trios.add(slot.dataset.alvo);
-      } else {
-        slot.classList.add('errado');
-        erradas++;
+    /* reavalia TODAS as estações ainda não fechadas — não só onde se jogou agora,
+       porque um reposicionamento também pode ter formado um trio que estava
+       errado desde um turno anterior. O que vale é o TRIO na mesma estação
+       (as 3 cartas da mesma organela), em qualquer posição do campo. */
+    let fechados = 0, erradas = 0, erradasMov = 0;
+    const novos = [];
+    orgChalCampo.querySelectorAll('.org-estacao').forEach(function(est){
+      const slots = [].slice.call(est.querySelectorAll('.org-slot'));
+      if (slots.every(function(sl){ return sl.classList.contains('travado'); })) return;
+      slots.forEach(function(sl){ sl.classList.remove('errado'); });
+      const cheios = slots.filter(function(sl){ return sl.dataset.posto; });
+      const cont = {};
+      cheios.forEach(function(sl){ cont[sl.dataset.posto] = (cont[sl.dataset.posto] || 0) + 1; });
+      const chaves = Object.keys(cont);
+      if (cheios.length === slots.length && chaves.length === 1){
+        fechados++;
+        cheios.forEach(function(sl){
+          const a = parseInt(sl.dataset.autor, 10);    /* cada carta fica com quem a posicionou */
+          sl.dataset.dono = a;
+          sl.dataset.alvo = sl.dataset.posto;          /* a revisão final mostra a carta deste encaixe */
+          sl.classList.add('certo', 'travado', 'dono' + a);
+          const badge = document.createElement('span');
+          badge.className = 'org-chal-dono jog' + a;
+          badge.textContent = a + 1;
+          sl.appendChild(badge);
+        });
+        novos.push(est);
+        return;
       }
+      /* com 3 encaixes: a chave que aparece 2x é a "maioria" (fica sem marca até
+         o trio completar); as demais cartas não combinam e ficam marcadas */
+      let maj = null;
+      chaves.forEach(function(k){ if (cont[k] > 1) maj = k; });
+      cheios.forEach(function(sl){
+        if (maj !== null ? sl.dataset.posto !== maj : chaves.length > 1){
+          sl.classList.add('errado');
+          erradas++;
+          if (CHAL_ORG.movidos.has(sl)) erradasMov++;
+        }
+      });
     });
-    if (ganhos > 0) somEncaixe(); else somErro();
-    trios.forEach(chalOrgChecarTrio);
+    const tipoVd = fechados > 0 ? 'acerto'
+      : ((erradasMov > 0 || (!CHAL_ORG.movidos.size && erradas > 0)) ? 'erro' : 'neutro');
+    CHAL_ORG.movidos.clear();
+    if (fechados > 0) somEncaixe(); else if (tipoVd === 'erro') somErro();
+    novos.forEach(chalOrgChecarTrio);
 
     /* veredito de 5 s — só depois dele é que o jogo segue (fim de jogo ou vez
        do próximo, com seu próprio aviso de 3 s), sem os dois overlays juntos */
-    chalOrgVeredito(j.nome, ganhos, erradas, function(){
+    chalOrgVeredito(j.nome, tipoVd, fechados, erradas, function(){
       if (chalOrgTudoCerto()){ chalOrgFim(); return; }
 
       CHAL_ORG.turno = (CHAL_ORG.turno + 1) % CHAL_ORG.jogadores.length;
@@ -1950,10 +2338,11 @@ body{
   orgChalEncerrarBtn.addEventListener('click', chalOrgEncerrarTurno);
 
   function chalOrgFim(){
+    orgMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_ORG.ativo = false;
     orgChalReiniciarBtn.disabled = false;
     orgChalTrocarModoBtn.disabled = false;
-    orgChalSacarBtn.disabled = true;
+    chalOrgAtualizarResto();
     orgChalEncerrarBtn.disabled = true;
     const jogadores = CHAL_ORG.jogadores;
     const vencedor = jogadores[0].pontos >= jogadores[1].pontos ? jogadores[0] : jogadores[1];
@@ -2022,14 +2411,76 @@ body{
     setTimeout(passo, 400);
   }
 
+  /* ---------- trava de rolagem durante as animações de tela cheia ----------
+     Ao aparecer qualquer uma delas, congela a rolagem da página (overflow:hidden no <html>);
+     ao sumir a última, devolve a página exatamente à posição de antes. */
+  (function(){
+    const ids = ['orgChalEmbaralho','orgChalSorteio','orgChalAviso'];
+    const els = ids.map(function(id){ return document.getElementById(id); });
+    const raiz = document.documentElement;
+    let y = null;
+    function sincronizar(){
+      const ligada = els.some(function(e){ return e.classList.contains('on'); });
+      if (ligada && y === null){
+        y = window.scrollY; raiz.classList.add('chal-anim-lock');
+      } else if (!ligada && y !== null){
+        raiz.classList.remove('chal-anim-lock');
+        window.scrollTo({ top:y, behavior:'instant' });
+        y = null;
+      }
+    }
+    const mo = new MutationObserver(sincronizar);
+    els.forEach(function(e){ mo.observe(e, { attributes:true, attributeFilter:['class'] }); });
+  })();
+
+  /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  let chalEmbTok = 0;
+  function chalEmbaralharDeck(cb){
+    const ov = document.getElementById('orgChalEmbaralho');
+    const resE = document.getElementById('orgChalEmbaralhoRes');
+    const meu = ++chalEmbTok;
+    resE.textContent = '';
+    ov.classList.remove('parou');
+    let cartas = '';
+    for (let n = 0; n < 8; n++){
+      cartas += '<div class="chal-emb-c ' + (n % 2 ? 'd' : 'e') + '" style="--n:' + n + '">🃏</div>';
+    }
+    document.getElementById('orgChalEmbaralhoPilha').innerHTML = '<div class="chal-emb-pilha">' + cartas + '</div>';
+    Object.keys(CHAL_ORG.montes).forEach(function(t){ CHAL_ORG.montes[t] = orgEmbaralhar(CHAL_ORG.montes[t].slice()); });       /* o embaralhamento de fato acontece aqui */
+    chalOrgAtualizarResto();
+    ov.classList.add('on');
+
+    const DUR = 5000, REVELA = 4300;
+    let t = 0;
+    const tique = setInterval(function(){
+      if (meu !== chalEmbTok){ clearInterval(tique); return; }
+      t += 110;
+      if (t >= REVELA){ clearInterval(tique); return; }
+      somClique();
+    }, 110);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.add('parou');
+      resE.textContent = '✔ ' + chalTotalMonte() + ' cartas embaralhadas!';
+      somVitoria();
+    }, REVELA);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.remove('on');
+      cb();
+    }, DUR);
+  }
+
   function chalOrgIniciar(nomes){
+    orgMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     if (orgRevAtiva) orgRevReset();
     CHAL_ORG.ativo = true;
     CHAL_ORG.jogadores = nomes.map(function(n){ return {nome:n, pontos:0}; });
-    CHAL_ORG.deck = chalOrgMontarDeck();
+    CHAL_ORG.montes = chalOrgMontarDeck();
     CHAL_ORG.cartaSacada = null;
     CHAL_ORG.cartaMao = null;
     CHAL_ORG.slotMarcado = null;
+    CHAL_ORG.movidos.clear();
     CHAL_ORG.fase = 'sacar';
     chalOrgMontarTabuleiro();
     chalOrgAtualizarHud();
@@ -2039,6 +2490,8 @@ body{
     orgChalTrocarModoBtn.disabled = true;
     chalOrgAtualizarResto();
 
+    /* abertura: embaralha o baralho (5 s) → sorteia quem começa (5 s) → 1ª vez */
+    chalEmbaralharDeck(function(){
     /* sorteio animado de quem começa */
     CHAL_ORG.turno = Math.floor(Math.random() * CHAL_ORG.jogadores.length);
     chalOrgAnimarSorteio(CHAL_ORG.turno, function(){
@@ -2048,6 +2501,7 @@ body{
       chalOrgMostrarCarta();
       chalOrgAtualizarBotoes();
     });
+    });
   }
 
   document.getElementById('orgChalNomesOk').addEventListener('click', function(){
@@ -2055,9 +2509,10 @@ body{
     const n1 = document.getElementById('orgChalNome1').value.trim() || 'Jogador 2';
     orgEsconderTudo();
     orgChalTabuleiro.style.display = '';
+    /* posiciona a página no tabuleiro ANTES de abrir as animações (instantâneo) */
+    orgChalTabuleiro.scrollIntoView({behavior:'instant', block:'start'});
     chalOrgIniciar([n0, n1]);
     somClique();
-    orgChalTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
   });
   orgChalReiniciarBtn.addEventListener('click', function(){
     if (CHAL_ORG.ativo) return;
@@ -2079,10 +2534,20 @@ body{
   const orgRevBar = document.getElementById('orgRevBar');
   const ORG_REV_TIPO_LABEL = { azul:'Definição e função', verm:'Correlação médica' };
 
+  function orgRevTipoDe(s){ return s.dataset.tipo || 'azul'; }
+  function orgRevGrande(t, alvo){ var src = orgArquivo(t, alvo); var im = document.createElement('img'); im.src = src; im.alt = ''; im.title = 'Tocar para ampliar mais'; im.addEventListener('click', function(){ abrirLightbox(src, t); }); return im; }
+  function orgRevTipos(alvo){ var lista = ['azul','verde','verm'].filter(function(t){ return t === 'verde' || !!orgRevContainer.querySelector('.org-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); return lista; }
   function orgRevisaoAbrir(container, onClose){
-    orgRevSlots = [].slice.call(container.querySelectorAll('.org-slot')).filter(function(s){ return s.dataset.posto; });
+    /* TODOS os encaixes, na ordem do tabuleiro — a revisão mostra a combinação correta,
+       não o que a turma jogou */
+    orgRevSlots = [].slice.call(container.querySelectorAll('.org-slot')).filter(function(s){ return s.dataset.alvo; });
     if (!orgRevSlots.length) return;
     orgRevContainer = container;
+    orgRevSlots.forEach(function(s){
+      const c = document.createElement('div'); c.className = 'org-rev-correta';
+      c.appendChild((function(){ var im = document.createElement('img'); im.src = orgArquivo(orgRevTipoDe(s), s.dataset.alvo); im.alt = ''; return im; })());
+      s.appendChild(c);
+    });
     orgRevOnClose = (typeof onClose === 'function') ? onClose : null;
     orgRevAtiva = true;
     orgRevIdx = 0;
@@ -2104,7 +2569,10 @@ body{
     orgRevAtiva = false;
     orgRevOnClose = null;
     if (orgRevContainer) orgRevContainer.classList.remove('org-rev-on');
-    orgRevSlots.forEach(function(s){ s.classList.remove('org-rev-atual'); });
+    orgRevSlots.forEach(function(s){
+      s.classList.remove('org-rev-atual');
+      const c = s.querySelector('.org-rev-correta'); if (c) c.remove();
+    });
     orgRevBar.classList.remove('on');
     orgRevSlots = [];
     orgRevContainer = null;
@@ -2115,7 +2583,7 @@ body{
     orgRevIdx = Math.max(0, Math.min(orgRevSlots.length - 1, i));
     orgRevSlots.forEach(function(s, k){ s.classList.toggle('org-rev-atual', k === orgRevIdx); });
     const slot = orgRevSlots[orgRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'center' });
+    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
     orgRevPintarBarra(slot);
     somClique();
   }
@@ -2126,24 +2594,23 @@ body{
   }
 
   function orgRevPintarBarra(slot){
-    const posto = slot.dataset.posto, alvo = slot.dataset.alvo;
-    const tipoLabel = ORG_REV_TIPO_LABEL[slot.dataset.tipo] || '';
-    const certo = (posto === alvo);
-
+    const alvo = slot.dataset.alvo;
     document.getElementById('orgRevPasso').textContent =
       'Estação ' + (orgRevIdx + 1) + ' de ' + orgRevSlots.length;
-    document.getElementById('orgRevTit').innerHTML =
-      '<b>' + orgNome(alvo) + '</b> — ' + tipoLabel;
+    document.getElementById('orgRevTit').innerHTML = '<b>' + orgNome(alvo) + '</b>';
 
-    const st = document.getElementById('orgRevStatus');
-    if (certo){
-      st.className = 'org-rev-status ok';
-      st.textContent = '✓ Encaixe correto.';
-    } else {
-      st.className = 'org-rev-status erro';
-      st.textContent = '✗ Aqui foi colocada “' + orgNome(posto) +
-        '”. O encaixe correto é “' + orgNome(alvo) + '”.';
-    }
+    /* as cartas corretas desta estação, já AMPLIADAS (tocar amplia ainda mais);
+       a do encaixe atual em destaque */
+    const cx = document.getElementById('orgRevCartas');
+    cx.innerHTML = '';
+    const atual = orgRevTipoDe(slot);
+    orgRevTipos(alvo).forEach(function(t){
+      const f = document.createElement('figure');
+      f.className = 'org-rev-fig' + (t === atual ? ' atual' : '');
+      f.appendChild(orgRevGrande(t, alvo));
+      cx.appendChild(f);
+    });
+
     document.getElementById('orgRevPrev').disabled = (orgRevIdx === 0);
     document.getElementById('orgRevNext').disabled = (orgRevIdx === orgRevSlots.length - 1);
   }

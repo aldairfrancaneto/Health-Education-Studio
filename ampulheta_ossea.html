@@ -41,7 +41,7 @@ body{
     radial-gradient(900px 900px at 50% 120%, rgba(122,66,28,.14), transparent 60%),
     linear-gradient(180deg,#100b06 0%, var(--bg-1) 22%, var(--bg-2) 100%);
 }
-.wrap{max-width:1120px; margin:0 auto; padding:16px 14px 90px;}
+.wrap{max-width:1120px; margin:0 auto; padding:46px 14px 90px;}   /* 46px no topo: faixa do botão de tela cheia */
 img{display:block;}
 button{font-family:inherit;}
 
@@ -371,10 +371,10 @@ button{font-family:inherit;}
 /* ===== aviso de vez em tela cheia, no mesmo estilo/nome de classe usado nos
    outros jogos da família (raios girando + ícone + título, cor do jogador) ===== */
 .chal-vez-ov{
-  position:fixed; inset:0; z-index:56; display:none;
+  position:fixed; inset:0; z-index:130; display:none;
   align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
-  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor, var(--gold)) 32%, transparent),
-    rgba(16,11,6,.68) 58%, rgba(16,11,6,.84));
+  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor, var(--gold)) 32%, #100B06),
+    #100B06 70%);   /* opaco: o tabuleiro não aparece por trás */
 }
 .chal-vez-ov.on{ display:flex; animation:chalVezFade 3s ease forwards; }
 .chal-vez-ov.p0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
@@ -466,6 +466,74 @@ button{font-family:inherit;}
 .veredito.bom .t{color:var(--green-glow);}
 @keyframes surge{from{transform:scale(.7); opacity:0;} to{transform:scale(1); opacity:1;}}
 
+/* enquanto uma animação de tela cheia está no ar, a página não rola (nem por roda/toque/teclado) */
+html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
+
+/* ============ SORTEIO DE QUEM COMEÇA + EMBARALHAMENTO (Desafio, 5 s cada) ============ */
+.chal-sorteio{
+  position:fixed; inset:0; z-index:130; display:none;
+  background:radial-gradient(circle at 50% 38%, #3A2410, #0D0804);   /* opaco: o tabuleiro não aparece por trás */
+  flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:24px;
+  text-align:center;
+}
+.chal-sorteio.on{ display:flex; }
+.chal-sorteio-dado{ font-size:60px; line-height:1; animation:chalDado 1s linear infinite; }
+.chal-sorteio.parou .chal-sorteio-dado{ animation:none; transform:scale(1.15); }
+@keyframes chalDado{ to{ transform:rotate(360deg); } }
+.chal-sorteio-tit{
+  font-family:var(--font-pixel); font-size:12px; line-height:1.7; letter-spacing:.05em;
+  color:var(--gold-soft); text-transform:uppercase;
+}
+.chal-sorteio-nomes{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+.chal-sorteio-nome{
+  font-family:var(--font-serif); font-weight:900; font-size:16px; letter-spacing:.04em;
+  color:#f3e7c9; padding:12px 18px; border-radius:12px;
+  border:2px solid var(--gold-dim); background:rgba(20,13,7,.6);
+  opacity:.4; transition:opacity .1s, transform .1s, box-shadow .1s;
+}
+.chal-sorteio-nome .pino{
+  display:inline-block; width:11px; height:11px; border-radius:50%;
+  margin-right:7px; vertical-align:middle; border:1px solid rgba(0,0,0,.4);
+}
+.chal-sorteio-nome.p0{ border-color:var(--jog0); } .chal-sorteio-nome.p0 .pino{ background:var(--jog0); }
+.chal-sorteio-nome.p1{ border-color:var(--jog1); } .chal-sorteio-nome.p1 .pino{ background:var(--jog1); }
+.chal-sorteio-nome.p2{ border-color:var(--jog2); } .chal-sorteio-nome.p2 .pino{ background:var(--jog2); }
+.chal-sorteio-nome.p3{ border-color:var(--jog3); } .chal-sorteio-nome.p3 .pino{ background:var(--jog3); }
+.chal-sorteio-nome.aceso{ opacity:1; transform:translateY(-4px) scale(1.06); box-shadow:0 0 0 3px rgba(255,210,63,.4); }
+.chal-sorteio-nome.venceu{
+  opacity:1; transform:scale(1.12);
+  box-shadow:0 0 0 4px rgba(255,210,63,.7), 0 10px 30px rgba(0,0,0,.5);
+  background:rgba(255,210,63,.14);
+}
+.chal-sorteio-res{
+  font-family:var(--font-pixel); font-size:11px; letter-spacing:.04em; color:#FFD23F;
+  min-height:1.4em; opacity:0; transition:opacity .3s;
+}
+.chal-sorteio.parou .chal-sorteio-res{ opacity:1; animation:chalResPulsa 1s ease-in-out infinite; }
+@keyframes chalResPulsa{ 50%{ transform:scale(1.07); } }
+
+.chal-emb-pilhas{ display:flex; justify-content:center; margin:34px 0 6px; }
+.chal-emb-pilha{ position:relative; width:128px; aspect-ratio:5/7; margin:0 44px; }
+.chal-emb-c{
+  position:absolute; left:0; right:0; bottom:calc(var(--n) * 1.6px); top:calc(var(--n) * -1.6px);
+  border-radius:9px; border:2px solid #F2E4B2; box-shadow:0 3px 8px rgba(0,0,0,.55);
+  background:linear-gradient(145deg,#8a6a2c,#3a2810);
+  display:flex; align-items:center; justify-content:center; font-size:48px;
+  animation:embEsq .9s ease-in-out infinite; animation-delay:calc(var(--n) * -.13s);
+}
+.chal-emb-c.d{ animation-name:embDir; }
+@keyframes embEsq{
+  0%,100%{ transform:translate(0,0) rotate(0); }
+  30%{ transform:translate(-68%,-8%) rotate(-11deg); }
+  62%{ transform:translate(-6%,-22%) rotate(-2deg); }
+}
+@keyframes embDir{
+  0%,100%{ transform:translate(0,0) rotate(0); }
+  30%{ transform:translate(68%,-8%) rotate(11deg); }
+  62%{ transform:translate(6%,-22%) rotate(2deg); }
+}
+.chal-sorteio.parou .chal-emb-c{ animation:none; }
+
 /* ============ REVISÃO GUIADA ============ */
 .rev{
   position:fixed; left:0; right:0; bottom:0; z-index:50; display:none;
@@ -487,16 +555,23 @@ button{font-family:inherit;}
 .rev .sair{font-family:var(--font-serif); font-weight:700; font-size:12px; padding:8px 12px;
   border-radius:8px; cursor:pointer; color:#e7d3a6; border:2px solid var(--gold-dim); background:rgba(36,26,15,.9);}
 .rev .corpo{display:flex; gap:14px; align-items:flex-start;}
-.rev .mini{width:96px; flex:none; border-radius:8px; overflow:hidden; border:2px solid var(--gold-dim); transition:border-color .2s;}
-.rev .mini.ok{border-color:var(--green);}
-.rev .mini.erro{border-color:var(--red);}
-.rev .mini img{width:100%; aspect-ratio:5/7; object-fit:cover;}
+.rev .mini{flex:none; border-radius:10px; overflow:hidden; border:3px solid var(--gold-soft); box-shadow:0 8px 22px rgba(0,0,0,.55);}
+.rev .mini img{height:min(34vh,300px); width:auto; aspect-ratio:5/7; object-fit:cover; display:block; cursor:zoom-in;}
+.rev .corpo{align-items:center;}
+/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
+.rev-correta{ display:none; }
+.mesa.rev-on .slot .rev-correta{
+  display:block; position:absolute; inset:0; z-index:7; border-radius:8px; overflow:hidden;
+  box-shadow:0 7px 18px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.4);
+}
+.rev-correta img{ width:100%; height:100%; object-fit:cover; display:block; }
+.mesa.rev-on .slot .marca{ display:none; }
+.mesa.rev-on .slot:not(.foco){ opacity:.55; }
+.mesa.rev-on .slot.foco .rev-correta{ outline:3px solid var(--gold-soft); outline-offset:3px; box-shadow:0 0 0 7px rgba(236,212,137,.3), 0 0 26px rgba(201,162,39,.6); }
+.mesa.rev-on .slot{ scroll-margin-top:16px; scroll-margin-bottom:400px; }
 .rev .txt h3{font-family:var(--font-serif); font-weight:700; color:var(--gold-soft); margin:0 0 4px; font-size:18px;}
 .rev .txt .et{font-family:var(--font-pixel); font-size:9px; color:var(--green-glow); letter-spacing:.06em; margin-bottom:7px;}
 .rev .txt p{margin:0; font-size:14.5px; color:#eaddbf;}
-.rev .status{margin-top:9px; font-size:13px; line-height:1.5; border-radius:8px; padding:7px 10px; font-family:var(--font-serif);}
-.rev .status.ok{ color:#9BE0B0; background:rgba(62,158,94,.18); border:1px solid #3E9E5E; }
-.rev .status.erro{ color:#F5B4B0; background:rgba(201,82,76,.16); border:1px solid #C9524C; }
 .rev .dica{margin-top:9px; font-size:11.5px; color:#b8a577; font-style:italic; text-align:center;}
 .slot.foco .berco{border-color:var(--gold-soft)!important; box-shadow:0 0 0 3px rgba(236,212,137,.7), 0 0 26px rgba(201,162,39,.6)!important;}
 .slot.foco{animation:focopulse 1.4s ease-in-out infinite;}
@@ -516,31 +591,65 @@ button{font-family:inherit;}
 }
 
 @media (max-width:520px){
-  .rev .corpo{gap:10px;} .rev .mini{width:74px;}
+  .rev .corpo{gap:10px;} .rev .mini img{height:min(28vh,220px);}
   .hud .stat{padding:7px 9px;}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001s!important; animation-iteration-count:1!important;}
   .carta,.btn,.capa .comeca{transition:none;}
 }
-/* ===== BOTAO TELA CHEIA (cabecalho, lado direito) ===== */
+/* ===== BOTÃO TELA CHEIA — só o ícone, discreto, no canto superior direito.
+   Fica na página (não flutua ao rolar) e a página reserva uma faixa no topo,
+   então nunca cobre outro botão. ===== */
 #btnTelaCheia{
-  position:fixed; top:12px; right:12px; z-index:90;
-  display:inline-flex; align-items:center; gap:7px;
-  font-family:var(--font-serif); font-weight:700; font-size:12.5px; letter-spacing:.03em;
-  color:var(--gold-soft); background:rgba(20,13,7,.82);
-  border:2px solid var(--gold-dim); border-radius:8px; padding:8px 11px;
-  cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-  box-shadow:0 3px 0 #120c06, 0 6px 16px rgba(0,0,0,.45);
-  transition:filter .15s ease, transform .1s ease, border-color .15s ease;
+  position:absolute; top:8px; right:10px; z-index:60;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; padding:0;
+  color:rgba(232,206,122,.75); background:transparent;
+  border:1px solid rgba(232,206,122,.28); border-radius:6px;
+  cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
 }
-#btnTelaCheia:hover{ filter:brightness(1.2); border-color:var(--gold); }
-#btnTelaCheia:active{ transform:translateY(2px); box-shadow:0 1px 0 #120c06; }
+#btnTelaCheia:hover, #btnTelaCheia:focus-visible{
+  color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(20,13,7,.6);
+}
 #btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
-@media (max-width:560px){
-  #btnTelaCheia{ padding:9px; }
-  #btnTelaCheia .btn-tc-txt{ display:none; }
-}
+#btnTelaCheia .btn-tc-txt{ display:none; }
+
+/* ===== BOTÃO DE VOLUME DA MÚSICA — ao lado do de tela cheia; só aparece enquanto a trilha da
+     partida está ativa. Ao clicar, abre um painel com − / barra / + para reduzir ou subir. ===== */
+  #btnMusica{
+    position:absolute; top:8px; right:46px; z-index:60;
+    display:none; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0; font-size:15px; line-height:1;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  #btnMusica.on{ display:inline-flex; }
+  #btnMusica:hover, #btnMusica:focus-visible, #btnMusica[aria-expanded="true"]{
+    color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(10,20,36,.6);
+  }
+  #painelVolume{
+    position:absolute; top:44px; right:10px; z-index:61; display:none;
+    flex-direction:column; gap:11px; align-items:stretch; width:212px; padding:9px 11px 11px;
+    background:rgba(10,20,36,.96); border:1px solid var(--gold-dim); border-radius:10px;
+    box-shadow:0 8px 22px rgba(0,0,0,.55);
+  }
+  #painelVolume.on{ display:flex; }
+#painelVolume .pv-bloco{ display:flex; flex-direction:column; gap:6px; }
+  #painelVolume .pv-tit{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--gold-soft); display:flex; justify-content:space-between;
+  }
+  #painelVolume .pv-linha{ display:flex; align-items:center; gap:8px; }
+  #painelVolume .pv-passo{
+    flex:0 0 auto; width:28px; height:28px; padding:0; font-size:17px; font-weight:700; line-height:1;
+    color:var(--gold-soft); background:rgba(212,175,55,.10); border:1px solid var(--gold-dim);
+    border-radius:6px; cursor:pointer;
+  }
+  #painelVolume .pv-passo:hover, #painelVolume .pv-passo:focus-visible{ background:rgba(212,175,55,.24); }
+  #painelVolume .pv-passo[disabled]{ opacity:.35; cursor:not-allowed; }
+  #painelVolume input[type=range]{ flex:1 1 auto; min-width:0; accent-color:var(--gold); cursor:pointer; }
 
 
 /* ===== CRÉDITOS NA TELA DE CARREGAMENTO ===== */
@@ -574,6 +683,26 @@ button{font-family:inherit;}
   <span class="btn-tc-ico" aria-hidden="true">&#9974;</span>
   <span class="btn-tc-txt">Tela cheia</span>
 </button>
+
+<button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
+<div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
+    </div>
+  </div>
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#128276; Efeitos</span><span id="pvPctEf">100%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos" aria-label="Reduzir o volume dos efeitos">&minus;</button>
+      <input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos">
+      <button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos" aria-label="Subir o volume dos efeitos">+</button>
+    </div>
+  </div>
+</div>
 
 <div class="wrap">
 
@@ -691,7 +820,7 @@ button{font-family:inherit;}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 16 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 20 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -723,6 +852,21 @@ button{font-family:inherit;}
   <div class="s" id="vdS"></div>
 </div></div>
 
+<!-- ===== EMBARALHAMENTO ANIMADO DO BARALHO, 5 s (Desafio) ===== -->
+<div class="chal-sorteio" id="chalEmbaralho">
+  <div class="chal-sorteio-tit">Embaralhando o baralho…</div>
+  <div class="chal-emb-pilhas" id="chalEmbPilha"></div>
+  <div class="chal-sorteio-res" id="chalEmbRes"></div>
+</div>
+
+<!-- ===== SORTEIO DE QUEM COMEÇA (Desafio) ===== -->
+<div class="chal-sorteio" id="chalSorteio">
+  <div class="chal-sorteio-dado">🎲</div>
+  <div class="chal-sorteio-tit">Sorteando quem começa…</div>
+  <div class="chal-sorteio-nomes" id="chalSorteioNomes"></div>
+  <div class="chal-sorteio-res" id="chalSorteioRes"></div>
+</div>
+
 <!-- ===== AVISO DE VEZ, no mesmo estilo dos outros jogos da família (Desafio) ===== -->
 <div class="chal-vez-ov" id="chalAviso" aria-hidden="true">
   <div class="chal-vez-cx">
@@ -748,7 +892,6 @@ button{font-family:inherit;}
       <p id="revP"></p>
     </div>
   </div>
-  <div class="status" id="revStatus"></div>
   <div class="dica">Use ‹ › ou toque numa carta do ciclo para saltar até ela.</div>
 </div></div>
 
@@ -765,7 +908,14 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   /* ================= SOM ================= */
   let ac=null;
   function actx(){ if(!ac){const A=window.AudioContext||window.webkitAudioContext; if(!A)return null; ac=new A();} if(ac.state==='suspended')ac.resume(); return ac; }
-  function bip(freq,t0,dur,tipo,vol){ const a=actx(); if(!a)return; const o=a.createOscillator(),g=a.createGain(); o.type=tipo||'triangle'; o.frequency.setValueAtTime(freq,a.currentTime+t0); g.gain.setValueAtTime(0.0001,a.currentTime+t0); g.gain.exponentialRampToValueAtTime(vol||0.14,a.currentTime+t0+0.012); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t0+dur); o.connect(g); g.connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+dur+0.02); }
+  /* volume dos EFEITOS: todos os bips passam por um ganho mestre (1 = nível original) */
+  let efeitosVol=1, efeitosMestre=null;
+  function saidaEfeitos(a){ if(!efeitosMestre || efeitosMestre.context!==a){ efeitosMestre=a.createGain(); efeitosMestre.gain.value=efeitosVol; efeitosMestre.connect(a.destination); } return efeitosMestre; }
+  const ampEfeitos={
+    definir:function(v){ efeitosVol=v; if(efeitosMestre) efeitosMestre.gain.value=v; },
+    amostra:function(){ bip(523,0,.1,'triangle',.12); bip(659,.09,.1,'triangle',.12); }
+  };
+  function bip(freq,t0,dur,tipo,vol){ const a=actx(); if(!a)return; const o=a.createOscillator(),g=a.createGain(); o.type=tipo||'triangle'; o.frequency.setValueAtTime(freq,a.currentTime+t0); g.gain.setValueAtTime(0.0001,a.currentTime+t0); g.gain.exponentialRampToValueAtTime(vol||0.14,a.currentTime+t0+0.012); g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t0+dur); o.connect(g); g.connect(saidaEfeitos(a)); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+dur+0.02); }
   const somClique =()=>bip(430,0,.09,'square',.08);
   const somPega   =()=>bip(520,0,.08,'triangle',.1);
   const somPousa  =()=>{bip(340,0,.1,'sine',.12); bip(255,.05,.12,'sine',.09);};
@@ -785,7 +935,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   let acervo=[], selecionada=null, slotMarcado=null, tentativas=0;
 
   // challenger
-  const CHAL={ ativo:false, jog:[], turno:0, fase:'sacar', monte:[], emJogo:null, mao:null, sacou:false, semProg:0 };
+  const CHAL={ ativo:false, jogadores:[], turno:0, fase:'sacar', monte:[], cartaSacada:null, cartaMao:null, sacou:false, semProg:0 };
 
   const mesaEl=$('mesa'), setasEl=$('setas'), acervoEl=$('acervo');
 
@@ -978,13 +1128,15 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     const max=Math.max.apply(null, CHAL.jogadores.map(j=>j.pontos));
     const vencedores=CHAL.jogadores.filter(j=>j.pontos===max);
     const placar=CHAL.jogadores.map(j=>j.nome+' '+j.pontos).join(' · ');
+    const completo=travado.every(t=>t);
+    const motivo=completo?'ciclo completo':'monte esgotado sem novos acertos';
     let ico, tit, sub;
     if(vencedores.length===1){
-      ico='🏆'; tit=vencedores[0].nome+' venceu!'; sub='Placar: '+placar+' · ciclo completo.';
+      ico='🏆'; tit=vencedores[0].nome+' venceu!'; sub='Placar: '+placar+' · '+motivo+'.';
     } else {
       const nomes=vencedores.map(j=>j.nome);
       const lista=nomes.length===2 ? nomes.join(' e ') : (nomes.slice(0,-1).join(', ')+' e '+nomes[nomes.length-1]);
-      ico='🤝'; tit='Empate!'; sub=lista+' — '+max+' ponto(s) cada. Ciclo completo!';
+      ico='🤝'; tit='Empate!'; sub=lista+' — '+max+' ponto(s) cada · '+motivo+'.';
     }
     fimDeJogo(ico, tit, sub);
   }
@@ -1133,6 +1285,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     clearTimeout(vdTimer); vdTimer=setTimeout(()=>{ v.className='veredito'; }, 1500);
   }
   function fimDeJogo(ico, tit, sub){
+    ampMusica.encerrar();                      /* fim da partida (Single Player ou Desafio) */
     encerrado=true; somVitoria();
     $('fimIco').textContent=ico||'🏆';
     $('fimT').textContent=tit; $('fimS').textContent=sub;
@@ -1147,29 +1300,29 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   let revIdx=0;
   let revPos=[];   // posições do tabuleiro que têm carta colocada, na ordem do ciclo
   function iniciarRevisao(){
+    /* TODAS as posições do ciclo, na ordem — a revisão mostra a sequência correta,
+       não o que a turma jogou */
     revPos=[];
-    for(let i=0;i<N;i++){ if(slots[i]!==null && slots[i]!==undefined) revPos.push(i); }
+    for(let i=0;i<N;i++) revPos.push(i);
     revIdx=0;
+    mesaEl.querySelectorAll('.slot').forEach(s=>{
+      const i=+s.dataset.slot, c=document.createElement('div'); c.className='rev-correta';
+      c.innerHTML='<img src="'+D.cards[i].img+'" alt="'+D.cards[i].t+'">'; s.appendChild(c);
+    });
+    mesaEl.classList.add('rev-on');
     $('fim').classList.remove('on'); $('rev').classList.add('on');
     mostrarRev();
   }
   function mostrarRev(){
     if(!revPos.length){ fecharRev(); return; }
     const pos=revPos[revIdx];
-    const placadoIdx=slots[pos];
-    const c=D.cards[placadoIdx];
-    const certo=(placadoIdx===pos);
+    const c=D.cards[pos];
     $('revPasso').textContent='CARTA '+(revIdx+1)+' DE '+revPos.length;
     $('revEt').textContent=c.l; $('revTit').textContent=c.t; $('revP').textContent=c.n; $('revImg').src=c.img;
     $('revPrev').disabled=revIdx===0; $('revNext').textContent=(revIdx===revPos.length-1)?'⟳':'›';
-    $('revMini').classList.toggle('ok', certo);
-    $('revMini').classList.toggle('erro', !certo);
-    const st=$('revStatus');
-    if(certo){ st.className='status ok'; st.textContent='✓ Posição correta no ciclo.'; }
-    else{ st.className='status erro'; st.textContent='✗ Aqui foi colocada "'+c.t+'". Nesta posição entra "'+D.cards[pos].t+'".'; }
     mesaEl.querySelectorAll('.slot.foco').forEach(e=>e.classList.remove('foco'));
-    const s=mesaEl.querySelector('.slot[data-slot="'+pos+'"]'); if(s) s.classList.add('foco');
-    document.querySelector('.mesa-cx').scrollIntoView({behavior:'smooth', block:'center'});
+    const s=mesaEl.querySelector('.slot[data-slot="'+pos+'"]');
+    if(s){ s.classList.add('foco'); s.scrollIntoView({behavior:'smooth', block:'nearest'}); }
   }
   function revNav(dir){
     if(!revPos.length) return;
@@ -1179,14 +1332,17 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   }
   function fecharRev(){
     $('rev').classList.remove('on'); mesaEl.querySelectorAll('.slot.foco').forEach(e=>e.classList.remove('foco'));
+    mesaEl.classList.remove('rev-on'); mesaEl.querySelectorAll('.rev-correta').forEach(e=>e.remove());
     if(encerrado) $('fim').classList.add('on');   // volta à tela final para novas opções
   }
 
   /* ================= ZOOM ================= */
   function zoom(idx){ $('lbImg').src=D.cards[idx].img; $('lb').classList.add('on'); somClique(); }
+  $('revImg').addEventListener('click',()=>{ $('lbImg').src=$('revImg').src; $('lb').classList.add('on'); });
 
   /* ================= SETUP DE MODOS ================= */
   function iniciarSolo(){
+    ampMusica.iniciar();                       /* começou a partida do Single Player (também ao recomeçar) */
     modo='solo'; CHAL.ativo=false; encerrado=false; $('fim').classList.remove('on');
     limparTabuleiro(); selecionada=null; slotMarcado=null; tentativas=0;
     acervo=baralhar(D.cards.map((_,i)=>i));
@@ -1195,25 +1351,256 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     mostrarPalco();
     render();
   }
+  /* ---------- trava de rolagem durante as animações de tela cheia ----------
+     Ao aparecer qualquer uma delas, congela a rolagem da página (overflow:hidden no <html>);
+     ao sumir a última, devolve a página exatamente à posição de antes. */
+  (function(){
+    const ids=['chalEmbaralho','chalSorteio','chalAviso'];
+    const els=ids.map(id=>$(id));
+    const raiz=document.documentElement;
+    let y=null;
+    function sincronizar(){
+      const ligada=els.some(e=>e.classList.contains('on'));
+      if(ligada && y===null){ y=window.scrollY; raiz.classList.add('chal-anim-lock'); }
+      else if(!ligada && y!==null){ raiz.classList.remove('chal-anim-lock'); window.scrollTo({top:y, behavior:'instant'}); y=null; }
+    }
+    const mo=new MutationObserver(sincronizar);
+    els.forEach(e=>mo.observe(e,{attributes:true, attributeFilter:['class']}));
+  })();
+
+  /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  let chalEmbTok=0;
+  function chalEmbaralharDeck(cb){
+    const ov=$('chalEmbaralho'), resE=$('chalEmbRes'), meu=++chalEmbTok;
+    resE.textContent=''; ov.classList.remove('parou');
+    let cartas='';
+    for(let n=0;n<8;n++) cartas+='<div class="chal-emb-c '+(n%2?'d':'e')+'" style="--n:'+n+'">🦴</div>';
+    $('chalEmbPilha').innerHTML='<div class="chal-emb-pilha">'+cartas+'</div>';
+    CHAL.monte=baralhar(CHAL.monte.slice());       /* o embaralhamento de fato acontece aqui */
+    ov.classList.add('on');
+    const DUR=5000, REVELA=4300;
+    let t=0;
+    const tique=setInterval(()=>{
+      if(meu!==chalEmbTok){ clearInterval(tique); return; }
+      t+=110; if(t>=REVELA){ clearInterval(tique); return; }
+      somClique();
+    },110);
+    setTimeout(()=>{
+      if(meu!==chalEmbTok) return;
+      ov.classList.add('parou'); resE.textContent='✔ '+CHAL.monte.length+' cartas embaralhadas!'; somVitoria();
+    },REVELA);
+    setTimeout(()=>{
+      if(meu!==chalEmbTok) return;
+      ov.classList.remove('on'); cb();
+    },DUR);
+  }
+
+  /* ---------- sorteio animado de quem começa (~5 s) ---------- */
+  let chalSorteioTok=0;
+  function chalAnimarSorteio(vencedorIdx, cb){
+    const ov=$('chalSorteio'), cxN=$('chalSorteioNomes'), resE=$('chalSorteioRes'), meu=++chalSorteioTok;
+    ov.classList.remove('parou'); resE.textContent=''; cxN.innerHTML='';
+    const chips=CHAL.jogadores.map((j,i)=>{
+      const sp=document.createElement('span');
+      sp.className='chal-sorteio-nome p'+i;
+      sp.innerHTML='<span class="pino"></span>'+chalEsc(j.nome);
+      cxN.appendChild(sp); return sp;
+    });
+    ov.classList.add('on');
+    const DUR=5000, REVELA=3600;
+    let t=0, atual=Math.floor(Math.random()*chips.length);
+    const acender=i=>chips.forEach((c,k)=>c.classList.toggle('aceso',k===i));
+    acender(atual);
+    function passo(){
+      if(meu!==chalSorteioTok) return;
+      if(t>=REVELA){
+        chips.forEach(c=>c.classList.remove('aceso'));
+        chips[vencedorIdx].classList.add('venceu');
+        ov.classList.add('parou');
+        resE.textContent='▶ '+CHAL.jogadores[vencedorIdx].nome+' começa!';
+        somVitoria();
+        setTimeout(()=>{
+          if(meu!==chalSorteioTok) return;
+          ov.classList.remove('on'); chips[vencedorIdx].classList.remove('venceu'); cb();
+        }, DUR-REVELA);
+        return;
+      }
+      atual=(atual+1)%chips.length; acender(atual); somClique();
+      const prog=t/REVELA, intervalo=80+prog*prog*420;
+      t+=intervalo; setTimeout(passo,intervalo);
+    }
+    setTimeout(passo,400);
+  }
+
   function chalIniciar(nomes){
+    ampMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     modo='chal'; encerrado=false; $('fim').classList.remove('on');
     const nP=Math.max(2, Math.min(4, nomes.length));
     CHAL.jogadores=[];
     for(let i=0;i<nP;i++) CHAL.jogadores.push({nome:(nomes[i]||('Jogador '+(i+1))), pontos:0});
     CHAL.monte=baralhar(D.cards.map((_,i)=>i));
-    CHAL.turno=Math.floor(Math.random()*nP); CHAL.fase='sacar'; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
+    CHAL.turno=0; CHAL.fase='espera'; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
     limparTabuleiro();
     fecharRev();
     montarHUDChal();
-    chalLog('Sorteio: '+CHAL.jogadores[CHAL.turno].nome+' começa.');
-    mostrarPalco();
+    chalLog('');
+    mostrarPalco(true);     /* posiciona a página no tabuleiro ANTES das animações (instantâneo) */
     render();
+    /* abertura: embaralha o baralho (5 s) → sorteia quem começa (5 s) → aviso de vez */
+    chalEmbaralharDeck(()=>{
+      CHAL.turno=Math.floor(Math.random()*nP);
+      chalAnimarSorteio(CHAL.turno, ()=>{
+        CHAL.fase='sacar';
+        chalLog('Sorteio: '+CHAL.jogadores[CHAL.turno].nome+' começa.');
+        chalAnunciarVez(render);
+        render();
+      });
+    });
   }
+
+  /* ==============================================================
+     TRILHA SONORA DA PARTIDA (exclusiva deste jogo)
+     Toca em sequência, com 3 s de intervalo: A = Duel of Arcana V1; B = Helicase Groove.
+     Começa quando uma partida começa, REPETE SEM PARAR até o fim do jogo (vitória/fim
+     da partida, com uma descida rápida do volume) ou até o jogador sair para os menus.
+     As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
+     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     baixada enquanto a atual toca.
+     ============================================================== */
+  const ampMusica = (function(){
+    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
+    const PASTA = 'Músicas dos jogos/';
+    const FAIXAS = ['Duel of Arcana -  V1.mp3', 'Helicase Groove.mp3'];
+    const INTERVALO_MS = 3000;
+    const btn = document.getElementById('btnMusica');
+    const painel = document.getElementById('painelVolume');
+    const barra = document.getElementById('pvBarra');
+    const pct = document.getElementById('pvPct');
+    const menos = document.getElementById('pvMenos');
+    const mais = document.getElementById('pvMais');
+    const barraEf = document.getElementById('pvBarraEf');
+    const pctEf = document.getElementById('pvPctEf');
+    const menosEf = document.getElementById('pvMenosEf');
+    const maisEf = document.getElementById('pvMaisEf');
+    const pre = [];                                        /* faixas já pré-carregadas */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
+
+    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver */
+      const a = pre[i] || new Audio(url(i));
+      pre[i] = null;
+      return a;
+    }
+    function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
+      if (pre[i]) return;
+      try { const a = new Audio(url(i)); a.preload = 'auto'; pre[i] = a; } catch (e) {}
+    }
+    function tocar(i, meu){
+      if (meu !== tok) return;
+      let a;
+      try { a = abrir(i); } catch (e) { return; }
+      a.volume = volume;
+      a.muted = calado;
+      audio = a;
+      a.addEventListener('ended', function(){
+        if (meu !== tok) return;
+        /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
+        const prox = (i + 1) % FAIXAS.length;
+        preparar(prox);
+        timer = setTimeout(function(){ tocar(prox, meu); }, INTERVALO_MS);
+      });
+      const p = a.play();
+      if (p && p.catch) p.catch(function(){});             /* bloqueio de autoplay ou pasta ausente: segue sem música */
+      preparar((i + 1) % FAIXAS.length);                   /* já deixa a próxima faixa baixando */
+    }
+    function parar(){
+      tok++;
+      clearTimeout(timer); timer = null;
+      if (fade){ clearInterval(fade.iv); fade.a.pause(); fade = null; }
+      if (audio){ audio.pause(); audio = null; }
+      if (btn) btn.classList.remove('on');
+      fechar();
+    }
+    /* FIM DA PARTIDA: a música desce em ~1,5 s e para (a sequência só termina com o jogo) */
+    function encerrar(){
+      if (!audio){ parar(); return; }
+      const meu = ++tok;                                   /* cancela o intervalo/faixa seguinte */
+      clearTimeout(timer); timer = null;
+      const a = audio, v0 = a.volume;
+      audio = null;                                        /* o controle de volume deixa de mexer nela */
+      let n = 0;
+      const iv = setInterval(function(){
+        n++;
+        a.volume = Math.max(0, v0 * (1 - n / 15));
+        if (n >= 15){
+          clearInterval(iv); a.pause();
+          if (fade && fade.a === a) fade = null;
+          if (tok === meu){ if (btn) btn.classList.remove('on'); fechar(); }
+        }
+      }, 100);
+      fade = { a:a, iv:iv };
+    }
+    function iniciar(){
+      parar();
+      if (btn) btn.classList.add('on');
+      tocar(0, tok);
+    }
+    function fechar(){
+      if (!painel) return;
+      painel.classList.remove('on');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+    function definirVolume(v){
+      volume = Math.max(0, Math.min(1, v));
+      if (audio) audio.volume = volume;
+      const p = Math.round(volume * 100);
+      barra.value = String(p);
+      pct.textContent = p + '%';
+      menos.disabled = p <= 0;
+      mais.disabled = p >= 100;
+      btn.innerHTML = p === 0 ? '&#128263;' : p < 50 ? '&#128265;' : '&#128266;';   /* 🔇 / 🔉 / 🔊 */
+    }
+    /* volume dos EFEITOS (bips do jogo): 0..1, 100% = nível original; independe da música */
+    function definirEfeitos(v, ouvir){
+      volEf = Math.max(0, Math.min(1, v));
+      ampEfeitos.definir(volEf);
+      const p = Math.round(volEf * 100);
+      barraEf.value = String(p);
+      pctEf.textContent = p + '%';
+      menosEf.disabled = p <= 0;
+      maisEf.disabled = p >= 100;
+      if (ouvir) ampEfeitos.amostra();                            /* toca um bip para o jogador ouvir o nível */
+    }
+    if (btn && painel){
+      definirVolume(volume);
+      definirEfeitos(volEf, false);
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const abrir = !painel.classList.contains('on');
+        painel.classList.toggle('on', abrir);
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      });
+      painel.addEventListener('click', function(e){ e.stopPropagation(); });
+      barra.addEventListener('input', function(){ definirVolume(Number(barra.value) / 100); });
+      menos.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 - 10) / 100); });
+      mais.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 + 10) / 100); });
+      barraEf.addEventListener('input', function(){ definirEfeitos(Number(barraEf.value) / 100, false); });
+      barraEf.addEventListener('change', function(){ ampEfeitos.amostra(); });     /* soltou a barra → bip de amostra */
+      menosEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 - 10) / 100, true); });
+      maisEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 + 10) / 100, true); });
+      /* clicar fora do painel ou apertar Esc fecha */
+      document.addEventListener('click', fechar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fechar(); });
+    }
+    /* silencia/libera a trilha sem parar a sequência (ligado ao botão "Som" do cariótipo) */
+    function silenciar(sim){ calado = !!sim; if (audio) audio.muted = calado; }
+    return { iniciar:iniciar, parar:parar, encerrar:encerrar, silenciar:silenciar };
+  })();
 
   /* ================= NAVEGAÇÃO DE TELAS ================= */
   function mostrarTela(id){ $('modoJogo').classList.remove('on'); $('chalNomes').classList.remove('on'); $('palco').classList.remove('on'); $(id).classList.add('on'); }
-  function mostrarPalco(){ mostrarTela('palco'); $('palco').scrollIntoView({behavior:'smooth', block:'start'}); }
-  function mostrarModo(){ modo=null; CHAL.ativo=false; mostrarTela('modoJogo'); $('modoJogo').scrollIntoView({behavior:'smooth', block:'start'}); }
+  function mostrarPalco(instantaneo){ mostrarTela('palco'); $('palco').scrollIntoView({behavior:instantaneo?'instant':'smooth', block:'start'}); }
+  function mostrarModo(){ ampMusica.parar(); modo=null; CHAL.ativo=false; mostrarTela('modoJogo'); $('modoJogo').scrollIntoView({behavior:'smooth', block:'start'}); }
   function trocarModo(){ somClique(); fecharRev(); mostrarModo(); }
 
   /* ================= FAKE LOAD ================= */

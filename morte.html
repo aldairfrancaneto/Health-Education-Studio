@@ -34,7 +34,7 @@ body{
   font-family:var(--font-serif); line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-.pagina{ max-width:1180px; margin:0 auto; padding:14px 14px 70px; }
+.pagina{ max-width:1180px; margin:0 auto; padding:44px 14px 70px; }   /* 44px no topo: faixa do botão de tela cheia */
   /* ================= TABULEIRO ================= */
   .tabuleiro{
     position:relative;
@@ -791,34 +791,11 @@ body{
   .chal-esp-monte.vazio::before, .chal-esp-monte.vazio::after{ display:none; }
   .chal-esp-monte.vazio .qtd{ color:rgba(232,238,247,.5); }
 
-  /* carta especial ampliada dentro do modal */
+  /* carta especial ampliada dentro do modal (só a carta + botão de usar, sem painel de texto) */
   .chal-esp-grande{
-    display:block; width:210px; max-width:70%; margin:0 auto 12px;
-    border-radius:10px; border:2px solid var(--gold-soft);
+    display:block; width:min(300px,72vw); max-height:62vh; object-fit:contain; margin:0 auto 16px;
+    border-radius:12px; border:2px solid var(--gold-soft);
     box-shadow:0 10px 28px rgba(0,0,0,.55); cursor:zoom-in;
-  }
-  /* descrição da carta especial na tela que abre ao clicar nela */
-  .chal-esp-detalhe{
-    text-align:left; max-width:340px; margin:0 auto;
-    display:flex; flex-direction:column; gap:8px;
-  }
-  .chal-esp-detalhe-tipo{
-    align-self:center; font-family:var(--font-pixel); font-size:9.5px; letter-spacing:.04em;
-    padding:5px 10px; border-radius:999px; border:2px solid var(--gold-dim);
-    background:rgba(10,20,36,.6); color:#E8EEF7;
-  }
-  .chal-esp-detalhe-tipo.k-sentenca{ border-color:#E5484D; color:#F5B4B0; }
-  .chal-esp-detalhe-tipo.k-inibidor{ border-color:#3DD8D0; color:#9BE7E2; }
-  .chal-esp-detalhe-tipo.k-amplificacao{ border-color:#E9982E; color:#F2C88C; }
-  .chal-esp-detalhe-tipo.k-sobrevivencia{ border-color:#C9A227; color:#EBD98C; }
-  .chal-esp-detalhe-efeito{
-    font-family:var(--font-serif); font-size:14px; line-height:1.55; color:#fff;
-    background:rgba(255,210,63,.10); border-left:3px solid var(--gold-soft);
-    border-radius:0 8px 8px 0; padding:9px 12px;
-  }
-  .chal-esp-detalhe-efeito b{ color:#FFD23F; }
-  .chal-esp-detalhe-quando{
-    font-family:var(--font-serif); font-size:12.5px; line-height:1.5; color:rgba(232,238,247,.82);
   }
   /* lista de efeitos das cartas nos modais de escolha/defesa */
   .chal-esp-lista{ display:flex; flex-direction:column; gap:7px; margin:4px 0 12px; text-align:left; }
@@ -931,10 +908,19 @@ body{
 
   /* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
   #morTabuleiro.mor-rev-on .mor-slot{
-    pointer-events:auto; cursor:pointer; opacity:.3; filter:grayscale(.4);
+    pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
+    border-color:var(--gold-dim); border-style:solid; box-shadow:none;   /* neutraliza verde/vermelho de certo/errado */
     transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
   }
-  #morTabuleiro.mor-rev-on .mor-slot .chal-erro-badge{ display:none; }
+  #morTabuleiro.mor-rev-on .mor-slot::after{ display:none; }
+  #morTabuleiro.mor-rev-on .mor-slot .chal-erro-badge,
+  #morTabuleiro.mor-rev-on .mor-slot .chal-dono{ display:none; }
+  /* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
+  .mor-rev-correta{ display:none; }
+  #morTabuleiro.mor-rev-on .mor-slot .mor-rev-correta{
+    display:block; position:absolute; inset:0; z-index:8; background:var(--slot);
+    border-radius:inherit; overflow:hidden;
+  }
   #morTabuleiro.mor-rev-on .mor-slot.mor-rev-atual{
     opacity:1; filter:none; outline:3px solid var(--coin); outline-offset:3px;
     box-shadow:0 0 0 7px rgba(255,210,63,.28), 0 12px 34px rgba(0,0,0,.6);
@@ -948,13 +934,23 @@ body{
     padding:12px 14px calc(12px + env(safe-area-inset-bottom));
   }
   .mor-rev-bar.on{ transform:translateY(0); }
-  .mor-rev-inner{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+  .mor-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+  .mor-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
+  .mor-rev-cartas{ display:flex; gap:14px; justify-content:center; align-items:flex-start; }
+  .mor-rev-fig{ margin:0; display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .mor-rev-fig img{
+    height:var(--rev-img-h); width:auto; max-width:44vw; object-fit:contain; cursor:zoom-in;
+    border-radius:10px; border:3px solid var(--gold-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
+  }
+  .mor-rev-fig figcaption{ font-family:var(--font-serif); font-weight:700; font-size:11.5px; color:#fff; }
+  .mor-rev-texto{ flex:1 1 260px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
   .mor-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .mor-rev-nav{
     font-family:var(--font-pixel); font-size:15px; line-height:1; color:#1A1206;
     background:linear-gradient(180deg,#E8CE7A,#8A7231); border:2px solid #F2E4B2;
     border-radius:8px; width:42px; height:36px; cursor:pointer;
   }
+  :root{ --rev-img-h:min(38vh,340px); }
   .mor-rev-nav[disabled]{ opacity:.35; cursor:not-allowed; }
   .mor-rev-passo{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.04em; color:#E4D2F5; }
   .mor-rev-fechar{
@@ -964,14 +960,10 @@ body{
   }
   .mor-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
   .mor-rev-tit b{ color:#FFD23F; }
-  .mor-rev-status{ font-family:var(--font-serif); font-size:13px; line-height:1.5; border-radius:8px; padding:7px 10px; }
-  .mor-rev-status.ok{ color:#9BE0B0; background:rgba(62,158,94,.18); border:1px solid #3E9E5E; }
-  .mor-rev-status.erro{ color:#F5B4B0; background:rgba(201,82,76,.16); border:1px solid #C9524C; }
   .mor-rev-dica{ font-family:var(--font-serif); font-size:11.5px; color:rgba(232,238,247,.6); }
   .mor-rev-cta{ margin-top:12px; }
   @media (max-width:600px){
     .mor-rev-tit{ font-size:13px; }
-    .mor-rev-status{ font-size:12px; }
   }
 
   /* --- os dois "quadros" do modo Desafio: um para o painel de turno (placar,
@@ -1132,7 +1124,7 @@ body{
   /* --- tela de sorteio animada (challenger) --- */
   .chal-sorteio{
     position:fixed; inset:0; z-index:130; display:none;
-    background:radial-gradient(circle at 50% 38%, rgba(46,22,74,.97), rgba(6,10,20,.98));
+    background:radial-gradient(circle at 50% 38%, #2E164A, #060A14);   /* opaco: o tabuleiro não aparece por trás */
     flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:24px;
     text-align:center;
   }
@@ -1175,8 +1167,8 @@ body{
   .chal-vez-ov{
     position:fixed; inset:0; z-index:119; display:none;
     align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
-    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
-      rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
+    background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, #060A14),
+      #060A14 70%);                                            /* opaco: o tabuleiro não aparece por trás */
   }
   .chal-vez-ov.on{ display:flex; animation:chalVdFade 3s ease forwards; }
   .chal-vez-ov.p0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-claro); }
@@ -1203,6 +1195,59 @@ body{
   }
 
   /* --- modal genérico (sorteio, bloqueio, resultado) --- */
+  /* enquanto uma animação de tela cheia está no ar, a página não rola (nem por roda/toque/teclado) */
+  html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
+
+  /* ---------- embaralhamento animado (5 s): baralhos especiais e baralho comum ---------- */
+  .chal-embaralho{
+    position:fixed; inset:0; z-index:130; display:none;
+    background:radial-gradient(circle at 50% 38%, #2E164A, #060A14);   /* opaco: o tabuleiro não aparece por trás */
+    flex-direction:column; align-items:center; justify-content:center; gap:26px; padding:24px;
+    text-align:center;
+  }
+  .chal-embaralho.on{ display:flex; }
+  .chal-emb-tit{
+    font-family:var(--font-pixel); font-size:12px; line-height:1.7; letter-spacing:.05em;
+    color:#E4D2F5; text-transform:uppercase;
+  }
+  .chal-emb-pilhas{ display:flex; gap:30px; flex-wrap:wrap; justify-content:center; margin:34px 0 6px; }
+  .chal-emb-item{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .chal-emb-nome{
+    font-family:var(--font-serif); font-weight:900; font-size:15px; letter-spacing:.04em; color:#E8EEF7;
+    padding:7px 14px; border-radius:10px; border:2px solid var(--gold-dim); background:rgba(10,20,36,.6);
+  }
+  .chal-emb-item.p0 .chal-emb-nome{ border-color:#3E86C4; }
+  .chal-emb-item.p1 .chal-emb-nome{ border-color:#C9524C; }
+  .chal-emb-item.p2 .chal-emb-nome{ border-color:#3E9E5E; }
+  .chal-emb-item.p3 .chal-emb-nome{ border-color:#E0982E; }
+  .chal-emb-pilha{ position:relative; width:var(--emb-w,88px); aspect-ratio:900/1260; margin:0 calc(var(--emb-w,88px) * .35); }
+  .chal-embaralho.grande .chal-emb-pilha{ --emb-w:128px; }
+  .chal-emb-c{
+    position:absolute; left:0; right:0; bottom:calc(var(--n) * 1.6px); top:calc(var(--n) * -1.6px);
+    border-radius:9px; border:2px solid #F2E4B2; box-shadow:0 3px 8px rgba(0,0,0,.55);
+    display:flex; align-items:center; justify-content:center; font-size:calc(var(--emb-w,88px) * .38);
+    animation:embEsq .9s ease-in-out infinite; animation-delay:calc(var(--n) * -.13s);
+  }
+  .chal-emb-c.d{ animation-name:embDir; }
+  .chal-emb-pilha.esp .chal-emb-c{ background:linear-gradient(145deg,#6A2FA3,#2A124A); }
+  .chal-emb-pilha.comum .chal-emb-c{ background:linear-gradient(145deg,#2A78BC,#0E2E52); }
+  @keyframes embEsq{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(-68%,-8%) rotate(-11deg); }
+    62%{ transform:translate(-6%,-22%) rotate(-2deg); }
+  }
+  @keyframes embDir{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(68%,-8%) rotate(11deg); }
+    62%{ transform:translate(6%,-22%) rotate(2deg); }
+  }
+  .chal-embaralho.parou .chal-emb-c{ animation:none; }
+  .chal-emb-res{
+    font-family:var(--font-pixel); font-size:11px; letter-spacing:.04em; color:#FFD23F;
+    min-height:1.4em; opacity:0; transition:opacity .3s;
+  }
+  .chal-embaralho.parou .chal-emb-res{ opacity:1; animation:chalResPulsa 1s ease-in-out infinite; }
+
   .chal-modal{
     position:fixed; inset:0; z-index:120; display:none;
     background:rgba(6,12,22,.9); padding:20px; align-items:center; justify-content:center;
@@ -1242,24 +1287,60 @@ body{
     .chal-carta-atual .miniatura{ width:100px; }
     .chal-vez{ font-size:10px; }
   }
-  /* ===== BOTAO TELA CHEIA (cabecalho, lado direito) ===== */
+  /* ===== BOTAO TELA CHEIA — só o ícone, discreto, no canto superior direito.
+     Fica na página (não flutua ao rolar) e o .pagina reserva uma faixa no topo,
+     então nunca cobre outro botão. ===== */
   #btnTelaCheia{
-    position:fixed; top:12px; right:12px; z-index:90;
-    display:inline-flex; align-items:center; gap:7px;
-    font-family:var(--font-serif); font-weight:700; font-size:12.5px; letter-spacing:.03em;
-    color:var(--gold-soft); background:rgba(10,20,36,.82);
-    border:2px solid var(--gold-dim); border-radius:8px; padding:8px 11px;
-    cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-    box-shadow:0 3px 0 #0A1424, 0 6px 16px rgba(0,0,0,.45);
-    transition:filter .15s ease, transform .1s ease, border-color .15s ease;
+    position:absolute; top:8px; right:10px; z-index:60;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
   }
-  #btnTelaCheia:hover{ filter:brightness(1.2); border-color:var(--gold); }
-  #btnTelaCheia:active{ transform:translateY(2px); box-shadow:0 1px 0 #0A1424; }
+  #btnTelaCheia:hover, #btnTelaCheia:focus-visible{
+    color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(10,20,36,.6);
+  }
   #btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
-  @media (max-width:560px){
-    #btnTelaCheia{ padding:9px; }
-    #btnTelaCheia .btn-tc-txt{ display:none; }
+  #btnTelaCheia .btn-tc-txt{ display:none; }
+
+/* ===== BOTÃO DE VOLUME DA MÚSICA — ao lado do de tela cheia; só aparece enquanto a trilha da
+     partida está ativa. Ao clicar, abre um painel com − / barra / + para reduzir ou subir. ===== */
+  #btnMusica{
+    position:absolute; top:8px; right:46px; z-index:60;
+    display:none; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0; font-size:15px; line-height:1;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
   }
+  #btnMusica.on{ display:inline-flex; }
+  #btnMusica:hover, #btnMusica:focus-visible, #btnMusica[aria-expanded="true"]{
+    color:var(--gold-soft); border-color:var(--gold-dim); background:rgba(10,20,36,.6);
+  }
+  #painelVolume{
+    position:absolute; top:44px; right:10px; z-index:61; display:none;
+    flex-direction:column; gap:11px; align-items:stretch; width:212px; padding:9px 11px 11px;
+    background:rgba(10,20,36,.96); border:1px solid var(--gold-dim); border-radius:10px;
+    box-shadow:0 8px 22px rgba(0,0,0,.55);
+  }
+  #painelVolume.on{ display:flex; }
+  #painelVolume .pv-bloco{ display:flex; flex-direction:column; gap:6px; }
+  #painelVolume .pv-tit{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--gold-soft); display:flex; justify-content:space-between;
+  }
+  #painelVolume .pv-linha{ display:flex; align-items:center; gap:8px; }
+  #painelVolume .pv-passo{
+    flex:0 0 auto; width:28px; height:28px; padding:0; font-size:17px; font-weight:700; line-height:1;
+    color:var(--gold-soft); background:rgba(212,175,55,.10); border:1px solid var(--gold-dim);
+    border-radius:6px; cursor:pointer;
+  }
+  #painelVolume .pv-passo:hover, #painelVolume .pv-passo:focus-visible{ background:rgba(212,175,55,.24); }
+  #painelVolume .pv-passo[disabled]{ opacity:.35; cursor:not-allowed; }
+  #painelVolume input[type=range]{ flex:1 1 auto; min-width:0; accent-color:var(--gold); cursor:pointer; }
+
+
 
 
 /* ===== CRÉDITOS NA TELA DE CARREGAMENTO ===== */
@@ -1285,6 +1366,7 @@ body{
   .cl-foto{ width:40px; height:40px; }
   .cl-copyright{ font-size:10.5px; }
 }
+
 </style>
 </head>
 <body>
@@ -1293,6 +1375,26 @@ body{
   <span class="btn-tc-ico" aria-hidden="true">&#9974;</span>
   <span class="btn-tc-txt">Tela cheia</span>
 </button>
+
+<button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
+<div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
+    </div>
+  </div>
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#128276; Efeitos</span><span id="pvPctEf">100%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos" aria-label="Reduzir o volume dos efeitos">&minus;</button>
+      <input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos">
+      <button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos" aria-label="Subir o volume dos efeitos">+</button>
+    </div>
+  </div>
+</div>
 
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
   <div class="tt-ico" aria-hidden="true">💀</div>
@@ -1584,6 +1686,13 @@ body{
   <div class="chal-sorteio-res" id="chalSorteioRes"></div>
 </div>
 
+<!-- ---------- EMBARALHAMENTO ANIMADO, 5 s (challenger) ---------- -->
+<div class="chal-embaralho" id="chalEmbaralho">
+  <div class="chal-emb-tit" id="chalEmbTit"></div>
+  <div class="chal-emb-pilhas" id="chalEmbPilhas"></div>
+  <div class="chal-emb-res" id="chalEmbRes"></div>
+</div>
+
 <!-- ---------- SORTEIO DE CARTA ESPECIAL — a cada rodada, 25% de chance (challenger) ---------- -->
 <div class="chal-sorteio" id="chalSorteioEsp">
   <div class="chal-sorteio-dado">🎲</div>
@@ -1637,8 +1746,12 @@ body{
       <button class="mor-rev-nav" id="morRevNext" type="button" aria-label="Proxima carta">&#8250;</button>
       <button class="mor-rev-fechar" id="morRevFecharBtn" type="button">&#10005; Encerrar revisao</button>
     </div>
-    <div class="mor-rev-tit" id="morRevTit"></div>
-    <div class="mor-rev-status" id="morRevStatus"></div>
+    <div class="mor-rev-corpo">
+      <div class="mor-rev-cartas" id="morRevCartas"></div>
+      <div class="mor-rev-texto">
+        <div class="mor-rev-tit" id="morRevTit"></div>
+      </div>
+    </div>
     <div class="mor-rev-dica">Toque em qualquer carta do tabuleiro para saltar ate ela &middot; as setas &larr; &rarr; tambem navegam</div>
   </div>
 </div>
@@ -1646,7 +1759,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 16 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.6 &middot; Última atualização: 20 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1667,6 +1780,21 @@ body{
     if (ctxAudio.state === 'suspended') ctxAudio.resume();
     return ctxAudio;
   }
+  /* volume dos EFEITOS: todos os bips do jogo passam por um ganho mestre (1 = nível original).
+     Ajustado no painel do botão de volume, separado do volume da música. */
+  let efeitosVol = 1, efeitosMestre = null;
+  function saidaEfeitos(ac){
+    if (!efeitosMestre || efeitosMestre.context !== ac){
+      efeitosMestre = ac.createGain();
+      efeitosMestre.gain.value = efeitosVol;
+      efeitosMestre.connect(ac.destination);
+    }
+    return efeitosMestre;
+  }
+  const morEfeitos = {
+    definir: function(v){ efeitosVol = v; if (efeitosMestre) efeitosMestre.gain.value = v; },
+    amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
+  };
   function nota(freq, inicio, dur, tipo, vol){
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
@@ -1675,7 +1803,7 @@ body{
     g.gain.setValueAtTime(0.0001, ac.currentTime + inicio);
     g.gain.exponentialRampToValueAtTime(vol || 0.22, ac.currentTime + inicio + 0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + inicio + dur);
-    o.connect(g); g.connect(ac.destination);
+    o.connect(g); g.connect(saidaEfeitos(ac));
     o.start(ac.currentTime + inicio); o.stop(ac.currentTime + inicio + dur + 0.02);
   }
   function somVitoria(){   // arpejo ascendente triunfal
@@ -2060,6 +2188,7 @@ body{
       morBtnTrocar.disabled = false;
       var _rb = document.getElementById('morRevBtn');
       if (_rb) _rb.addEventListener('click', function(){ morRevisaoAbrir(); });
+      morMusica.encerrar();                    /* fim da partida do Clássico */
       somVitoria();
     } else {
       let dica = '';
@@ -2164,7 +2293,145 @@ body{
   const morTabuleiro  = document.getElementById('morTabuleiro');
   const chalNomesEl   = document.getElementById('chalNomes');
 
+  /* ==============================================================
+     TRILHA SONORA DA PARTIDA (exclusiva do jogo Morte celular)
+     Toca em sequência as faixas A (Duel of Arcana V1), B (Arcane Focus - Calm Version)
+     e C (Ignite the Spark - Energetic Version), com 3 s de intervalo entre elas. Começa
+     quando uma partida começa (Clássico ou Challenger) e REPETE SEM PARAR até o fim do jogo (vitória/fim da partida, com uma
+     descida rápida do volume) ou até o jogador sair para os menus.
+     As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
+     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     baixada enquanto a atual toca.
+     ============================================================== */
+  const morMusica = (function(){
+    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
+    const PASTA = 'Músicas dos jogos/';
+    const FAIXAS = ['Duel of Arcana -  V1.mp3', 'Arcane Focus - Calm Version.mp3', 'Ignite the Spark - Energetic Version.mp3'];
+    const INTERVALO_MS = 3000;
+    const btn = document.getElementById('btnMusica');
+    const painel = document.getElementById('painelVolume');
+    const barra = document.getElementById('pvBarra');
+    const pct = document.getElementById('pvPct');
+    const menos = document.getElementById('pvMenos');
+    const mais = document.getElementById('pvMais');
+    const barraEf = document.getElementById('pvBarraEf');
+    const pctEf = document.getElementById('pvPctEf');
+    const menosEf = document.getElementById('pvMenosEf');
+    const maisEf = document.getElementById('pvMaisEf');
+    const pre = [];                                        /* faixas já pré-carregadas */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, volEf = 1;   /* 0..1, vale pela vida da página */
+
+    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver */
+      const a = pre[i] || new Audio(url(i));
+      pre[i] = null;
+      return a;
+    }
+    function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
+      if (pre[i]) return;
+      try { const a = new Audio(url(i)); a.preload = 'auto'; pre[i] = a; } catch (e) {}
+    }
+    function tocar(i, meu){
+      if (meu !== tok) return;
+      let a;
+      try { a = abrir(i); } catch (e) { return; }
+      a.volume = volume;
+      audio = a;
+      a.addEventListener('ended', function(){
+        if (meu !== tok) return;
+        /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
+        const prox = (i + 1) % FAIXAS.length;
+        preparar(prox);
+        timer = setTimeout(function(){ tocar(prox, meu); }, INTERVALO_MS);
+      });
+      const p = a.play();
+      if (p && p.catch) p.catch(function(){});             /* bloqueio de autoplay ou pasta ausente: segue sem música */
+      preparar((i + 1) % FAIXAS.length);                   /* já deixa a próxima faixa baixando */
+    }
+    function parar(){
+      tok++;
+      clearTimeout(timer); timer = null;
+      if (fade){ clearInterval(fade.iv); fade.a.pause(); fade = null; }
+      if (audio){ audio.pause(); audio = null; }
+      if (btn) btn.classList.remove('on');
+      fechar();
+    }
+    /* FIM DA PARTIDA: a música desce em ~1,5 s e para (a sequência só termina com o jogo) */
+    function encerrar(){
+      if (!audio){ parar(); return; }
+      const meu = ++tok;                                   /* cancela o intervalo/faixa seguinte */
+      clearTimeout(timer); timer = null;
+      const a = audio, v0 = a.volume;
+      audio = null;                                        /* o controle de volume deixa de mexer nela */
+      let n = 0;
+      const iv = setInterval(function(){
+        n++;
+        a.volume = Math.max(0, v0 * (1 - n / 15));
+        if (n >= 15){
+          clearInterval(iv); a.pause();
+          if (fade && fade.a === a) fade = null;
+          if (tok === meu){ if (btn) btn.classList.remove('on'); fechar(); }
+        }
+      }, 100);
+      fade = { a:a, iv:iv };
+    }
+    function iniciar(){
+      parar();
+      if (btn) btn.classList.add('on');
+      tocar(0, tok);
+    }
+    function fechar(){
+      if (!painel) return;
+      painel.classList.remove('on');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+    function definirVolume(v){
+      volume = Math.max(0, Math.min(1, v));
+      if (audio) audio.volume = volume;
+      const p = Math.round(volume * 100);
+      barra.value = String(p);
+      pct.textContent = p + '%';
+      menos.disabled = p <= 0;
+      mais.disabled = p >= 100;
+      btn.innerHTML = p === 0 ? '&#128263;' : p < 50 ? '&#128265;' : '&#128266;';   /* 🔇 / 🔉 / 🔊 */
+    }
+    /* volume dos EFEITOS (bips do jogo): 0..1, 100% = nível original; independe da música */
+    function definirEfeitos(v, ouvir){
+      volEf = Math.max(0, Math.min(1, v));
+      morEfeitos.definir(volEf);
+      const p = Math.round(volEf * 100);
+      barraEf.value = String(p);
+      pctEf.textContent = p + '%';
+      menosEf.disabled = p <= 0;
+      maisEf.disabled = p >= 100;
+      if (ouvir) morEfeitos.amostra();                            /* toca um bip para o jogador ouvir o nível */
+    }
+    if (btn && painel){
+      definirVolume(volume);
+      definirEfeitos(volEf, false);
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const abrir = !painel.classList.contains('on');
+        painel.classList.toggle('on', abrir);
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      });
+      painel.addEventListener('click', function(e){ e.stopPropagation(); });
+      barra.addEventListener('input', function(){ definirVolume(Number(barra.value) / 100); });
+      menos.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 - 10) / 100); });
+      mais.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 + 10) / 100); });
+      barraEf.addEventListener('input', function(){ definirEfeitos(Number(barraEf.value) / 100, false); });
+      barraEf.addEventListener('change', function(){ morEfeitos.amostra(); });     /* soltou a barra → bip de amostra */
+      menosEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 - 10) / 100, true); });
+      maisEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 + 10) / 100, true); });
+      /* clicar fora do painel ou apertar Esc fecha */
+      document.addEventListener('click', fechar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fechar(); });
+    }
+    return { iniciar:iniciar, parar:parar, encerrar:encerrar };
+  })();
+
   function morEsconderTudo(){
+    morMusica.parar();                         /* voltar aos menus para a trilha */
     morModoJogo.classList.remove('on');
     morSelecao.classList.remove('on');
     chalNomesEl.classList.remove('on');
@@ -2239,8 +2506,10 @@ body{
     morEsconderTudo();
     morTabuleiro.classList.remove('oculto');
     morAplicarLayout();
+    /* posiciona a página no tabuleiro ANTES de abrir as animações (instantâneo, sem
+       rolagem suave em curso por baixo delas) */
+    morTabuleiro.scrollIntoView({behavior:'instant', block:'start'});
     chalIniciar();
-    morTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
   }
   document.getElementById('chalNomesOk').addEventListener('click', chalConfirmarNomes);
   document.getElementById('chalNomesVoltar').addEventListener('click', function(){
@@ -2266,6 +2535,7 @@ body{
       morTabuleiro.classList.remove('oculto');
       morAplicarLayout();
       morMontar();
+      morMusica.iniciar();                     /* começou a partida do Clássico */
       morTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
     } else {
       /* Challenger: registrar jogadores agora (o percurso já define o limite) */
@@ -2314,16 +2584,16 @@ body{
      Embaralhadas no monte único; sacadas pela regra normal.
      'quando': 'turno'  = usa pela bandeja, no seu turno
                'defesa' = só aparece quando você é atacado (modal)
-               'combo'  = pergunta automática logo após uma Sentença */
+               'combo'  = pergunta automática ao lançar uma Sentença, antes da defesa do alvo */
   const CHAL_ESP = {
     sentenca:      { nome:'Sentença de Apoptose',    tipo:'ataque', ico:'💀', quando:'turno',
-                     efeito:'O alvo perde a próxima vez — e o turno volta para você.' },
+                     efeito:'O alvo perde a próxima vez. Pode ser lançada a qualquer momento do seu turno, até antes de sacar.' },
     inibidor:      { nome:'Inibidor de Apoptose',    tipo:'defesa', ico:'🛡️', quando:'defesa',
-                     efeito:'Bloqueia uma Sentença de Apoptose lançada contra você.' },
+                     efeito:'Bloqueia 1 vez perdida de uma Sentença lançada contra você (se ela vier amplificada, só o que passar de 1 te atinge).' },
     sobrevivencia: { nome:'Sobrevivência Celular',   tipo:'defesa', ico:'🧬', quando:'defesa',
-                     efeito:'Anula o ataque e passa a iniciativa para você (joga em seguida).' },
+                     efeito:'Anula todo o ataque, mesmo amplificado, e passa a iniciativa para você (joga em seguida).' },
     amplificacao:  { nome:'Amplificação da Cascata', tipo:'ataque', ico:'⚡', quando:'combo',
-                     efeito:'Logo após uma Sentença, o alvo perde 2 vezes em vez de 1.' }
+                     efeito:'Ao lançar uma Sentença, você a amplifica ANTES da defesa do alvo: ele perde 2 vezes em vez de 1.' }
   };
 
   /* Baralho PESSOAL de cartas especiais — um por jogador, separado do monte de conteúdo:
@@ -2377,6 +2647,28 @@ body{
     chalReiniciarBtn.disabled  = !encerrada;
     chalTrocarModoBtn.disabled = !encerrada;
   }
+
+  /* ---------- trava de rolagem durante as animações de tela cheia ----------
+     Ao aparecer qualquer uma delas, congela a rolagem da página (overflow:hidden no <html>);
+     ao sumir a última, devolve a página exatamente à posição de antes. */
+  (function(){
+    const ids = ['chalEmbaralho','chalSorteio','chalSorteioEsp','chalAviso'];
+    const els = ids.map(function(id){ return document.getElementById(id); });
+    const raiz = document.documentElement;
+    let y = null;
+    function sincronizar(){
+      const ligada = els.some(function(e){ return e.classList.contains('on'); });
+      if (ligada && y === null){
+        y = window.scrollY; raiz.classList.add('chal-anim-lock');
+      } else if (!ligada && y !== null){
+        raiz.classList.remove('chal-anim-lock');
+        window.scrollTo({ top:y, behavior:'instant' });
+        y = null;
+      }
+    }
+    const mo = new MutationObserver(sincronizar);
+    els.forEach(function(e){ mo.observe(e, { attributes:true, attributeFilter:['class'] }); });
+  })();
 
   /* ---------- tela de sorteio animada (~5 s) ---------- */
   let chalSorteioToken = 0;
@@ -2452,6 +2744,7 @@ body{
   function chalLog(){}
 
   function chalIniciar(){
+    morMusica.iniciar();                       /* começou a partida do Challenger (também ao recomeçar) */
     morMontarCampos();
 
     /* nº de jogadores = quantos nomes foram registrados (2 a 4) */
@@ -2459,14 +2752,13 @@ body{
     const cfgEsp = chalEspPessoalConfig();
     CHAL.jogadores = [];
     for (let i = 0; i < nP; i++){
-      /* baralho pessoal de cartas especiais deste jogador, embaralhado à parte */
-      let pessoal = [];
-      cfgEsp.forEach(function(c){ for (let n = 0; n < c.qtd; n++) pessoal.push(c.k); });
+      /* o baralho pessoal de cartas especiais é embaralhado depois, na animação de
+         abertura (chalSortearBaralhosEspeciais) — um sorteio independente por jogador */
       CHAL.jogadores.push({
         nome: (chalNomes[i] || ('Jogador ' + (i+1))),
         pontos: 0, vias:{int:0,ext:0,com:0,nec:0},
         especiais: [],
-        especiaisDeck: morEmbaralhar(pessoal)
+        especiaisDeck: []
       });
     }
     CHAL.registro = {};
@@ -2478,15 +2770,16 @@ body{
     CHAL.semProgresso = 0;
     CHAL.pulez = {};
     CHAL.iniciativaPara = null;
+    CHAL.turno = 0;
     CHAL.ativo = true;
 
-    /* baralho: apenas as cartas de conteúdo das trilhas ativas, embaralhadas
-       (as especiais não entram mais aqui — cada jogador tem o próprio baralho, ver acima) */
+    /* baralho comum: apenas as cartas de conteúdo das trilhas ativas — embaralhado
+       na animação de abertura, depois do embaralhamento das cartas especiais */
     let conteudo = [];
     morAtivas().forEach(function(t){
       t.cartas.forEach(function(c){ conteudo.push(c[0]); });
     });
-    CHAL.deck = morEmbaralhar(conteudo);
+    CHAL.deck = conteudo;
 
     chalCartaEl.classList.remove('segurando','alvo-espera');
 
@@ -2501,17 +2794,103 @@ body{
         : '🃏 Percurso de necrose: partida sem cartas especiais — corrida pura pela ordem dos eventos.');
     })();
 
-    /* sorteio animado de quem começa (2 a 4 jogadores) */
-    if (nP >= 2){
-      CHAL.turno = Math.floor(Math.random() * nP);
-      chalAnimarSorteio(CHAL.turno, chalNovoTurno);
-    } else {
-      CHAL.turno = 0;
-      chalNovoTurno();
-    }
     chalRenderPlacar();
     chalAtualizarRest();
     chalAtualizarBotoesPartida();
+
+    /* abertura: embaralha as cartas especiais (5 s) → embaralha o baralho comum (5 s)
+       → sorteia quem começa (5 s) → primeira vez */
+    chalEmbaralharEspeciais(function(){
+      chalEmbaralharDeck(conteudo, function(){
+        CHAL.turno = Math.floor(Math.random() * nP);
+        chalAnimarSorteio(CHAL.turno, chalNovoTurno);
+      });
+    });
+  }
+
+  /* ---------- embaralhamento animado (5 s) ---------- */
+  /* Sorteia o baralho pessoal de cada jogador, cada um por conta própria, e garante que
+     duas ordens nunca saiam idênticas (mesmo que o acaso repita, refaz o sorteio). */
+  function chalSortearBaralhosEspeciais(){
+    const cfg = chalEspPessoalConfig();
+    const vistos = {};
+    CHAL.jogadores.forEach(function(j){
+      const base = [];
+      cfg.forEach(function(c){ for (let n = 0; n < c.qtd; n++) base.push(c.k); });
+      let ordem, tent = 0;
+      do { ordem = morEmbaralhar(base.slice()); tent++; }
+      while (vistos[ordem.join('|')] && tent < 60);
+      vistos[ordem.join('|')] = true;
+      j.especiaisDeck = ordem;
+    });
+  }
+
+  let chalEmbTok = 0;
+  function chalAnimarEmbaralho(op, cb){
+    const ov = document.getElementById('chalEmbaralho');
+    const meu = ++chalEmbTok;
+    document.getElementById('chalEmbTit').textContent = op.titulo;
+    const resE = document.getElementById('chalEmbRes');
+    resE.textContent = '';
+    ov.classList.remove('parou');
+    ov.classList.toggle('grande', op.pilhas.length === 1);
+
+    const cx = document.getElementById('chalEmbPilhas');
+    cx.innerHTML = '';
+    op.pilhas.forEach(function(pl){
+      const item = document.createElement('div');
+      item.className = 'chal-emb-item ' + (pl.cls || '');
+      let cartas = '';
+      for (let n = 0; n < 8; n++){
+        cartas += '<div class="chal-emb-c ' + (n % 2 ? 'd' : 'e') + '" style="--n:' + n + '">' + pl.ico + '</div>';
+      }
+      item.innerHTML = '<div class="chal-emb-pilha ' + op.tipo + '">' + cartas + '</div>' +
+        (pl.rot ? '<div class="chal-emb-nome">' + chalEsc(pl.rot) + '</div>' : '');
+      cx.appendChild(item);
+    });
+    if (op.antes) op.antes();          /* o embaralhamento de fato acontece aqui, na abertura da animação */
+    ov.classList.add('on');
+
+    const DUR = 5000, REVELA = 4300;
+    let t = 0;
+    const tique = setInterval(function(){
+      if (meu !== chalEmbTok){ clearInterval(tique); return; }
+      t += 110;
+      if (t >= REVELA){ clearInterval(tique); return; }
+      somDado();
+    }, 110);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.add('parou');
+      resE.textContent = op.fim;
+      somVitoria();
+    }, REVELA);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.remove('on');
+      cb();
+    }, DUR);
+  }
+
+  function chalEmbaralharEspeciais(cb){
+    if (!chalEspPessoalConfig().length){ cb(); return; }      /* necrose: sem cartas especiais */
+    chalAnimarEmbaralho({
+      tipo:'esp',
+      titulo:'Embaralhando as cartas especiais de cada jogador…',
+      fim:'✔ Cada jogador com o seu baralho!',
+      pilhas: CHAL.jogadores.map(function(j, i){ return { rot:j.nome, cls:'p' + i, ico:'✨' }; }),
+      antes: chalSortearBaralhosEspeciais
+    }, cb);
+  }
+
+  function chalEmbaralharDeck(conteudo, cb){
+    chalAnimarEmbaralho({
+      tipo:'comum',
+      titulo:'Embaralhando o baralho comum…',
+      fim:'✔ ' + conteudo.length + ' cartas embaralhadas!',
+      pilhas:[{ rot:'', cls:'', ico:'🃏' }],
+      antes:function(){ CHAL.deck = morEmbaralhar(conteudo.slice()); chalAtualizarRest(); }
+    }, cb);
   }
 
   function chalEsc(s){ return String(s).replace(/[&<>"]/g, function(c){
@@ -2601,7 +2980,7 @@ body{
             b.type = 'button';
             b.className = 'chal-esp-carta k-' + k;
             b.dataset.k = k;
-            b.title = CHAL_ESP[k].nome + ' — toque para ver a descrição';
+            b.title = CHAL_ESP[k].nome + ' — toque para ampliar';
             b.innerHTML = '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">' +
               '<span class="chal-esp-ico">' + CHAL_ESP[k].ico + '</span>';
             esp.appendChild(b);
@@ -2619,28 +2998,17 @@ body{
     });
   }
 
-  /* rótulo de "quando se joga" por tipo de carta */
-  function chalEspQuandoTxt(e){
-    return e.quando === 'turno'
-        ? 'Quando usar: no seu turno, pela bandeja, depois de sacar a carta de conteúdo.'
-      : e.quando === 'combo'
-        ? 'Quando entra: sozinha — o jogo pergunta automaticamente logo depois de uma Sentença de Apoptose sua.'
-        : 'Quando entra: só quando alguém lança uma Sentença contra você — aparece como opção de defesa.';
+  /* carta especial ampliada (abre ao tocar na carta, no placar). Só a carta e, quando
+     ela já pode ser usada, o botão de usar — sem tela intermediária de instruções. */
+  function chalSentencaDisponivel(){
+    return CHAL.ativo && !CHAL.bloqueado && (CHAL.fase === 'sacar' || CHAL.fase === 'jogar') &&
+           chalTemEsp(CHAL.turno, 'sentenca');
   }
-
-  /* tela de detalhe da carta especial (abre ao tocar na carta, no placar ou na bandeja) */
   function chalVerCartaEsp(k){
     const e = CHAL_ESP[k];
-    const podeUsar = (k === 'sentenca' && CHAL.fase === 'jogar' && !CHAL.bloqueado && chalTemEsp(CHAL.turno, 'sentenca'));
-    const tipoRot = (e.tipo === 'ataque') ? '⚔️ CARTA DE ATAQUE' : '🛡️ CARTA DE DEFESA';
-    const html =
-      '<img class="chal-esp-grande" id="chalEspGrandeImg" src="' + CHAL_ESP_IMG[k] +
-        '" alt="' + e.nome + '" title="Tocar para ampliar">' +
-      '<div class="chal-esp-detalhe">' +
-        '<span class="chal-esp-detalhe-tipo k-' + k + '">' + tipoRot + '</span>' +
-        '<div class="chal-esp-detalhe-efeito"><b>Efeito:</b> ' + e.efeito + '</div>' +
-        '<div class="chal-esp-detalhe-quando">' + chalEspQuandoTxt(e) + '</div>' +
-      '</div>';
+    const podeUsar = (k === 'sentenca' && chalSentencaDisponivel());
+    const html = '<img class="chal-esp-grande" id="chalEspGrandeImg" src="' + CHAL_ESP_IMG[k] +
+      '" alt="' + e.nome + '" title="Tocar para ampliar mais">';
     const botoes = [];
     if (podeUsar){
       botoes.push({ txt:'💀 Usar agora', tipo:'principal', fn:function(){ chalModalFechar(); chalLancarSentenca(); } });
@@ -2741,18 +3109,31 @@ body{
 
   /* ==========  CARTAS ESPECIAIS: uso  ========== */
 
-  /* --- Sentença de Apoptose (ataque, pela bandeja) --- */
+  /* --- Sentença de Apoptose (ataque; vale no seu turno, mesmo antes de sacar) ---
+     Ordem da resolução:
+       1) o atacante escolhe o alvo;
+       2) o atacante decide se AMPLIFICA (Amplificação da Cascata: dano 1 → 2);
+       3) só então o alvo pode se defender — a defesa absorve o que ela cobre e o alvo
+          recebe apenas o dano que ultrapassar a defesa. */
   function chalLancarSentenca(){
     const eu = CHAL.turno;
-    if (!chalTemEsp(eu, 'sentenca') || CHAL.fase !== 'jogar' || CHAL.bloqueado) return;
+    if (!chalSentencaDisponivel()) return;
     chalEscolherAlvo(function(alvoIdx){
+      CHAL.bloqueado = true;                 /* trava o tabuleiro até a resolução terminar */
       chalRemoverEsp(eu, 'sentenca');
       chalLog('💀 <b>' + chalEsc(CHAL.jogadores[eu].nome) + '</b> lançou a <b>Sentença de Apoptose</b> contra <b>' +
         chalEsc(CHAL.jogadores[alvoIdx].nome) + '</b>.', 'vermelho');
       somErro();
-      chalRenderPlacar();
-      chalResolverSentenca(eu, alvoIdx);
+      chalRenderPlacar(); chalRenderAcoes();
+      chalFlipCarta('sentenca', chalEsc(CHAL.jogadores[eu].nome) + ' lança a Sentença contra ' + chalEsc(CHAL.jogadores[alvoIdx].nome));
+      /* espera o flip (1,6 s) terminar antes de abrir os modais, que ficam por cima dele */
+      setTimeout(function(){ chalOferecerAmplificacao(eu, alvoIdx); }, 1700);
     });
+  }
+
+  function chalSentencaConcluir(){
+    CHAL.bloqueado = false;
+    chalRenderPlacar(); chalRenderAcoes();
   }
 
   function chalEscolherAlvo(cb){
@@ -2766,17 +3147,39 @@ body{
     chalModalMsg('🎯', 'Sentença de Apoptose', 'Contra quem você lança a Sentença?', botoes);
   }
 
-  /* --- resolução: um único modal de defesa com as cartas do alvo --- */
-  function chalResolverSentenca(atkIdx, alvoIdx){
+  /* passo 2: o atacante, com a Amplificação na mão, decide antes da defesa */
+  function chalOferecerAmplificacao(atkIdx, alvoIdx){
+    if (!chalTemEsp(atkIdx, 'amplificacao')){ chalResolverSentenca(atkIdx, alvoIdx, 1); return; }
+    const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
+    const html = '<div class="chal-modal-cartas"><img src="' + CHAL_ESP_IMG.amplificacao + '" alt="Amplificação da Cascata"></div>' +
+      '<div class="chal-modal-txt" style="font-size:13px;">Antes de <b>' + alvoNome + '</b> poder se defender: ' +
+      'potencializar a Sentença? Ele passará a perder <b>2 vezes</b> em vez de 1 — e a defesa dele só absorve o que ela cobre.</div>';
+    chalModalMsgHTML('⚡', 'Amplificação da Cascata', html, [
+      { txt:'⚡ Potencializar', tipo:'principal', fn:function(){
+          chalModalFechar();
+          chalRemoverEsp(atkIdx, 'amplificacao');
+          chalFlipCarta('amplificacao', 'Ataque amplificado: 2 vezes!');
+          chalLog('⚡ <b>Amplificação da Cascata</b>: a Sentença contra <b>' + alvoNome + '</b> agora vale 2 vezes.', 'vermelho');
+          somErro();
+          chalRenderPlacar();
+          setTimeout(function(){ chalResolverSentenca(atkIdx, alvoIdx, 2); }, 1700);
+      }},
+      { txt:'Guardar a carta', tipo:'', fn:function(){ chalModalFechar(); chalResolverSentenca(atkIdx, alvoIdx, 1); } }
+    ]);
+  }
+
+  /* passo 3: defesa do alvo, contra `dano` vezes perdidas (pode reabrir se ainda sobrar dano) */
+  function chalResolverSentenca(atkIdx, alvoIdx, dano){
     const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
     const defesas = ['inibidor','sobrevivencia'].filter(function(k){ return chalTemEsp(alvoIdx, k); });
 
-    if (!defesas.length){ chalSentencaAtinge(atkIdx, alvoIdx); return; }
+    if (!defesas.length){ chalSentencaAtinge(atkIdx, alvoIdx, dano); return; }
 
     let cartasHtml = '<div class="chal-modal-cartas">';
     defesas.forEach(function(k){ cartasHtml += '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">'; });
     cartasHtml += '</div><div class="chal-modal-txt" style="font-size:13px;"><b>' + alvoNome +
-      '</b>, você foi alvo da Sentença de Apoptose. Como quer reagir?</div>';
+      '</b>, você foi alvo da Sentença de Apoptose' +
+      (dano > 1 ? ' <b>amplificada</b> (' + dano + ' vezes perdidas)' : '') + '. Como quer reagir?</div>';
     cartasHtml += '<div class="chal-esp-lista">';
     defesas.forEach(function(k){
       const e = CHAL_ESP[k];
@@ -2786,56 +3189,46 @@ body{
 
     const botoes = defesas.map(function(k){
       const rotulo = (k === 'inibidor')
-        ? '🛡️ Bloquear (Inibidor de Apoptose)'
-        : '🧬 Anular e assumir a vez (Sobrevivência Celular)';
+        ? '🛡️ Bloquear 1 (Inibidor de Apoptose)'
+        : '🧬 Anular tudo e assumir a vez (Sobrevivência Celular)';
       return { txt: rotulo, tipo:'principal', fn:function(){
         chalModalFechar();
         chalRemoverEsp(alvoIdx, k);
         chalFlipCarta(k, alvoNome + ' se defendeu!');
+        somVitoria();
         if (k === 'sobrevivencia'){
           CHAL.iniciativaPara = alvoIdx;
           chalLog('🧬 <b>' + alvoNome + '</b> usou a <b>Sobrevivência Celular</b>: ataque anulado e a iniciativa passa para ' + alvoNome + '.', 'verde');
-        } else {
-          chalLog('🛡️ <b>' + alvoNome + '</b> gastou o <b>Inibidor de Apoptose</b> e bloqueou a Sentença.', 'verde');
+          chalRenderPlacar();
+          setTimeout(chalSentencaConcluir, 1700);
+          return;
         }
-        somVitoria();
+        /* Inibidor: absorve 1 vez perdida; o que passar disso ainda atinge o alvo */
+        const resta = dano - 1;
+        chalLog('🛡️ <b>' + alvoNome + '</b> gastou o <b>Inibidor de Apoptose</b> e bloqueou 1 vez perdida.', 'verde');
         chalRenderPlacar();
+        setTimeout(function(){
+          if (resta <= 0){ chalSentencaConcluir(); return; }
+          chalResolverSentenca(atkIdx, alvoIdx, resta);
+        }, 1700);
       }};
     });
     botoes.push({ txt:'😞 Aceitar o ataque', tipo:'', fn:function(){
-      chalModalFechar(); chalSentencaAtinge(atkIdx, alvoIdx);
+      chalModalFechar(); chalSentencaAtinge(atkIdx, alvoIdx, dano);
     }});
 
     chalModalMsgHTML('⚔️', 'Você foi atacado!', cartasHtml, botoes);
   }
 
-  /* alvo sem defesa (ou que aceitou) → perde a próxima vez; oferece Amplificação */
-  function chalSentencaAtinge(atkIdx, alvoIdx){
-    CHAL.pulez[alvoIdx] = (CHAL.pulez[alvoIdx] || 0) + 1;
+  /* o que sobrou do ataque atinge o alvo: perde `dano` vezes */
+  function chalSentencaAtinge(atkIdx, alvoIdx, dano){
+    CHAL.pulez[alvoIdx] = (CHAL.pulez[alvoIdx] || 0) + dano;
     const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
-    chalLog('☠️ A Sentença atingiu <b>' + alvoNome + '</b> — perde a próxima vez.', 'vermelho');
+    chalLog('☠️ A Sentença atingiu <b>' + alvoNome + '</b> — perde ' +
+      (dano > 1 ? dano + ' vezes' : 'a próxima vez') + '.', 'vermelho');
     somErro(); chalTremerJog(alvoIdx);
-    chalFlipCarta('sentenca', alvoNome + ' perde a próxima vez');
-    chalRenderPlacar();
-
-    if (chalTemEsp(atkIdx, 'amplificacao')){
-      setTimeout(function(){
-        chalModalMsg('⚡', 'Amplificação da Cascata',
-          'Potencializar o ataque? <b>' + alvoNome + '</b> passará a perder <b>2 vezes</b> em vez de 1.',
-          [
-            { txt:'⚡ Potencializar', tipo:'principal', fn:function(){
-                chalModalFechar();
-                chalRemoverEsp(atkIdx, 'amplificacao');
-                CHAL.pulez[alvoIdx] = (CHAL.pulez[alvoIdx] || 0) + 1;
-                chalFlipCarta('amplificacao', alvoNome + ' perde 2 vezes!');
-                chalLog('⚡ <b>Amplificação da Cascata</b>: <b>' + alvoNome + '</b> perderá 2 vezes!', 'vermelho');
-                somErro(); chalTremerJog(alvoIdx);
-                chalRenderPlacar();
-            }},
-            { txt:'Guardar a carta', tipo:'', fn: chalModalFechar }
-          ]);
-      }, 1000);
-    }
+    chalFlipCarta('sentenca', alvoNome + (dano > 1 ? ' perde ' + dano + ' vezes!' : ' perde a próxima vez'));
+    chalSentencaConcluir();
   }
 
   function chalNovoTurno(){
@@ -3195,6 +3588,7 @@ body{
 
   /* ---------- fim de jogo ---------- */
   function chalFim(){
+    morMusica.encerrar();                      /* fim da partida do Challenger */
     CHAL.ativo = false;
     chalAtualizarBotoesPartida();
     const permitidas = MOR_MODOS[morModo];
@@ -3313,8 +3707,16 @@ body{
 
   function morRevisaoAbrir(onClose){
     const tab = document.getElementById('morTabuleiro');
-    morRevSlots = [].slice.call(tab.querySelectorAll('.mor-slot')).filter(function(s){ return s.dataset.posto; });
+    /* TODOS os encaixes do percurso, na ordem do tabuleiro — a revisão mostra a sequência
+       correta, não o que a turma jogou */
+    morRevSlots = [].slice.call(tab.querySelectorAll('.mor-slot')).filter(function(s){ return s.dataset.alvo; });
     if (!morRevSlots.length) return;
+    morRevSlots.forEach(function(s){
+      const c = document.createElement('div'); c.className = 'mor-rev-correta';
+      const im = document.createElement('img');
+      im.src = morArquivo(s.dataset.alvo); im.alt = morNome(s.dataset.alvo);
+      c.appendChild(im); s.appendChild(c);
+    });
     morRevOnClose = (typeof onClose === 'function') ? onClose : null;
     morRevAtiva = true;
     morRevIdx = 0;
@@ -3336,7 +3738,10 @@ body{
     morRevAtiva = false;
     morRevOnClose = null;
     document.getElementById('morTabuleiro').classList.remove('mor-rev-on');
-    morRevSlots.forEach(function(s){ s.classList.remove('mor-rev-atual'); });
+    morRevSlots.forEach(function(s){
+      s.classList.remove('mor-rev-atual');
+      const c = s.querySelector('.mor-rev-correta'); if (c) c.remove();
+    });
     morRevBar.classList.remove('on');
     morRevSlots = [];
   }
@@ -3346,7 +3751,7 @@ body{
     morRevIdx = Math.max(0, Math.min(morRevSlots.length - 1, i));
     morRevSlots.forEach(function(s, k){ s.classList.toggle('mor-rev-atual', k === morRevIdx); });
     const slot = morRevSlots[morRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'center' });
+    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
     morRevPintarBarra(slot);
     somClique();
   }
@@ -3357,27 +3762,26 @@ body{
   }
 
   function morRevPintarBarra(slot){
-    const posto = slot.dataset.posto, alvo = slot.dataset.alvo;
+    const alvo = slot.dataset.alvo;
     const trilhaEl = slot.closest('.mor-trilha');
     const meta = MOR_TRILHAS.find(function(t){ return trilhaEl && t.id === trilhaEl.id; });
     const ordEl = slot.parentElement.querySelector('.mor-ordem');
-    const certo = (posto === alvo);
     const prefixo = (ordEl ? ordEl.textContent + ' \u00b7 ' : '') + (meta ? meta.rotulo : '');
 
     document.getElementById('morRevPasso').textContent =
-      'Carta ' + (morRevIdx + 1) + ' de ' + morRevSlots.length;
+      'Encaixe ' + (morRevIdx + 1) + ' de ' + morRevSlots.length;
     document.getElementById('morRevTit').innerHTML =
-      '<b>' + prefixo + '</b> \u2014 ' + morNome(posto);
+      '<b>' + prefixo + '</b> \u2014 ' + morNome(alvo);
 
-    const st = document.getElementById('morRevStatus');
-    if (certo){
-      st.className = 'mor-rev-status ok';
-      st.textContent = '\u2713 Posicao correta no caminho.';
-    } else {
-      st.className = 'mor-rev-status erro';
-      st.textContent = '\u2717 A turma colocou aqui \u201c' + morNome(posto) +
-        '\u201d. Nesta posicao entra \u201c' + morNome(alvo) + '\u201d.';
-    }
+    /* a carta correta deste encaixe, já ampliada (tocar amplia ainda mais) */
+    const cx = document.getElementById('morRevCartas');
+    cx.innerHTML = '';
+    const f = document.createElement('figure'); f.className = 'mor-rev-fig';
+    const im = document.createElement('img');
+    im.src = morArquivo(alvo); im.alt = morNome(alvo); im.title = 'Tocar para ampliar mais';
+    im.addEventListener('click', function(){ abrirLightbox(morArquivo(alvo)); });
+    f.appendChild(im); cx.appendChild(f);
+
     document.getElementById('morRevPrev').disabled = (morRevIdx === 0);
     document.getElementById('morRevNext').disabled = (morRevIdx === morRevSlots.length - 1);
   }

@@ -34,7 +34,7 @@ body{
   font-family:var(--font-serif); line-height:1.6;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
-.pagina{ max-width:1220px; margin:0 auto; padding:14px 14px 78px; }
+.pagina{ max-width:1220px; margin:0 auto; padding:44px 14px 78px;   /* 44px no topo: faixa do botão de tela cheia */ }
 
 /* ================= TABULEIRO ================= */
 .tabuleiro{
@@ -309,6 +309,12 @@ body{
 .rep-slot.cheio{ border-style:solid; padding:0; display:block; }
 .rep-slot.certo{ border-color:var(--green); box-shadow:0 0 0 3px rgba(76,175,80,.45); }
 .rep-slot.errado{ border-color:var(--red); box-shadow:0 0 0 3px rgba(229,57,53,.5); animation:tremer .45s; }
+/* dentro do leque o tremor usa a propriedade `translate`, que se soma ao `transform` do
+   leque — com o `tremer` normal a carta perdia a inclinação por 0,45 s */
+@keyframes tremerLeque{
+  0%,100%{translate:0;} 20%{translate:-6px;} 40%{translate:6px;} 60%{translate:-4px;} 80%{translate:4px;}
+}
+.rep-leque > .rep-slot.errado{ animation-name:tremerLeque; }
 .rep-slot.certo::after, .rep-slot.errado::after{
   content:"✓"; position:absolute; inset:0; z-index:4;
   display:flex; align-items:center; justify-content:center;
@@ -331,6 +337,8 @@ body{
 }
 .rep-vd.on{ display:flex; animation:repVdFade 5s ease forwards; }
 .rep-vd.acerto{ background:radial-gradient(circle at 50% 44%, rgba(60,200,120,.32), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
+.rep-vd.neutro{ background:radial-gradient(circle at 50% 44%, rgba(120,170,235,.28), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
+.rep-vd.neutro .rep-vd-raios{ color:rgba(150,190,245,.8); }
 .rep-vd.erro{ background:radial-gradient(circle at 50% 44%, rgba(255,80,60,.34), rgba(6,10,20,.55) 58%, rgba(6,10,20,.74)); }
 .rep-vd-cx{ position:relative; text-align:center; animation:repVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
 .rep-vd-raios{
@@ -366,7 +374,7 @@ body{
 /* --- tela de sorteio animada de quem começa (Desafio) --- */
 .rep-sorteio{
   position:fixed; inset:0; z-index:130; display:none;
-  background:radial-gradient(circle at 50% 38%, rgba(46,22,74,.97), rgba(6,10,20,.98));
+  background:radial-gradient(circle at 50% 38%, #2E164A, #060A14);
   flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:24px;
   text-align:center;
 }
@@ -409,8 +417,7 @@ body{
 .chal-vez-ov{
   position:fixed; inset:0; z-index:119; display:none;
   align-items:center; justify-content:center; pointer-events:none; overflow:hidden;
-  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, transparent),
-    rgba(6,10,20,.55) 58%, rgba(6,10,20,.74));
+  background:radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--chal-cor) 34%, #060A14), #060A14 70%);   /* opaco: o tabuleiro não aparece por trás */
 }
 .chal-vez-ov.on{ display:flex; animation:repVdFade 3s ease forwards; }
 .chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
@@ -633,13 +640,21 @@ body{
 }
 .rep-chal-dono.jog0{ background:var(--jog0); }
 .rep-chal-dono.jog1{ background:var(--jog1); }
-.rep-estacao.rep-chal-vencida{ position:relative; }
-.rep-estacao.rep-chal-vencida::after{
-  content:"🏆"; position:absolute; top:-6px; right:6px; font-size:16px;
-  filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));
+/* --- estação ganha: pintada com a cor do jogador que a venceu (borda, fundo, brilho e troféu) --- */
+.rep-estacao.rep-chal-vencida.jog0{ --venc:var(--jog0); --venc-claro:var(--jog0-soft); }
+.rep-estacao.rep-chal-vencida.jog1{ --venc:var(--jog1); --venc-claro:var(--jog1-soft); }
+.rep-estacao.rep-chal-vencida{
+  position:relative; border-color:var(--venc);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--venc) 34%, rgba(10,20,36,.6)), color-mix(in srgb, var(--venc) 14%, rgba(10,20,36,.6)));
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--venc) 45%, transparent), 0 0 18px -4px var(--venc);
 }
-.rep-estacao.rep-chal-vencida.jog0 .rep-rotulo{ color:var(--jog0-soft); }
-.rep-estacao.rep-chal-vencida.jog1 .rep-rotulo{ color:var(--jog1-soft); }
+.rep-estacao.rep-chal-vencida::after{
+  content:"🏆"; position:absolute; top:-12px; right:-7px; z-index:7;
+  width:26px; height:26px; border-radius:50%; font-size:14px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--venc); border:2px solid var(--venc-claro);
+  box-shadow:0 2px 6px rgba(0,0,0,.55);
+}
 
 .rep-chal-mesa{ display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin:0 0 6px; }
 .rep-chal-bloco{ display:flex; flex-direction:column; align-items:center; gap:8px; min-width:180px; }
@@ -647,17 +662,58 @@ body{
   font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em;
   text-transform:uppercase; color:rgba(232,238,247,.6);
 }
-.rep-chal-sacar{
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  border:3px solid var(--gold-dim); border-radius:12px; padding:14px 20px;
-  background:linear-gradient(180deg, rgba(40,30,92,.5), rgba(8,9,26,.6));
-  color:#E8EEF7; cursor:pointer; font:inherit;
-  transition:transform .12s, box-shadow .15s;
+/* ---- montes de compra, UM POR TIPO DE CARTA. Miniatura no padrão do morte
+     (.chal-esp-monte): verso de carta com duas "sombras" empilhadas, losangos e
+     selo de quantidade no canto; aqui cada monte é um botão tingido com a cor do tipo ---- */
+.rep-chal-montes{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+.rep-chal-monte{
+  --mc:#C9A8E8; --mc-claro:#E8CE7A;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:none; border:0; padding:4px 8px 2px; cursor:pointer;
+  font-family:var(--font-serif); font-weight:800; font-size:10px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--mc-claro); max-width:calc(var(--card-w-mao) * 1.7);
+  transition:transform .12s, filter .15s;
 }
-.rep-chal-sacar:hover{ transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.4); }
-.rep-chal-sacar[disabled]{ opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
-.rep-chal-sacar .ico{ font-size:26px; }
-.rep-chal-sacar .rest{ font-family:var(--font-pixel); font-size:8px; letter-spacing:.04em; color:rgba(232,238,247,.55); }
+.rep-chal-monte:hover:not([disabled]){ transform:translateY(-4px); filter:brightness(1.15); }
+.rep-chal-monte:active:not([disabled]){ transform:translateY(-1px); }
+.rep-chal-monte:focus-visible{ outline:2px solid var(--mc-claro); outline-offset:3px; border-radius:8px; }
+.rep-chal-monte[disabled]{ cursor:not-allowed; opacity:.55; }
+.rep-chal-monte.vazio{ opacity:.4; }
+.rep-chal-monte .pilha{
+  position:relative; width:calc(var(--card-w-mao) * 1.25); aspect-ratio:900/1260; margin:2px 3px 4px;
+}
+.rep-chal-monte .pilha::before, .rep-chal-monte .pilha::after{
+  content:''; position:absolute; inset:0; z-index:0; border-radius:6px;
+  border:1.5px solid color-mix(in srgb, var(--mc) 55%, rgba(10,20,36,.9));
+  background:rgba(10,20,36,.9);
+}
+.rep-chal-monte .pilha::before{ transform:rotate(-7deg) translate(-3px,2px); }
+.rep-chal-monte .pilha::after{ transform:rotate(6deg) translate(3px,2px); }
+.rep-chal-monte.vazio .pilha::before, .rep-chal-monte.vazio .pilha::after{ display:none; }
+.rep-chal-monte .verso{
+  position:relative; z-index:1; width:100%; height:100%; border-radius:6px;
+  border:2px solid var(--mc);
+  background:
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--mc) 40%, transparent) 0%, transparent 64%),
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--mc) 25%, transparent) 0 3px, rgba(9,16,28,.95) 3px 9px),
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--mc) 14%, transparent) 0 3px, transparent 3px 9px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 4px 12px rgba(0,0,0,.5);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.rep-chal-monte .verso::before{
+  content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+  border:1px solid color-mix(in srgb, var(--mc-claro) 60%, transparent);
+}
+.rep-chal-monte .ico{
+  position:relative; font-size:30px; opacity:.9; color:var(--mc-claro);
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.65));
+}
+.rep-chal-monte .qtd{
+  position:absolute; bottom:1px; right:2px; z-index:2; font-family:var(--font-pixel); font-size:9px;
+  background:rgba(6,10,20,.9); border:1px solid color-mix(in srgb, var(--mc) 55%, transparent);
+  border-radius:4px; padding:2px 4px; color:#F4E7B8;
+}
+.rep-chal-monte .rot{ text-align:center; line-height:1.25; }
 .rep-chal-carta-atual{
   display:flex; flex-direction:column; align-items:center; gap:8px;
   min-height:calc(var(--card-w-mao) * 1.6 * 830 / 560 + 40px);
@@ -724,24 +780,58 @@ body{
 .tc-preenchimento{ height:100%; width:0%; background:repeating-linear-gradient(90deg, var(--ac) 0 10px, var(--ac-dim) 10px 14px); }
 .tc-pct{ font-family:var(--font-pixel); font-size:15px; letter-spacing:.06em; color:var(--ac-soft); }
 
-/* ===== BOTÃO TELA CHEIA ===== */
-#btnTelaCheia{
-  position:fixed; top:12px; right:12px; z-index:90;
-  display:inline-flex; align-items:center; gap:7px;
-  font-family:var(--font-serif); font-weight:700; font-size:12.5px; letter-spacing:.03em;
-  color:var(--ac-soft); background:rgba(7,12,28,.82);
-  border:2px solid var(--ac-dim); border-radius:8px; padding:8px 11px;
-  cursor:pointer; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-  box-shadow:0 3px 0 #070C1C, 0 6px 16px rgba(0,0,0,.45);
-  transition:filter .15s ease, transform .1s ease, border-color .15s ease;
-}
-#btnTelaCheia:hover{ filter:brightness(1.2); border-color:var(--ac); }
-#btnTelaCheia:active{ transform:translateY(2px); box-shadow:0 1px 0 #070C1C; }
-#btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
-@media (max-width:560px){
-  #btnTelaCheia{ padding:9px; }
+/* ===== BOTÃO TELA CHEIA — só o ícone, discreto, no canto superior direito.
+     Fica na página (não flutua ao rolar) e a página reserva uma faixa no topo,
+     então nunca cobre outro botão. ===== */
+  #btnTelaCheia{
+    position:absolute; top:8px; right:10px; z-index:60;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  #btnTelaCheia:hover, #btnTelaCheia:focus-visible{
+    color:var(--ac-soft); border-color:var(--ac-dim); background:rgba(10,20,36,.6);
+  }
+  #btnTelaCheia .btn-tc-ico{ font-size:15px; line-height:1; }
   #btnTelaCheia .btn-tc-txt{ display:none; }
-}
+
+/* ===== BOTÃO DE VOLUME DA MÚSICA — ao lado do de tela cheia; só aparece enquanto a trilha da
+     partida está ativa. Ao clicar, abre um painel com − / barra / + para reduzir ou subir. ===== */
+  #btnMusica{
+    position:absolute; top:8px; right:46px; z-index:60;
+    display:none; align-items:center; justify-content:center;
+    width:30px; height:30px; padding:0; font-size:15px; line-height:1;
+    color:rgba(232,206,122,.75); background:transparent;
+    border:1px solid rgba(232,206,122,.28); border-radius:6px;
+    cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  #btnMusica.on{ display:inline-flex; }
+  #btnMusica:hover, #btnMusica:focus-visible, #btnMusica[aria-expanded="true"]{
+    color:var(--ac-soft); border-color:var(--ac-dim); background:rgba(10,20,36,.6);
+  }
+  #painelVolume{
+    position:absolute; top:44px; right:10px; z-index:61; display:none;
+    flex-direction:column; gap:11px; align-items:stretch; width:212px; padding:9px 11px 11px;
+    background:rgba(10,20,36,.96); border:1px solid var(--ac-dim); border-radius:10px;
+    box-shadow:0 8px 22px rgba(0,0,0,.55);
+  }
+  #painelVolume.on{ display:flex; }
+#painelVolume .pv-bloco{ display:flex; flex-direction:column; gap:6px; }
+  #painelVolume .pv-tit{
+    font-family:var(--font-pixel); font-size:9px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ac-soft); display:flex; justify-content:space-between;
+  }
+  #painelVolume .pv-linha{ display:flex; align-items:center; gap:8px; }
+  #painelVolume .pv-passo{
+    flex:0 0 auto; width:28px; height:28px; padding:0; font-size:17px; font-weight:700; line-height:1;
+    color:var(--ac-soft); background:rgba(111,211,232,.08); border:1px solid var(--ac-dim);
+    border-radius:6px; cursor:pointer;
+  }
+  #painelVolume .pv-passo:hover, #painelVolume .pv-passo:focus-visible{ background:rgba(111,211,232,.2); }
+  #painelVolume .pv-passo[disabled]{ opacity:.35; cursor:not-allowed; }
+  #painelVolume input[type=range]{ flex:1 1 auto; min-width:0; accent-color:var(--ac); cursor:pointer; }
 @media (max-width:600px){
   .rep-leque{ min-height:104px; }
 }
@@ -771,17 +861,53 @@ body{
   .cl-copyright{ font-size:10.5px; }
 }
 
+  /* enquanto uma animação de tela cheia está no ar, a página não rola (nem por roda/toque/teclado) */
+  html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
+
+  /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  .chal-emb-pilhas{ display:flex; justify-content:center; margin:34px 0 6px; }
+  .chal-emb-pilha{ position:relative; width:128px; aspect-ratio:900/1260; margin:0 44px; }
+  .chal-emb-c{
+    position:absolute; left:0; right:0; bottom:calc(var(--n) * 1.6px); top:calc(var(--n) * -1.6px);
+    border-radius:9px; border:2px solid #F2E4B2; box-shadow:0 3px 8px rgba(0,0,0,.55);
+    background:linear-gradient(145deg,#2A78BC,#0E2E52);
+    display:flex; align-items:center; justify-content:center; font-size:48px;
+    animation:embEsq .9s ease-in-out infinite; animation-delay:calc(var(--n) * -.13s);
+  }
+  .chal-emb-c.d{ animation-name:embDir; }
+  @keyframes embEsq{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(-68%,-8%) rotate(-11deg); }
+    62%{ transform:translate(-6%,-22%) rotate(-2deg); }
+  }
+  @keyframes embDir{
+    0%,100%{ transform:translate(0,0) rotate(0); }
+    30%{ transform:translate(68%,-8%) rotate(11deg); }
+    62%{ transform:translate(6%,-22%) rotate(2deg); }
+  }
+  .rep-sorteio.parou .chal-emb-c{ animation:none; }
+
 /* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-.rep-campo.rep-rev-on .rep-slot,
-.rep-campo.rep-rev-on .rep-carta--mini{
-  pointer-events:auto; cursor:pointer; opacity:.3; filter:grayscale(.4);
+.rep-rev-on .rep-slot{
+  pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
   transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
+  border-color:var(--ac-dim) !important; border-style:solid !important;   /* neutraliza verde/vermelho de certo/errado */
 }
-.rep-campo.rep-rev-on .rep-slot.rep-rev-atual{
+.rep-rev-on .rep-slot:not(.rep-rev-atual){ box-shadow:none !important; }
+.rep-rev-on .rep-slot::after{ display:none !important; }
+/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
+.rep-rev-correta{ display:none; }
+.rep-rev-on .rep-slot .rep-rev-correta{
+  display:block; position:absolute; inset:0; z-index:8; background:#0a1020;
+  border-radius:inherit; overflow:hidden;
+}
+.rep-rev-correta > img{ width:100%; height:100%; object-fit:cover; display:block; }
+.rep-rev-on .rep-slot.rep-rev-atual{
   opacity:1; filter:none; outline:3px solid var(--gold); outline-offset:3px;
   box-shadow:0 0 0 7px rgba(212,175,55,.28), 0 12px 34px rgba(0,0,0,.6);
   transform:scale(1.07); z-index:6;
 }
+.rep-rev-correta > .rep-carta{ position:absolute; inset:0; font-size:calc(var(--card-w) / 30); }
 .rep-rev-bar{
   position:fixed; left:0; right:0; bottom:0; z-index:90; transform:translateY(120%);
   transition:transform .3s ease;
@@ -789,7 +915,20 @@ body{
   border-top:2px solid var(--gold-dim); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
 }
 .rep-rev-bar.on{ transform:translateY(0); }
-.rep-rev-inner{ max-width:760px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+:root{ --rev-img-h:min(34vh,300px); }
+.rep-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
+.rep-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
+.rep-rev-cartas{ display:flex; gap:12px; justify-content:center; align-items:flex-start; }
+.rep-rev-fig{ margin:0; position:relative; opacity:.6; transition:opacity .2s; }
+.rep-rev-fig.atual{ opacity:1; }
+.rep-rev-fig > img{
+  height:var(--rev-img-h); width:auto; max-width:30vw; object-fit:contain; cursor:zoom-in; display:block;
+  border-radius:10px; border:3px solid var(--ac-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
+}
+.rep-rev-fig.atual > img{ border-color:var(--ac-soft); }
+.rep-rev-texto{ flex:1 1 240px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
+.rep-rev-fig > .rep-carta{ flex:none; width:calc(var(--rev-img-h) * 560 / 830); font-size:calc(var(--rev-img-h) * 560 / 830 / 30); cursor:zoom-in; }
+.rep-rev-on .rep-slot{ scroll-margin-top:16px; scroll-margin-bottom:calc(var(--rev-img-h) + 200px); }
 .rep-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 .rep-rev-nav{
   background:var(--gold-dim); color:#1B0A2C; border:none; border-radius:8px;
@@ -803,13 +942,9 @@ body{
 }
 .rep-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
 .rep-rev-tit b{ color:var(--gold); }
-.rep-rev-status{ font-family:var(--font-serif); font-size:13px; line-height:1.5; border-radius:8px; padding:7px 10px; }
-.rep-rev-status.ok{ color:#9BE0B0; background:rgba(62,158,94,.18); border:1px solid #3E9E5E; }
-.rep-rev-status.erro{ color:#F5B4B0; background:rgba(201,82,76,.16); border:1px solid #C9524C; }
 .rep-rev-cta{ margin-top:12px; }
 @media (max-width:600px){
   .rep-rev-tit{ font-size:13px; }
-  .rep-rev-status{ font-size:12px; }
 }
 </style>
 </head>
@@ -819,6 +954,26 @@ body{
   <span class="btn-tc-ico" aria-hidden="true">&#9974;</span>
   <span class="btn-tc-txt">Tela cheia</span>
 </button>
+
+<button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
+<div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
+    </div>
+  </div>
+  <div class="pv-bloco">
+    <div class="pv-tit"><span>&#128276; Efeitos</span><span id="pvPctEf">100%</span></div>
+    <div class="pv-linha">
+      <button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos" aria-label="Reduzir o volume dos efeitos">&minus;</button>
+      <input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos">
+      <button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos" aria-label="Subir o volume dos efeitos">+</button>
+    </div>
+  </div>
+</div>
 
 <div class="tela-titulo" id="repTelaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
   <div class="tt-ico" aria-hidden="true">🧬</div>
@@ -978,17 +1133,13 @@ body{
 
       <!-- ---------- MONTE ÚNICO — SAQUE E POSICIONE ---------- -->
       <div class="faixa">
-        <span class="faixa-titulo">Monte único — saque e posicione</span>
+        <span class="faixa-titulo">Montes de compra — escolha, saque e posicione</span>
         <span class="linha-ouro"></span>
       </div>
       <div class="rep-chal-mesa">
         <div class="rep-chal-bloco">
-          <div class="rep-chal-bloco-tit">Monte de compra</div>
-          <button class="rep-chal-sacar" id="repChalSacar" type="button">
-            <span class="ico">🂠</span>
-            <span>Sacar carta</span>
-            <span class="rest" id="repChalRest">— cartas no monte</span>
-          </button>
+          <div class="rep-chal-bloco-tit">Montes de compra</div>
+          <div class="rep-chal-montes" id="repChalMontes"></div>
         </div>
         <div class="rep-chal-bloco">
           <div class="rep-chal-bloco-tit">Carta em jogo</div>
@@ -1035,8 +1186,10 @@ body{
       <button class="rep-rev-nav" id="repRevNext" type="button" aria-label="Próxima estação">&#8250;</button>
       <button class="rep-rev-fechar" id="repRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
     </div>
-    <div class="rep-rev-tit" id="repRevTit"></div>
-    <div class="rep-rev-status" id="repRevStatus"></div>
+    <div class="rep-rev-corpo">
+      <div class="rep-rev-cartas" id="repRevCartas"></div>
+      <div class="rep-rev-texto"><div class="rep-rev-tit" id="repRevTit"></div></div>
+    </div>
   </div>
 </div>
 
@@ -1048,6 +1201,13 @@ body{
     <div class="rep-vd-tit" id="repVdTit"></div>
     <div class="rep-vd-sub" id="repVdSub"></div>
   </div>
+</div>
+
+<!-- ---------- EMBARALHAMENTO ANIMADO DO BARALHO, 5 s (Desafio) ---------- -->
+<div class="rep-sorteio" id="repChalEmbaralho">
+  <div class="rep-sorteio-tit">Embaralhando o baralho…</div>
+  <div class="chal-emb-pilhas" id="repChalEmbaralhoPilha"></div>
+  <div class="rep-sorteio-res" id="repChalEmbaralhoRes"></div>
 </div>
 
 <!-- ---------- SORTEIO DE QUEM COMEÇA (Desafio) ---------- -->
@@ -1070,7 +1230,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 16 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 20 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1089,6 +1249,21 @@ body{
     if (ctxAudio.state === 'suspended') ctxAudio.resume();
     return ctxAudio;
   }
+  /* volume dos EFEITOS: todos os bips do jogo passam por um ganho mestre (1 = nível original).
+     Ajustado no painel do botão de volume, separado do volume da música. */
+  let efeitosVol = 1, efeitosMestre = null;
+  function saidaEfeitos(ac){
+    if (!efeitosMestre || efeitosMestre.context !== ac){
+      efeitosMestre = ac.createGain();
+      efeitosMestre.gain.value = efeitosVol;
+      efeitosMestre.connect(ac.destination);
+    }
+    return efeitosMestre;
+  }
+  const repEfeitos = {
+    definir: function(v){ efeitosVol = v; if (efeitosMestre) efeitosMestre.gain.value = v; },
+    amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
+  };
   function nota(freq, inicio, dur, tipo, vol){
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
@@ -1097,7 +1272,7 @@ body{
     g.gain.setValueAtTime(0.0001, ac.currentTime + inicio);
     g.gain.exponentialRampToValueAtTime(vol || 0.22, ac.currentTime + inicio + 0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + inicio + dur);
-    o.connect(g); g.connect(ac.destination);
+    o.connect(g); g.connect(saidaEfeitos(ac));
     o.start(ac.currentTime + inicio); o.stop(ac.currentTime + inicio + dur + 0.02);
   }
   function somVitoria(){ [523.25,659.25,783.99,1046.50].forEach(function(f,i){ nota(f,i*0.11,0.32,'triangle',0.24); }); nota(1318.51,0.46,0.55,'sine',0.18); }
@@ -1457,6 +1632,7 @@ body{
       repBtnTrocar.disabled = false;
       var _rrb = document.getElementById('repRevBtn');
       if (_rrb) _rrb.addEventListener('click', function(){ repRevisaoAbrir(repCampo); });
+      repMusica.encerrar();                    /* fim da partida do Single Player */
       somVitoria();
     } else {
       repResultado.className = 'on falha';
@@ -1517,7 +1693,144 @@ body{
   const repModoJogo   = document.getElementById('repModoJogo');
   const repChalNomes  = document.getElementById('repChalNomes');
 
+  /* ==============================================================
+     TRILHA SONORA DA PARTIDA (exclusiva do jogo Replicação)
+     Toca a faixa A (Helicase Groove) e, 3 s depois de ela acabar, a faixa B
+     (Double Helix Beat). Começa quando uma partida começa (Single Player ou
+     Desafio) e REPETE SEM PARAR até o fim do jogo (vitória/fim da partida, com uma
+     descida rápida do volume) ou até o jogador sair para os menus. As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
+     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     baixada enquanto a atual toca.
+     ============================================================== */
+  const repMusica = (function(){
+    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
+    const PASTA = 'Músicas dos jogos/';
+    const FAIXAS = ['Helicase Groove.mp3', 'Double Helix Beat.mp3'];
+    const INTERVALO_MS = 3000;
+    const btn = document.getElementById('btnMusica');
+    const painel = document.getElementById('painelVolume');
+    const barra = document.getElementById('pvBarra');
+    const pct = document.getElementById('pvPct');
+    const menos = document.getElementById('pvMenos');
+    const mais = document.getElementById('pvMais');
+    const barraEf = document.getElementById('pvBarraEf');
+    const pctEf = document.getElementById('pvPctEf');
+    const menosEf = document.getElementById('pvMenosEf');
+    const maisEf = document.getElementById('pvMaisEf');
+    const pre = [];                                        /* faixas já pré-carregadas */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, volEf = 1;   /* 0..1, vale pela vida da página */
+
+    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver */
+      const a = pre[i] || new Audio(url(i));
+      pre[i] = null;
+      return a;
+    }
+    function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
+      if (pre[i]) return;
+      try { const a = new Audio(url(i)); a.preload = 'auto'; pre[i] = a; } catch (e) {}
+    }
+    function tocar(i, meu){
+      if (meu !== tok) return;
+      let a;
+      try { a = abrir(i); } catch (e) { return; }
+      a.volume = volume;
+      audio = a;
+      a.addEventListener('ended', function(){
+        if (meu !== tok) return;
+        /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
+        const prox = (i + 1) % FAIXAS.length;
+        preparar(prox);
+        timer = setTimeout(function(){ tocar(prox, meu); }, INTERVALO_MS);
+      });
+      const p = a.play();
+      if (p && p.catch) p.catch(function(){});             /* bloqueio de autoplay ou pasta ausente: segue sem música */
+      preparar((i + 1) % FAIXAS.length);                   /* já deixa a próxima faixa baixando */
+    }
+    function parar(){
+      tok++;
+      clearTimeout(timer); timer = null;
+      if (fade){ clearInterval(fade.iv); fade.a.pause(); fade = null; }
+      if (audio){ audio.pause(); audio = null; }
+      if (btn) btn.classList.remove('on');
+      fechar();
+    }
+    /* FIM DA PARTIDA: a música desce em ~1,5 s e para (a sequência só termina com o jogo) */
+    function encerrar(){
+      if (!audio){ parar(); return; }
+      const meu = ++tok;                                   /* cancela o intervalo/faixa seguinte */
+      clearTimeout(timer); timer = null;
+      const a = audio, v0 = a.volume;
+      audio = null;                                        /* o controle de volume deixa de mexer nela */
+      let n = 0;
+      const iv = setInterval(function(){
+        n++;
+        a.volume = Math.max(0, v0 * (1 - n / 15));
+        if (n >= 15){
+          clearInterval(iv); a.pause();
+          if (fade && fade.a === a) fade = null;
+          if (tok === meu){ if (btn) btn.classList.remove('on'); fechar(); }
+        }
+      }, 100);
+      fade = { a:a, iv:iv };
+    }
+    function iniciar(){
+      parar();
+      if (btn) btn.classList.add('on');
+      tocar(0, tok);
+    }
+    function fechar(){
+      if (!painel) return;
+      painel.classList.remove('on');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+    function definirVolume(v){
+      volume = Math.max(0, Math.min(1, v));
+      if (audio) audio.volume = volume;
+      const p = Math.round(volume * 100);
+      barra.value = String(p);
+      pct.textContent = p + '%';
+      menos.disabled = p <= 0;
+      mais.disabled = p >= 100;
+      btn.innerHTML = p === 0 ? '&#128263;' : p < 50 ? '&#128265;' : '&#128266;';   /* 🔇 / 🔉 / 🔊 */
+    }
+    /* volume dos EFEITOS (bips do jogo): 0..1, 100% = nível original; independe da música */
+    function definirEfeitos(v, ouvir){
+      volEf = Math.max(0, Math.min(1, v));
+      repEfeitos.definir(volEf);
+      const p = Math.round(volEf * 100);
+      barraEf.value = String(p);
+      pctEf.textContent = p + '%';
+      menosEf.disabled = p <= 0;
+      maisEf.disabled = p >= 100;
+      if (ouvir) repEfeitos.amostra();                            /* toca um bip para o jogador ouvir o nível */
+    }
+    if (btn && painel){
+      definirVolume(volume);
+      definirEfeitos(volEf, false);
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const abrir = !painel.classList.contains('on');
+        painel.classList.toggle('on', abrir);
+        btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+      });
+      painel.addEventListener('click', function(e){ e.stopPropagation(); });
+      barra.addEventListener('input', function(){ definirVolume(Number(barra.value) / 100); });
+      menos.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 - 10) / 100); });
+      mais.addEventListener('click', function(){ definirVolume(Math.round(volume * 100 + 10) / 100); });
+      barraEf.addEventListener('input', function(){ definirEfeitos(Number(barraEf.value) / 100, false); });
+      barraEf.addEventListener('change', function(){ repEfeitos.amostra(); });     /* soltou a barra → bip de amostra */
+      menosEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 - 10) / 100, true); });
+      maisEf.addEventListener('click', function(){ definirEfeitos(Math.round(volEf * 100 + 10) / 100, true); });
+      /* clicar fora do painel ou apertar Esc fecha */
+      document.addEventListener('click', fechar);
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fechar(); });
+    }
+    return { iniciar:iniciar, parar:parar, encerrar:encerrar };
+  })();
+
   function repEsconderTudo(){
+    repMusica.parar();                         /* voltar aos menus para a trilha */
     repModoJogo.classList.remove('on');
     repChalNomes.classList.remove('on');
     repSelecao.classList.remove('on');
@@ -1537,6 +1850,7 @@ body{
     repSelecao.classList.remove('on');
     repTabuleiro.classList.remove('oculto');
     repMontar();
+    repMusica.iniciar();                       /* começou a partida do Single Player */
     somClique();
     repTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
   }
@@ -1578,8 +1892,7 @@ body{
   const repChalPlacar      = document.getElementById('repChalPlacar');
   const repChalResultado   = document.getElementById('repChalResultado');
   const repChalCartaAtual  = document.getElementById('repChalCartaAtual');
-  const repChalSacarBtn    = document.getElementById('repChalSacar');
-  const repChalRestEl      = document.getElementById('repChalRest');
+  const repChalMontesEl = document.getElementById('repChalMontes');
   const repChalEncerrarBtn = document.getElementById('repChalEncerrar');
   const repChalReiniciarBtn   = document.getElementById('repChalReiniciar');
   const repChalTrocarModoBtn  = document.getElementById('repChalTrocarModo');
@@ -1590,10 +1903,11 @@ body{
     ativo: false,
     jogadores: [],   /* [{nome, pontos}] */
     turno: 0,
-    deck: [],        /* [{tipo, chave}] */
+    montes: {},      /* {tipo: [{tipo, chave}]} — um monte de compra por tipo de carta */
     cartaSacada: null,
     cartaMao: null,
     slotMarcado: null,
+    movidos: new Set(),   /* encaixes preenchidos/movidos neste turno */
     fase: 'sacar'    /* 'sacar' | 'jogar' */
   };
 
@@ -1603,10 +1917,9 @@ body{
 
   function chalRepVazioHTML(tipo){ return '<span class="vazio">' + CHAL_REP_VAZIO[tipo] + '</span>'; }
 
-  function chalRepCriarSlot(chave, tipo){
+  function chalRepCriarSlot(tipo){
     const s = document.createElement('div');
     s.className = 'rep-slot tipo-' + tipo;
-    s.dataset.alvo = chave;
     s.dataset.tipo = tipo;
     s.dataset.posto = '';
     s.innerHTML = chalRepVazioHTML(tipo);
@@ -1616,15 +1929,13 @@ body{
   function chalRepCriarEstacao(trio){
     const est = document.createElement('div');
     est.className = 'rep-estacao';
-    const rot = document.createElement('div');
-    rot.className = 'rep-rotulo';
-    rot.textContent = trio.titulo;
-    est.appendChild(rot);
+    /* sem título e sem "alvo": qualquer trio completo e coerente na mesma
+       estação é acerto, em qualquer posição do campo */
     const leque = document.createElement('div');
     leque.className = 'rep-leque';
-    leque.appendChild(chalRepCriarSlot(trio.id, 'conceito'));
-    leque.appendChild(chalRepCriarSlot(trio.id, 'def'));
-    leque.appendChild(chalRepCriarSlot(trio.id, 'clin'));
+    leque.appendChild(chalRepCriarSlot('conceito'));
+    leque.appendChild(chalRepCriarSlot('def'));
+    leque.appendChild(chalRepCriarSlot('clin'));
     est.appendChild(leque);
     return est;
   }
@@ -1639,12 +1950,50 @@ body{
       deck.push({tipo:'def', chave:t.id});
       deck.push({tipo:'clin', chave:t.id});
     });
-    return repEmbaralhar(deck);
+    /* um monte por tipo de carta, cada um embaralhado por dentro */
+    const montes = {};
+    deck.forEach(function(c){ (montes[c.tipo] = montes[c.tipo] || []).push(c); });
+    Object.keys(montes).forEach(function(t){ montes[t] = repEmbaralhar(montes[t]); });
+    return montes;
   }
+  /* ---------- montes de compra: um por tipo de carta ---------- */
+  const CHAL_REP_TIPOS_MONTE = [
+    {tipo:'conceito', rot:'Categoria', cor:'#8B6FE0', claro:'#C9BAF4'},
+    {tipo:'def', rot:'Definição e função', cor:'#4F9BD9', claro:'#BEE0F5'},
+    {tipo:'clin', rot:'Conexão clínica', cor:'#E08A55', claro:'#F5CDB4'}
+  ];
+  function chalTotalMonte(){
+    let n = 0;
+    Object.keys(CHAL_REP.montes).forEach(function(t){ n += CHAL_REP.montes[t].length; });
+    return n;
+  }
+  function chalMontarMontes(){
+    repChalMontesEl.innerHTML = '';
+    CHAL_REP_TIPOS_MONTE.forEach(function(t){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rep-chal-monte';
+      b.dataset.tipo = t.tipo;
+      b.style.setProperty('--mc', t.cor);
+      b.style.setProperty('--mc-claro', t.claro);
+      b.setAttribute('aria-label', 'Sacar do monte: ' + t.rot);
+      b.innerHTML = '<span class="pilha"><span class="verso"><span class="ico">🂠</span></span>' +
+        '<span class="qtd">0</span></span><span class="rot">' + t.rot + '</span>';
+      repChalMontesEl.appendChild(b);
+    });
+  }
+  /* atualiza contagem, "vazio" e se dá pra sacar: só na fase de sacar, e de monte com carta */
   function chalRepAtualizarResto(){
-    const n = CHAL_REP.deck.length;
-    repChalRestEl.textContent = n + (n === 1 ? ' carta no monte' : ' cartas no monte');
+    const podeSacar = CHAL_REP.ativo && CHAL_REP.fase === 'sacar';
+    Array.prototype.forEach.call(repChalMontesEl.querySelectorAll('.rep-chal-monte'), function(b){
+      const n = (CHAL_REP.montes[b.dataset.tipo] || []).length;
+      b.querySelector('.qtd').textContent = n;
+      b.classList.toggle('vazio', n === 0);
+      b.disabled = !podeSacar || n === 0;
+      b.title = n ? n + (n === 1 ? ' carta neste monte' : ' cartas neste monte') : 'Monte esgotado';
+    });
   }
+  chalMontarMontes();
   function chalRepRenderVez(msg){
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
     repChalVez.innerHTML = msg || ('▶ Vez de <b>' + repChalEsc(j.nome) + '</b>');
@@ -1697,19 +2046,19 @@ body{
       p.className = 'instr';
       if (CHAL_REP.fase === 'jogar'){
         p.textContent = 'Carta posicionada — encerre a vez quando terminar.';
-      } else if (!CHAL_REP.deck.length){
+      } else if (!chalTotalMonte()){
         p.textContent = 'O monte acabou — corrija as cartas erradas ou encerre a vez.';
       } else {
-        p.textContent = 'Saque uma carta para continuar o turno.';
+        p.textContent = 'Escolha um dos montes e saque uma carta para continuar o turno.';
       }
       repChalCartaAtual.appendChild(p);
     }
   }
   function chalRepAtualizarBotoes(){
     const semCartaNaMao = !CHAL_REP.cartaSacada && !CHAL_REP.cartaMao;
-    repChalSacarBtn.disabled = !CHAL_REP.ativo || CHAL_REP.fase !== 'sacar' || !CHAL_REP.deck.length;
+    chalRepAtualizarResto();
     repChalEncerrarBtn.disabled = !CHAL_REP.ativo || !semCartaNaMao ||
-      (CHAL_REP.fase === 'sacar' && CHAL_REP.deck.length > 0);
+      (CHAL_REP.fase === 'sacar' && chalTotalMonte() > 0);
   }
 
   function chalRepEsvaziarSlot(slot){
@@ -1722,6 +2071,8 @@ body{
     const tipo = slot.dataset.tipo;
     const trio = repTrio(chave);
     slot.dataset.posto = chave;
+    slot.dataset.autor = String(CHAL_REP.turno);     /* quem posicionou (conta na maioria do trio) */
+    CHAL_REP.movidos.add(slot);
     slot.classList.remove('certo','errado','marcado');
     slot.classList.add('cheio');
     slot.innerHTML = '';
@@ -1732,10 +2083,10 @@ body{
     CHAL_REP.slotMarcado = null;
   }
 
-  function chalRepSacar(){
-    if (!CHAL_REP.ativo || CHAL_REP.fase !== 'sacar' || !CHAL_REP.deck.length) return;
+  function chalRepSacar(tipo){
+    if (!CHAL_REP.ativo || CHAL_REP.fase !== 'sacar' || !CHAL_REP.montes[tipo] || !CHAL_REP.montes[tipo].length) return;
     chalRepDesmarcarSlot();
-    CHAL_REP.cartaSacada = CHAL_REP.deck.pop();
+    CHAL_REP.cartaSacada = CHAL_REP.montes[tipo].pop();
     CHAL_REP.fase = 'jogar';
     chalRepAtualizarResto();
     somClique();
@@ -1743,7 +2094,10 @@ body{
     chalRepRenderVez();
     chalRepAtualizarBotoes();
   }
-  repChalSacarBtn.addEventListener('click', chalRepSacar);
+  repChalMontesEl.addEventListener('click', function(e){
+    const b = e.target.closest('.rep-chal-monte');
+    if (b && !b.disabled) chalRepSacar(b.dataset.tipo);
+  });
 
   repChalCartaAtual.addEventListener('click', function(){
     if (!CHAL_REP.ativo) return;
@@ -1767,15 +2121,14 @@ body{
     const feitos = repChalCampo.querySelectorAll('.rep-estacao.rep-chal-vencida').length;
     repChalHudPos.innerHTML = 'TRIOS FECHADOS: <b>' + feitos + '/' + REP_TRIOS.length + '</b>';
   }
-  function chalRepChecarTrio(chave){
-    const slots = repChalCampo.querySelectorAll('.rep-slot[data-alvo="' + chave + '"]');
-    const travados = Array.prototype.filter.call(slots, function(s){ return s.classList.contains('travado'); });
-    if (travados.length < 3) return;
+  /* trio recém-fechado: a estação (1 ponto) é de quem acertou mais cartas dela — maioria de 2 das 3;
+     cada carta fica registrada com quem a posicionou (selo numerado) */
+  function chalRepChecarTrio(est){
+    const slots = est.querySelectorAll('.rep-slot');
     const contagem = [0, 0];
-    travados.forEach(function(s){ contagem[Number(s.dataset.dono)]++; });
+    Array.prototype.forEach.call(slots, function(s){ contagem[Number(s.dataset.dono)]++; });
     const vencedor = contagem[0] >= contagem[1] ? 0 : 1;
     CHAL_REP.jogadores[vencedor].pontos++;
-    const est = slots[0].closest('.rep-estacao');
     est.classList.add('rep-chal-vencida', 'jog' + vencedor);
     chalRepAtualizarHud();
     somVitoria();
@@ -1809,14 +2162,19 @@ body{
        momento do turno, antes ou depois de sacar */
     if (CHAL_REP.slotMarcado){
       if (CHAL_REP.slotMarcado === slot){ chalRepDesmarcarSlot(); somClique(); return; }
-      if (slot.dataset.posto || slot.dataset.tipo !== CHAL_REP.slotMarcado.dataset.tipo){
+      if (slot.dataset.tipo !== CHAL_REP.slotMarcado.dataset.tipo){
         somErro();
         return;
       }
-      const chave = CHAL_REP.slotMarcado.dataset.posto;
-      chalRepEsvaziarSlot(CHAL_REP.slotMarcado);
+      /* encaixe ocupado do mesmo tipo: as duas cartas trocam de lugar (sem isso,
+         com o monte vazio e tudo preenchido, ninguém conseguiria corrigir nada) */
+      const chaveA = CHAL_REP.slotMarcado.dataset.posto;
+      const chaveB = slot.dataset.posto;
+      const origem = CHAL_REP.slotMarcado;
+      chalRepEsvaziarSlot(origem);
       chalRepDesmarcarSlot();
-      chalRepPreencherSlot(slot, chave);
+      if (chaveB){ chalRepEsvaziarSlot(slot); chalRepPreencherSlot(origem, chaveB); }
+      chalRepPreencherSlot(slot, chaveA);
       somEncaixe();
       return;
     }
@@ -1834,19 +2192,23 @@ body{
   }
 
   let repVdTok = 0;
-  function chalRepVeredito(nome, ganhos, erradas, cb){
+  /* tipo: 'acerto' (fechou trio), 'erro' (posicionou carta que não combina) ou
+     'neutro' (carta posicionada numa estação que ainda não tem com o que comparar) */
+  function chalRepVeredito(nome, tipo, trios, erradas, cb){
     const ov = document.getElementById('repChalVeredito');
     if (!ov){ if (cb) cb(); return; }
-    const acerto = ganhos > 0;
-    ov.classList.remove('acerto','erro');
-    ov.classList.add(acerto ? 'acerto' : 'erro');
-    document.getElementById('repVdIco').textContent = acerto ? '✅' : '❌';
-    document.getElementById('repVdTit').innerHTML = acerto
-      ? '<b>' + repChalEsc(nome) + '</b> ACERTOU ' + ganhos + (ganhos === 1 ? ' CARTA!' : ' CARTAS!')
-      : '<b>' + repChalEsc(nome) + '</b> ERROU A POSIÇÃO!';
+    ov.classList.remove('acerto','erro','neutro');
+    ov.classList.add(tipo);
+    document.getElementById('repVdIco').textContent = tipo === 'acerto' ? '✅' : tipo === 'erro' ? '❌' : '📌';
+    document.getElementById('repVdTit').innerHTML = tipo === 'acerto'
+      ? '<b>' + repChalEsc(nome) + '</b> FECHOU ' + trios + (trios === 1 ? ' TRIO!' : ' TRIOS!')
+      : tipo === 'erro'
+        ? '<b>' + repChalEsc(nome) + '</b> ERROU O TRIO!'
+        : '<b>' + repChalEsc(nome) + '</b> POSICIONOU A CARTA';
     document.getElementById('repVdSub').textContent = erradas > 0
       ? erradas + (erradas === 1 ? ' carta ainda fora do lugar.' : ' cartas ainda fora do lugar.')
-      : (acerto ? 'Nenhuma carta fora do lugar até aqui.' : '');
+      : (tipo === 'acerto' ? 'Nenhuma carta fora do lugar até aqui.'
+        : tipo === 'neutro' ? 'Ainda não há trio para conferir nessa estação.' : '');
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
     const meu = ++repVdTok;
     setTimeout(function(){
@@ -1858,43 +2220,65 @@ body{
 
   function chalRepEncerrarTurno(){
     if (!CHAL_REP.ativo || CHAL_REP.cartaSacada || CHAL_REP.cartaMao) return;
-    if (CHAL_REP.fase === 'sacar' && CHAL_REP.deck.length > 0) return;
+    if (CHAL_REP.fase === 'sacar' && chalTotalMonte() > 0) return;
     chalRepDesmarcarSlot();
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
 
     /* trava os botões enquanto o veredito e o aviso de vez tocam em sequência —
        evita clique duplo reabrindo o veredito no meio da animação */
-    repChalSacarBtn.disabled = true;
+    chalRepAtualizarResto();
     repChalEncerrarBtn.disabled = true;
 
-    /* reavalia TODOS os encaixes ainda não confirmados — não só o que acabou
-       de ser jogado, porque um reposicionamento também pode ter acertado
-       uma carta que estava errada desde um turno anterior */
-    let ganhos = 0, erradas = 0;
-    const trios = new Set();
-    repChalCampo.querySelectorAll('.rep-slot').forEach(function(slot){
-      if (!slot.dataset.posto || slot.classList.contains('travado')) return;
-      if (slot.dataset.posto === slot.dataset.alvo){
-        ganhos++;
-        slot.dataset.dono = CHAL_REP.turno;
-        slot.classList.remove('errado');
-        slot.classList.add('certo', 'travado', 'dono' + CHAL_REP.turno);
-        const badge = document.createElement('span');
-        badge.className = 'rep-chal-dono jog' + CHAL_REP.turno;
-        badge.textContent = CHAL_REP.turno + 1;
-        slot.appendChild(badge);
-        trios.add(slot.dataset.alvo);
-      } else {
-        slot.classList.add('errado');
-        erradas++;
+    /* reavalia TODAS as estações ainda não fechadas — não só onde se jogou agora,
+       porque um reposicionamento também pode ter formado um trio que estava
+       errado desde um turno anterior. O que vale é o TRIO na mesma estação
+       (conceito + definição + clínica do mesmo tema), em qualquer posição do campo. */
+    let fechados = 0, erradas = 0, erradasMov = 0;
+    const novos = [];
+    repChalCampo.querySelectorAll('.rep-estacao').forEach(function(est){
+      const slots = [].slice.call(est.querySelectorAll('.rep-slot'));
+      if (slots.every(function(sl){ return sl.classList.contains('travado'); })) return;
+      slots.forEach(function(sl){ sl.classList.remove('errado'); });
+      const cheios = slots.filter(function(sl){ return sl.dataset.posto; });
+      const cont = {};
+      cheios.forEach(function(sl){ cont[sl.dataset.posto] = (cont[sl.dataset.posto] || 0) + 1; });
+      const chaves = Object.keys(cont);
+      if (cheios.length === slots.length && chaves.length === 1){
+        fechados++;
+        cheios.forEach(function(sl){
+          const a = parseInt(sl.dataset.autor, 10);    /* cada carta fica com quem a posicionou */
+          sl.dataset.dono = a;
+          sl.dataset.alvo = sl.dataset.posto;          /* a revisão final mostra a carta deste encaixe */
+          sl.classList.add('certo', 'travado', 'dono' + a);
+          const badge = document.createElement('span');
+          badge.className = 'rep-chal-dono jog' + a;
+          badge.textContent = a + 1;
+          sl.appendChild(badge);
+        });
+        novos.push(est);
+        return;
       }
+      /* com 3 encaixes: a chave que aparece 2x é a "maioria" (fica sem marca até
+         o trio completar); as demais cartas não combinam e ficam marcadas */
+      let maj = null;
+      chaves.forEach(function(k){ if (cont[k] > 1) maj = k; });
+      cheios.forEach(function(sl){
+        if (maj !== null ? sl.dataset.posto !== maj : chaves.length > 1){
+          sl.classList.add('errado');
+          erradas++;
+          if (CHAL_REP.movidos.has(sl)) erradasMov++;
+        }
+      });
     });
-    if (ganhos > 0) somEncaixe(); else somErro();
-    trios.forEach(chalRepChecarTrio);
+    const tipoVd = fechados > 0 ? 'acerto'
+      : ((erradasMov > 0 || (!CHAL_REP.movidos.size && erradas > 0)) ? 'erro' : 'neutro');
+    CHAL_REP.movidos.clear();
+    if (fechados > 0) somEncaixe(); else if (tipoVd === 'erro') somErro();
+    novos.forEach(chalRepChecarTrio);
 
     /* veredito (5 s) só então dá lugar ao aviso de vez do próximo jogador (3 s) —
        antes os dois overlays apareciam sobrepostos */
-    chalRepVeredito(j.nome, ganhos, erradas, function(){
+    chalRepVeredito(j.nome, tipoVd, fechados, erradas, function(){
       if (chalRepTudoCerto()){ chalRepFim(); return; }
 
       CHAL_REP.turno = (CHAL_REP.turno + 1) % CHAL_REP.jogadores.length;
@@ -1909,10 +2293,11 @@ body{
   repChalEncerrarBtn.addEventListener('click', chalRepEncerrarTurno);
 
   function chalRepFim(){
+    repMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_REP.ativo = false;
     repChalReiniciarBtn.disabled = false;
     repChalTrocarModoBtn.disabled = false;
-    repChalSacarBtn.disabled = true;
+    chalRepAtualizarResto();
     repChalEncerrarBtn.disabled = true;
     const jogadores = CHAL_REP.jogadores;
     const vencedor = jogadores[0].pontos >= jogadores[1].pontos ? jogadores[0] : jogadores[1];
@@ -1981,14 +2366,76 @@ body{
     setTimeout(passo, 400);
   }
 
+  /* ---------- trava de rolagem durante as animações de tela cheia ----------
+     Ao aparecer qualquer uma delas, congela a rolagem da página (overflow:hidden no <html>);
+     ao sumir a última, devolve a página exatamente à posição de antes. */
+  (function(){
+    const ids = ['repChalEmbaralho','repChalSorteio','repChalAviso'];
+    const els = ids.map(function(id){ return document.getElementById(id); });
+    const raiz = document.documentElement;
+    let y = null;
+    function sincronizar(){
+      const ligada = els.some(function(e){ return e.classList.contains('on'); });
+      if (ligada && y === null){
+        y = window.scrollY; raiz.classList.add('chal-anim-lock');
+      } else if (!ligada && y !== null){
+        raiz.classList.remove('chal-anim-lock');
+        window.scrollTo({ top:y, behavior:'instant' });
+        y = null;
+      }
+    }
+    const mo = new MutationObserver(sincronizar);
+    els.forEach(function(e){ mo.observe(e, { attributes:true, attributeFilter:['class'] }); });
+  })();
+
+  /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  let chalEmbTok = 0;
+  function chalEmbaralharDeck(cb){
+    const ov = document.getElementById('repChalEmbaralho');
+    const resE = document.getElementById('repChalEmbaralhoRes');
+    const meu = ++chalEmbTok;
+    resE.textContent = '';
+    ov.classList.remove('parou');
+    let cartas = '';
+    for (let n = 0; n < 8; n++){
+      cartas += '<div class="chal-emb-c ' + (n % 2 ? 'd' : 'e') + '" style="--n:' + n + '">🃏</div>';
+    }
+    document.getElementById('repChalEmbaralhoPilha').innerHTML = '<div class="chal-emb-pilha">' + cartas + '</div>';
+    Object.keys(CHAL_REP.montes).forEach(function(t){ CHAL_REP.montes[t] = repEmbaralhar(CHAL_REP.montes[t].slice()); });       /* o embaralhamento de fato acontece aqui */
+    chalRepAtualizarResto();
+    ov.classList.add('on');
+
+    const DUR = 5000, REVELA = 4300;
+    let t = 0;
+    const tique = setInterval(function(){
+      if (meu !== chalEmbTok){ clearInterval(tique); return; }
+      t += 110;
+      if (t >= REVELA){ clearInterval(tique); return; }
+      somClique();
+    }, 110);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.add('parou');
+      resE.textContent = '✔ ' + chalTotalMonte() + ' cartas embaralhadas!';
+      somVitoria();
+    }, REVELA);
+    setTimeout(function(){
+      if (meu !== chalEmbTok) return;
+      ov.classList.remove('on');
+      cb();
+    }, DUR);
+  }
+
   function chalRepIniciar(nomes){
+    repMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     if (repRevAtiva) repRevReset();
     CHAL_REP.ativo = true;
     CHAL_REP.jogadores = nomes.map(function(n){ return {nome:n, pontos:0}; });
-    CHAL_REP.deck = chalRepMontarDeck();
+    CHAL_REP.montes = chalRepMontarDeck();
     CHAL_REP.cartaSacada = null;
     CHAL_REP.cartaMao = null;
     CHAL_REP.slotMarcado = null;
+    CHAL_REP.movidos.clear();
     CHAL_REP.fase = 'sacar';
     chalRepMontarTabuleiro();
     chalRepAtualizarHud();
@@ -1998,6 +2445,8 @@ body{
     repChalTrocarModoBtn.disabled = true;
     chalRepAtualizarResto();
 
+    /* abertura: embaralha o baralho (5 s) → sorteia quem começa (5 s) → 1ª vez */
+    chalEmbaralharDeck(function(){
     /* sorteio animado de quem começa */
     CHAL_REP.turno = Math.floor(Math.random() * CHAL_REP.jogadores.length);
     chalRepAnimarSorteio(CHAL_REP.turno, function(){
@@ -2007,6 +2456,7 @@ body{
       chalRepMostrarCarta();
       chalRepAtualizarBotoes();
     });
+    });
   }
 
   document.getElementById('repChalNomesOk').addEventListener('click', function(){
@@ -2014,9 +2464,10 @@ body{
     const n1 = document.getElementById('repChalNome1').value.trim() || 'Jogador 2';
     repEsconderTudo();
     repChalTabuleiro.style.display = '';
+    /* posiciona a página no tabuleiro ANTES de abrir as animações (instantâneo) */
+    repChalTabuleiro.scrollIntoView({behavior:'instant', block:'start'});
     chalRepIniciar([n0, n1]);
     somClique();
-    repChalTabuleiro.scrollIntoView({behavior:'smooth', block:'start'});
   });
   repChalReiniciarBtn.addEventListener('click', function(){
     if (CHAL_REP.ativo) return;
@@ -2042,10 +2493,20 @@ body{
   let repRevOnClose = null;
   const repRevBar = document.getElementById('repRevBar');
 
+  function repRevTipoDe(s){ return s.dataset.tipo || 'def'; }
+  function repRevGrande(t, alvo){ var trio = repTrio(alvo); var el = repMontarCarta(t, trio); el.title = 'Tocar para ampliar mais'; el.style.cursor = 'zoom-in'; el.addEventListener('click', function(){ abrirLightbox(repMontarCarta(t, trio)); }); return el; }
+  function repRevTipos(alvo){ var lista = ['conceito','def','clin'].filter(function(t){ return t === 'conceito' || !!repRevContainer.querySelector('.rep-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); return lista; }
   function repRevisaoAbrir(container, onClose){
-    repRevSlots = [].slice.call(container.querySelectorAll('.rep-slot')).filter(function(s){ return s.dataset.posto; });
+    /* TODOS os encaixes, na ordem do tabuleiro — a revisão mostra a combinação correta,
+       não o que a turma jogou */
+    repRevSlots = [].slice.call(container.querySelectorAll('.rep-slot')).filter(function(s){ return s.dataset.alvo; });
     if (!repRevSlots.length) return;
     repRevContainer = container;
+    repRevSlots.forEach(function(s){
+      const c = document.createElement('div'); c.className = 'rep-rev-correta';
+      c.appendChild((function(){ return repMontarCarta(repRevTipoDe(s), repTrio(s.dataset.alvo)); })());
+      s.appendChild(c);
+    });
     repRevOnClose = (typeof onClose === 'function') ? onClose : null;
     repRevAtiva = true;
     repRevIdx = 0;
@@ -2067,7 +2528,10 @@ body{
     repRevAtiva = false;
     repRevOnClose = null;
     if (repRevContainer) repRevContainer.classList.remove('rep-rev-on');
-    repRevSlots.forEach(function(s){ s.classList.remove('rep-rev-atual'); });
+    repRevSlots.forEach(function(s){
+      s.classList.remove('rep-rev-atual');
+      const c = s.querySelector('.rep-rev-correta'); if (c) c.remove();
+    });
     repRevBar.classList.remove('on');
     repRevSlots = [];
     repRevContainer = null;
@@ -2078,7 +2542,7 @@ body{
     repRevIdx = Math.max(0, Math.min(repRevSlots.length - 1, i));
     repRevSlots.forEach(function(s, k){ s.classList.toggle('rep-rev-atual', k === repRevIdx); });
     const slot = repRevSlots[repRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'center' });
+    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
     repRevPintarBarra(slot);
     somClique();
   }
@@ -2089,24 +2553,23 @@ body{
   }
 
   function repRevPintarBarra(slot){
-    const posto = slot.dataset.posto, alvo = slot.dataset.alvo;
-    const tipoLabel = REP_REV_TIPO_LABEL[slot.dataset.tipo] || '';
-    const certo = (posto === alvo);
-
+    const alvo = slot.dataset.alvo;
     document.getElementById('repRevPasso').textContent =
       'Estação ' + (repRevIdx + 1) + ' de ' + repRevSlots.length;
-    document.getElementById('repRevTit').innerHTML =
-      '<b>' + repRevNome(alvo) + '</b> — ' + tipoLabel;
+    document.getElementById('repRevTit').innerHTML = '<b>' + repRevNome(alvo) + '</b>';
 
-    const st = document.getElementById('repRevStatus');
-    if (certo){
-      st.className = 'rep-rev-status ok';
-      st.textContent = '✓ Encaixe correto.';
-    } else {
-      st.className = 'rep-rev-status erro';
-      st.textContent = '✗ Aqui foi colocada “' + repRevNome(posto) +
-        '”. O encaixe correto é “' + repRevNome(alvo) + '”.';
-    }
+    /* as cartas corretas desta estação, já AMPLIADAS (tocar amplia ainda mais);
+       a do encaixe atual em destaque */
+    const cx = document.getElementById('repRevCartas');
+    cx.innerHTML = '';
+    const atual = repRevTipoDe(slot);
+    repRevTipos(alvo).forEach(function(t){
+      const f = document.createElement('figure');
+      f.className = 'rep-rev-fig' + (t === atual ? ' atual' : '');
+      f.appendChild(repRevGrande(t, alvo));
+      cx.appendChild(f);
+    });
+
     document.getElementById('repRevPrev').disabled = (repRevIdx === 0);
     document.getElementById('repRevNext').disabled = (repRevIdx === repRevSlots.length - 1);
   }
