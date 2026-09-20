@@ -1463,13 +1463,16 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
      Toca em sequência, com 3 s de intervalo: A = Duel of Arcana V1; B = Helicase Groove.
      Começa quando uma partida começa, REPETE SEM PARAR até o fim do jogo (vitória/fim
      da partida, com uma descida rápida do volume) ou até o jogador sair para os menus.
-     As faixas são MP3 da pasta «Músicas dos jogos», que deve ficar AO LADO deste
-     arquivo (sem ela o jogo funciona normalmente, só sem música). A próxima faixa é
+     As faixas são MP3 da pasta «Músicas dos jogos» (ou, se ela não existir, soltos ao lado
+     deste arquivo); sem eles o jogo funciona normalmente, só sem música. A próxima faixa é
      baixada enquanto a atual toca.
      ============================================================== */
   const ampMusica = (function(){
-    /* MP3 na pasta «Músicas dos jogos», ao lado do jogo (nomes com espaço/acento são codificados na URL) */
-    const PASTA = 'Músicas dos jogos/';
+    /* Onde procurar os MP3 (nomes com espaço/acento são codificados na URL): primeiro na pasta
+       «Músicas dos jogos», ao lado do jogo; se não achar, na própria pasta do jogo (serve quando
+       só os arquivos .mp3 foram enviados, sem a pasta). Sem nenhum dos dois, o jogo fica sem música. */
+    const PASTAS = ['Músicas dos jogos/', ''];
+    let pastaIdx = 0;
     const FAIXAS = ['Duel of Arcana -  V1.mp3', 'Helicase Groove.mp3'];
     const INTERVALO_MS = 3000;
     const btn = document.getElementById('btnMusica');
@@ -1485,10 +1488,10 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     const pre = [];                                        /* faixas já pré-carregadas */
     let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
 
-    function url(i){ return encodeURI(PASTA + FAIXAS[i]); }
-    function abrir(i){                                     /* usa a pré-carregada, se houver */
-      const a = pre[i] || new Audio(url(i));
-      pre[i] = null;
+    function url(i){ return encodeURI(PASTAS[pastaIdx] + FAIXAS[i]); }
+    function abrir(i){                                     /* usa a pré-carregada, se houver e não deu erro */
+      let a = pre[i]; pre[i] = null;
+      if (!a || a.error) a = new Audio(url(i));
       return a;
     }
     function preparar(i){                                  /* baixa a próxima faixa durante a atual/o intervalo */
@@ -1502,6 +1505,13 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
       a.volume = volume;
       a.muted = calado;
       audio = a;
+      a.addEventListener('error', function(){              /* não achou o arquivo nesta pasta: tenta a seguinte */
+        if (meu !== tok || a !== audio || a.currentTime > 0) return;
+        if (pastaIdx < PASTAS.length - 1){
+          pastaIdx++; pre.length = 0; audio = null;
+          tocar(i, meu);
+        }
+      });
       a.addEventListener('ended', function(){
         if (meu !== tok) return;
         /* a sequência repete sem parar: depois da última volta à primeira (com o mesmo intervalo) */
