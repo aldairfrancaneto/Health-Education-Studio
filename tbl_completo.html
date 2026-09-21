@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TBL — Aprendizagem Baseada em Equipes</title>
+<style>
+  :root{
+    --azul:#123a5c;--azul-claro:#1d6091;--ouro:#c9992b;--ouro-forte:#a87d17;
+    --verde:#1f8a55;--vermelho:#b23b3b;--cinza:#eef2f5;--cinza-borda:#d3dce3;
+    --texto:#1c2b36;--texto-suave:#5a6b78;
+    box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--cinza);color:var(--texto);line-height:1.5;-webkit-text-size-adjust:100%}
+  .wrap{max-width:720px;margin:0 auto;padding:16px}
+  .card{background:#fff;border:1px solid var(--cinza-borda);border-radius:16px;padding:22px;box-shadow:0 4px 18px rgba(18,58,92,.06)}
+  header.topo{background:linear-gradient(135deg,var(--azul),var(--azul-claro));color:#fff;border-radius:16px;padding:20px 22px;margin-bottom:16px}
+  header.topo h1{margin:0;font-size:1.15rem;letter-spacing:.3px}
+  header.topo p{margin:6px 0 0;opacity:.85;font-size:.85rem}
+  h2{margin:0 0 4px;font-size:1.25rem;color:var(--azul)}
+  .sub{color:var(--texto-suave);font-size:.9rem;margin:0 0 18px}
+  label.campo{display:block;font-weight:600;font-size:.85rem;margin:14px 0 6px;color:var(--azul)}
+  input[type=text]{width:100%;padding:12px 14px;border:1.5px solid var(--cinza-borda);border-radius:10px;font-size:1rem;background:#fbfdfe;color:var(--texto)}
+  input[type=text]:focus{outline:none;border-color:var(--azul-claro);background:#fff}
+  textarea{width:100%;min-height:200px;padding:14px;border:1.5px solid var(--cinza-borda);border-radius:12px;font-size:1rem;
+    font-family:inherit;background:#fbfdfe;color:var(--texto);resize:vertical;line-height:1.55}
+  textarea:focus{outline:none;border-color:var(--azul-claro);background:#fff}
+  .membro{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .membro input{flex:1}
+  .btn-rem{border:none;background:#f3e3e3;color:var(--vermelho);width:40px;height:44px;border-radius:10px;font-size:1.3rem;cursor:pointer;flex:none;line-height:1}
+  .btn-rem:disabled{opacity:.3;cursor:not-allowed}
+  .btn-add{background:none;border:1.5px dashed var(--cinza-borda);color:var(--azul-claro);padding:10px;width:100%;border-radius:10px;font-weight:600;cursor:pointer;margin-top:4px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;padding:14px 20px;font-size:1rem;font-weight:700;cursor:pointer;transition:filter .15s}
+  .btn-primario{background:var(--azul);color:#fff}
+  .btn-primario:hover{filter:brightness(1.08)}
+  .btn-primario:disabled{background:#9db2c1;cursor:not-allowed;filter:none}
+  .btn-secundario{background:var(--cinza);color:var(--azul);border:1.5px solid var(--cinza-borda)}
+  .btn-secundario:disabled{opacity:.5;cursor:not-allowed;filter:none}
+  .btn-pdf{background:var(--verde);color:#fff;font-size:1.05rem;width:100%;padding:16px}
+  .btn-pdf:hover{filter:brightness(1.07)}
+  .erro{color:var(--vermelho);font-size:.85rem;margin-top:10px;min-height:1em;font-weight:600}
+
+  /* Escolha de fase */
+  .fase-card{display:block;width:100%;text-align:left;border:1.5px solid var(--cinza-borda);background:#fbfdfe;
+    border-radius:14px;padding:18px 20px;margin-bottom:14px;cursor:pointer;transition:.15s}
+  .fase-card:hover{border-color:var(--azul-claro);background:#fff;box-shadow:0 4px 14px rgba(18,58,92,.08)}
+  .fase-card .fase-num{display:block;font-size:1.3rem;font-weight:800;color:var(--azul)}
+  .fase-card .fase-desc{display:block;font-size:.86rem;color:var(--texto-suave);margin-top:4px}
+
+  /* Progresso */
+  .prog{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center}
+  .dot{width:24px;height:24px;border-radius:50%;background:#dbe4ea;color:var(--texto-suave);font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .dot.feita{background:var(--verde);color:#fff}
+  .dot.atual{background:var(--azul);color:#fff;box-shadow:0 0 0 3px rgba(18,58,92,.18)}
+  .q-num{font-size:2rem;font-weight:800;color:var(--azul);text-align:center;margin:4px 0 2px}
+  .q-num-linha{display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0 2px}
+  .q-num-linha .q-num{margin:0}
+  .rem-inline{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--cinza-borda);background:#fff;color:var(--vermelho);font-size:1.05rem;line-height:1;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;padding:0}
+  .rem-inline:hover{background:#f9ecec;border-color:var(--vermelho)}
+  .q-instr{text-align:center;color:var(--texto-suave);font-size:.86rem;margin:0}
+
+  /* Seletor de tipo (Fase 3) */
+  .tipo-sel{display:flex;gap:8px;margin:16px 0 8px}
+  .tipo-btn{flex:1;padding:12px;border:1.5px solid var(--cinza-borda);background:#fbfdfe;border-radius:12px;font-weight:700;color:var(--texto-suave);cursor:pointer;font-size:.95rem}
+  .tipo-btn.ativo{background:var(--azul);color:#fff;border-color:var(--azul)}
+  .aviso-tipo{text-align:center;color:var(--texto-suave);font-size:.9rem;padding:22px 8px;background:var(--cinza);border-radius:12px;margin-top:8px}
+
+  /* Objetiva */
+  .parcelas-info{display:flex;justify-content:center;gap:10px;align-items:center;margin:16px 0;flex-wrap:wrap}
+  .fichas{display:flex;gap:6px}
+  .ficha{width:18px;height:18px;border-radius:50%;border:2px solid var(--ouro);background:#fff}
+  .ficha.usada{background:var(--ouro)}
+  .total-badge{font-weight:800;font-size:1rem;padding:6px 14px;border-radius:20px;background:var(--cinza);color:var(--azul)}
+  .total-badge.ok{background:#e2f4ea;color:var(--verde)}
+  .alt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--cinza-borda);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:#fbfdfe;position:relative;overflow:hidden}
+  .alt.tem-valor{border-color:var(--ouro);background:#fffdf5}
+  .alt .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(201,153,43,.14);width:0;transition:width .2s;z-index:0}
+  .alt>*{position:relative;z-index:1}
+  .letra{width:44px;height:44px;flex:none;border-radius:11px;background:var(--azul);color:#fff;font-size:1.3rem;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+  .letra:hover{background:var(--azul-claro)}
+  .alt-meio{flex:1;min-width:0}
+  .alt-perc{font-size:1.35rem;font-weight:800;color:var(--azul)}
+  .alt-hint{font-size:.72rem;color:var(--texto-suave)}
+  .stepper{display:flex;gap:6px;flex:none}
+  .step{width:44px;height:44px;border:none;border-radius:11px;font-size:1.5rem;font-weight:800;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
+  .step-menos{background:#eef2f5;color:var(--azul)}
+  .step-mais{background:var(--ouro);color:#fff}
+  .step:disabled{opacity:.3;cursor:not-allowed}
+  .contador{text-align:right;font-size:.78rem;color:var(--texto-suave);margin-top:6px}
+
+  /* Seleção única (Fase 1 / IRAT) */
+  .alt-sel{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1.5px solid var(--cinza-borda);border-radius:14px;padding:10px 12px;margin-bottom:10px;background:#fbfdfe;cursor:pointer;transition:.12s;font-family:inherit}
+  .alt-sel:hover{border-color:var(--azul-claro)}
+  .alt-sel.sel{border-color:var(--azul);background:#eef4f9;box-shadow:0 0 0 2px rgba(18,58,92,.12)}
+  .alt-sel .alt-nome{flex:1;font-size:1.05rem;font-weight:700;color:var(--azul)}
+  .radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--cinza-borda);flex:none}
+  .alt-sel.sel .radio{border-color:var(--azul);background:var(--azul);box-shadow:inset 0 0 0 4px #fff}
+
+  .nav{display:flex;gap:10px;margin-top:18px}
+  .nav .btn{flex:1}
+  .linha-extra{display:flex;gap:10px;margin-top:10px}
+  .linha-extra .btn{flex:1}
+  .remover{background:none;border:none;color:var(--vermelho);font-size:.82rem;cursor:pointer;margin-top:12px;display:block;width:100%;text-align:center;font-weight:600}
+  .dica{background:#f1f6fa;border-left:4px solid var(--azul-claro);padding:10px 14px;border-radius:8px;font-size:.82rem;color:var(--texto-suave);margin-top:14px}
+
+  table.rev{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
+  table.rev th,table.rev td{border:1px solid var(--cinza-borda);padding:8px 6px;text-align:center}
+  table.rev th{background:var(--azul);color:#fff}
+  table.rev td.q{font-weight:700;background:var(--cinza)}
+  table.rev td.v{color:var(--texto-suave)}
+  table.rev td.v.destaque{color:var(--ouro-forte);font-weight:800;background:#fffbf0}
+  .rev-q{border:1px solid var(--cinza-borda);border-radius:12px;padding:12px 14px;margin-top:10px;background:#fbfdfe}
+  .rev-q .rq-cab{font-weight:800;color:var(--azul);margin-bottom:6px}
+  .rev-q .rq-tag{font-size:.72rem;background:var(--azul);color:#fff;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:700}
+  .rev-q .rq-dist{font-size:.9rem;color:var(--ouro-forte);font-weight:700}
+  .rev-q .rq-texto{white-space:pre-wrap;font-size:.9rem;color:var(--texto)}
+
+  /* rodapé de informações (mesmo sistema do jogo "morte") */
+  .site-footer{position:fixed; left:0; right:0; bottom:0; z-index:50;
+    padding:10px 14px; border-top:1px solid rgba(255,255,255,.15);
+    background:#0E1A2E;
+    color:rgba(255,255,255,.55); font-size:12.5px; letter-spacing:.02em; text-align:left; line-height:1.7;}
+  .site-footer .site-footer-linha{ max-width:1180px; margin:0 auto; }
+  .site-footer strong{ color:rgba(255,255,255,.8); }
+  .site-footer-linha{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; }
+  .site-footer-verso{ margin-left:auto; color:rgba(255,255,255,.45); }
+  @media (max-width:600px){
+    .site-footer-verso{ margin-left:0; width:100%; }
+  }
+  /* o rodapé é fixo: reserva espaço para ele não cobrir o fim do conteúdo */
+  .wrap{padding-bottom:90px}
+
+  .hidden{display:none !important}
+
+  #print-area{display:none}
+  @media print{
+    body{background:#fff}
+    .wrap,header.topo,.screen,.site-footer{display:none !important}
+    #print-area{display:block !important}
+    #print-area h1{font-size:18px;color:#123a5c;margin:0 0 4px}
+    #print-area .meta{font-size:12px;margin-bottom:16px}
+    #print-area table{width:100%;border-collapse:collapse;font-size:12px}
+    #print-area th,#print-area td{border:1px solid #333;padding:6px;text-align:center}
+    #print-area th{background:#e6edf2}
+    #print-area td.q{font-weight:bold}
+    #print-area .pq{border:1px solid #333;border-radius:6px;padding:8px 10px;margin-bottom:10px;page-break-inside:avoid}
+    #print-area .pq .cab{font-weight:bold;font-size:13px;margin-bottom:4px}
+    #print-area .pq .dist{font-size:12px}
+    #print-area .pq .txt{font-size:12px;white-space:pre-wrap}
+    @page{margin:16mm}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <h1>TBL — Aprendizagem Baseada em Equipes</h1>
+    <p id="topo-sub">Escolha a fase para começar</p>
+  </header>
+
+  <!-- TELA 0: ESCOLHA DA FASE -->
+  <section id="screen-fase" class="screen card">
+    <h2>Escolha a fase do TBL</h2>
+    <p class="sub">Selecione a fase que você está respondendo agora, conforme o professor indicar.</p>
+    <button class="fase-card" id="pick-1" type="button">
+      <span class="fase-num">Fase 1 — IRAT</span>
+    </button>
+    <button class="fase-card" id="pick-2" type="button">
+      <span class="fase-num">Fase 2 — TRAT</span>
+    </button>
+    <button class="fase-card" id="pick-3" type="button">
+      <span class="fase-num">Fase 3 — Aplicação de Conceitos</span>
+    </button>
+  </section>
+
+  <!-- TELA 1: IDENTIFICAÇÃO (compartilhada) -->
+  <section id="screen-id" class="screen card hidden">
+    <h2 id="id-titulo">Identificação</h2>
+    <p class="sub" id="id-sub">Preencha os dados antes de começar.</p>
+    <div id="id-individual" class="hidden">
+      <label class="campo" for="aluno-nome">Nome completo</label>
+      <input type="text" id="aluno-nome" placeholder="Seu nome completo">
+      <label class="campo" for="aluno-ra">Matrícula / RA (opcional)</label>
+      <input type="text" id="aluno-ra" placeholder="Ex.: 202512345">
+    </div>
+    <div id="id-grupo">
+      <label class="campo" for="grupo">Nome / número do grupo</label>
+      <input type="text" id="grupo" placeholder="Ex.: Grupo 3">
+      <label class="campo">Integrantes (nome completo)</label>
+      <div id="membros"></div>
+      <button class="btn-add" id="add-membro" type="button">+ Adicionar integrante</button>
+    </div>
+    <div class="erro" id="erro-id"></div>
+    <div class="nav">
+      <button class="btn btn-secundario" id="id-voltar" type="button">← Fase</button>
+      <button class="btn btn-primario" id="iniciar" type="button">Iniciar →</button>
+    </div>
+  </section>
+
+  <!-- TELA 2Z: QUESTÕES FASE 1 (IRAT) -->
+  <section id="screen-q1" class="screen card hidden">
+    <div class="prog" id="prog1"></div>
+    <p class="q-instr">Selecione a alternativa que você julga correta</p>
+    <div class="q-num" id="q1-num">Questão 1</div>
+    <div id="alternativas1" style="margin-top:8px"></div>
+    <div class="dica">💡 Escolha <strong>uma</strong> alternativa por questão. É possível trocar a seleção antes de avançar.</div>
+    <div class="nav">
+      <button class="btn btn-secundario" id="q1-ant" type="button">← Anterior</button>
+      <button class="btn btn-primario" id="q1-prox" type="button">Salvar e próxima →</button>
+    </div>
+  </section>
+
+  <!-- TELA 2A: QUESTÕES FASE 2 -->
+  <section id="screen-q2" class="screen card hidden">
+    <div class="prog" id="prog2"></div>
+    <p class="q-instr">Distribua as 4 parcelas de 25% do ponto</p>
+    <div class="q-num" id="q2-num">Questão 1</div>
+    <div class="parcelas-info">
+      <div class="fichas" id="fichas2"></div>
+      <span class="total-badge" id="total-badge2">0% / 100%</span>
+    </div>
+    <div id="alternativas2"></div>
+    <div class="dica">
+      💡 Toque na <strong>letra</strong> para colocar 100% numa alternativa, ou use <strong>–/+</strong> para distribuir 25% entre as alternativas em dúvida. O total precisa somar <strong>100%</strong>.
+    </div>
+    <div class="nav">
+      <button class="btn btn-secundario" id="q2-ant" type="button">← Anterior</button>
+      <button class="btn btn-primario" id="q2-prox" type="button">Salvar e próxima →</button>
+    </div>
+  </section>
+
+  <!-- TELA 2B: QUESTÕES FASE 3 -->
+  <section id="screen-q3" class="screen card hidden">
+    <div class="prog" id="prog3"></div>
+    <div class="q-num-linha">
+      <span class="q-num" id="q3-num">Questão 1</span>
+      <button class="rem-inline" id="btn-rem-q" type="button" title="Remover esta questão" aria-label="Remover esta questão">×</button>
+    </div>
+    <p class="q-instr">Marque o tipo da questão que o professor está projetando</p>
+    <div class="tipo-sel">
+      <button class="tipo-btn" id="tipo-obj" type="button">Objetiva</button>
+      <button class="tipo-btn" id="tipo-disc" type="button">Discursiva</button>
+    </div>
+    <div id="corpo-tipo"></div>
+    <div class="nav">
+      <button class="btn btn-secundario" id="q3-ant" type="button">← Anterior</button>
+    </div>
+    <div class="linha-extra">
+      <button class="btn btn-secundario" id="btn-add-q" type="button">+ Adicionar questão</button>
+      <button class="btn btn-primario" id="btn-final" type="button">✔ Revisar e salvar</button>
+    </div>
+    <button class="btn btn-secundario" id="btn-rascunho" type="button" style="width:100%;margin-top:10px">Salvar e próxima →</button>
+    <div id="rascunho-status" style="text-align:center;font-size:.78rem;color:var(--verde);min-height:1em;margin-top:6px;font-weight:600"></div>
+  </section>
+
+  <!-- TELA 3: FINAL (compartilhada) -->
+  <section id="screen-final" class="screen card hidden">
+    <h2 id="final-titulo">Revisão das respostas</h2>
+    <p class="sub" id="final-grupo"></p>
+    <div id="rev-container"></div>
+    <div class="dica" style="margin-top:18px">
+      ⚠️ <strong>Obrigatório:</strong> salve o comprovante em PDF para enviar ao professor —
+      na janela que abrir, escolha <strong>"Salvar como PDF"</strong> no destino da impressão.
+      Depois de salvar, você pode voltar para escolher outra fase do TBL.
+    </div>
+    <div style="margin-top:16px"><button class="btn btn-pdf" id="btn-pdf" type="button">💾 Salvar respostas em PDF</button></div>
+    <div class="linha-extra" id="final-extra">
+      <button class="btn btn-secundario" id="btn-add-final" type="button">+ Adicionar mais perguntas</button>
+      <button class="btn btn-secundario" id="btn-voltar-q" type="button">← Revisar questões</button>
+    </div>
+    <div class="nav" id="final-nav">
+      <button class="btn btn-secundario" id="btn-escolha" type="button" style="flex:1">⟲ Voltar para escolha da fase</button>
+    </div>
+  </section>
+</div>
+
+<div id="print-area"></div>
+
+<footer class="site-footer">
+  <div class="site-footer-linha">
+    <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
+    <span class="site-footer-verso">Versão 1.0 &middot; Última atualização: 21 de setembro de 2026</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var LETRAS=["A","B","C","D"];
+  var KEY1="tbl_fase1_rascunho", KEY2="tbl_fase2_rascunho", KEY3="tbl_fase3_rascunho";
+
+  var fase=null;      // 1, 2 ou 3
+  var atual=0;        // índice da questão atual
+  var estado={grupo:"",membros:[],aluno:"",ra:"",q1:[],q2:[],q3:[]};
+
+  function $(id){return document.getElementById(id);}
+  function mostrar(id){
+    ["screen-fase","screen-id","screen-q1","screen-q2","screen-q3","screen-final"].forEach(function(s){$(s).classList.toggle("hidden",s!==id);});
+    window.scrollTo(0,0);
+  }
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function totalParc(d){return d.A+d.B+d.C+d.D;}
+  function novaQ3(){return {tipo:null,dist:{A:0,B:0,C:0,D:0},texto:""};}
+  function completa3(q){
+    if(q.tipo==="obj") return totalParc(q.dist)===4;
+    if(q.tipo==="disc") return q.texto.trim().length>0;
+    return false;
+  }
+  function initFase1(){ estado.q1=[]; for(var i=0;i<10;i++) estado.q1.push(null); }
+  function initFase2(){ estado.q2=[]; for(var i=0;i<10;i++) estado.q2.push({A:0,B:0,C:0,D:0}); }
+  function initFase3(){ estado.q3=[novaQ3(),novaQ3(),novaQ3(),novaQ3()]; }
+
+  // ---------- RASCUNHO (memória) ----------
+  function salvarRascunho(silencioso){
+    try{
+      var p={atual:atual,quando:Date.now()};
+      if(fase===1){ p.aluno=estado.aluno; p.ra=estado.ra; p.q1=estado.q1; localStorage.setItem(KEY1,JSON.stringify(p)); }
+      else if(fase===2){ p.grupo=estado.grupo; p.membros=estado.membros; p.q2=estado.q2; localStorage.setItem(KEY2,JSON.stringify(p)); }
+      else { p.grupo=estado.grupo; p.membros=estado.membros; p.q3=estado.q3; localStorage.setItem(KEY3,JSON.stringify(p)); }
+      if(!silencioso) flashRascunho("Rascunho salvo na memória ✓");
+      return true;
+    }catch(e){ if(!silencioso) flashRascunho("Não foi possível salvar (memória indisponível)."); return false; }
+  }
+  function carregarRascunho(f){
+    var k = (f===1)?KEY1:(f===2)?KEY2:KEY3;
+    try{var raw=localStorage.getItem(k);return raw?JSON.parse(raw):null;}catch(e){return null;}
+  }
+  function flashRascunho(msg){var el=$("rascunho-status");if(!el)return;el.textContent=msg;setTimeout(function(){el.textContent="";},2600);}
+
+  // ---------- ESCOLHA DA FASE ----------
+  $("pick-1").onclick=function(){escolherFase(1);};
+  $("pick-2").onclick=function(){escolherFase(2);};
+  $("pick-3").onclick=function(){escolherFase(3);};
+
+  function escolherFase(f){
+    fase=f;
+    $("topo-sub").textContent = (f===1) ? "Fase 1 — IRAT" : (f===2) ? "Fase 2 — TRAT" : "Fase 3 — Aplicação de Conceitos";
+    var d=carregarRascunho(f);
+    var quem = (f===1) ? (d&&d.aluno) : (d&&d.grupo);
+    if(d && quem){
+      var qd=new Date(d.quando||Date.now());
+      var quando=qd.toLocaleDateString("pt-BR")+" "+qd.toLocaleTimeString("pt-BR").slice(0,5);
+      var rotulo = (f===1) ? ('aluno "'+quem+'"') : ('grupo "'+quem+'"');
+      if(confirm('Há um rascunho salvo da Fase '+f+' — '+rotulo+' ('+quando+').\n\nDeseja continuar de onde parou?')){
+        restaurar(d); return;
+      }
+    }
+    estado={grupo:"",membros:[],aluno:"",ra:"",q1:[],q2:[],q3:[]};
+    if(f===1) initFase1(); else if(f===2) initFase2(); else initFase3();
+    atual=0;
+    prepararIdScreen();
+    mostrar("screen-id");
+  }
+
+  function restaurar(d){
+    atual=d.atual||0;
+    if(fase===1){
+      estado.aluno=d.aluno||""; estado.ra=d.ra||"";
+      estado.q1=d.q1||[]; while(estado.q1.length<10) estado.q1.push(null);
+      if(atual>9) atual=9;
+      mostrar("screen-q1"); renderQ1();
+    } else if(fase===2){
+      estado.grupo=d.grupo||""; estado.membros=d.membros||[];
+      estado.q2=d.q2||[]; while(estado.q2.length<10) estado.q2.push({A:0,B:0,C:0,D:0});
+      if(atual>9) atual=9;
+      mostrar("screen-q2"); renderQ2();
+    } else {
+      estado.grupo=d.grupo||""; estado.membros=d.membros||[];
+      estado.q3=(d.q3&&d.q3.length)?d.q3:[novaQ3()];
+      if(atual>=estado.q3.length) atual=estado.q3.length-1;
+      mostrar("screen-q3"); renderQ3();
+    }
+  }
+
+  // ---------- IDENTIFICAÇÃO ----------
+  var membrosDiv=$("membros");
+  function novaLinhaMembro(v){
+    var wrap=document.createElement("div");wrap.className="membro";
+    var inp=document.createElement("input");inp.type="text";inp.placeholder="Nome completo";inp.value=v||"";
+    var rem=document.createElement("button");rem.className="btn-rem";rem.type="button";rem.textContent="×";
+    rem.onclick=function(){wrap.remove();botoesRem();};
+    wrap.appendChild(inp);wrap.appendChild(rem);membrosDiv.appendChild(wrap);botoesRem();
+  }
+  function botoesRem(){var l=membrosDiv.querySelectorAll(".membro");l.forEach(function(x){x.querySelector(".btn-rem").disabled=(l.length<=1);});}
+  $("add-membro").onclick=function(){novaLinhaMembro("");};
+
+  function prepararIdScreen(){
+    $("iniciar").textContent="Iniciar Fase "+fase+" →";
+    $("erro-id").textContent="";
+    if(fase===1){
+      $("id-titulo").textContent="Identificação do aluno — Fase 1";
+      $("id-sub").textContent="Esta fase é individual. Preencha seu nome completo.";
+      $("id-individual").classList.remove("hidden");
+      $("id-grupo").classList.add("hidden");
+      $("aluno-nome").value=""; $("aluno-ra").value="";
+    } else {
+      $("id-titulo").textContent="Identificação do grupo — Fase "+fase;
+      $("id-sub").textContent="Preencha o nome do grupo e o nome completo de todos os integrantes.";
+      $("id-individual").classList.add("hidden");
+      $("id-grupo").classList.remove("hidden");
+      $("grupo").value="";
+      membrosDiv.innerHTML="";
+      for(var i=0;i<4;i++) novaLinhaMembro("");
+    }
+  }
+
+  $("id-voltar").onclick=function(){ mostrar("screen-fase"); $("topo-sub").textContent="Escolha a fase para começar"; };
+
+  $("iniciar").onclick=function(){
+    var erro=$("erro-id");erro.textContent="";
+    if(fase===1){
+      var nome=$("aluno-nome").value.trim().replace(/\s+/g," ");
+      if(!nome){erro.textContent="Informe seu nome.";return;}
+      if(nome.split(" ").length<2){erro.textContent="Digite seu NOME COMPLETO (nome e sobrenome).";return;}
+      estado.aluno=nome; estado.ra=$("aluno-ra").value.trim(); atual=0;
+      if(!estado.q1.length) initFase1();
+      mostrar("screen-q1"); renderQ1();
+      return;
+    }
+    var grupo=$("grupo").value.trim();
+    if(!grupo){erro.textContent="Informe o nome/número do grupo.";return;}
+    var nomes=[],incompleto=false;
+    membrosDiv.querySelectorAll(".membro input").forEach(function(inp){
+      var v=inp.value.trim().replace(/\s+/g," ");
+      if(v){ if(v.split(" ").length<2) incompleto=true; nomes.push(v); }
+    });
+    if(nomes.length===0){erro.textContent="Informe ao menos um integrante.";return;}
+    if(incompleto){erro.textContent="Digite o NOME COMPLETO de cada integrante (nome e sobrenome).";return;}
+    estado.grupo=grupo; estado.membros=nomes; atual=0;
+    if(fase===2){ if(!estado.q2.length) initFase2(); mostrar("screen-q2"); renderQ2(); }
+    else { if(!estado.q3.length) initFase3(); mostrar("screen-q3"); renderQ3(); }
+  };
+
+  // ================= FASE 1 (IRAT) =================
+  function renderProg1(){
+    var p=$("prog1");p.innerHTML="";
+    for(var i=0;i<10;i++){
+      var d=document.createElement("div");d.className="dot";
+      if(i===atual)d.classList.add("atual");
+      else if(estado.q1[i]!=null)d.classList.add("feita");
+      d.textContent=(i+1);p.appendChild(d);
+    }
+  }
+  function renderQ1(){
+    $("q1-num").textContent="Questão "+(atual+1);
+    var cont=$("alternativas1");cont.innerHTML="";
+    var sel=estado.q1[atual];
+    LETRAS.forEach(function(L){
+      var b=document.createElement("button");b.type="button";b.className="alt-sel"+(sel===L?" sel":"");
+      var letra=document.createElement("div");letra.className="letra";letra.textContent=L;
+      var nome=document.createElement("div");nome.className="alt-nome";nome.textContent="Alternativa "+L;
+      var radio=document.createElement("div");radio.className="radio";
+      b.appendChild(letra);b.appendChild(nome);b.appendChild(radio);
+      b.onclick=function(){ estado.q1[atual]=L; renderQ1(); };
+      cont.appendChild(b);
+    });
+    $("q1-ant").disabled=(atual===0);
+    $("q1-prox").textContent=(atual===9)?"Finalizar →":"Salvar e próxima →";
+    $("q1-prox").disabled=(estado.q1[atual]==null);
+    renderProg1();
+  }
+  $("q1-ant").onclick=function(){if(atual>0){atual--;renderQ1();}};
+  $("q1-prox").onclick=function(){
+    if(estado.q1[atual]==null) return;
+    salvarRascunho(true);
+    if(atual<9){ atual++; renderQ1(); }
+    else { irParaFinal(); }
+  };
+
+  // ================= FASE 2 =================
+  function renderProg2(){
+    var p=$("prog2");p.innerHTML="";
+    for(var i=0;i<10;i++){
+      var d=document.createElement("div");d.className="dot";
+      if(i===atual)d.classList.add("atual");
+      else if(totalParc(estado.q2[i])===4)d.classList.add("feita");
+      d.textContent=(i+1);p.appendChild(d);
+    }
+  }
+  function renderQ2(){
+    $("q2-num").textContent="Questão "+(atual+1);
+    var cont=$("alternativas2");cont.innerHTML="";
+    var r=estado.q2[atual];
+    LETRAS.forEach(function(L){
+      var alt=document.createElement("div");alt.className="alt";
+      var fill=document.createElement("div");fill.className="fill";alt.appendChild(fill);
+      var letra=document.createElement("div");letra.className="letra";letra.textContent=L;
+      letra.onclick=function(){LETRAS.forEach(function(x){r[x]=0;});r[L]=4;renderQ2();};
+      alt.appendChild(letra);
+      var meio=document.createElement("div");meio.className="alt-meio";
+      meio.innerHTML='<div class="alt-perc">'+(r[L]*25)+'%</div><div class="alt-hint">Alternativa '+L+' · '+r[L]+' de 4 parcelas</div>';
+      alt.appendChild(meio);
+      var step=document.createElement("div");step.className="stepper";
+      var menos=document.createElement("button");menos.className="step step-menos";menos.type="button";menos.textContent="–";menos.disabled=r[L]<=0;
+      menos.onclick=function(){if(r[L]>0){r[L]--;renderQ2();}};
+      var mais=document.createElement("button");mais.className="step step-mais";mais.type="button";mais.textContent="+";mais.disabled=(totalParc(r)>=4)||(r[L]>=4);
+      mais.onclick=function(){if(totalParc(r)<4&&r[L]<4){r[L]++;renderQ2();}};
+      step.appendChild(menos);step.appendChild(mais);alt.appendChild(step);
+      if(r[L]>0)alt.classList.add("tem-valor");
+      fill.style.width=(r[L]*25)+"%";
+      cont.appendChild(alt);
+    });
+    atualizarTotais2();
+    $("q2-ant").disabled=(atual===0);
+    $("q2-prox").textContent=(atual===9)?"Finalizar →":"Salvar e próxima →";
+    renderProg2();
+  }
+  function atualizarTotais2(){
+    var r=estado.q2[atual];var t=totalParc(r);var pct=t*25;
+    var badge=$("total-badge2");badge.textContent=pct+"% / 100%";badge.classList.toggle("ok",pct===100);
+    var f=$("fichas2");f.innerHTML="";for(var i=0;i<4;i++){var el=document.createElement("div");el.className="ficha"+(i<t?" usada":"");f.appendChild(el);}
+    $("q2-prox").disabled=(pct!==100);
+    renderProg2();
+  }
+  $("q2-ant").onclick=function(){if(atual>0){atual--;renderQ2();}};
+  $("q2-prox").onclick=function(){
+    if(totalParc(estado.q2[atual])!==4) return;
+    salvarRascunho(true);
+    if(atual<9){ atual++; renderQ2(); }
+    else { irParaFinal(); }
+  };
+
+  // ================= FASE 3 =================
+  function renderProg3(){
+    var p=$("prog3");p.innerHTML="";
+    for(var i=0;i<estado.q3.length;i++){
+      var d=document.createElement("div");d.className="dot";
+      if(i===atual)d.classList.add("atual");
+      else if(completa3(estado.q3[i]))d.classList.add("feita");
+      d.textContent=(i+1);p.appendChild(d);
+    }
+  }
+  function renderQ3(){
+    var q=estado.q3[atual];
+    $("q3-num").textContent="Questão "+(atual+1);
+    $("tipo-obj").classList.toggle("ativo",q.tipo==="obj");
+    $("tipo-disc").classList.toggle("ativo",q.tipo==="disc");
+    var corpo=$("corpo-tipo");corpo.innerHTML="";
+    if(q.tipo===null){
+      var av=document.createElement("div");av.className="aviso-tipo";
+      av.textContent="Selecione acima se esta questão é objetiva ou discursiva.";
+      corpo.appendChild(av);
+    } else if(q.tipo==="obj"){ corpo.appendChild(montarObjetiva3(q)); }
+    else { corpo.appendChild(montarDiscursiva3(q)); }
+    atualizarNav3();
+    renderProg3();
+    $("btn-rem-q").style.display=(atual>=4)?"":"none";
+  }
+  function montarObjetiva3(q){
+    var box=document.createElement("div");
+    box.innerHTML='<p class="q-instr" style="margin:10px 0 0">Distribua as 4 parcelas de 25% do ponto</p>';
+    var info=document.createElement("div");info.className="parcelas-info";
+    var fichas=document.createElement("div");fichas.className="fichas";fichas.id="fichas3";
+    var badge=document.createElement("span");badge.className="total-badge";badge.id="total-badge3";
+    info.appendChild(fichas);info.appendChild(badge);box.appendChild(info);
+    LETRAS.forEach(function(L){
+      var alt=document.createElement("div");alt.className="alt";
+      var fill=document.createElement("div");fill.className="fill";alt.appendChild(fill);
+      var letra=document.createElement("div");letra.className="letra";letra.textContent=L;
+      letra.onclick=function(){LETRAS.forEach(function(x){q.dist[x]=0;});q.dist[L]=4;renderQ3();};
+      alt.appendChild(letra);
+      var meio=document.createElement("div");meio.className="alt-meio";
+      meio.innerHTML='<div class="alt-perc">'+(q.dist[L]*25)+'%</div><div class="alt-hint">Alternativa '+L+' · '+q.dist[L]+' de 4 parcelas</div>';
+      alt.appendChild(meio);
+      var step=document.createElement("div");step.className="stepper";
+      var menos=document.createElement("button");menos.className="step step-menos";menos.type="button";menos.textContent="–";menos.disabled=q.dist[L]<=0;
+      menos.onclick=function(){if(q.dist[L]>0){q.dist[L]--;renderQ3();}};
+      var mais=document.createElement("button");mais.className="step step-mais";mais.type="button";mais.textContent="+";mais.disabled=(totalParc(q.dist)>=4)||(q.dist[L]>=4);
+      mais.onclick=function(){if(totalParc(q.dist)<4&&q.dist[L]<4){q.dist[L]++;renderQ3();}};
+      step.appendChild(menos);step.appendChild(mais);alt.appendChild(step);
+      if(q.dist[L]>0)alt.classList.add("tem-valor");
+      fill.style.width=(q.dist[L]*25)+"%";
+      box.appendChild(alt);
+    });
+    var t=totalParc(q.dist),pct=t*25;
+    setTimeout(function(){
+      var b=$("total-badge3");if(b){b.textContent=pct+"% / 100%";b.classList.toggle("ok",pct===100);}
+      var f=$("fichas3");if(f){f.innerHTML="";for(var i=0;i<4;i++){var el=document.createElement("div");el.className="ficha"+(i<t?" usada":"");f.appendChild(el);}}
+    },0);
+    var dica=document.createElement("div");dica.className="dica";
+    dica.innerHTML="💡 Toque na <strong>letra</strong> para colocar 100% numa alternativa, ou use <strong>–/+</strong> para distribuir 25% entre as alternativas em dúvida. O total precisa somar <strong>100%</strong>.";
+    box.appendChild(dica);
+    return box;
+  }
+  function montarDiscursiva3(q){
+    var box=document.createElement("div");
+    var lbl=document.createElement("p");lbl.className="q-instr";lbl.style.margin="10px 0 8px";lbl.textContent="Escreva a resposta do grupo";
+    box.appendChild(lbl);
+    var ta=document.createElement("textarea");ta.value=q.texto;ta.placeholder="Digite aqui a resposta discursiva do grupo...";
+    ta.oninput=function(){q.texto=ta.value;$("cont-car").textContent=ta.value.trim().length+" caracteres";atualizarNav3();renderProg3();};
+    box.appendChild(ta);
+    var cont=document.createElement("div");cont.className="contador";cont.id="cont-car";cont.textContent=q.texto.trim().length+" caracteres";
+    box.appendChild(cont);
+    return box;
+  }
+  function atualizarNav3(){
+    var q=estado.q3[atual];var ok=completa3(q);
+    $("q3-ant").disabled=(atual===0);
+    var temProx=(atual<estado.q3.length-1);
+    $("btn-add-q").disabled=!ok;
+    $("btn-add-q").style.display=temProx?"none":"";
+    $("btn-final").style.display=temProx?"none":"";
+    var btnR=$("btn-rascunho");
+    if(btnR){
+      if(temProx){
+        btnR.style.display="";
+        btnR.textContent="Salvar e próxima →";
+        btnR.disabled=!ok;
+      } else {
+        btnR.style.display="none";
+      }
+    }
+  }
+  $("tipo-obj").onclick=function(){estado.q3[atual].tipo="obj";renderQ3();};
+  $("tipo-disc").onclick=function(){estado.q3[atual].tipo="disc";renderQ3();};
+  $("q3-ant").onclick=function(){if(atual>0){atual--;renderQ3();}};
+  $("btn-add-q").onclick=function(){
+    if(!completa3(estado.q3[atual]))return;
+    estado.q3.push(novaQ3());atual=estado.q3.length-1;renderQ3();
+  };
+  $("btn-rem-q").onclick=function(){
+    if(estado.q3.length<=1)return;
+    if(!confirm("Remover a Questão "+(atual+1)+"?"))return;
+    estado.q3.splice(atual,1);
+    if(atual>=estado.q3.length)atual=estado.q3.length-1;
+    renderQ3();
+  };
+  $("btn-rascunho").onclick=function(){
+    var temProx=(atual<estado.q3.length-1);
+    if(temProx && completa3(estado.q3[atual])){ salvarRascunho(true); atual++; renderQ3(); }
+    else if(temProx){ salvarRascunho("Rascunho salvo ✓ — complete a questão para avançar."); }
+    else { salvarRascunho(); }
+  };
+  $("btn-final").onclick=function(){ irParaFinal(); };
+
+  // ================= FINAL (compartilhada) =================
+  function irParaFinal(){
+    if(fase===1){
+      for(var k=0;k<10;k++){ if(estado.q1[k]==null){ atual=k; mostrar("screen-q1"); renderQ1(); return; } }
+    } else if(fase===2){
+      for(var i=0;i<10;i++){ if(totalParc(estado.q2[i])!==4){ atual=i; mostrar("screen-q2"); renderQ2(); return; } }
+    } else {
+      for(var j=0;j<estado.q3.length;j++){
+        if(!completa3(estado.q3[j])){ atual=j; mostrar("screen-q3"); renderQ3();
+          alert("A Questão "+(j+1)+" ainda não está completa. Marque o tipo e finalize a resposta antes de salvar."); return; }
+      }
+    }
+    salvarRascunho(true);
+    renderFinal();
+    mostrar("screen-final");
+  }
+  function renderFinal(){
+    $("final-titulo").textContent="Revisão das respostas — Fase "+fase;
+    if(fase===1){
+      $("final-grupo").innerHTML="<strong>"+esc(estado.aluno)+"</strong>"+(estado.ra?(" — RA "+esc(estado.ra)):"");
+    } else {
+      $("final-grupo").innerHTML="<strong>"+esc(estado.grupo)+"</strong> — "+estado.membros.map(esc).join(", ");
+    }
+    var c=$("rev-container");c.innerHTML="";
+    if(fase===1){
+      var h1='<table class="rev"><tr><th>Questão</th><th>Resposta</th></tr>';
+      for(var k=0;k<10;k++){ h1+='<tr><td class="q">'+(k+1)+'</td><td class="v destaque">'+(estado.q1[k]||"—")+'</td></tr>'; }
+      h1+='</table>';
+      c.innerHTML=h1;
+    } else if(fase===2){
+      var html='<table class="rev"><tr><th>Questão</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>';
+      for(var i=0;i<10;i++){
+        var r=estado.q2[i];
+        html+='<tr><td class="q">'+(i+1)+'</td>';
+        LETRAS.forEach(function(L){var v=r[L]*25;html+='<td class="v'+(v>0?' destaque':'')+'">'+v+'%</td>';});
+        html+='</tr>';
+      }
+      html+='</table>';
+      c.innerHTML=html;
+    } else {
+      estado.q3.forEach(function(q,i){
+        var d=document.createElement("div");d.className="rev-q";
+        var tag=(q.tipo==="obj")?"Objetiva":"Discursiva";
+        var cab='<div class="rq-cab">Questão '+(i+1)+'<span class="rq-tag">'+tag+'</span></div>';
+        var corpo=(q.tipo==="obj")
+          ? '<div class="rq-dist">'+LETRAS.map(function(L){return L+": "+(q.dist[L]*25)+"%";}).join("  ·  ")+'</div>'
+          : '<div class="rq-texto">'+esc(q.texto)+'</div>';
+        d.innerHTML=cab+corpo;c.appendChild(d);
+      });
+    }
+    if(fase===3){
+      $("final-extra").style.display="none";
+      $("final-nav").style.display="none";
+    } else {
+      $("final-extra").style.display="none";
+      $("final-nav").style.display="";
+    }
+  }
+  $("btn-voltar-q").onclick=function(){ atual=0; if(fase===1){mostrar("screen-q1");renderQ1();} else if(fase===2){mostrar("screen-q2");renderQ2();} else {mostrar("screen-q3");renderQ3();} };
+  $("btn-add-final").onclick=function(){ estado.q3.push(novaQ3()); atual=estado.q3.length-1; mostrar("screen-q3"); renderQ3(); };
+  $("btn-escolha").onclick=function(){
+    fase=null; estado={grupo:"",membros:[],aluno:"",ra:"",q1:[],q2:[],q3:[]}; atual=0;
+    $("topo-sub").textContent="Escolha a fase para começar";
+    mostrar("screen-fase");
+  };
+
+  // ---------- PDF ----------
+  $("btn-pdf").onclick=function(){
+    var dt=new Date();
+    var dataStr=dt.toLocaleDateString("pt-BR")+" "+dt.toLocaleTimeString("pt-BR").slice(0,5);
+    var nomeFase=(fase===1)?"Fase 1 (IRAT)":(fase===2)?"Fase 2 (TRAT)":"Fase 3 (Aplicação)";
+    var h="";
+    h+='<h1>TBL — '+nomeFase+' · Comprovante de Respostas</h1>';
+    h+='<div class="meta">';
+    if(fase===1){
+      h+='<div><strong>Aluno:</strong> '+esc(estado.aluno)+'</div>';
+      if(estado.ra) h+='<div><strong>Matrícula/RA:</strong> '+esc(estado.ra)+'</div>';
+    } else {
+      h+='<div><strong>Grupo:</strong> '+esc(estado.grupo)+'</div>';
+      h+='<div><strong>Integrantes:</strong> '+estado.membros.map(esc).join("; ")+'</div>';
+    }
+    h+='<div><strong>Data/hora:</strong> '+dataStr+'</div>';
+    h+='</div>';
+    if(fase===1){
+      h+='<table><tr><th>Questão</th><th>Resposta</th></tr>';
+      for(var k=0;k<10;k++){ h+='<tr><td class="q">'+(k+1)+'</td><td>'+(estado.q1[k]||"—")+'</td></tr>'; }
+      h+='</table>';
+    } else if(fase===2){
+      h+='<table><tr><th>Questão</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>';
+      for(var i=0;i<10;i++){var r=estado.q2[i];h+='<tr><td class="q">'+(i+1)+'</td>';LETRAS.forEach(function(L){h+='<td>'+(r[L]*25)+'%</td>';});h+='</tr>';}
+      h+='</table>';
+    } else {
+      estado.q3.forEach(function(q,i){
+        var tag=(q.tipo==="obj")?"Objetiva":"Discursiva";
+        h+='<div class="pq"><div class="cab">Questão '+(i+1)+' — '+tag+'</div>';
+        if(q.tipo==="obj"){ h+='<div class="dist">'+LETRAS.map(function(L){return L+": "+(q.dist[L]*25)+"%";}).join("   ")+'</div>'; }
+        else { h+='<div class="txt">'+esc(q.texto)+'</div>'; }
+        h+='</div>';
+      });
+    }
+    $("print-area").innerHTML=h;
+    window.print();
+  };
+})();
+</script>
+</body>
+</html>
