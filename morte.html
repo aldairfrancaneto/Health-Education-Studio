@@ -559,6 +559,7 @@ body{
   #morResultado.vitoria{ background:rgba(30,110,45,.28); border-color:var(--green); color:#B7F0C1; }
   #morResultado.falha{ background:rgba(180,30,26,.25); border-color:var(--red); color:#FFC9C9; }
   #morResultado .grande{ display:block; font-size:19px; margin-bottom:6px; color:#fff; }
+  #morResultado .chal-res-txt{ margin-top:10px; font-size:12.5px; font-weight:400; line-height:1.5; color:#E3F7E7; opacity:.92; }
 
   @media (max-width:600px){
     .mor-campo{ padding:12px 9px 13px; }
@@ -906,64 +907,40 @@ body{
   }
   @keyframes chalVdFade{ 0%,82%{ opacity:1; } 100%{ opacity:0; } }
 
-  /* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-  #morTabuleiro.mor-rev-on .mor-slot{
-    pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
-    border-color:var(--gold-dim); border-style:solid; box-shadow:none;   /* neutraliza verde/vermelho de certo/errado */
-    transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
-  }
-  #morTabuleiro.mor-rev-on .mor-slot::after{ display:none; }
-  #morTabuleiro.mor-rev-on .mor-slot .chal-erro-badge,
-  #morTabuleiro.mor-rev-on .mor-slot .chal-dono{ display:none; }
-  /* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
-  .mor-rev-correta{ display:none; }
-  #morTabuleiro.mor-rev-on .mor-slot .mor-rev-correta{
-    display:block; position:absolute; inset:0; z-index:8; background:var(--slot);
-    border-radius:inherit; overflow:hidden;
-  }
-  #morTabuleiro.mor-rev-on .mor-slot.mor-rev-atual{
-    opacity:1; filter:none; outline:3px solid var(--coin); outline-offset:3px;
-    box-shadow:0 0 0 7px rgba(255,210,63,.28), 0 12px 34px rgba(0,0,0,.6);
-    transform:scale(1.07); z-index:6;
-  }
-  .mor-rev-bar{
-    position:fixed; left:0; right:0; bottom:0; z-index:90; transform:translateY(120%);
-    transition:transform .3s ease;
-    background:linear-gradient(180deg, rgba(46,22,74,.98), rgba(16,8,28,.98));
-    border-top:3px solid #8B5CF6; box-shadow:0 -10px 40px rgba(0,0,0,.55);
-    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
-  }
-  .mor-rev-bar.on{ transform:translateY(0); }
-  .mor-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
-  .mor-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
-  .mor-rev-cartas{ display:flex; gap:14px; justify-content:center; align-items:flex-start; }
-  .mor-rev-fig{ margin:0; display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .mor-rev-fig img{
-    height:var(--rev-img-h); width:auto; max-width:44vw; object-fit:contain; cursor:zoom-in;
-    border-radius:10px; border:3px solid var(--gold-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
-  }
-  .mor-rev-fig figcaption{ font-family:var(--font-serif); font-weight:700; font-size:11.5px; color:#fff; }
-  .mor-rev-texto{ flex:1 1 260px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
-  .mor-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  /* ---------- revisao guiada (fim de jogo): uma carta por vez, ampliada em tela cheia ---------- */
   .mor-rev-nav{
-    font-family:var(--font-pixel); font-size:15px; line-height:1; color:#1A1206;
-    background:linear-gradient(180deg,#E8CE7A,#8A7231); border:2px solid #F2E4B2;
-    border-radius:8px; width:42px; height:36px; cursor:pointer;
-  }
-  :root{ --rev-img-h:min(38vh,340px); }
+      font-family:var(--font-pixel); font-size:15px; line-height:1; color:#1A1206;
+      background:linear-gradient(180deg,#E8CE7A,#8A7231); border:2px solid #F2E4B2;
+      border-radius:8px; width:42px; height:36px; cursor:pointer;
+    }
   .mor-rev-nav[disabled]{ opacity:.35; cursor:not-allowed; }
   .mor-rev-passo{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.04em; color:#E4D2F5; }
   .mor-rev-fechar{
-    margin-left:auto; font-family:var(--font-serif); font-weight:700; font-size:12.5px;
-    color:#fff; background:rgba(201,82,76,.92); border:2px solid #F0A9A4; border-radius:8px;
-    padding:7px 12px; cursor:pointer;
-  }
+      margin-left:auto; font-family:var(--font-serif); font-weight:700; font-size:12.5px;
+      color:#fff; background:rgba(201,82,76,.92); border:2px solid #F0A9A4; border-radius:8px;
+      padding:7px 12px; cursor:pointer;
+    }
   .mor-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
   .mor-rev-tit b{ color:#FFD23F; }
-  .mor-rev-dica{ font-family:var(--font-serif); font-size:11.5px; color:rgba(232,238,247,.6); }
-  .mor-rev-cta{ margin-top:12px; }
+  .mor-rev-ov{
+    position:fixed; inset:0; z-index:95; display:none; flex-direction:column; gap:10px;
+    background:linear-gradient(180deg, #2E164A, #10081C);
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  .mor-rev-ov.on{ display:flex; }
+  .mor-rev-ov .mor-rev-top{ display:flex; align-items:center; gap:10px; }
+  .mor-rev-ov .mor-rev-passo{ flex:1; text-align:center; }
+  .mor-rev-ov .mor-rev-tit{ text-align:center; font-size:clamp(15px,2.3vw,22px); }
+  .mor-rev-ov .mor-rev-palco{ flex:1; min-height:0; display:flex; align-items:center; gap:12px; }
+  .mor-rev-ov .mor-rev-palco .mor-rev-nav{ flex:none; width:48px; height:72px; font-size:26px; }
+  .mor-rev-ov .mor-rev-cartas{ flex:1; min-width:0; height:100%; display:flex; gap:clamp(8px,1.6vw,20px); justify-content:center; align-items:center; }
+  .mor-rev-ov .mor-rev-fig{ flex:1 1 0; min-width:0; height:100%; margin:0; display:flex; align-items:center; justify-content:center; }
+  .mor-rev-ov .mor-rev-fig > img{ width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 8px 22px rgba(0,0,0,.6)); }
   @media (max-width:600px){
     .mor-rev-tit{ font-size:13px; }
+    .mor-rev-ov{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+    .mor-rev-ov .mor-rev-palco{ gap:6px; }
+    .mor-rev-ov .mor-rev-palco .mor-rev-nav{ width:32px; height:56px; font-size:22px; }
   }
 
   /* --- os dois "quadros" do modo Desafio: um para o painel de turno (placar,
@@ -1499,6 +1476,7 @@ body{
         <button class="btn-board principal" id="morSelar" type="button" disabled>🔬 Conferir respostas</button>
         <button class="btn-board" id="morLimpar" type="button" disabled title="Disponível ao concluir o percurso">↻ Embaralhar e recomeçar</button>
         <button class="btn-board" id="morTrocar" type="button" disabled title="Disponível ao concluir o percurso">⇄ Trocar conjunto</button>
+        <button class="btn-board principal" id="morRevisar" type="button" disabled title="Disponível ao concluir o percurso">🔍 Revisar a atividade com a turma</button>
       </div>
 
       <!-- ---------- QUADRO 1: placar, monte único e cartas especiais (Challenger) ---------- -->
@@ -1507,6 +1485,7 @@ body{
         <div class="chal-hud" id="chalHud">
           <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
           <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+          <button class="btn-board principal" id="chalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
         </div>
 
         <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
@@ -1738,21 +1717,16 @@ body{
 </div>
 
 <!-- ---------- REVISAO GUIADA DO TABULEIRO (fim de jogo, todos os modos) ---------- -->
-<div class="mor-rev-bar" id="morRevBar" aria-hidden="true">
-  <div class="mor-rev-inner">
-    <div class="mor-rev-top">
-      <button class="mor-rev-nav" id="morRevPrev" type="button" aria-label="Carta anterior">&#8249;</button>
-      <span class="mor-rev-passo" id="morRevPasso"></span>
-      <button class="mor-rev-nav" id="morRevNext" type="button" aria-label="Proxima carta">&#8250;</button>
-      <button class="mor-rev-fechar" id="morRevFecharBtn" type="button">&#10005; Encerrar revisao</button>
-    </div>
-    <div class="mor-rev-corpo">
-      <div class="mor-rev-cartas" id="morRevCartas"></div>
-      <div class="mor-rev-texto">
-        <div class="mor-rev-tit" id="morRevTit"></div>
-      </div>
-    </div>
-    <div class="mor-rev-dica">Toque em qualquer carta do tabuleiro para saltar ate ela &middot; as setas &larr; &rarr; tambem navegam</div>
+<div class="mor-rev-ov" id="morRevOv" role="dialog" aria-modal="true" aria-label="Revisão da atividade" aria-hidden="true">
+  <div class="mor-rev-top">
+    <span class="mor-rev-passo" id="morRevPasso"></span>
+    <button class="mor-rev-fechar" id="morRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
+  </div>
+  <div class="mor-rev-tit" id="morRevTit"></div>
+  <div class="mor-rev-palco">
+    <button class="mor-rev-nav" id="morRevPrev" type="button" aria-label="Passo anterior">&#8249;</button>
+    <div class="mor-rev-cartas" id="morRevCartas"></div>
+    <button class="mor-rev-nav" id="morRevNext" type="button" aria-label="Próximo passo">&#8250;</button>
   </div>
 </div>
 
@@ -1955,6 +1929,7 @@ body{
   const morBtnSelar  = document.getElementById('morSelar');
   const morBtnLimpar = document.getElementById('morLimpar');
   const morBtnTrocar = document.getElementById('morTrocar');
+  const morBtnRevisar = document.getElementById('morRevisar');
   const morResultado = document.getElementById('morResultado');
 
   let morSelecionada = null;
@@ -2062,7 +2037,7 @@ body{
 
   function morClicarSlot(slot){
     /* revisão guiada ligada (fim de jogo): o clique navega até a carta */
-    if (morRevAtiva){ morRevSelecionarSlot(slot); return; }
+    if (morRevAtiva) return;
     /* nos modos por turnos, o clique no slot é tratado pelo motor Challenger */
     if (morFluxo !== 'classico'){ chalClicarSlot(slot); return; }
 
@@ -2180,14 +2155,11 @@ body{
           'digerem a própria célula de dentro para fora, a membrana se rompe e o conteúdo ' +
           'extravasado dispara a resposta inflamatória. Mesma lesão irreversível, dois desfechos.'
       };
-      morResultado.innerHTML = fechos[morModo] +
-        '<div class="mor-rev-cta"><button class="btn-board principal" type="button" id="morRevBtn">' +
-        '\uD83D\uDD0D Revisar o caminho com a turma</button></div>';
+      morResultado.innerHTML = fechos[morModo];
       morBtnSelar.disabled = true;
       morBtnLimpar.disabled = false;
+      morBtnRevisar.disabled = false;
       morBtnTrocar.disabled = false;
-      var _rb = document.getElementById('morRevBtn');
-      if (_rb) _rb.addEventListener('click', function(){ morRevisaoAbrir(); });
       morMusica.encerrar();                    /* fim da partida do Clássico */
       somVitoria();
     } else {
@@ -2275,6 +2247,7 @@ body{
     morSelecionada = null;
     morSlotMarcado = null;
     morBtnLimpar.disabled = true;
+    morBtnRevisar.disabled = true;
     morBtnTrocar.disabled = true;
     morRodada = 1;
     morHudRod.innerHTML = 'RODADA: <b>1</b>';
@@ -2650,12 +2623,14 @@ body{
 
   const chalReiniciarBtn  = document.getElementById('chalReiniciar');
   const chalTrocarModoBtn = document.getElementById('chalTrocarModo');
+  const chalRevisarBtn    = document.getElementById('chalRevisar');
 
   /* "Nova partida" e "Trocar modo" só ficam disponíveis com a partida encerrada */
   function chalAtualizarBotoesPartida(){
     const encerrada = !CHAL.ativo;
     chalReiniciarBtn.disabled  = !encerrada;
     chalTrocarModoBtn.disabled = !encerrada;
+    chalRevisarBtn.disabled    = !encerrada;
   }
 
   /* ---------- trava de rolagem durante as animações de tela cheia ----------
@@ -3625,21 +3600,18 @@ body{
     const topo = CHAL.jogadores[venc].pontos;
     const empate = CHAL.jogadores.filter(function(j){ return j.pontos === topo; }).length > 1;
 
-    let html = '<div class="chal-placar-final">';
-    CHAL.jogadores
-      .map(function(j, i){ return {j:j, i:i}; })
-      .sort(function(a, b){ return b.j.pontos - a.j.pontos; })
-      .forEach(function(o){
-        const vence = !empate && o.i === venc;
-        html += '<div class="chal-linha-final p' + o.i + (vence ? ' vencedor' : '') + '">' +
-          '<span class="nm"><span class="pino"></span>' + (vence ? '🏆 ' : '') + chalEsc(o.j.nome) + '</span>' +
-          '<span class="pt">' + o.j.pontos + ' pts</span></div>';
-      });
-    html += '</div>';
-
+    /* placar final, bônus por via e fecho didático — numa caixa acima do tabuleiro
+       (o tabuleiro continua visível e o "Revisar a atividade" fica na barra do topo) */
+    const titulo = empate ? 'Empate!' : ('Vitória de ' + CHAL.jogadores[venc].nome);
+    const ico = empate ? '🤝' : '🏆';
+    let html = '<span class="grande">' + ico + ' ' + chalEsc(titulo) + '</span>' +
+      CHAL.jogadores
+        .map(function(j, i){ return {j:j, i:i}; })
+        .sort(function(a, b){ return b.j.pontos - a.j.pontos; })
+        .map(function(o){ return chalEsc(o.j.nome) + ': ' + o.j.pontos + ' pts'; })
+        .join(' · ') + '.';
     if (bonusLinhas.length){
-      html += '<div class="chal-modal-txt" style="text-align:left;font-size:12.5px;">' +
-        '<b>Bônus de via:</b><br>' + bonusLinhas.join('<br>') + '</div>';
+      html += '<div class="chal-res-txt"><b>Bônus de via:</b><br>' + bonusLinhas.join('<br>') + '</div>';
     }
 
     /* fecho didático do percurso (reaproveita as explicações do modo Clássico) */
@@ -3648,21 +3620,12 @@ body{
       necrose:  'A necrose começa na falência do ATP: os lisossomos rompem, as enzimas digerem a célula de dentro para fora, a membrana se rompe e os DAMPs disparam a inflamação — sem programa nem gasto de energia.',
       ambas:    'Apoptose: membrana íntegra, gasto de ATP, morte silenciosa e fagocitada. Necrose: colapso energético, autólise, ruptura de membrana e inflamação. Mesma lesão irreversível, dois desfechos.'
     };
-    html += '<div class="chal-modal-txt" style="font-size:12.5px;opacity:.9;">' + fechos[morModo] + '</div>';
+    html += '<div class="chal-res-txt">' + fechos[morModo] + '</div>';
 
-    const titulo = empate ? 'Empate!' : ('Vitória de ' + CHAL.jogadores[venc].nome);
-    const ico = empate ? '🤝' : '🏆';
-
-    const botoesFim = [
-      {txt:'🔍 Revisar o caminho', tipo:'principal', fn:function(){
-        chalModalFechar();
-        morRevisaoAbrir(function(){ chalModalMsgHTML(ico, titulo, html, botoesFim); });
-      }},
-      {txt:'↻ Embaralhar e recomeçar', tipo:'', fn:function(){ chalModalFechar(); chalIniciar(); }},
-      {txt:'⇄ Trocar modo', tipo:'', fn:function(){ chalModalFechar(); morMostrarModo(); }}
-    ];
-    chalModalMsgHTML(ico, titulo, html, botoesFim);
+    morResultado.className = 'on vitoria';
+    morResultado.innerHTML = html;
     somVitoria();
+    morResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
   /* botões do HUD de turno */
@@ -3712,66 +3675,44 @@ body{
   let morRevAtiva = false;
   let morRevSlots = [];
   let morRevIdx = 0;
-  let morRevOnClose = null;
-  const morRevBar = document.getElementById('morRevBar');
+  const morRevOv = document.getElementById('morRevOv');
 
-  function morRevisaoAbrir(onClose){
+  function morRevisaoAbrir(){
     const tab = document.getElementById('morTabuleiro');
     /* TODOS os encaixes do percurso, na ordem do tabuleiro — a revisão mostra a sequência
-       correta, não o que a turma jogou */
+       correta (uma carta ampliada por passo), não o que a turma jogou */
     morRevSlots = [].slice.call(tab.querySelectorAll('.mor-slot')).filter(function(s){ return s.dataset.alvo; });
     if (!morRevSlots.length) return;
-    morRevSlots.forEach(function(s){
-      const c = document.createElement('div'); c.className = 'mor-rev-correta';
-      const im = document.createElement('img');
-      im.src = morArquivo(s.dataset.alvo); im.alt = morNome(s.dataset.alvo);
-      c.appendChild(im); s.appendChild(c);
-    });
-    morRevOnClose = (typeof onClose === 'function') ? onClose : null;
     morRevAtiva = true;
     morRevIdx = 0;
-    tab.classList.add('mor-rev-on');
-    morRevBar.classList.add('on');
-    tab.scrollIntoView({ behavior:'smooth', block:'start' });
+    morRevOv.classList.add('on');
+    document.documentElement.style.overflow = 'hidden';   /* trava a rolagem da página atrás */
+    morRevOv.setAttribute('aria-hidden', 'false');
     morRevIr(0);
   }
 
   function morRevFechar(){
-    const cb = morRevOnClose;
     morRevReset();
     somClique();
-    if (cb) cb();
   }
 
   /* limpa a revisão sem disparar o callback (usado quando o tabuleiro é remontado) */
   function morRevReset(){
     morRevAtiva = false;
-    morRevOnClose = null;
-    document.getElementById('morTabuleiro').classList.remove('mor-rev-on');
-    morRevSlots.forEach(function(s){
-      s.classList.remove('mor-rev-atual');
-      const c = s.querySelector('.mor-rev-correta'); if (c) c.remove();
-    });
-    morRevBar.classList.remove('on');
+    morRevOv.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    morRevOv.setAttribute('aria-hidden', 'true');
     morRevSlots = [];
   }
 
   function morRevIr(i){
     if (!morRevSlots.length) return;
     morRevIdx = Math.max(0, Math.min(morRevSlots.length - 1, i));
-    morRevSlots.forEach(function(s, k){ s.classList.toggle('mor-rev-atual', k === morRevIdx); });
-    const slot = morRevSlots[morRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
-    morRevPintarBarra(slot);
+    morRevPintar(morRevSlots[morRevIdx]);
     somClique();
   }
 
-  function morRevSelecionarSlot(slot){
-    const i = morRevSlots.indexOf(slot);
-    if (i >= 0) morRevIr(i);
-  }
-
-  function morRevPintarBarra(slot){
+  function morRevPintar(slot){
     const alvo = slot.dataset.alvo;
     const trilhaEl = slot.closest('.mor-trilha');
     const meta = MOR_TRILHAS.find(function(t){ return trilhaEl && t.id === trilhaEl.id; });
@@ -3779,17 +3720,16 @@ body{
     const prefixo = (ordEl ? ordEl.textContent + ' \u00b7 ' : '') + (meta ? meta.rotulo : '');
 
     document.getElementById('morRevPasso').textContent =
-      'Encaixe ' + (morRevIdx + 1) + ' de ' + morRevSlots.length;
+      'Passo ' + (morRevIdx + 1) + ' de ' + morRevSlots.length;
     document.getElementById('morRevTit').innerHTML =
       '<b>' + prefixo + '</b> \u2014 ' + morNome(alvo);
 
-    /* a carta correta deste encaixe, já ampliada (tocar amplia ainda mais) */
+    /* a carta correta deste encaixe, já ampliada */
     const cx = document.getElementById('morRevCartas');
     cx.innerHTML = '';
     const f = document.createElement('figure'); f.className = 'mor-rev-fig';
     const im = document.createElement('img');
-    im.src = morArquivo(alvo); im.alt = morNome(alvo); im.title = 'Tocar para ampliar mais';
-    im.addEventListener('click', function(){ abrirLightbox(morArquivo(alvo)); });
+    im.src = morArquivo(alvo); im.alt = morNome(alvo);
     f.appendChild(im); cx.appendChild(f);
 
     document.getElementById('morRevPrev').disabled = (morRevIdx === 0);
@@ -3799,11 +3739,13 @@ body{
   document.getElementById('morRevPrev').addEventListener('click', function(){ morRevIr(morRevIdx - 1); });
   document.getElementById('morRevNext').addEventListener('click', function(){ morRevIr(morRevIdx + 1); });
   document.getElementById('morRevFecharBtn').addEventListener('click', morRevFechar);
+  morBtnRevisar.addEventListener('click', function(){ if (!morBtnRevisar.disabled) morRevisaoAbrir(); });
+  chalRevisarBtn.addEventListener('click', function(){ if (!chalRevisarBtn.disabled) morRevisaoAbrir(); });
   document.addEventListener('keydown', function(e){
     if (!morRevAtiva) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); morRevIr(morRevIdx + 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); morRevIr(morRevIdx - 1); }
-    else if (e.key === 'Escape' && !lb.classList.contains('on')){ morRevFechar(); }
+    else if (e.key === 'Escape'){ morRevFechar(); }
   });
 
   iniciarMorte();

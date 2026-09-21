@@ -918,47 +918,7 @@ body{
   }
   .org-sorteio.parou .chal-emb-c{ animation:none; }
 
-/* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-.org-rev-on .org-slot{
-  pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
-  transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
-  border-color:var(--gold-dim) !important; border-style:solid !important;   /* neutraliza verde/vermelho de certo/errado */
-}
-.org-rev-on .org-slot:not(.org-rev-atual){ box-shadow:none !important; }
-.org-rev-on .org-slot::after{ display:none !important; }
-/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
-.org-rev-correta{ display:none; }
-.org-rev-on .org-slot .org-rev-correta{
-  display:block; position:absolute; inset:0; z-index:8; background:var(--slot);
-  border-radius:inherit; overflow:hidden;
-}
-.org-rev-correta > img{ width:100%; height:100%; object-fit:cover; display:block; }
-.org-rev-on .org-slot.org-rev-atual{
-  opacity:1; filter:none; outline:3px solid var(--gold); outline-offset:3px;
-  box-shadow:0 0 0 7px rgba(212,175,55,.28), 0 12px 34px rgba(0,0,0,.6);
-  transform:scale(1.07); z-index:6;
-}
-.org-rev-bar{
-  position:fixed; left:0; right:0; bottom:0; z-index:90; transform:translateY(120%);
-  transition:transform .3s ease;
-  background:linear-gradient(180deg, rgba(20,14,8,.98), rgba(8,5,3,.98));
-  border-top:2px solid var(--gold-dim); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-}
-.org-rev-bar.on{ transform:translateY(0); }
-:root{ --rev-img-h:min(34vh,300px); }
-.org-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
-.org-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
-.org-rev-cartas{ display:flex; gap:12px; justify-content:center; align-items:flex-start; }
-.org-rev-fig{ margin:0; position:relative; opacity:.6; transition:opacity .2s; }
-.org-rev-fig.atual{ opacity:1; }
-.org-rev-fig > img{
-  height:var(--rev-img-h); width:auto; max-width:30vw; object-fit:contain; cursor:zoom-in; display:block;
-  border-radius:10px; border:3px solid var(--gold-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
-}
-.org-rev-fig.atual > img{ border-color:var(--gold-soft); }
-.org-rev-texto{ flex:1 1 240px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
-.org-rev-on .org-slot{ scroll-margin-top:16px; scroll-margin-bottom:calc(var(--rev-img-h) + 200px); }
-.org-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+/* ---------- revisao guiada (fim de jogo): uma associação por vez, cartas já ampliadas em tela cheia ---------- */
 .org-rev-nav{
   background:var(--gold-dim); color:#1B0A2C; border:none; border-radius:8px;
   width:34px; height:34px; font-size:18px; font-weight:700; cursor:pointer;
@@ -971,9 +931,30 @@ body{
 }
 .org-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
 .org-rev-tit b{ color:var(--gold); }
-.org-rev-cta{ margin-top:12px; }
+.org-rev-ov{
+  position:fixed; inset:0; z-index:95; display:none; flex-direction:column; gap:10px;
+  background:linear-gradient(180deg, #140E08, #080503);
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.org-rev-ov.on{ display:flex; }
+.org-rev-ov .org-rev-top{ display:flex; align-items:center; gap:10px; }
+.org-rev-ov .org-rev-passo{ flex:1; text-align:center; }
+.org-rev-ov .org-rev-tit{ text-align:center; font-size:clamp(15px,2.3vw,22px); }
+.org-rev-ov .org-rev-palco{ flex:1; min-height:0; display:flex; align-items:center; gap:12px; }
+.org-rev-ov .org-rev-palco .org-rev-nav{ flex:none; width:48px; height:72px; font-size:26px; }
+.org-rev-ov .org-rev-cartas{ flex:1; min-width:0; height:100%; display:flex; gap:clamp(8px,1.6vw,20px); justify-content:center; align-items:center; }
+.org-rev-ov .org-rev-fig{ flex:1 1 0; min-width:0; height:100%; margin:0; display:flex; align-items:center; justify-content:center; }
+.org-rev-ov .org-rev-fig > img{ width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 8px 22px rgba(0,0,0,.6)); }
+/* celular em pé: as cartas de uma associação ficam empilhadas (cada uma maior do que lado a lado) */
+@media (max-width:700px) and (orientation:portrait){
+  .org-rev-ov .org-rev-cartas{ flex-direction:column; }
+  .org-rev-ov .org-rev-fig{ width:100%; height:auto; min-height:0; }
+}
 @media (max-width:600px){
   .org-rev-tit{ font-size:13px; }
+  .org-rev-ov{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .org-rev-ov .org-rev-palco{ gap:6px; }
+  .org-rev-ov .org-rev-palco .org-rev-nav{ width:32px; height:56px; font-size:22px; }
 }
 </style>
 </head>
@@ -1100,6 +1081,7 @@ body{
         <span class="hud-item" id="orgRod">RODADA: <b>1</b></span>
         <button class="btn-board principal" id="orgSelar" type="button" disabled>🔬 Conferir respostas</button>
         <button class="btn-board" id="orgLimpar" type="button" disabled title="Disponível ao concluir a expedição">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board principal" id="orgRevisar" type="button" disabled title="Disponível ao concluir a expedição">🔍 Revisar a atividade com a turma</button>
         <button class="btn-board" id="orgTrocar" type="button" disabled title="Disponível ao concluir a expedição">⇄ Trocar conjunto</button>
       </div>
 
@@ -1154,6 +1136,7 @@ body{
         <div class="hud">
           <span class="hud-item" id="orgChalHudPos">TRIOS FECHADOS: <b>0/11</b></span>
           <button class="btn-board" id="orgChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board principal" id="orgChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
           <button class="btn-board" id="orgChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
         </div>
 
@@ -1244,18 +1227,16 @@ body{
   <img id="lbImg" src="" alt="Carta ampliada">
 </div>
 
-<div class="org-rev-bar" id="orgRevBar" aria-hidden="true">
-  <div class="org-rev-inner">
-    <div class="org-rev-top">
-      <button class="org-rev-nav" id="orgRevPrev" type="button" aria-label="Estação anterior">&#8249;</button>
-      <span class="org-rev-passo" id="orgRevPasso"></span>
-      <button class="org-rev-nav" id="orgRevNext" type="button" aria-label="Próxima estação">&#8250;</button>
-      <button class="org-rev-fechar" id="orgRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
-    </div>
-    <div class="org-rev-corpo">
-      <div class="org-rev-cartas" id="orgRevCartas"></div>
-      <div class="org-rev-texto"><div class="org-rev-tit" id="orgRevTit"></div></div>
-    </div>
+<div class="org-rev-ov" id="orgRevOv" role="dialog" aria-modal="true" aria-label="Revisão da atividade" aria-hidden="true">
+  <div class="org-rev-top">
+    <span class="org-rev-passo" id="orgRevPasso"></span>
+    <button class="org-rev-fechar" id="orgRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
+  </div>
+  <div class="org-rev-tit" id="orgRevTit"></div>
+  <div class="org-rev-palco">
+    <button class="org-rev-nav" id="orgRevPrev" type="button" aria-label="Passo anterior">&#8249;</button>
+    <div class="org-rev-cartas" id="orgRevCartas"></div>
+    <button class="org-rev-nav" id="orgRevNext" type="button" aria-label="Próximo passo">&#8250;</button>
   </div>
 </div>
 
@@ -1438,6 +1419,7 @@ body{
   const orgHudRod    = document.getElementById('orgRod');
   const orgBtnSelar  = document.getElementById('orgSelar');
   const orgBtnLimpar = document.getElementById('orgLimpar');
+  const orgBtnRevisar = document.getElementById('orgRevisar');
   const orgBtnTrocar = document.getElementById('orgTrocar');
   const orgResultado = document.getElementById('orgResultado');
 
@@ -1569,7 +1551,7 @@ body{
   }
 
   function orgClicarSlot(slot){
-    if (orgRevAtiva){ orgRevSelecionarSlot(slot); return; }
+    if (orgRevAtiva) return;
     /* encaixe já conferido como errado → devolve a carta ao acervo (não pode mais ser movida direto) */
     if (slot.dataset.posto && slot.classList.contains('errado')){
       const tipo = slot.dataset.tipo;
@@ -1664,14 +1646,11 @@ body{
         (orgModo === 'todas'
           ? 'Cada estrutura foi ligada à sua função molecular e à sua repercussão clínica.'
           : 'Cada estrutura foi ligada à sua função molecular. Para fechar os trios com a ' +
-            'correlação médica, jogue novamente no conjunto completo.') +
-        '<div class="org-rev-cta"><button class="btn-board principal" type="button" id="orgRevBtn">' +
-        '🔍 Revisar as estações com a turma</button></div>';
+            'correlação médica, jogue novamente no conjunto completo.');
       orgBtnSelar.disabled = true;
       orgBtnLimpar.disabled = false;
+      orgBtnRevisar.disabled = false;
       orgBtnTrocar.disabled = false;
-      var _orb = document.getElementById('orgRevBtn');
-      if (_orb) _orb.addEventListener('click', function(){ orgRevisaoAbrir(orgCampo); });
       orgMusica.encerrar();                    /* fim da partida do Single Player */
       somVitoria();
     } else {
@@ -1726,6 +1705,7 @@ body{
     orgSelecionada = null;
     orgSlotMarcado = null;
     orgBtnLimpar.disabled = true;
+    orgBtnRevisar.disabled = true;
     orgBtnTrocar.disabled = true;
     orgRodada = 1;
     orgHudRod.innerHTML = 'RODADA: <b>1</b>';
@@ -1960,6 +1940,7 @@ body{
   const orgChalMontesEl = document.getElementById('orgChalMontes');
   const orgChalEncerrarBtn = document.getElementById('orgChalEncerrar');
   const orgChalReiniciarBtn  = document.getElementById('orgChalReiniciar');
+  const orgChalRevisarBtn = document.getElementById('orgChalRevisar');
   const orgChalTrocarModoBtn = document.getElementById('orgChalTrocarModo');
 
   const CHAL_ORG = {
@@ -2195,7 +2176,7 @@ body{
   }
 
   function chalOrgClicarSlot(slot){
-    if (orgRevAtiva){ orgRevSelecionarSlot(slot); return; }
+    if (orgRevAtiva) return;
     if (!CHAL_ORG.ativo || slot.classList.contains('travado')) return;
 
     /* obs.: uma carta sacada e ainda não pega NÃO bloqueia o tabuleiro — o
@@ -2351,6 +2332,7 @@ body{
     orgMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_ORG.ativo = false;
     orgChalReiniciarBtn.disabled = false;
+    orgChalRevisarBtn.disabled = false;
     orgChalTrocarModoBtn.disabled = false;
     chalOrgAtualizarResto();
     orgChalEncerrarBtn.disabled = true;
@@ -2358,14 +2340,10 @@ body{
     const vencedor = jogadores[0].pontos >= jogadores[1].pontos ? jogadores[0] : jogadores[1];
     orgChalResultado.className = 'on vitoria';
     orgChalResultado.innerHTML = '<span class="grande">🏆 ' + orgChalEsc(vencedor.nome) + ' venceu!</span>' +
-      jogadores.map(function(j){ return orgChalEsc(j.nome) + ': ' + j.pontos + ' estaç' + (j.pontos === 1 ? 'ão' : 'ões'); }).join(' · ') + '.' +
-      '<div class="org-rev-cta"><button class="btn-board principal" type="button" id="orgChalRevBtn">' +
-      '🔍 Revisar as estações com a turma</button></div>';
+      jogadores.map(function(j){ return orgChalEsc(j.nome) + ': ' + j.pontos + ' estaç' + (j.pontos === 1 ? 'ão' : 'ões'); }).join(' · ') + '.';
     chalOrgRenderVez('🏁 Fim de jogo!');
     chalOrgRenderPlacar();
     somVitoria();
-    var _ocrb = document.getElementById('orgChalRevBtn');
-    if (_ocrb) _ocrb.addEventListener('click', function(){ orgRevisaoAbrir(orgChalCampo); });
     orgChalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
@@ -2497,6 +2475,7 @@ body{
     orgChalResultado.className = '';
     orgChalResultado.innerHTML = '';
     orgChalReiniciarBtn.disabled = true;
+    orgChalRevisarBtn.disabled = true;
     orgChalTrocarModoBtn.disabled = true;
     chalOrgAtualizarResto();
 
@@ -2537,102 +2516,80 @@ body{
 
   /* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
   let orgRevAtiva = false;
-  let orgRevSlots = [];
+  let orgRevAlvos = [];
   let orgRevIdx = 0;
   let orgRevContainer = null;
-  let orgRevOnClose = null;
-  const orgRevBar = document.getElementById('orgRevBar');
-  const ORG_REV_TIPO_LABEL = { azul:'Definição e função', verm:'Correlação médica' };
+  const orgRevOv = document.getElementById('orgRevOv');
 
-  function orgRevTipoDe(s){ return s.dataset.tipo || 'azul'; }
-  function orgRevGrande(t, alvo){ var src = orgArquivo(t, alvo); var im = document.createElement('img'); im.src = src; im.alt = ''; im.title = 'Tocar para ampliar mais'; im.addEventListener('click', function(){ abrirLightbox(src, t); }); return im; }
-  function orgRevTipos(alvo){ var lista = ['azul','verde','verm'].filter(function(t){ return t === 'verde' || !!orgRevContainer.querySelector('.org-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); return lista; }
-  function orgRevisaoAbrir(container, onClose){
-    /* TODOS os encaixes, na ordem do tabuleiro — a revisão mostra a combinação correta,
-       não o que a turma jogou */
-    orgRevSlots = [].slice.call(container.querySelectorAll('.org-slot')).filter(function(s){ return s.dataset.alvo; });
-    if (!orgRevSlots.length) return;
-    orgRevContainer = container;
-    orgRevSlots.forEach(function(s){
-      const c = document.createElement('div'); c.className = 'org-rev-correta';
-      c.appendChild((function(){ var im = document.createElement('img'); im.src = orgArquivo(orgRevTipoDe(s), s.dataset.alvo); im.alt = ''; return im; })());
-      s.appendChild(c);
+  /* carta correta já ampliada: ocupa o espaço da tela (sem lupa, sem segundo clique) */
+  function orgRevGrande(t, alvo){ var im = document.createElement('img'); im.src = orgArquivo(t, alvo); im.alt = ''; return im; }
+  function orgRevTipos(alvo){ return ['azul','verde','verm'].filter(function(t){ return t === 'verde' || !!orgRevContainer.querySelector('.org-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); }
+  function orgRevisaoAbrir(container){
+    /* UMA associação por passo, na ordem do tabuleiro (no Desafio cada uma ocupa vários encaixes) —
+       a revisão mostra as cartas corretas já ampliadas, não o que a turma jogou */
+    orgRevAlvos = [];
+    [].slice.call(container.querySelectorAll('.org-slot')).forEach(function(s){
+      if (s.dataset.alvo && orgRevAlvos.indexOf(s.dataset.alvo) < 0) orgRevAlvos.push(s.dataset.alvo);
     });
-    orgRevOnClose = (typeof onClose === 'function') ? onClose : null;
+    if (!orgRevAlvos.length) return;
+    orgRevContainer = container;
     orgRevAtiva = true;
     orgRevIdx = 0;
-    container.classList.add('org-rev-on');
-    orgRevBar.classList.add('on');
-    container.scrollIntoView({ behavior:'smooth', block:'start' });
+    orgRevOv.classList.add('on');
+    document.documentElement.style.overflow = 'hidden';   /* trava a rolagem da página atrás */
+    orgRevOv.setAttribute('aria-hidden', 'false');
     orgRevIr(0);
   }
 
   function orgRevFechar(){
-    const cb = orgRevOnClose;
     orgRevReset();
     somClique();
-    if (cb) cb();
   }
 
   /* limpa a revisão sem disparar o callback (usado quando o tabuleiro é remontado) */
   function orgRevReset(){
     orgRevAtiva = false;
-    orgRevOnClose = null;
-    if (orgRevContainer) orgRevContainer.classList.remove('org-rev-on');
-    orgRevSlots.forEach(function(s){
-      s.classList.remove('org-rev-atual');
-      const c = s.querySelector('.org-rev-correta'); if (c) c.remove();
-    });
-    orgRevBar.classList.remove('on');
-    orgRevSlots = [];
+    orgRevOv.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    orgRevOv.setAttribute('aria-hidden', 'true');
+    orgRevAlvos = [];
     orgRevContainer = null;
   }
 
   function orgRevIr(i){
-    if (!orgRevSlots.length) return;
-    orgRevIdx = Math.max(0, Math.min(orgRevSlots.length - 1, i));
-    orgRevSlots.forEach(function(s, k){ s.classList.toggle('org-rev-atual', k === orgRevIdx); });
-    const slot = orgRevSlots[orgRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
-    orgRevPintarBarra(slot);
+    if (!orgRevAlvos.length) return;
+    orgRevIdx = Math.max(0, Math.min(orgRevAlvos.length - 1, i));
+    orgRevPintar();
     somClique();
   }
 
-  function orgRevSelecionarSlot(slot){
-    const i = orgRevSlots.indexOf(slot);
-    if (i >= 0) orgRevIr(i);
-  }
-
-  function orgRevPintarBarra(slot){
-    const alvo = slot.dataset.alvo;
+  function orgRevPintar(){
+    const alvo = orgRevAlvos[orgRevIdx];
     document.getElementById('orgRevPasso').textContent =
-      'Estação ' + (orgRevIdx + 1) + ' de ' + orgRevSlots.length;
+      'Passo ' + (orgRevIdx + 1) + ' de ' + orgRevAlvos.length;
     document.getElementById('orgRevTit').innerHTML = '<b>' + orgNome(alvo) + '</b>';
-
-    /* as cartas corretas desta estação, já AMPLIADAS (tocar amplia ainda mais);
-       a do encaixe atual em destaque */
     const cx = document.getElementById('orgRevCartas');
     cx.innerHTML = '';
-    const atual = orgRevTipoDe(slot);
     orgRevTipos(alvo).forEach(function(t){
       const f = document.createElement('figure');
-      f.className = 'org-rev-fig' + (t === atual ? ' atual' : '');
+      f.className = 'org-rev-fig';
       f.appendChild(orgRevGrande(t, alvo));
       cx.appendChild(f);
     });
-
     document.getElementById('orgRevPrev').disabled = (orgRevIdx === 0);
-    document.getElementById('orgRevNext').disabled = (orgRevIdx === orgRevSlots.length - 1);
+    document.getElementById('orgRevNext').disabled = (orgRevIdx === orgRevAlvos.length - 1);
   }
 
   document.getElementById('orgRevPrev').addEventListener('click', function(){ orgRevIr(orgRevIdx - 1); });
   document.getElementById('orgRevNext').addEventListener('click', function(){ orgRevIr(orgRevIdx + 1); });
   document.getElementById('orgRevFecharBtn').addEventListener('click', orgRevFechar);
+  orgBtnRevisar.addEventListener('click', function(){ if (!orgBtnRevisar.disabled) orgRevisaoAbrir(orgCampo); });
+  orgChalRevisarBtn.addEventListener('click', function(){ if (!orgChalRevisarBtn.disabled) orgRevisaoAbrir(orgChalCampo); });
   document.addEventListener('keydown', function(e){
     if (!orgRevAtiva) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); orgRevIr(orgRevIdx + 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); orgRevIr(orgRevIdx - 1); }
-    else if (e.key === 'Escape' && !lb.classList.contains('on')){ orgRevFechar(); }
+    else if (e.key === 'Escape'){ orgRevFechar(); }
   });
 
   function iniciarOrganelas(){ orgMostrarModo(); }

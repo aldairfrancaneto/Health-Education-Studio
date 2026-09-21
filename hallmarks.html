@@ -706,47 +706,7 @@ body{
   }
   .chal-sorteio.parou .chal-emb-c{ animation:none; }
 
-/* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-.rev-on .slot{
-  pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
-  transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
-  border-color:var(--gold-dim) !important; border-style:solid !important;   /* neutraliza verde/vermelho de certo/errado */
-}
-.rev-on .slot:not(.rev-atual){ box-shadow:none !important; }
-.rev-on .slot::after{ display:none !important; }
-/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
-.rev-correta{ display:none; }
-.rev-on .slot .rev-correta{
-  display:block; position:absolute; inset:0; z-index:8; background:var(--slot);
-  border-radius:inherit; overflow:hidden;
-}
-.rev-correta > img{ width:100%; height:100%; object-fit:cover; display:block; }
-.rev-on .slot.rev-atual{
-  opacity:1; filter:none; outline:3px solid var(--gold); outline-offset:3px;
-  box-shadow:0 0 0 7px rgba(212,175,55,.28), 0 12px 34px rgba(0,0,0,.6);
-  transform:scale(1.07); z-index:6;
-}
-.rev-bar{
-  position:fixed; left:0; right:0; bottom:0; z-index:90; transform:translateY(120%);
-  transition:transform .3s ease;
-  background:linear-gradient(180deg, rgba(20,14,8,.98), rgba(8,5,3,.98));
-  border-top:2px solid var(--gold-dim); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-}
-.rev-bar.on{ transform:translateY(0); }
-:root{ --rev-img-h:min(38vh,340px); }
-.rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
-.rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
-.rev-cartas{ display:flex; gap:12px; justify-content:center; align-items:flex-start; }
-.rev-fig{ margin:0; position:relative; opacity:.6; transition:opacity .2s; }
-.rev-fig.atual{ opacity:1; }
-.rev-fig > img{
-  height:var(--rev-img-h); width:auto; max-width:44vw; object-fit:contain; cursor:zoom-in; display:block;
-  border-radius:10px; border:3px solid var(--gold-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
-}
-.rev-fig.atual > img{ border-color:var(--gold-soft); }
-.rev-texto{ flex:1 1 240px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
-.rev-on .slot{ scroll-margin-top:16px; scroll-margin-bottom:calc(var(--rev-img-h) + 200px); }
-.rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+/* ---------- revisao guiada (fim de jogo): uma associação por vez, cartas já ampliadas em tela cheia ---------- */
 .rev-nav{
   background:var(--gold-dim); color:#1B0A2C; border:none; border-radius:8px;
   width:34px; height:34px; font-size:18px; font-weight:700; cursor:pointer;
@@ -759,9 +719,30 @@ body{
 }
 .rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
 .rev-tit b{ color:var(--gold); }
-.rev-cta{ margin-top:12px; }
+.rev-ov{
+  position:fixed; inset:0; z-index:95; display:none; flex-direction:column; gap:10px;
+  background:linear-gradient(180deg, #140E08, #080503);
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.rev-ov.on{ display:flex; }
+.rev-ov .rev-top{ display:flex; align-items:center; gap:10px; }
+.rev-ov .rev-passo{ flex:1; text-align:center; }
+.rev-ov .rev-tit{ text-align:center; font-size:clamp(15px,2.3vw,22px); }
+.rev-ov .rev-palco{ flex:1; min-height:0; display:flex; align-items:center; gap:12px; }
+.rev-ov .rev-palco .rev-nav{ flex:none; width:48px; height:72px; font-size:26px; }
+.rev-ov .rev-cartas{ flex:1; min-width:0; height:100%; display:flex; gap:clamp(8px,1.6vw,20px); justify-content:center; align-items:center; }
+.rev-ov .rev-fig{ flex:1 1 0; min-width:0; height:100%; margin:0; display:flex; align-items:center; justify-content:center; }
+.rev-ov .rev-fig > img{ width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 8px 22px rgba(0,0,0,.6)); }
+/* celular em pé: as cartas de uma associação ficam empilhadas (cada uma maior do que lado a lado) */
+@media (max-width:700px) and (orientation:portrait){
+  .rev-ov .rev-cartas{ flex-direction:column; }
+  .rev-ov .rev-fig{ width:100%; height:auto; min-height:0; }
+}
 @media (max-width:600px){
   .rev-tit{ font-size:13px; }
+  .rev-ov{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .rev-ov .rev-palco{ gap:6px; }
+  .rev-ov .rev-palco .rev-nav{ width:32px; height:56px; font-size:22px; }
 }
 </style>
 </head>
@@ -858,6 +839,7 @@ body{
         <span class="hud-item" id="hudRod">RODADA: <b>1</b></span>
         <button class="btn-board principal" id="btnSelar" type="button" disabled>🔬 Conferir respostas</button>
         <button class="btn-board" id="btnLimpar" type="button" disabled title="Disponível ao concluir a atividade">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board principal" id="btnRevisar" type="button" disabled title="Disponível ao concluir a atividade">🔍 Revisar a atividade com a turma</button>
       </div>
 
       <div id="resultado"></div>
@@ -887,6 +869,7 @@ body{
         <div class="hud">
           <span class="hud-item" id="chalHudPos">PARES FECHADOS: <b>0/12</b></span>
           <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board principal" id="chalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
           <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
         </div>
 
@@ -971,18 +954,16 @@ body{
   <img id="lbImg" src="" alt="Carta ampliada">
 </div>
 
-<div class="rev-bar" id="revBar" aria-hidden="true">
-  <div class="rev-inner">
-    <div class="rev-top">
-      <button class="rev-nav" id="revPrevBtn" type="button" aria-label="Estação anterior">&#8249;</button>
-      <span class="rev-passo" id="revPasso"></span>
-      <button class="rev-nav" id="revNextBtn" type="button" aria-label="Próxima estação">&#8250;</button>
-      <button class="rev-fechar" id="revFecharBtn" type="button">&#10005; Encerrar revisão</button>
-    </div>
-    <div class="rev-corpo">
-      <div class="rev-cartas" id="revCartas"></div>
-      <div class="rev-texto"><div class="rev-tit" id="revTit"></div></div>
-    </div>
+<div class="rev-ov" id="revOv" role="dialog" aria-modal="true" aria-label="Revisão da atividade" aria-hidden="true">
+  <div class="rev-top">
+    <span class="rev-passo" id="revPasso"></span>
+    <button class="rev-fechar" id="revFecharBtn" type="button">&#10005; Encerrar revisão</button>
+  </div>
+  <div class="rev-tit" id="revTit"></div>
+  <div class="rev-palco">
+    <button class="rev-nav" id="revPrevBtn" type="button" aria-label="Passo anterior">&#8249;</button>
+    <div class="rev-cartas" id="revCartas"></div>
+    <button class="rev-nav" id="revNextBtn" type="button" aria-label="Próximo passo">&#8250;</button>
   </div>
 </div>
 
@@ -1132,6 +1113,7 @@ body{
   const hudRod  = document.getElementById('hudRod');
   const btnSelar = document.getElementById('btnSelar');
   const btnLimpar = document.getElementById('btnLimpar');
+  const btnRevisar = document.getElementById('btnRevisar');
   const elResultado = document.getElementById('resultado');
 
   let selecionada = null;   // carta de definição selecionada no acervo
@@ -1244,7 +1226,7 @@ body{
   }
 
   function clicarSlot(slot){
-    if (revAtiva){ revSelecionarSlot(slot); return; }
+    if (revAtiva) return;
     // slot já conferido como errado → devolve a carta ao acervo (não pode mais ser movida direto)
     if (slot.dataset.posto && slot.classList.contains('errado')){
       const num = esvaziarSlot(slot);
@@ -1332,13 +1314,10 @@ body{
     if (errados.length === 0){
       elResultado.className = 'on vitoria';
       elResultado.innerHTML = '<span class="grande">🏆 Todas as 12 associações estão corretas!</span>' +
-        'Você concluiu a atividade na rodada ' + rodada + '.' +
-        '<div class="rev-cta"><button class="btn-board principal" type="button" id="revBtn">' +
-        '🔍 Revisar as associações com a turma</button></div>';
+        'Você concluiu a atividade na rodada ' + rodada + '.';
       btnSelar.disabled = true;
       btnLimpar.disabled = false;
-      var _rvb = document.getElementById('revBtn');
-      if (_rvb) _rvb.addEventListener('click', function(){ revisaoAbrir(elCampo); });
+      btnRevisar.disabled = false;
       hallMusica.encerrar();                   /* fim da partida do Single Player */
       somVitoria();
     } else {
@@ -1362,6 +1341,7 @@ body{
     selecionada = null;
     slotMarcado = null;
     btnLimpar.disabled = true;
+    btnRevisar.disabled = true;
     rodada = 1;
     hudRod.innerHTML = 'RODADA: <b>1</b>';
     limparResultado();
@@ -1576,6 +1556,7 @@ body{
   const chalMontesEl = document.getElementById('chalMontes');
   const chalEncerrarBtn = document.getElementById('chalEncerrar');
   const chalReiniciarBtn   = document.getElementById('chalReiniciar');
+  const chalRevisarBtn = document.getElementById('chalRevisar');
   const chalTrocarModoBtn  = document.getElementById('chalTrocarModo');
 
   const CHAL = {
@@ -1816,7 +1797,7 @@ body{
   }
 
   function chalClicarSlot(slot){
-    if (revAtiva){ revSelecionarSlot(slot); return; }
+    if (revAtiva) return;
     if (!CHAL.ativo || slot.classList.contains('travado')) return;
 
     /* obs.: uma carta sacada e ainda não pega (CHAL.cartaSacada) NÃO bloqueia o
@@ -1972,6 +1953,7 @@ body{
     hallMusica.encerrar();                     /* fim da partida do Desafio */
     CHAL.ativo = false;
     chalReiniciarBtn.disabled = false;
+    chalRevisarBtn.disabled = false;
     chalTrocarModoBtn.disabled = false;
     chalAtualizarResto();
     chalEncerrarBtn.disabled = true;
@@ -1982,14 +1964,10 @@ body{
     else { const v = p0 > p1 ? 0 : 1; ico = '🏆'; tit = jogadores[v].nome + ' venceu!'; }
     chalResultado.className = 'on vitoria';
     chalResultado.innerHTML = '<span class="grande">' + ico + ' ' + chalEsc(tit) + '</span>' +
-      jogadores.map(function(j){ return chalEsc(j.nome) + ': ' + j.pontos + ' carta' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.' +
-      '<div class="rev-cta"><button class="btn-board principal" type="button" id="chalRevBtn">' +
-      '🔍 Revisar as associações com a turma</button></div>';
+      jogadores.map(function(j){ return chalEsc(j.nome) + ': ' + j.pontos + ' carta' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
     chalRenderVez('🏁 Fim de jogo!');
     chalRenderPlacar();
     somVitoria();
-    var _chrb = document.getElementById('chalRevBtn');
-    if (_chrb) _chrb.addEventListener('click', function(){ revisaoAbrir(chalCampo); });
     chalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
@@ -2121,6 +2099,7 @@ body{
     chalResultado.className = '';
     chalResultado.innerHTML = '';
     chalReiniciarBtn.disabled = true;
+    chalRevisarBtn.disabled = true;
     chalTrocarModoBtn.disabled = true;
     chalAtualizarResto();
 
@@ -2165,101 +2144,80 @@ body{
     return p ? p[2] : '';
   }
   let revAtiva = false;
-  let revSlots = [];
+  let revAlvos = [];
   let revIdx = 0;
   let revContainer = null;
-  let revOnClose = null;
-  const revBar = document.getElementById('revBar');
+  const revOv = document.getElementById('revOv');
 
-  function revTipoDe(s){ return s.dataset.tipo || 'def'; }
-  function revGrande(t, alvo){ var src = arquivo(t, alvo); var im = document.createElement('img'); im.src = src; im.alt = ''; im.title = 'Tocar para ampliar mais'; im.addEventListener('click', function(){ abrirLightbox(src, t); }); return im; }
+  /* carta correta já ampliada: ocupa o espaço da tela (sem lupa, sem segundo clique) */
+  function revGrande(t, alvo){ var im = document.createElement('img'); im.src = arquivo(t, alvo); im.alt = ''; return im; }
   function revTipos(alvo){ return ['cat','def']; }
-  function revisaoAbrir(container, onClose){
-    /* TODOS os encaixes, na ordem do tabuleiro — a revisão mostra a combinação correta,
-       não o que a turma jogou */
-    revSlots = [].slice.call(container.querySelectorAll('.slot')).filter(function(s){ return s.dataset.alvo; });
-    if (!revSlots.length) return;
-    revContainer = container;
-    revSlots.forEach(function(s){
-      const c = document.createElement('div'); c.className = 'rev-correta';
-      c.appendChild((function(){ var im = document.createElement('img'); im.src = arquivo(revTipoDe(s), s.dataset.alvo); im.alt = ''; return im; })());
-      s.appendChild(c);
+  function revisaoAbrir(container){
+    /* UMA associação por passo, na ordem do tabuleiro (no Desafio cada uma ocupa vários encaixes) —
+       a revisão mostra as cartas corretas já ampliadas, não o que a turma jogou */
+    revAlvos = [];
+    [].slice.call(container.querySelectorAll('.slot')).forEach(function(s){
+      if (s.dataset.alvo && revAlvos.indexOf(s.dataset.alvo) < 0) revAlvos.push(s.dataset.alvo);
     });
-    revOnClose = (typeof onClose === 'function') ? onClose : null;
+    if (!revAlvos.length) return;
+    revContainer = container;
     revAtiva = true;
     revIdx = 0;
-    container.classList.add('rev-on');
-    revBar.classList.add('on');
-    container.scrollIntoView({ behavior:'smooth', block:'start' });
+    revOv.classList.add('on');
+    document.documentElement.style.overflow = 'hidden';   /* trava a rolagem da página atrás */
+    revOv.setAttribute('aria-hidden', 'false');
     revIr(0);
   }
 
   function revFechar(){
-    const cb = revOnClose;
     revReset();
     somClique();
-    if (cb) cb();
   }
 
   /* limpa a revisão sem disparar o callback (usado quando o tabuleiro é remontado) */
   function revReset(){
     revAtiva = false;
-    revOnClose = null;
-    if (revContainer) revContainer.classList.remove('rev-on');
-    revSlots.forEach(function(s){
-      s.classList.remove('rev-atual');
-      const c = s.querySelector('.rev-correta'); if (c) c.remove();
-    });
-    revBar.classList.remove('on');
-    revSlots = [];
+    revOv.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    revOv.setAttribute('aria-hidden', 'true');
+    revAlvos = [];
     revContainer = null;
   }
 
   function revIr(i){
-    if (!revSlots.length) return;
-    revIdx = Math.max(0, Math.min(revSlots.length - 1, i));
-    revSlots.forEach(function(s, k){ s.classList.toggle('rev-atual', k === revIdx); });
-    const slot = revSlots[revIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
-    revPintarBarra(slot);
+    if (!revAlvos.length) return;
+    revIdx = Math.max(0, Math.min(revAlvos.length - 1, i));
+    revPintar();
     somClique();
   }
 
-  function revSelecionarSlot(slot){
-    const i = revSlots.indexOf(slot);
-    if (i >= 0) revIr(i);
-  }
-
-  function revPintarBarra(slot){
-    const alvo = slot.dataset.alvo;
+  function revPintar(){
+    const alvo = revAlvos[revIdx];
     document.getElementById('revPasso').textContent =
-      'Estação ' + (revIdx + 1) + ' de ' + revSlots.length;
+      'Passo ' + (revIdx + 1) + ' de ' + revAlvos.length;
     document.getElementById('revTit').innerHTML = '<b>' + revNome(alvo) + '</b>';
-
-    /* as cartas corretas desta estação, já AMPLIADAS (tocar amplia ainda mais);
-       a do encaixe atual em destaque */
     const cx = document.getElementById('revCartas');
     cx.innerHTML = '';
-    const atual = revTipoDe(slot);
     revTipos(alvo).forEach(function(t){
       const f = document.createElement('figure');
-      f.className = 'rev-fig' + (t === atual ? ' atual' : '');
+      f.className = 'rev-fig';
       f.appendChild(revGrande(t, alvo));
       cx.appendChild(f);
     });
-
     document.getElementById('revPrevBtn').disabled = (revIdx === 0);
-    document.getElementById('revNextBtn').disabled = (revIdx === revSlots.length - 1);
+    document.getElementById('revNextBtn').disabled = (revIdx === revAlvos.length - 1);
   }
 
   document.getElementById('revPrevBtn').addEventListener('click', function(){ revIr(revIdx - 1); });
   document.getElementById('revNextBtn').addEventListener('click', function(){ revIr(revIdx + 1); });
   document.getElementById('revFecharBtn').addEventListener('click', revFechar);
+  btnRevisar.addEventListener('click', function(){ if (!btnRevisar.disabled) revisaoAbrir(elCampo); });
+  chalRevisarBtn.addEventListener('click', function(){ if (!chalRevisarBtn.disabled) revisaoAbrir(chalCampo); });
   document.addEventListener('keydown', function(e){
     if (!revAtiva) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); revIr(revIdx + 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); revIr(revIdx - 1); }
-    else if (e.key === 'Escape' && !lb.classList.contains('on')){ revFechar(); }
+    else if (e.key === 'Escape'){ revFechar(); }
   });
 
   function iniciarHallmarks(){

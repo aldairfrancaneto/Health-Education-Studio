@@ -887,49 +887,7 @@ body{
   }
   .rep-sorteio.parou .chal-emb-c{ animation:none; }
 
-/* ---------- revisao guiada do tabuleiro (fim de jogo, todos os modos) ---------- */
-.rep-rev-on .rep-slot{
-  pointer-events:auto; cursor:pointer; opacity:.45; filter:grayscale(.3);
-  transition:opacity .2s, transform .2s, box-shadow .2s, outline-color .2s;
-  border-color:var(--ac-dim) !important; border-style:solid !important;   /* neutraliza verde/vermelho de certo/errado */
-}
-.rep-rev-on .rep-slot:not(.rep-rev-atual){ box-shadow:none !important; }
-.rep-rev-on .rep-slot::after{ display:none !important; }
-/* na revisão cada encaixe mostra a carta CORRETA daquela posição (independente do que foi jogado) */
-.rep-rev-correta{ display:none; }
-.rep-rev-on .rep-slot .rep-rev-correta{
-  display:block; position:absolute; inset:0; z-index:8; background:#0a1020;
-  border-radius:inherit; overflow:hidden;
-}
-.rep-rev-correta > img{ width:100%; height:100%; object-fit:cover; display:block; }
-.rep-rev-on .rep-slot.rep-rev-atual{
-  opacity:1; filter:none; outline:3px solid var(--gold); outline-offset:3px;
-  box-shadow:0 0 0 7px rgba(212,175,55,.28), 0 12px 34px rgba(0,0,0,.6);
-  transform:scale(1.07); z-index:6;
-}
-.rep-rev-correta > .rep-carta{ position:absolute; inset:0; font-size:calc(var(--card-w) / 30); }
-.rep-rev-bar{
-  position:fixed; left:0; right:0; bottom:0; z-index:90; transform:translateY(120%);
-  transition:transform .3s ease;
-  background:linear-gradient(180deg, rgba(20,14,8,.98), rgba(8,5,3,.98));
-  border-top:2px solid var(--gold-dim); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-}
-.rep-rev-bar.on{ transform:translateY(0); }
-:root{ --rev-img-h:min(34vh,300px); }
-.rep-rev-inner{ max-width:920px; margin:0 auto; display:flex; flex-direction:column; gap:8px; }
-.rep-rev-corpo{ display:flex; gap:16px; align-items:center; justify-content:center; flex-wrap:wrap; }
-.rep-rev-cartas{ display:flex; gap:12px; justify-content:center; align-items:flex-start; }
-.rep-rev-fig{ margin:0; position:relative; opacity:.6; transition:opacity .2s; }
-.rep-rev-fig.atual{ opacity:1; }
-.rep-rev-fig > img{
-  height:var(--rev-img-h); width:auto; max-width:30vw; object-fit:contain; cursor:zoom-in; display:block;
-  border-radius:10px; border:3px solid var(--ac-dim); box-shadow:0 8px 22px rgba(0,0,0,.55);
-}
-.rep-rev-fig.atual > img{ border-color:var(--ac-soft); }
-.rep-rev-texto{ flex:1 1 240px; min-width:0; max-width:420px; display:flex; flex-direction:column; gap:8px; }
-.rep-rev-fig > .rep-carta{ flex:none; width:calc(var(--rev-img-h) * 560 / 830); font-size:calc(var(--rev-img-h) * 560 / 830 / 30); cursor:zoom-in; }
-.rep-rev-on .rep-slot{ scroll-margin-top:16px; scroll-margin-bottom:calc(var(--rev-img-h) + 200px); }
-.rep-rev-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+/* ---------- revisao guiada (fim de jogo): uma associação por vez, cartas já ampliadas em tela cheia ---------- */
 .rep-rev-nav{
   background:var(--gold-dim); color:#1B0A2C; border:none; border-radius:8px;
   width:34px; height:34px; font-size:18px; font-weight:700; cursor:pointer;
@@ -942,9 +900,31 @@ body{
 }
 .rep-rev-tit{ font-family:var(--font-serif); font-size:14.5px; line-height:1.45; color:#fff; }
 .rep-rev-tit b{ color:var(--gold); }
-.rep-rev-cta{ margin-top:12px; }
+.rep-rev-ov{
+  position:fixed; inset:0; z-index:95; display:none; flex-direction:column; gap:10px;
+  background:linear-gradient(180deg, #140E08, #080503);
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.rep-rev-ov.on{ display:flex; }
+.rep-rev-ov .rep-rev-top{ display:flex; align-items:center; gap:10px; }
+.rep-rev-ov .rep-rev-passo{ flex:1; text-align:center; }
+.rep-rev-ov .rep-rev-tit{ text-align:center; font-size:clamp(15px,2.3vw,22px); }
+.rep-rev-ov .rep-rev-palco{ flex:1; min-height:0; display:flex; align-items:center; gap:12px; }
+.rep-rev-ov .rep-rev-palco .rep-rev-nav{ flex:none; width:48px; height:72px; font-size:26px; }
+.rep-rev-ov .rep-rev-cartas{ flex:1; min-width:0; height:100%; display:flex; gap:clamp(8px,1.6vw,20px); justify-content:center; align-items:center; }
+.rep-rev-ov .rep-rev-fig{ flex:1 1 0; min-width:0; height:100%; margin:0; display:flex; align-items:center; justify-content:center; container-type:size; }
+.rep-rev-ov .rep-rev-fig > img{ width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 8px 22px rgba(0,0,0,.6)); }
+.rep-rev-ov .rep-rev-fig > .rep-carta{ --w:min(100cqw, calc(100cqh * 560 / 830)); flex:none; width:var(--w); font-size:calc(var(--w) / 30); }
+/* celular em pé: as cartas de uma associação ficam empilhadas (cada uma maior do que lado a lado) */
+@media (max-width:700px) and (orientation:portrait){
+  .rep-rev-ov .rep-rev-cartas{ flex-direction:column; }
+  .rep-rev-ov .rep-rev-fig{ width:100%; height:auto; min-height:0; }
+}
 @media (max-width:600px){
   .rep-rev-tit{ font-size:13px; }
+  .rep-rev-ov{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .rep-rev-ov .rep-rev-palco{ gap:6px; }
+  .rep-rev-ov .rep-rev-palco .rep-rev-nav{ width:32px; height:56px; font-size:22px; }
 }
 </style>
 </head>
@@ -1071,6 +1051,7 @@ body{
       <span class="hud-item" id="repRod">RODADA: <b>1</b></span>
       <button class="btn-board principal" id="repSelar" type="button" disabled>🔬 Conferir respostas</button>
       <button class="btn-board" id="repLimpar" type="button" disabled title="Disponível ao concluir o baralho">↻ Embaralhar e recomeçar</button>
+      <button class="btn-board principal" id="repRevisar" type="button" disabled title="Disponível ao concluir o baralho">🔍 Revisar a atividade com a turma</button>
       <button class="btn-board" id="repTrocar" type="button" disabled title="Disponível ao concluir o baralho">⇄ Trocar conjunto</button>
     </div>
 
@@ -1121,6 +1102,7 @@ body{
       <div class="hud">
         <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
         <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board principal" id="repChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
         <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
       </div>
 
@@ -1178,18 +1160,16 @@ body{
   <div id="repLbCartao"></div>
 </div>
 
-<div class="rep-rev-bar" id="repRevBar" aria-hidden="true">
-  <div class="rep-rev-inner">
-    <div class="rep-rev-top">
-      <button class="rep-rev-nav" id="repRevPrev" type="button" aria-label="Estação anterior">&#8249;</button>
-      <span class="rep-rev-passo" id="repRevPasso"></span>
-      <button class="rep-rev-nav" id="repRevNext" type="button" aria-label="Próxima estação">&#8250;</button>
-      <button class="rep-rev-fechar" id="repRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
-    </div>
-    <div class="rep-rev-corpo">
-      <div class="rep-rev-cartas" id="repRevCartas"></div>
-      <div class="rep-rev-texto"><div class="rep-rev-tit" id="repRevTit"></div></div>
-    </div>
+<div class="rep-rev-ov" id="repRevOv" role="dialog" aria-modal="true" aria-label="Revisão da atividade" aria-hidden="true">
+  <div class="rep-rev-top">
+    <span class="rep-rev-passo" id="repRevPasso"></span>
+    <button class="rep-rev-fechar" id="repRevFecharBtn" type="button">&#10005; Encerrar revisão</button>
+  </div>
+  <div class="rep-rev-tit" id="repRevTit"></div>
+  <div class="rep-rev-palco">
+    <button class="rep-rev-nav" id="repRevPrev" type="button" aria-label="Passo anterior">&#8249;</button>
+    <div class="rep-rev-cartas" id="repRevCartas"></div>
+    <button class="rep-rev-nav" id="repRevNext" type="button" aria-label="Próximo passo">&#8250;</button>
   </div>
 </div>
 
@@ -1349,6 +1329,7 @@ body{
   const repHudRod     = document.getElementById('repRod');
   const repBtnSelar   = document.getElementById('repSelar');
   const repBtnLimpar  = document.getElementById('repLimpar');
+  const repBtnRevisar = document.getElementById('repRevisar');
   const repBtnTrocar  = document.getElementById('repTrocar');
   const repResultado  = document.getElementById('repResultado');
   const repSelecao    = document.getElementById('repSelecao');
@@ -1532,7 +1513,7 @@ body{
   }
 
   function repClicarSlot(slot){
-    if (repRevAtiva){ repRevSelecionarSlot(slot); return; }
+    if (repRevAtiva) return;
     /* encaixe já conferido como errado → devolve a carta ao acervo (não pode mais ser movida direto) */
     if (slot.dataset.posto && slot.classList.contains('errado')){
       const tipo = slot.dataset.tipo;
@@ -1624,14 +1605,11 @@ body{
         (repModo === 'todas'
           ? 'Cada categoria da replicação foi ligada à sua definição molecular e à sua conexão clínica.'
           : 'Cada categoria foi ligada à sua definição molecular. Para fechar os trios com a conexão ' +
-            'clínica, jogue novamente no conjunto completo.') +
-        '<div class="rep-rev-cta"><button class="btn-board principal" type="button" id="repRevBtn">' +
-        '🔍 Revisar os trios com a turma</button></div>';
+            'clínica, jogue novamente no conjunto completo.');
       repBtnSelar.disabled = true;
       repBtnLimpar.disabled = false;
+      repBtnRevisar.disabled = false;
       repBtnTrocar.disabled = false;
-      var _rrb = document.getElementById('repRevBtn');
-      if (_rrb) _rrb.addEventListener('click', function(){ repRevisaoAbrir(repCampo); });
       repMusica.encerrar();                    /* fim da partida do Single Player */
       somVitoria();
     } else {
@@ -1680,6 +1658,7 @@ body{
     repSelecionada = null;
     repSlotMarcado = null;
     repBtnLimpar.disabled = true;
+    repBtnRevisar.disabled = true;
     repBtnTrocar.disabled = true;
     repRodada = 1;
     repHudRod.innerHTML = 'RODADA: <b>1</b>';
@@ -1905,6 +1884,7 @@ body{
   const repChalMontesEl = document.getElementById('repChalMontes');
   const repChalEncerrarBtn = document.getElementById('repChalEncerrar');
   const repChalReiniciarBtn   = document.getElementById('repChalReiniciar');
+  const repChalRevisarBtn = document.getElementById('repChalRevisar');
   const repChalTrocarModoBtn  = document.getElementById('repChalTrocarModo');
 
   const CHAL_REP_VAZIO = { conceito:'CATEGORIA', def:'DEFINIÇÃO<br>E FUNÇÃO', clin:'CONEXÃO<br>CLÍNICA' };
@@ -2145,7 +2125,7 @@ body{
   }
 
   function chalRepClicarSlot(slot){
-    if (repRevAtiva){ repRevSelecionarSlot(slot); return; }
+    if (repRevAtiva) return;
     if (!CHAL_REP.ativo || slot.classList.contains('travado')) return;
 
     /* obs.: uma carta sacada e ainda não pega NÃO bloqueia o tabuleiro — o
@@ -2306,6 +2286,7 @@ body{
     repMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_REP.ativo = false;
     repChalReiniciarBtn.disabled = false;
+    repChalRevisarBtn.disabled = false;
     repChalTrocarModoBtn.disabled = false;
     chalRepAtualizarResto();
     repChalEncerrarBtn.disabled = true;
@@ -2313,14 +2294,10 @@ body{
     const vencedor = jogadores[0].pontos >= jogadores[1].pontos ? jogadores[0] : jogadores[1];
     repChalResultado.className = 'on vitoria';
     repChalResultado.innerHTML = '<span class="grande">🏆 ' + repChalEsc(vencedor.nome) + ' venceu!</span>' +
-      jogadores.map(function(j){ return repChalEsc(j.nome) + ': ' + j.pontos + ' trio' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.' +
-      '<div class="rep-rev-cta"><button class="btn-board principal" type="button" id="repChalRevBtn">' +
-      '🔍 Revisar os trios com a turma</button></div>';
+      jogadores.map(function(j){ return repChalEsc(j.nome) + ': ' + j.pontos + ' trio' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
     chalRepRenderVez('🏁 Fim de jogo!');
     chalRepRenderPlacar();
     somVitoria();
-    var _rcrb = document.getElementById('repChalRevBtn');
-    if (_rcrb) _rcrb.addEventListener('click', function(){ repRevisaoAbrir(repChalCampo); });
     repChalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
@@ -2452,6 +2429,7 @@ body{
     repChalResultado.className = '';
     repChalResultado.innerHTML = '';
     repChalReiniciarBtn.disabled = true;
+    repChalRevisarBtn.disabled = true;
     repChalTrocarModoBtn.disabled = true;
     chalRepAtualizarResto();
 
@@ -2497,101 +2475,80 @@ body{
     return t ? t.titulo : id;
   }
   let repRevAtiva = false;
-  let repRevSlots = [];
+  let repRevAlvos = [];
   let repRevIdx = 0;
   let repRevContainer = null;
-  let repRevOnClose = null;
-  const repRevBar = document.getElementById('repRevBar');
+  const repRevOv = document.getElementById('repRevOv');
 
-  function repRevTipoDe(s){ return s.dataset.tipo || 'def'; }
-  function repRevGrande(t, alvo){ var trio = repTrio(alvo); var el = repMontarCarta(t, trio); el.title = 'Tocar para ampliar mais'; el.style.cursor = 'zoom-in'; el.addEventListener('click', function(){ abrirLightbox(repMontarCarta(t, trio)); }); return el; }
-  function repRevTipos(alvo){ var lista = ['conceito','def','clin'].filter(function(t){ return t === 'conceito' || !!repRevContainer.querySelector('.rep-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); return lista; }
-  function repRevisaoAbrir(container, onClose){
-    /* TODOS os encaixes, na ordem do tabuleiro — a revisão mostra a combinação correta,
-       não o que a turma jogou */
-    repRevSlots = [].slice.call(container.querySelectorAll('.rep-slot')).filter(function(s){ return s.dataset.alvo; });
-    if (!repRevSlots.length) return;
-    repRevContainer = container;
-    repRevSlots.forEach(function(s){
-      const c = document.createElement('div'); c.className = 'rep-rev-correta';
-      c.appendChild((function(){ return repMontarCarta(repRevTipoDe(s), repTrio(s.dataset.alvo)); })());
-      s.appendChild(c);
+  /* carta correta já ampliada: ocupa o espaço da tela (sem lupa, sem segundo clique) */
+  function repRevGrande(t, alvo){ return repMontarCarta(t, repTrio(alvo)); }
+  function repRevTipos(alvo){ return ['conceito','def','clin'].filter(function(t){ return t === 'conceito' || !!repRevContainer.querySelector('.rep-slot[data-alvo="' + alvo + '"][data-tipo="' + t + '"]'); }); }
+  function repRevisaoAbrir(container){
+    /* UMA associação por passo, na ordem do tabuleiro (no Desafio cada uma ocupa vários encaixes) —
+       a revisão mostra as cartas corretas já ampliadas, não o que a turma jogou */
+    repRevAlvos = [];
+    [].slice.call(container.querySelectorAll('.rep-slot')).forEach(function(s){
+      if (s.dataset.alvo && repRevAlvos.indexOf(s.dataset.alvo) < 0) repRevAlvos.push(s.dataset.alvo);
     });
-    repRevOnClose = (typeof onClose === 'function') ? onClose : null;
+    if (!repRevAlvos.length) return;
+    repRevContainer = container;
     repRevAtiva = true;
     repRevIdx = 0;
-    container.classList.add('rep-rev-on');
-    repRevBar.classList.add('on');
-    container.scrollIntoView({ behavior:'smooth', block:'start' });
+    repRevOv.classList.add('on');
+    document.documentElement.style.overflow = 'hidden';   /* trava a rolagem da página atrás */
+    repRevOv.setAttribute('aria-hidden', 'false');
     repRevIr(0);
   }
 
   function repRevFechar(){
-    const cb = repRevOnClose;
     repRevReset();
     somClique();
-    if (cb) cb();
   }
 
   /* limpa a revisão sem disparar o callback (usado quando o tabuleiro é remontado) */
   function repRevReset(){
     repRevAtiva = false;
-    repRevOnClose = null;
-    if (repRevContainer) repRevContainer.classList.remove('rep-rev-on');
-    repRevSlots.forEach(function(s){
-      s.classList.remove('rep-rev-atual');
-      const c = s.querySelector('.rep-rev-correta'); if (c) c.remove();
-    });
-    repRevBar.classList.remove('on');
-    repRevSlots = [];
+    repRevOv.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    repRevOv.setAttribute('aria-hidden', 'true');
+    repRevAlvos = [];
     repRevContainer = null;
   }
 
   function repRevIr(i){
-    if (!repRevSlots.length) return;
-    repRevIdx = Math.max(0, Math.min(repRevSlots.length - 1, i));
-    repRevSlots.forEach(function(s, k){ s.classList.toggle('rep-rev-atual', k === repRevIdx); });
-    const slot = repRevSlots[repRevIdx];
-    slot.scrollIntoView({ behavior:'smooth', block:'nearest' });   /* respeita o scroll-margin: não fica atrás da barra */
-    repRevPintarBarra(slot);
+    if (!repRevAlvos.length) return;
+    repRevIdx = Math.max(0, Math.min(repRevAlvos.length - 1, i));
+    repRevPintar();
     somClique();
   }
 
-  function repRevSelecionarSlot(slot){
-    const i = repRevSlots.indexOf(slot);
-    if (i >= 0) repRevIr(i);
-  }
-
-  function repRevPintarBarra(slot){
-    const alvo = slot.dataset.alvo;
+  function repRevPintar(){
+    const alvo = repRevAlvos[repRevIdx];
     document.getElementById('repRevPasso').textContent =
-      'Estação ' + (repRevIdx + 1) + ' de ' + repRevSlots.length;
+      'Passo ' + (repRevIdx + 1) + ' de ' + repRevAlvos.length;
     document.getElementById('repRevTit').innerHTML = '<b>' + repRevNome(alvo) + '</b>';
-
-    /* as cartas corretas desta estação, já AMPLIADAS (tocar amplia ainda mais);
-       a do encaixe atual em destaque */
     const cx = document.getElementById('repRevCartas');
     cx.innerHTML = '';
-    const atual = repRevTipoDe(slot);
     repRevTipos(alvo).forEach(function(t){
       const f = document.createElement('figure');
-      f.className = 'rep-rev-fig' + (t === atual ? ' atual' : '');
+      f.className = 'rep-rev-fig';
       f.appendChild(repRevGrande(t, alvo));
       cx.appendChild(f);
     });
-
     document.getElementById('repRevPrev').disabled = (repRevIdx === 0);
-    document.getElementById('repRevNext').disabled = (repRevIdx === repRevSlots.length - 1);
+    document.getElementById('repRevNext').disabled = (repRevIdx === repRevAlvos.length - 1);
   }
 
   document.getElementById('repRevPrev').addEventListener('click', function(){ repRevIr(repRevIdx - 1); });
   document.getElementById('repRevNext').addEventListener('click', function(){ repRevIr(repRevIdx + 1); });
   document.getElementById('repRevFecharBtn').addEventListener('click', repRevFechar);
+  repBtnRevisar.addEventListener('click', function(){ if (!repBtnRevisar.disabled) repRevisaoAbrir(repCampo); });
+  repChalRevisarBtn.addEventListener('click', function(){ if (!repChalRevisarBtn.disabled) repRevisaoAbrir(repChalCampo); });
   document.addEventListener('keydown', function(e){
     if (!repRevAtiva) return;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); repRevIr(repRevIdx + 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); repRevIr(repRevIdx - 1); }
-    else if (e.key === 'Escape' && !lb.classList.contains('on')){ repRevFechar(); }
+    else if (e.key === 'Escape'){ repRevFechar(); }
   });
 
   repMostrarModo();
