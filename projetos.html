@@ -1,310 +1,401 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Projetos — Aldair de França Neto</title>
-<meta name="description" content="Jogos sérios e ferramentas educativas desenvolvidas por Aldair de França Neto para o ensino médico.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!DOCTYPE html><html class="scroll-smooth" lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Projetos | AFN Health Education Studio</title>
+<meta content="Jogos e recursos digitais para a formação de estudantes e profissionais da saúde." name="description">
+<!-- Google Fonts: Space Grotesk, Space Mono, Plus Jakarta Sans, Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#faf8ff",
+            "surface": "#ffffff",
+            "surface-subtle": "#f4f6fc",
+            "dark-slate": "#0f172a",
+            "primary": "#be000c",
+            "primary-container": "#e52521",
+            "secondary-container": "#facc15",
+            "speed-blue": "#2563eb",
+            "speed-dark": "#0f2759",
+            "power-green": "#10b981",
+            "star-gold": "#eab308",
+            "mana-cyan": "#0284c7"
+          },
+          borderRadius: {
+            "DEFAULT": "0.375rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.25rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "label-md": ["Space Mono", "monospace"],
+            "label-sm": ["Space Mono", "monospace"],
+            "body-md": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "card-title": ["Cinzel", "serif"]
+          }
+        }
+      }
+    }
+  </script>
 <style>
-  /* ============================================================
-     COMO ADICIONAR UM JOGO NOVO (guia para quem não programa)
-     ============================================================
-     1. Lá embaixo, dentro de <div class="grid">, existe um bloco
-        que começa com <article class="card"> e termina com
-        </article>. Esse bloco é UM cartão de jogo inteiro.
-     2. Para adicionar um jogo novo: copie o bloco inteiro do
-        último jogo, cole logo abaixo, e troque:
-          - a imagem de capa (src="...")
-          - a "tag" e o título do jogo
-          - a descrição e as estatísticas
-          - o link do botão "Jogar" (href="...")
-     ============================================================ */
-
-  :root{
-    --sky-top: #4A90E2;
-    --sky-bottom: #8FD3F4;
-    --brick: #C9642B;
-    --coin: #FFD23F;
-    --coin-dark: #C99A1E;
-    --red: #E53935;
-    --red-dark: #A82420;
-    --green: #4CAF50;
-    --green-dark: #2E7D32;
-    --ink: #2B1B0E;
-    --paper: #FFF8E7;
-    --paper-2: #FFEFC7;
-    --outline: #2B1B0E;
-    --font-pixel: 'Press Start 2P', monospace;
-    --font-body: 'Baloo 2', sans-serif;
-  }
-
-  *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  body{
-    margin:0;
-    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 55%, var(--sky-bottom) 100%);
-    background-attachment: fixed;
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-weight: 600;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-
-  .cloud{
-    position: absolute; z-index: 0; pointer-events: none;
-    background: #FFFFFF;
-    box-shadow:
-      20px 0 0 #fff, 40px 0 0 #fff, 60px 0 0 #fff,
-      10px -14px 0 #fff, 30px -14px 0 #fff, 50px -14px 0 #fff,
-      20px -28px 0 #fff, 40px -28px 0 #fff;
-    width: 12px; height: 12px; opacity: .8;
-  }
-  .cloud.c1{ top: 60px; left: 6%; transform: scale(1.3); }
-  .cloud.c2{ top: 200px; right: 8%; transform: scale(1.05); opacity:.7; }
-  .cloud.c3{ top: 700px; left: 10%; transform: scale(0.95); opacity:.6; }
-
-  a{ color: var(--red-dark); text-decoration:none; }
-  ::selection{ background: var(--coin); color: var(--ink); }
-
-  .wrap{ max-width: 880px; margin:0 auto; padding: 0 24px; position:relative; z-index:1; }
-
-  header{
-    padding: 18px 0; background: var(--paper);
-    border-bottom: 4px solid var(--outline);
-    box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-    position: relative; z-index: 2;
-  }
-  .nav-inner{
-    max-width: 880px; margin:0 auto; padding: 0 24px;
-    display:flex; align-items:center; justify-content:space-between;
-    gap: 16px; flex-wrap: wrap;
-  }
-  .brand{ font-family: var(--font-pixel); font-size: 12px; color: var(--ink); display:flex; align-items:center; gap:8px; }
-  .brand .coin-icon{
-    width:18px; height:18px; border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, #FFF2A8, var(--coin) 60%, var(--coin-dark));
-    border: 2px solid var(--outline); display:inline-block;
-  }
-  nav.links{ display:flex; gap: 18px; font-family: var(--font-pixel); font-size: 10px; }
-  nav.links a{ color: var(--ink); padding: 6px 4px; }
-  nav.links a:hover, nav.links a.active{ color: var(--red); }
-
-  .level-tag{ display:flex; align-items:center; gap: 12px; margin: 50px 0 18px; flex-wrap:wrap; }
-  .level-num{
-    font-family: var(--font-pixel); font-size: 12px; color: #fff;
-    background: var(--red); border: 3px solid var(--outline);
-    padding: 8px 10px; border-radius: 5px; box-shadow: 3px 3px 0 var(--outline);
-  }
-  .level-label{
-    font-family: var(--font-pixel); font-size: 11px; color: var(--ink);
-    background: var(--paper); border: 3px solid var(--outline);
-    padding: 8px 12px; border-radius: 5px; box-shadow: 3px 3px 0 var(--outline);
-  }
-
-  h1{
-    font-family: var(--font-pixel); font-size: clamp(20px,4vw,30px);
-    margin: 0 0 16px; color: #fff;
-    text-shadow: 3px 3px 0 var(--outline), -1px -1px 0 var(--outline), 1px -1px 0 var(--outline), -1px 1px 0 var(--outline);
-  }
-  .page-lede{
-    color: var(--ink); font-weight:600; font-size:17px;
-    background: var(--paper); border: 3px solid var(--outline); border-radius: 10px;
-    box-shadow: 5px 5px 0 var(--outline);
-    padding: 16px 20px; max-width: 60ch; margin: 0 0 40px;
-  }
-
-  .grid{ display:grid; grid-template-columns: 1fr; gap: 34px; padding-bottom: 70px; }
-
-  .card{
-    background: var(--paper); border: 4px solid var(--outline); border-radius: 12px;
-    overflow:hidden; box-shadow: 7px 7px 0 var(--outline);
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .card:hover{ transform: translate(-3px,-3px); box-shadow: 10px 10px 0 var(--green-dark); }
-  .card-cover{ width:100%; display:block; border-bottom: 4px solid var(--outline); }
-  .card-body{ padding: 24px 26px 28px; }
-  .card-tag{ font-family: var(--font-pixel); font-size: 9.5px; color: var(--red-dark); margin-bottom: 8px; }
-  .card h2{
-    font-family: var(--font-pixel); font-size: 16px; margin: 4px 0 14px; color: var(--ink);
-  }
-  .card p{ color: var(--ink); font-weight:600; margin: 0 0 6px; font-size:15.5px; }
-  .stat-row{ display:flex; gap: 10px; flex-wrap:wrap; margin: 16px 0 22px; }
-  .stat{
-    font-family: var(--font-pixel); font-size: 9px; color: var(--ink);
-    background: var(--paper-2); border: 2px solid var(--outline);
-    padding: 7px 10px; border-radius: 18px;
-  }
-  .btn{
-    font-family: var(--font-pixel); font-size: 11px;
-    padding: 13px 20px; border-radius: 6px;
-    display:inline-flex; align-items:center; gap: 9px;
-    border: 3px solid var(--outline); box-shadow: 0 5px 0 var(--outline);
-    background: var(--green); color: #fff;
-    transition: transform .1s ease, box-shadow .1s ease;
-  }
-  .btn:hover{ background: var(--green-dark); text-decoration:none; }
-  .btn:active{ transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
-
-  .card.soon{ box-shadow:none; opacity:.65; border-style:dashed; }
-  .card.soon:hover{ transform:none; box-shadow:none; }
-  .card.soon .card-body{ padding: 26px; }
-
-  footer{
-    margin-top: 30px;
-    padding: 26px 0 40px; background: var(--paper);
-    border-top: 4px solid var(--outline);
-    font-family: var(--font-pixel); font-size: 9.5px; color: var(--ink);
-  }
-  .footer-inner{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-  footer a{ color: var(--ink); }
-  footer a:hover{ color: var(--red); }
-
-  /* ============================================================
-     CABEÇALHO À PROVA DE ESTOURO NO CELULAR
-     No celular o menu passa a ocupar a linha inteira, abaixo do
-     nome, e quebra em várias linhas se precisar. Assim ele nunca
-     escapa do fundo claro do cabeçalho — nem quando o aparelho
-     está com a fonte do sistema aumentada.
-     ============================================================ */
-  header{ overflow:hidden; }              /* trava qualquer vazamento */
-  .nav-inner{ min-width:0; }
-  .brand{ min-width:0; max-width:100%; overflow-wrap:break-word; }
-  nav.links{ min-width:0; max-width:100%; flex-wrap:wrap; }
-  nav.links a{ white-space:nowrap; }
-
-  @media (max-width:640px){
-    .nav-inner{
-      flex-direction:column; align-items:flex-start; gap:10px;
-      padding-left:16px; padding-right:16px;
+    /* Links do menu (#about, #games...): a seção para logo abaixo do cabeçalho fixo, sem ficar escondida atrás dele */
+    html { scroll-padding-top: 100px; }
+    /* Modern Neo-Brutalist clean dot grid background */
+    .neo-grid {
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
     }
-    nav.links{
-      width:100%; justify-content:flex-start;
-      gap:8px 14px; font-size:9px;
-    }
-    nav.links a{ padding:4px 0; }
-    .brand{ font-size:10.5px; }
-  }
-  @media (max-width:360px){
-    nav.links{ font-size:8.5px; gap:7px 11px; }
-    .brand{ font-size:9.5px; }
-    /* em telas muito estreitas, rótulos longos podem quebrar em 2 linhas
-       em vez de escapar do cabeçalho */
-    nav.links a{ white-space:normal; overflow-wrap:break-word; }
-  }
 
-  @media (max-width:600px){
-    .footer-inner{ flex-direction:column; }
-    .btn{
-      font-size: 9.5px; padding: 12px 14px;
-      max-width: 100%; word-break: break-word; text-align: center;
+    /* Tactile Neo-Brutalist Shadows */
+    .neo-box {
+      border: 2.5px solid #0f172a;
+      box-shadow: 4px 4px 0px 0px #0f172a;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .stat{ max-width: 100%; word-break: break-word; }
-  }
+    .neo-box:hover {
+      box-shadow: 6px 6px 0px 0px #0f172a;
+      transform: translate(-2px, -2px);
+    }
+
+    /* Buttons with tactile click depression */
+    .neo-btn {
+      border: 2.5px solid #0f172a;
+      box-shadow: 4px 4px 0px 0px #0f172a;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .neo-btn:hover {
+      box-shadow: 5px 5px 0px 0px #0f172a;
+      transform: translate(-1px, -1px);
+    }
+    .neo-btn:active {
+      box-shadow: 1px 1px 0px 0px #0f172a;
+      transform: translate(3px, 3px);
+    }
+
+    /* TCG Collectible Card container */
+    .neo-tcg-card {
+      border: 2.5px solid #0f172a;
+      box-shadow: 5px 5px 0px 0px #0f172a;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .neo-tcg-card:hover {
+      box-shadow: 8px 8px 0px 0px #0f172a;
+      transform: translateY(-5px);
+    }
+
+    /* Card holographic foil shimmer */
+    .tcg-holo-shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .tcg-holo-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -120%;
+      left: -120%;
+      width: 340%;
+      height: 340%;
+      background: linear-gradient(
+        125deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.25) 45%,
+        rgba(250, 204, 21, 0.2) 50%,
+        rgba(37, 99, 235, 0.2) 55%,
+        rgba(239, 68, 68, 0.2) 60%,
+        transparent 75%
+      );
+      transform: rotate(20deg);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .neo-tcg-card:hover .tcg-holo-shimmer::after {
+      opacity: 1;
+      animation: holo-pass 2s infinite linear;
+    }
+    @keyframes holo-pass {
+      0% { transform: translateY(-30%) rotate(20deg); }
+      100% { transform: translateY(30%) rotate(20deg); }
+    }
+
+    /* Mana Gem Icons */
+    .mana-gem {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #0f172a;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: 'Space Mono', monospace;
+      box-shadow: 1.5px 1.5px 0px 0px #0f172a;
+    }
+
+    /* Continuous Ring spin */
+    @keyframes ring-spin {
+      0% { transform: scaleX(1); }
+      50% { transform: scaleX(0.2); }
+      100% { transform: scaleX(1); }
+    }
+    .spin-ring {
+      display: inline-block;
+      animation: ring-spin 1.4s infinite ease-in-out;
+    }
+  </style>
+<style>
+/* ================================================================
+   COMO ADICIONAR UM JOGO NOVO (guia para quem não programa)
+   ================================================================
+   1. Lá embaixo, dentro de <section id="catalogo">, cada jogo é um
+      bloco que começa com <article ...> e termina com </article>.
+   2. Para adicionar um jogo novo: copie o bloco inteiro do último
+      jogo, cole logo abaixo e troque:
+        - a imagem de capa (src="...")
+        - a categoria, o título e o subtítulo
+        - a descrição e as etiquetas
+        - as estrelas de dificuldade
+        - o link do botão "Jogar agora" (href="...")
+   ================================================================ */
 </style>
 </head>
-<body>
-
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
-<div class="cloud c3"></div>
-
-<header>
-  <div class="nav-inner">
-    <div class="brand"><span class="coin-icon"></span>AFN Health Education Studio</div>
-    <nav class="links">
-      <a href="index.html">Início</a>
-      <a href="projetos.html" class="active">Projetos</a>
-      <a href="atividades.html">Atividade Presencial</a>
-      <a href="index.html#contato">Contato</a>
-    </nav>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <div class="level-tag">
-    <span class="level-num">02</span>
-    <span class="level-label">CATÁLOGO</span>
-  </div>
-  <h1>Projetos</h1>
-  <p class="page-lede">
-    Jogos e recursos digitais desenvolvidos para apoiar a formação de
-    estudantes e profissionais da saúde.
-  </p>
-
-  <div class="grid">
-
-    <!-- ══════════════ INÍCIO DO CARTÃO: CÓDIGO LACTATO ══════════════
-         Copie do <article> até o </article> para criar um novo cartão. -->
-    <article class="card">
-      <img class="card-cover" src="poster-codigo-lactato.jpg" alt="Cartaz do jogo Código Lactato">
-      <div class="card-body">
-        <div class="card-tag">ESCAPE ROOM CLÍNICO DIGITAL</div>
-        <h2>Código Lactato</h2>
-        <p>
-          Glicólise anaeróbia e distúrbios ácido-base mistos, ensinados
-          através de um plantão simulado: interprete gasometrias, tome
-          decisões terapêuticas sob pressão e acompanhe a evolução de um
-          paciente crítico em tempo real.
-        </p>
-        <div class="stat-row">
-          <span class="stat">🎮 5 SALAS</span>
-          <span class="stat">🧩 QUIZZES · CHECKLIST · CAÇA-PALAVRAS</span>
-          <span class="stat">📱 CELULAR E COMPUTADOR</span>
-        </div>
-        <!-- Troque o link abaixo se o endereço do jogo mudar -->
-        <a class="btn" href="https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-lactato-mobile.html" target="_blank" rel="noopener">▶ JOGAR AGORA</a>
-      </div>
-    </article>
-    <!-- ══════════════ FIM DO CARTÃO: CÓDIGO LACTATO ══════════════ -->
-
-    <!-- ══════════════ INÍCIO DO CARTÃO: CÓDIGO INFLAMAÇÃO ══════════════ -->
-    <article class="card">
-      <img class="card-cover" src="cartaz_codigo_inflamacao.jpg" alt="Cartaz do jogo Código Inflamação">
-      <div class="card-body">
-        <div class="card-tag">SERIOUS GAME DE PATOLOGIA · 16-BIT</div>
-        <h2>Código Inflamação</h2>
-        <p>
-          O processo inflamatório agudo ensinado através de um plantão
-          noturno no pronto-socorro: atenda casos clínicos, interprete
-          lâminas e resultados, revise laudos e tome decisões de conduta
-          enquanto acompanha o paciente do leito 12 até o fim da noite.
-        </p>
-        <div class="stat-row">
-          <span class="stat">🎮 3 TURNOS · 21 ATIVIDADES</span>
-          <span class="stat">🧩 QUIZ · IMAGENS · DECISÕES CLÍNICAS</span>
-          <span class="stat">🎓 MODO HISTÓRIA E MODO PROFESSOR</span>
-        </div>
-        <!-- Troque o link abaixo se o endereço do jogo mudar -->
-        <a class="btn" href="https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-inflamacao.html" target="_blank" rel="noopener">▶ JOGAR AGORA</a>
-      </div>
-    </article>
-    <!-- ══════════════ FIM DO CARTÃO: CÓDIGO INFLAMAÇÃO ══════════════ -->
-
-    <!-- Cartão "em breve" — pode apagar quando publicar o próximo jogo -->
-    <article class="card soon">
-      <div class="card-body">
-        <div class="card-tag">EM DESENVOLVIMENTO</div>
-        <h2 style="margin-top:4px;">Próximo projeto</h2>
-        <p style="margin:0;">Novos jogos sérios estão a caminho. Volte em breve.</p>
-      </div>
-    </article>
-
-  </div>
-
+<body class="text-dark-slate font-body-md antialiased selection:bg-secondary-container selection:text-dark-slate overflow-x-hidden min-h-screen" style="background-color: rgb(92, 148, 252); background-attachment: fixed;">
+<header class="bg-white border-b-[2.5px] border-dark-slate sticky top-0 z-50 shadow-[0px_4px_0px_0px_#0f172a]">
+<div class="flex justify-between items-center w-full px-4 sm:px-6 py-3 max-w-7xl mx-auto">
+<a class="flex items-center gap-3 group" href="index.html">
+<div class="w-10 h-10 bg-primary text-white border-2 border-dark-slate flex items-center justify-center rounded-xl shadow-[2px_2px_0px_0px_#0f172a] group-hover:-translate-y-0.5 transition-transform">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
 </div>
-
-<footer>
-  <div class="wrap footer-inner">
-    <span>© 2026 ALDAIR DE FRANÇA NETO</span>
-    <span><a href="index.html">← VOLTAR AO INÍCIO</a></span>
-  </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-dark-slate">AFN STUDIO</span>
+</div>
+<span class="font-label-sm text-slate-500 text-[11px] block -mt-0.5">Prof. Dr. Aldair de França Neto</span>
+</div>
+</a>
+<!-- Clean Modern Nav Menu -->
+<nav class="hidden xl:flex items-center gap-6 font-label-md uppercase text-xs font-bold text-slate-700">
+<a class="hover:text-speed-blue transition-colors flex items-center gap-1.5" href="index.html#about">
+<span class="w-2 h-2 rounded-full bg-speed-blue inline-block"></span> Sobre
+        </a>
+<a class="hover:text-primary transition-colors flex items-center gap-1.5" href="index.html#games">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Jogos
+        </a>
+<a class="hover:text-power-green transition-colors flex items-center gap-1.5" href="index.html#pillars">
+<span class="w-2 h-2 rounded-full bg-power-green inline-block"></span> Como ensino
+        </a>
+<a class="hover:text-amber-500 transition-colors flex items-center gap-1.5" href="index.html#contact">
+<span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> Contato
+        </a>
+<span class="w-px h-4 bg-slate-200"></span>
+<a class="hover:text-dark-slate transition-colors flex items-center gap-1.5 text-primary underline decoration-2 underline-offset-4" aria-current="page" href="projetos.html">
+<span class="material-symbols-outlined text-[15px]">grid_view</span> Projetos
+        </a>
+<a class="hover:text-dark-slate transition-colors flex items-center gap-1.5" href="atividades.html">
+<span class="material-symbols-outlined text-[15px]">groups</span> Atividade Presencial
+        </a>
+</nav>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 border-[2px] border-dark-slate bg-slate-100 hover:bg-slate-200 text-dark-slate font-label-md text-xs font-bold rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[17px]">school</span> Lattes
+        </a>
+<a class="px-4 py-2 bg-primary text-white neo-btn font-label-md text-xs font-bold rounded-xl flex items-center gap-1.5" href="projetos.html">
+<span class="">JOGAR</span>
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</a>
+<!-- Mobile menu toggle (nav acima fica oculta abaixo de xl (1280px), onde não cabe numa linha) -->
+<button aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu" class="xl:hidden inline-flex items-center justify-center w-10 h-10 border-2 border-dark-slate bg-slate-100 rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all" id="mobileMenuBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+</div>
+</div>
+<!-- Mobile Nav Panel -->
+<nav class="hidden xl:hidden flex-col gap-1 px-4 pb-4 font-label-md uppercase text-xs font-bold text-slate-700 border-t-2 border-slate-100 pt-3" id="mobileMenu">
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2 text-primary underline decoration-2 underline-offset-4" aria-current="page" href="projetos.html">
+<span class="material-symbols-outlined text-[16px]">grid_view</span> Todos os Projetos
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="atividades.html">
+<span class="material-symbols-outlined text-[16px]">groups</span> Atividade Presencial
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="index.html#about">
+<span class="material-symbols-outlined text-[16px]">badge</span> Sobre
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="index.html#games">
+<span class="material-symbols-outlined text-[16px]">sports_esports</span> Jogos
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="index.html#pillars">
+<span class="material-symbols-outlined text-[16px]">bolt</span> Como ensino
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="index.html#contact">
+<span class="material-symbols-outlined text-[16px]">mail</span> Contato
+      </a>
+</nav>
+<script>
+  (function(){
+    var btn = document.getElementById('mobileMenuBtn');
+    var menu = document.getElementById('mobileMenu');
+    if(!btn || !menu) return;
+    btn.addEventListener('click', function(){
+      var isOpen = menu.classList.toggle('flex');
+      menu.classList.toggle('hidden');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    menu.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+</script>
+</header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10 relative z-10">
+<!-- Apresentação -->
+<section class="bg-white neo-box rounded-2xl p-6 sm:p-10">
+<h1 class="font-headline-lg text-3xl sm:text-4xl font-extrabold text-dark-slate tracking-tight">Projetos</h1>
+<p class="mt-3 text-slate-600 text-base sm:text-lg max-w-2xl leading-relaxed">Jogos e recursos digitais desenvolvidos para apoiar a formação de estudantes e profissionais da saúde.</p>
+</section>
+<!-- Catálogo de jogos -->
+<section class="space-y-10" id="catalogo">
+<!-- ══════════════ INÍCIO DO CARTÃO: CÓDIGO LACTATO ══════════════
+     Copie do <article> até o </article> para criar um novo cartão. -->
+<article class="neo-tcg-card bg-white rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+<!-- Capa inteira, sem cortes -->
+<div class="lg:col-span-7 bg-slate-900 flex items-center justify-center p-3 sm:p-4">
+<img alt="Cartaz do jogo Código Lactato" class="block w-full h-auto rounded-xl border-2 border-dark-slate" loading="lazy" src="poster-codigo-lactato.jpg">
+</div>
+<div class="lg:col-span-5 p-5 sm:p-8 flex flex-col gap-5">
+<div class="flex items-center justify-between gap-3">
+<span class="px-2 py-0.5 bg-primary text-white border border-dark-slate rounded font-label-sm text-[10px] font-bold">CLÍNICA</span>
+</div>
+<div>
+<h2 class="font-headline-md text-2xl sm:text-3xl font-extrabold text-dark-slate tracking-tight">Código Lactato</h2>
+<p class="font-label-sm text-[11px] font-bold uppercase tracking-wider text-primary mt-1">Escape room clínico digital</p>
+</div>
+<p class="text-slate-700 leading-relaxed">Glicólise anaeróbia e distúrbios ácido-base mistos, ensinados através de um plantão simulado: interprete gasometrias, tome decisões terapêuticas sob pressão e acompanhe a evolução de um paciente crítico em tempo real.</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-primary">meeting_room</span> 5 Salas</span>
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-primary">extension</span> Quizzes · Checklist · Caça-palavras</span>
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-primary">devices</span> Celular e computador</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
+<div class="flex items-center text-primary text-[16px]"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined text-slate-300">star</span></div>
+<span class="font-bold text-xs text-slate-600">4 / 5</span>
+</div>
+<!-- Troque o link abaixo se o endereço do jogo mudar -->
+<a class="mt-auto w-full sm:w-auto sm:self-start px-6 py-3 bg-primary text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-lactato-mobile.html" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+JOGAR AGORA
+</a>
+</div>
+</article>
+<!-- ══════════════ FIM DO CARTÃO: CÓDIGO LACTATO ══════════════ -->
+<!-- ══════════════ INÍCIO DO CARTÃO: CÓDIGO INFLAMAÇÃO ══════════════
+     Copie do <article> até o </article> para criar um novo cartão. -->
+<article class="neo-tcg-card bg-white rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+<!-- Capa inteira, sem cortes -->
+<div class="lg:col-span-5 lg:order-2 bg-slate-900 flex items-center justify-center p-3 sm:p-4">
+<img alt="Cartaz do jogo Código Inflamação" class="block w-full h-auto rounded-xl border-2 border-dark-slate" loading="lazy" src="cartaz_codigo_inflamacao.jpg">
+</div>
+<div class="lg:col-span-7 p-5 sm:p-8 flex flex-col gap-5">
+<div class="flex items-center justify-between gap-3">
+<span class="px-2 py-0.5 bg-power-green text-white border border-dark-slate rounded font-label-sm text-[10px] font-bold">PATOLOGIA</span>
+</div>
+<div>
+<h2 class="font-headline-md text-2xl sm:text-3xl font-extrabold text-dark-slate tracking-tight">Código Inflamação</h2>
+<p class="font-label-sm text-[11px] font-bold uppercase tracking-wider text-power-green mt-1">Serious game de patologia</p>
+</div>
+<p class="text-slate-700 leading-relaxed">O processo inflamatório agudo ensinado através de um plantão noturno no pronto-socorro: atenda casos clínicos, interprete lâminas e resultados, revise laudos e tome decisões de conduta enquanto acompanha o paciente do leito 12 até o fim da noite.</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-power-green">nightlight</span> 3 Turnos · 21 Atividades</span>
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-power-green">biotech</span> Quiz · Imagens · Decisões clínicas</span>
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800"><span class="material-symbols-outlined text-[14px] text-power-green">school</span> Modo história e modo professor</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
+<div class="flex items-center text-primary text-[16px]"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span></div>
+<span class="font-bold text-xs text-slate-600">5 / 5</span>
+</div>
+<!-- Troque o link abaixo se o endereço do jogo mudar -->
+<a class="mt-auto w-full sm:w-auto sm:self-start px-6 py-3 bg-power-green text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-inflamacao.html" rel="noopener" target="_blank">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+JOGAR AGORA
+</a>
+</div>
+</article>
+<!-- ══════════════ FIM DO CARTÃO: CÓDIGO INFLAMAÇÃO ══════════════ -->
+</section>
+<!-- Chamada para as atividades presenciais -->
+<section class="bg-white neo-box rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 shrink-0 bg-secondary-container text-dark-slate rounded-xl border-2 border-dark-slate flex items-center justify-center shadow-[2px_2px_0px_0px_#0f172a]"><span class="material-symbols-outlined text-[22px]">groups</span></div>
+<div>
+<h2 class="font-headline-md text-xl font-bold text-dark-slate">Atividades para a sala de aula</h2>
+<p class="text-slate-600 text-sm mt-1">Jogos de cartas e dinâmicas para usar em aula, liberados por senha informada pelo professor.</p>
+</div>
+</div>
+<a class="shrink-0 px-5 py-3 bg-secondary-container text-dark-slate neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="atividades.html">
+VER ATIVIDADES PRESENCIAIS
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</section>
+</main>
+<footer class="mt-16 bg-white border-t-2 border-dark-slate py-10 px-6 text-dark-slate relative z-10">
+<div class="max-w-7xl mx-auto flex flex-col items-center gap-6 text-center">
+<!-- Brand & Hub Name -->
+<div class="flex items-center gap-2.5">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary-container border border-dark-slate inline-block"></span>
+<span class="font-headline-md text-lg font-bold tracking-tight text-dark-slate">
+          AFN HEALTH EDUCATION STUDIO
+        </span>
+</div>
+<!-- Footer Quick Links -->
+<div class="flex flex-wrap justify-center gap-4 sm:gap-6 font-label-sm text-xs text-slate-600 font-bold">
+<a class="hover:text-primary transition-colors" href="projetos.html">
+          TODOS OS PROJETOS
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="atividades.html">
+          ATIVIDADE PRESENCIAL
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+          CURRÍCULO LATTES
+        </a>
+</div>
+<!-- Divider line -->
+<div class="w-24 h-1 bg-dark-slate rounded-full"></div>
+<!-- Copyright -->
+<div class="space-y-1 text-slate-500 font-body-md text-xs">
+<p class="">© 2024 AFN Health Education Studio — Prof. Dr. Aldair de França Neto. Todos os direitos reservados.</p>
+<p class="font-mono text-[11px] text-slate-400">Educação e Inovação em Saúde Multidisciplinar.</p>
+</div>
+<!-- Back to Top Button -->
+<a class="mt-2 inline-flex items-center gap-1.5 text-xs font-label-sm text-dark-slate bg-slate-100 hover:bg-slate-200 border-2 border-dark-slate px-4 py-2 rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all font-bold" href="#">
+<span class="material-symbols-outlined text-[15px]">arrow_upward</span>
+        VOLTAR AO TOPO
+      </a>
+</div>
 </footer>
 
-</body>
-</html>
+</body></html>
