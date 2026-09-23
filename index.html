@@ -1,499 +1,836 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Aldair de França Neto — Gamificação na Educação</title>
-<meta name="description" content="Professor Dr. Aldair de França Neto — recursos digitais para o ensino das Ciências da Saúde.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!DOCTYPE html><html class="scroll-smooth" lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>AFN Health Education Studio | Prof. Dr. Aldair de França Neto</title>
+<!-- Google Fonts: Space Grotesk, Space Mono, Plus Jakarta Sans, Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#faf8ff",
+            "surface": "#ffffff",
+            "surface-subtle": "#f4f6fc",
+            "dark-slate": "#0f172a",
+            "primary": "#be000c",
+            "primary-container": "#e52521",
+            "secondary-container": "#facc15",
+            "speed-blue": "#2563eb",
+            "speed-dark": "#0f2759",
+            "power-green": "#10b981",
+            "star-gold": "#eab308",
+            "mana-cyan": "#0284c7"
+          },
+          borderRadius: {
+            "DEFAULT": "0.375rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.25rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "label-md": ["Space Mono", "monospace"],
+            "label-sm": ["Space Mono", "monospace"],
+            "body-md": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "card-title": ["Cinzel", "serif"]
+          }
+        }
+      }
+    }
+  </script>
 <style>
-  /* ============================================================
-     COMO EDITAR ESTA PÁGINA (guia rápido para quem não programa)
-     ============================================================
-     1. Para mudar TEXTOS: procure o texto dentro das tags HTML
-        (ex.: <h1>...</h1>) na seção <body> lá embaixo.
-     2. Para mudar CORES: procure o bloco ":root" logo abaixo.
-     3. A lista de jogos fica no arquivo projetos.html.
-     4. Visual: inspirado em jogos de plataforma clássicos (céu,
-        blocos de tijolo, moedas, fonte pixelada) — sem usar
-        nenhum personagem, logotipo ou marca de terceiros.
-     ============================================================ */
-
-  :root{
-    --sky-top: #4A90E2;
-    --sky-bottom: #8FD3F4;
-    --brick: #C9642B;
-    --brick-dark: #8A3F16;
-    --ground: #E8B04B;
-    --coin: #FFD23F;
-    --coin-dark: #C99A1E;
-    --red: #E53935;
-    --red-dark: #A82420;
-    --green: #4CAF50;
-    --green-dark: #2E7D32;
-    --ink: #2B1B0E;
-    --paper: #FFF8E7;
-    --paper-2: #FFEFC7;
-    --outline: #2B1B0E;
-    --font-pixel: 'Press Start 2P', monospace;
-    --font-body: 'Baloo 2', sans-serif;
-  }
-
-  *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  body{
-    margin:0;
-    background:
-      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 55%, var(--sky-bottom) 100%);
-    background-attachment: fixed;
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-weight: 600;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  /* ── nuvens pixeladas de fundo (decorativas, puramente geométricas) ── */
-  .cloud{
-    position: absolute; z-index: 0; pointer-events: none;
-    background: #FFFFFF;
-    box-shadow:
-      20px 0 0 #fff, 40px 0 0 #fff, 60px 0 0 #fff,
-      10px -14px 0 #fff, 30px -14px 0 #fff, 50px -14px 0 #fff,
-      20px -28px 0 #fff, 40px -28px 0 #fff;
-    width: 12px; height: 12px;
-    opacity: .9;
-  }
-  .cloud.c1{ top: 60px; left: 6%; transform: scale(1.4); }
-  .cloud.c2{ top: 160px; right: 8%; transform: scale(1.1); opacity:.75; }
-  .cloud.c3{ top: 420px; left: 12%; transform: scale(0.9); opacity:.6; }
-  .cloud.c4{ top: 900px; right: 5%; transform: scale(1.3); opacity:.7; }
-
-  /* ── colinas verdes pixeladas atrás do "chão" de tijolos (decorativas) ── */
-  .hill{
-    position: absolute; bottom: 100%; z-index: 0; pointer-events: none;
-    border-radius: 50% 50% 0 0;
-    border: 3px solid var(--outline);
-  }
-  .hill.left{ width: 200px; height: 70px; left: 2%; background: var(--green); opacity:.55; }
-  .hill.right{ width: 160px; height: 58px; right: 4%; background: var(--green-dark); opacity:.45; }
-  @media (max-width: 700px){ .hill{ display:none; } }
-
-  /* ── arbustos decorativos ao lado do divisor de tijolos ── */
-  .bush{
-    position: absolute; z-index: 1; pointer-events: none;
-    width: 60px; height: 30px; top: -26px;
-    background: var(--green);
-    border: 3px solid var(--outline);
-    border-radius: 50% 50% 6px 6px;
-  }
-  .bush::before, .bush::after{
-    content: ""; position: absolute; bottom: 0;
-    width: 30px; height: 26px;
-    background: inherit; border: 3px solid var(--outline);
-    border-radius: 50%;
-  }
-  .bush::before{ left: -14px; }
-  .bush::after{ right: -14px; }
-  .bush.left{ left: 6%; }
-  .bush.right{ right: 8%; }
-  @media (max-width: 480px){ .bush{ display:none; } }
-
-  /* ── bloco "?" flutuante (decorativo, remete à gamificação) ── */
-  .qmark{
-    font-family: var(--font-pixel); font-size: 13px; color: var(--ink);
-    width: 34px; height: 34px; flex: 0 0 auto;
-    display: inline-flex; align-items:center; justify-content:center;
-    background: var(--coin); border: 3px solid var(--outline); border-radius: 5px;
-    box-shadow: 3px 3px 0 var(--outline);
-    animation: qfloat 2.4s ease-in-out infinite;
-  }
-  @keyframes qfloat{
-    0%, 100%{ transform: translateY(0); }
-    50%{ transform: translateY(-6px); }
-  }
-
-  a{ color: var(--red-dark); text-decoration:none; }
-  ::selection{ background: var(--coin); color: var(--ink); }
-
-  .wrap{ max-width: 880px; margin:0 auto; padding: 0 24px; position:relative; z-index:1; }
-
-  /* ---------- cabeçalho ---------- */
-  header{
-    padding: 18px 0;
-    background: var(--paper);
-    border-bottom: 4px solid var(--outline);
-    box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-    position: relative; z-index: 2;
-  }
-  .nav-inner{
-    max-width: 880px; margin:0 auto; padding: 0 24px;
-    display:flex; align-items:center; justify-content:space-between;
-    gap: 16px; flex-wrap: wrap;
-  }
-  .brand{
-    font-family: var(--font-pixel); font-size: 12px; color: var(--ink);
-    display:flex; align-items:center; gap:8px;
-  }
-  .brand .coin-icon{
-    width:18px; height:18px; border-radius:50%;
-    background: radial-gradient(circle at 35% 30%, #FFF2A8, var(--coin) 60%, var(--coin-dark));
-    border: 2px solid var(--outline);
-    display:inline-block;
-  }
-  nav.links{ display:flex; gap: 18px; font-family: var(--font-pixel); font-size: 10px; }
-  nav.links a{ color: var(--ink); padding: 6px 4px; }
-  nav.links a:hover, nav.links a.active{ color: var(--red); }
-
-  /* ---------- botões estilo "bloco de jogo" ---------- */
-  .btn{
-    font-family: var(--font-pixel); font-size: 11px;
-    padding: 14px 20px; border-radius: 6px;
-    display:inline-flex; align-items:center; gap: 10px;
-    border: 3px solid var(--outline);
-    box-shadow: 0 5px 0 var(--outline);
-    transition: transform .1s ease, box-shadow .1s ease;
-    cursor: pointer;
-  }
-  .btn:active{ transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
-  .btn.primary{ background: var(--red); color:#fff; }
-  .btn.primary:hover{ background: var(--red-dark); text-decoration:none; }
-  .btn.coin{ background: var(--coin); color: var(--ink); }
-  .btn.coin:hover{ background: var(--coin-dark); text-decoration:none; }
-  .btn.green{ background: var(--green); color:#fff; }
-  .btn.green:hover{ background: var(--green-dark); text-decoration:none; }
-
-  /* ---------- selo de nível (numeração de seção) ---------- */
-  .level-tag{ display:flex; align-items:center; gap: 12px; margin: 56px 0 18px; flex-wrap:wrap; }
-  .level-num{
-    font-family: var(--font-pixel); font-size: 12px; color: #fff;
-    background: var(--red); border: 3px solid var(--outline);
-    padding: 8px 10px; border-radius: 5px; box-shadow: 3px 3px 0 var(--outline);
-  }
-  .level-label{
-    font-family: var(--font-pixel); font-size: 11px; letter-spacing: .04em;
-    color: var(--ink);
-    background: var(--paper); border: 3px solid var(--outline);
-    padding: 8px 12px; border-radius: 5px; box-shadow: 3px 3px 0 var(--outline);
-  }
-
-  /* ---------- hero ---------- */
-  .hero{ padding: 40px 0 10px; }
-  h1{
-    font-family: var(--font-pixel);
-    font-size: clamp(18px, 3.2vw, 30px); line-height:1.55; margin: 0 0 24px;
-    color: #fff;
-    text-shadow:
-      3px 3px 0 var(--outline), -1px -1px 0 var(--outline),
-      1px -1px 0 var(--outline), -1px 1px 0 var(--outline);
-    max-width: 22ch;
-  }
-  h1 .accent{ color: var(--coin); }
-  .lede{
-    font-size: clamp(17px, 2vw, 20px); font-weight: 600; color: var(--ink);
-    background: var(--paper); border: 3px solid var(--outline); border-radius: 10px;
-    box-shadow: 5px 5px 0 var(--outline);
-    padding: 18px 22px; max-width: 60ch; margin: 0 0 30px;
-  }
-  .hero-cta{ display:flex; gap: 16px; flex-wrap:wrap; margin-bottom: 20px; }
-
-  /* ---------- "chão" de tijolos como divisor ---------- */
-  .brick-divider{
-    position: relative;
-    height: 26px; margin: 46px 0 0;
-    background-image:
-      linear-gradient(var(--outline) 2px, transparent 2px),
-      linear-gradient(90deg, var(--outline) 2px, transparent 2px);
-    background-size: 44px 26px;
-    background-color: var(--brick);
-    border-top: 3px solid var(--outline);
-    border-bottom: 3px solid var(--outline);
-    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-  }
-
-  /* ---------- seções ---------- */
-  section{ padding: 6px 0 10px; }
-  h2{
-    font-family: var(--font-pixel); font-size: clamp(14px,2vw,18px);
-    margin: 0 0 20px; color: var(--ink);
-    background: var(--coin); display:inline-block;
-    border: 3px solid var(--outline); border-radius: 6px;
-    padding: 10px 16px; box-shadow: 4px 4px 0 var(--outline);
-  }
-  p{ color: var(--ink); font-weight: 600; margin: 0 0 16px; font-size: 16.5px; }
-  p strong{ color: var(--red-dark); }
-
-  /* ---------- cartão "bloco de interrogação" ---------- */
-  .qblock{
-    background: var(--paper); border: 4px solid var(--outline); border-radius: 10px;
-    box-shadow: 6px 6px 0 var(--outline);
-    padding: 24px 26px; margin: 20px 0;
-  }
-  .stat-row{ display:flex; gap: 12px; flex-wrap:wrap; margin: 6px 0 24px; }
-  .stat{
-    font-family: var(--font-pixel); font-size: 9.5px; color: var(--ink);
-    background: var(--paper-2); border: 2px solid var(--outline);
-    padding: 8px 12px; border-radius: 20px;
-  }
-  .spotlight{
-    background: var(--paper); border: 4px solid var(--outline); border-radius: 10px;
-    padding: 28px; box-shadow: 6px 6px 0 var(--green-dark);
-  }
-  .spotlight-tag{
-    font-family: var(--font-pixel); font-size: 9.5px; color: var(--red-dark);
-    margin-bottom: 8px;
-  }
-  .spotlight h3{
-    font-family: var(--font-pixel); font-size: 15px; margin: 4px 0 14px; color: var(--ink);
-  }
-
-  .formacao-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:26px; }
-  .formacao-grid ul{ margin:0; padding-left:20px; color: var(--ink); font-weight:600; font-size:16px; line-height:1.9; }
-
-  footer{
-    margin-top: 6px;
-    padding: 26px 0 40px; background: var(--paper);
-    border-top: 4px solid var(--outline);
-    font-family: var(--font-pixel); font-size: 9.5px; color: var(--ink);
-  }
-  .footer-inner{ display:flex; justify-content:flex-start; flex-wrap:wrap; gap:12px; }
-  footer a{ color: var(--ink); }
-  footer a:hover{ color: var(--red); }
-
-  @media (max-width:600px){
-    .hero{ padding: 24px 0 10px; }
-    .footer-inner{ flex-direction:column; }
-    .formacao-grid{ grid-template-columns:1fr !important; }
-    .btn{
-      font-size: 9.5px; padding: 12px 14px;
-      max-width: 100%; word-break: break-word; text-align: center;
+    /* Modern Neo-Brutalist clean dot grid background */
+    .neo-grid {
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
     }
-    .stat{ max-width: 100%; word-break: break-word; }
-  }
-  /* e-mail de contato: fonte menor, pois o endereço é longo */
-  .btn.email{ font-size:9.03px; letter-spacing:0; }
 
-  /* cabeçalho: folga extra em telas bem estreitas (abaixo de 380px) */
-  @media (max-width:380px){
-    .brand{ font-size:10px; gap:6px; }
-    .brand .coin-icon{ width:15px; height:15px; }
-    nav.links{ gap:11px; font-size:8.5px; }
-    nav.links a{ padding:5px 2px; }
-    .nav-inner{ padding:0 14px; gap:10px; }
-    .btn.email{ font-size:7.6px; }
-  }
-  /* ============================================================
-     CABEÇALHO À PROVA DE ESTOURO NO CELULAR
-     No celular o menu passa a ocupar a linha inteira, abaixo do
-     nome, e quebra em várias linhas se precisar. Assim ele nunca
-     escapa do fundo claro do cabeçalho — nem quando o aparelho
-     está com a fonte do sistema aumentada.
-     ============================================================ */
-  header{ overflow:hidden; }              /* trava qualquer vazamento */
-  .nav-inner{ min-width:0; }
-  .brand{ min-width:0; max-width:100%; overflow-wrap:break-word; }
-  nav.links{ min-width:0; max-width:100%; flex-wrap:wrap; }
-  nav.links a{ white-space:nowrap; }
+    /* Tactile Neo-Brutalist Shadows */
+    .neo-box {
+      border: 2.5px solid #0f172a;
+      box-shadow: 4px 4px 0px 0px #0f172a;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .neo-box:hover {
+      box-shadow: 6px 6px 0px 0px #0f172a;
+      transform: translate(-2px, -2px);
+    }
 
-  @media (max-width:640px){
-    .nav-inner{
-      flex-direction:column; align-items:flex-start; gap:10px;
-      padding-left:16px; padding-right:16px;
+    /* Buttons with tactile click depression */
+    .neo-btn {
+      border: 2.5px solid #0f172a;
+      box-shadow: 4px 4px 0px 0px #0f172a;
+      transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    nav.links{
-      width:100%; justify-content:flex-start;
-      gap:8px 14px; font-size:9px;
+    .neo-btn:hover {
+      box-shadow: 5px 5px 0px 0px #0f172a;
+      transform: translate(-1px, -1px);
     }
-    nav.links a{ padding:4px 0; }
-    .brand{ font-size:10.5px; }
-  }
-  @media (max-width:360px){
-    nav.links{ font-size:8.5px; gap:7px 11px; }
-    .brand{ font-size:9.5px; }
-    /* em telas muito estreitas, rótulos longos podem quebrar em 2 linhas
-       em vez de escapar do cabeçalho */
-    nav.links a{ white-space:normal; overflow-wrap:break-word; }
-  }
-</style>
+    .neo-btn:active {
+      box-shadow: 1px 1px 0px 0px #0f172a;
+      transform: translate(3px, 3px);
+    }
+
+    /* TCG Collectible Card container */
+    .neo-tcg-card {
+      border: 2.5px solid #0f172a;
+      box-shadow: 5px 5px 0px 0px #0f172a;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .neo-tcg-card:hover {
+      box-shadow: 8px 8px 0px 0px #0f172a;
+      transform: translateY(-5px);
+    }
+
+    /* Card holographic foil shimmer */
+    .tcg-holo-shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .tcg-holo-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -120%;
+      left: -120%;
+      width: 340%;
+      height: 340%;
+      background: linear-gradient(
+        125deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.25) 45%,
+        rgba(250, 204, 21, 0.2) 50%,
+        rgba(37, 99, 235, 0.2) 55%,
+        rgba(239, 68, 68, 0.2) 60%,
+        transparent 75%
+      );
+      transform: rotate(20deg);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .neo-tcg-card:hover .tcg-holo-shimmer::after {
+      opacity: 1;
+      animation: holo-pass 2s infinite linear;
+    }
+    @keyframes holo-pass {
+      0% { transform: translateY(-30%) rotate(20deg); }
+      100% { transform: translateY(30%) rotate(20deg); }
+    }
+
+    /* Mana Gem Icons */
+    .mana-gem {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #0f172a;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: 'Space Mono', monospace;
+      box-shadow: 1.5px 1.5px 0px 0px #0f172a;
+    }
+
+    /* Continuous Ring spin */
+    @keyframes ring-spin {
+      0% { transform: scaleX(1); }
+      50% { transform: scaleX(0.2); }
+      100% { transform: scaleX(1); }
+    }
+    .spin-ring {
+      display: inline-block;
+      animation: ring-spin 1.4s infinite ease-in-out;
+    }
+  </style>
 </head>
-<body>
-
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
-<div class="cloud c3"></div>
-<div class="cloud c4"></div>
-
-<header>
-  <div class="nav-inner">
-    <div class="brand"><span class="coin-icon"></span>AFN Health Education Studio</div>
-    <nav class="links">
-      <a href="index.html" class="active">Início</a>
-      <a href="projetos.html">Projetos</a>
-      <a href="atividades.html">Atividade Presencial</a>
-      <a href="#contato">Contato</a>
-    </nav>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <section class="hero">
-    <h1 style="font-size:clamp(14.4px,2.56vw,24px); text-align:left; max-width:100%;">Ciência, educação e <span class="accent">tecnologia</span> para transformar a aprendizagem.</h1>
-    <p class="lede" style="text-align:justify;">
-      Acredito que a aprendizagem pode ser desafiadora, significativa e
-      envolvente. Por isso, desenvolvo recursos digitais educacionais que
-      aproximam ciência, tecnologia e metodologias ativas.
-    </p>
-    <div class="hero-cta">
-      <a class="btn primary" href="projetos.html">▶ Ver os jogos</a>
-      <a class="btn coin" href="#contato">✉ Contato</a>
-    </div>
-  </section>
-
-  <div class="brick-divider">
-    <div class="hill left"></div>
-    <div class="hill right"></div>
-    <div class="bush left"></div>
-    <div class="bush right"></div>
-  </div>
-
-  <section>
-    <div class="level-tag">
-      <span class="level-num">01</span>
-      <span class="level-label">SOBRE MIM</span>
-      <span class="qmark" aria-hidden="true">?</span>
-    </div>
-    <h2>Da ciência à inovação no ensino em saúde.</h2>
-
-    <div class="qblock">
-      <div class="stat-row">
-        <span class="stat">🎓 DOUTOR EM FISIOLOGIA — USP</span>
-        <span class="stat">📘 MESTRE — UECE</span>
-        <span class="stat">🏫 DOCENTE UNIVERSITÁRIO</span>
-      </div>
-
-      <p style="text-align:justify;">
-        Prof. Dr. Aldair de França Neto.<br>
-        Sou professor e pesquisador dedicado ao ensino das Ciências Básicas
-        da Saúde. Meu trabalho busca integrar conhecimento científico,
-        metodologias ativas e tecnologias educacionais para criar
-        experiências de aprendizagem que estimulem o raciocínio científico e
-        clínico, a tomada de decisão e a construção significativa do
-        conhecimento.
-      </p>
-      <p style="text-align:justify;">
-        Este espaço reúne projetos desenvolvidos para tornar o ensino mais
-        interativo, significativo e fundamentado em evidências pedagógicas e
-        científicas.
-      </p>
-
-      <div class="formacao-grid">
-        <div>
-          <div class="spotlight-tag">FORMAÇÃO</div>
-          <ul>
-            <li>Doutor em Ciências (Fisiologia Humana - ICB/USP)</li>
-            <li>Mestre em Ciências (Fisiologia Humana - ISCB/UECE)</li>
-            <li>Licenciado em Ciências Biológicas (UECE)</li>
-          </ul>
-        </div>
-        <div>
-          <div class="spotlight-tag">ÁREAS DE ATUAÇÃO</div>
-          <div class="stat-row" style="margin:0;">
-            <span class="stat">Educação em Saúde</span>
-            <span class="stat">Serious Games</span>
-            <span class="stat">Gamificação</span>
-            <span class="stat">Tecnologias Educacionais</span>
-            <span class="stat">Metodologias Ativas</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-cta" style="margin:26px 0 0;">
-        <a class="btn coin" href="http://lattes.cnpq.br/4010253873678059" target="_blank" rel="noopener">📄 CURRÍCULO LATTES</a>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="level-tag">
-      <span class="level-num">02</span>
-      <span class="level-label">DESTAQUE</span>
-      <span class="qmark" aria-hidden="true">?</span>
-    </div>
-    <div class="spotlight">
-      <div class="spotlight-tag">ESCAPE ROOM CLÍNICO DIGITAL</div>
-      <h3>Código Lactato</h3>
-      <p style="text-align:justify;">
-        Você está diante de um paciente crítico. Interprete os sinais,
-        resolva os desafios e tome decisões para conduzir o caso até o
-        desfecho.
-      </p>
-      <div class="stat-row">
-        <span class="stat">🎮 5 ETAPAS</span>
-        <span class="stat">🧩 ESCAPE ROOM · QUIZZES · CAÇA-PALAVRAS · ASSOCIAÇÃO</span>
-        <span class="stat">📱 JOGUE NO CELULAR OU NO COMPUTADOR</span>
-      </div>
-      <a class="btn green" href="projetos.html">▶ VER DETALHES E JOGAR</a>
-    </div>
-
-    <div class="spotlight" style="margin-top:24px;">
-      <div class="spotlight-tag">SERIOUS GAME DE PATOLOGIA</div>
-      <h3>Código Inflamação</h3>
-      <p style="text-align:justify;">
-        Um plantão noturno no pronto-socorro para dominar o processo
-        inflamatório agudo: atenda casos clínicos, interprete lâminas e
-        laudos, tome decisões de conduta e acompanhe o paciente do leito 12
-        até a passagem de plantão.
-      </p>
-      <div class="stat-row">
-        <span class="stat">🎮 3 TURNOS · 21 ATIVIDADES</span>
-        <span class="stat">🧩 QUIZ · IMAGENS · DECISÕES CLÍNICAS</span>
-        <span class="stat">🎓 MODO HISTÓRIA E MODO PROFESSOR</span>
-      </div>
-      <a class="btn green" href="projetos.html">▶ VER DETALHES E JOGAR</a>
-    </div>
-  </section>
-
-  <section id="contato">
-    <div class="level-tag">
-      <span class="level-num">03</span>
-      <span class="level-label">CONTATO</span>
-      <span class="qmark" aria-hidden="true">?</span>
-    </div>
-    <div class="qblock">
-      <h2 style="margin-bottom:16px;">Vamos conversar</h2>
-      <p style="text-align:justify;">
-        Estou aberto ao compartilhamento de ideias, desenvolvimento de
-        projetos e parcerias voltadas à inovação na educação em saúde. Se
-        você trabalha com ensino, pesquisa ou desenvolvimento de tecnologias
-        educacionais, entre em contato.
-      </p>
-      <div class="hero-cta" style="margin-bottom:0;">
-        <!-- Troque o e-mail abaixo pelo seu e-mail de contato preferido -->
-        <a class="btn primary email" href="mailto:prof.aldair.franca@gmail.com">✉ PROF.ALDAIR.FRANCA@GMAIL.COM</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="brick-divider">
-    <div class="hill left"></div>
-    <div class="hill right"></div>
-    <div class="bush left"></div>
-    <div class="bush right"></div>
-  </div>
-
+<body class="text-dark-slate font-body-md antialiased selection:bg-secondary-container selection:text-dark-slate overflow-x-hidden min-h-screen" style="background-color: rgb(92, 148, 252); background-attachment: fixed;">
+<!-- TOP APP NAVIGATION BAR -->
+<header class="bg-white border-b-[2.5px] border-dark-slate sticky top-0 z-50 shadow-[0px_4px_0px_0px_#0f172a]">
+<div class="flex justify-between items-center w-full px-4 sm:px-6 py-3 max-w-7xl mx-auto">
+<a class="flex items-center gap-3 group" href="#hero">
+<div class="w-10 h-10 bg-primary text-white border-2 border-dark-slate flex items-center justify-center rounded-xl shadow-[2px_2px_0px_0px_#0f172a] group-hover:-translate-y-0.5 transition-transform">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
 </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-dark-slate">AFN STUDIO</span>
+<span class="bg-secondary-container text-dark-slate text-[10px] font-label-sm font-bold px-2 py-0.5 border border-dark-slate rounded-md">GAMIFIED ED</span>
+</div>
+<span class="font-label-sm text-slate-500 text-[11px] block -mt-0.5">Prof. Dr. Aldair de França Neto</span>
+</div>
+</a>
+<!-- Clean Modern Nav Menu -->
+<nav class="hidden md:flex items-center gap-6 font-label-md uppercase text-xs font-bold text-slate-700">
+<a class="hover:text-speed-blue transition-colors flex items-center gap-1.5" href="#about">
+<span class="w-2 h-2 rounded-full bg-speed-blue inline-block"></span> Perfil TCG
+        </a>
+<a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#games">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Missões
+        </a>
+<a class="hover:text-power-green transition-colors flex items-center gap-1.5" href="#pillars">
+<span class="w-2 h-2 rounded-full bg-power-green inline-block"></span> Power-ups
+        </a>
+<a class="hover:text-amber-500 transition-colors flex items-center gap-1.5" href="#contact">
+<span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> Co-op
+        </a>
+<span class="w-px h-4 bg-slate-200"></span>
+<a class="hover:text-dark-slate transition-colors flex items-center gap-1.5" href="projetos.html">
+<span class="material-symbols-outlined text-[15px]">grid_view</span> Projetos
+        </a>
+<a class="hover:text-dark-slate transition-colors flex items-center gap-1.5" href="atividades.html">
+<span class="material-symbols-outlined text-[15px]">groups</span> Atividade Presencial
+        </a>
+</nav>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 border-[2px] border-dark-slate bg-slate-100 hover:bg-slate-200 text-dark-slate font-label-md text-xs font-bold rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[17px]">school</span> Lattes
+        </a>
+<a class="px-4 py-2 bg-primary text-white neo-btn font-label-md text-xs font-bold rounded-xl flex items-center gap-1.5" href="#games">
+<span class="">JOGAR</span>
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</a>
+<!-- Mobile menu toggle (nav acima fica oculta abaixo de md) -->
+<button aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu" class="md:hidden inline-flex items-center justify-center w-10 h-10 border-2 border-dark-slate bg-slate-100 rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all" id="mobileMenuBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
+</div>
+</div>
+<!-- Mobile Nav Panel -->
+<nav class="hidden md:hidden flex-col gap-1 px-4 pb-4 font-label-md uppercase text-xs font-bold text-slate-700 border-t-2 border-slate-100 pt-3" id="mobileMenu">
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="projetos.html">
+<span class="material-symbols-outlined text-[16px]">grid_view</span> Todos os Projetos
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="atividades.html">
+<span class="material-symbols-outlined text-[16px]">groups</span> Atividade Presencial
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="#about">
+<span class="material-symbols-outlined text-[16px]">badge</span> Perfil TCG
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="#games">
+<span class="material-symbols-outlined text-[16px]">sports_esports</span> Missões
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="#pillars">
+<span class="material-symbols-outlined text-[16px]">bolt</span> Power-ups
+      </a>
+<a class="py-2.5 px-2 rounded-lg hover:bg-slate-50 flex items-center gap-2" href="#contact">
+<span class="material-symbols-outlined text-[16px]">mail</span> Co-op / Contato
+      </a>
+</nav>
+<script>
+  (function(){
+    var btn = document.getElementById('mobileMenuBtn');
+    var menu = document.getElementById('mobileMenu');
+    if(!btn || !menu) return;
+    btn.addEventListener('click', function(){
+      var isOpen = menu.classList.toggle('flex');
+      menu.classList.toggle('hidden');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    menu.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+</script>
+</header>
+<!-- MAIN CONTAINER -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-12 relative z-10">
+<!-- 1. HERO SECTION: Neo-Brutalist Gamified Lab -->
+<section class="relative bg-white neo-box rounded-2xl p-6 sm:p-10 lg:p-12 overflow-hidden" id="hero">
+<!-- Decorative Neo-Brutalist Badges in Background -->
+<div class="absolute -right-8 -top-8 w-40 h-40 bg-blue-100/60 rounded-full border-2 border-dashed border-speed-blue/40 pointer-events-none"></div>
+<!-- Top Level Tag -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border-2 border-dark-slate rounded-xl font-label-md text-xs font-bold text-speed-blue mb-6 shadow-[2px_2px_0px_0px_#0f172a]">
+<span class="w-2 h-2 rounded-full bg-speed-blue animate-pulse"></span>
+<span class="">MODO APRENDIZAGEM ATIVA</span>
+<span class="text-slate-300">|</span>
+<span class="text-dark-slate">LABORATÓRIO DE ENSINO EM SAÚDE</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+<!-- Main Pitch -->
+<div class="lg:col-span-8 space-y-6">
+<h1 class="font-headline-xl text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark-slate tracking-tight leading-tight">
+            Ciência, educação &amp; tecnologia para 
+            <span class="bg-secondary-container px-3 py-0.5 border-2 border-dark-slate inline-block -rotate-1 rounded-xl shadow-[3px_3px_0px_0px_#0f172a] text-dark-slate font-black">transformar</span>
+            a aprendizagem em saúde.
+          </h1>
+<p class="font-body-lg text-slate-600 text-base sm:text-lg max-w-2xl leading-relaxed">
+            Acredito que a aprendizagem pode ser desafiadora, significativa e envolvente. Por isso, desenvolvo recursos digitais educacionais que aproximam a investigação biológica, mecânicas de games e metodologias ativas.
+          </p>
+<!-- Neo-Brutalist Interactive CTA Buttons -->
+<div class="flex flex-wrap items-center gap-3.5 pt-2">
+<a class="px-5 py-3 bg-primary text-white neo-btn font-label-md text-xs font-bold rounded-xl flex items-center gap-2" href="#games">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              VER CARDS DE MISSÃO
+            </a>
+<a class="px-5 py-3 bg-power-green text-white neo-btn font-label-md text-xs font-bold rounded-xl flex items-center gap-2" href="#contact">
+<span class="material-symbols-outlined text-[18px]">group</span>
+              CO-OP CONTATO
+            </a>
+<a class="px-4 py-3 bg-white text-dark-slate neo-btn font-label-md text-xs font-bold rounded-xl flex items-center gap-2" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+              CURRÍCULO LATTES
+            </a>
+</div>
+</div>
+<!-- Telemetry & Diagnostic Monitor Card -->
+<div class="lg:col-span-4 flex justify-center">
+<div class="w-full max-w-sm bg-slate-900 text-white border-2 border-dark-slate p-5 rounded-2xl shadow-[6px_6px_0px_0px_#0f172a] space-y-4">
+<div class="flex items-center justify-between pb-3 border-b border-slate-800 font-label-sm text-xs text-amber-400">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-power-green inline-block animate-pulse"></span>
+                TELEMETRIA CLÍNICA
+              </span>
+<span class="font-bold text-slate-400">60 FPS // V-SYNC</span>
+</div>
+<!-- ECG Graphic Display -->
+<div class="bg-slate-950 p-4 border border-slate-800 rounded-xl space-y-3 font-label-sm">
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-400">MONITOR CARDÍACO:</span>
+<span class="text-power-green font-bold">72 BPM [ESTÁVEL]</span>
+</div>
+<!-- Clean Minimal Waveform Bars -->
+<div class="h-10 w-full flex items-end justify-between gap-1 border border-slate-800 px-2 py-1 bg-slate-900/80 rounded-lg">
+<span class="w-2 bg-power-green h-2 rounded-xs"></span>
+<span class="w-2 bg-power-green h-3 rounded-xs"></span>
+<span class="w-2 bg-power-green h-2 rounded-xs"></span>
+<span class="w-2 bg-primary h-8 rounded-xs"></span>
+<span class="w-2 bg-secondary-container h-4 rounded-xs"></span>
+<span class="w-2 bg-power-green h-2 rounded-xs"></span>
+<span class="w-2 bg-speed-blue h-5 rounded-xs"></span>
+<span class="w-2 bg-power-green h-3 rounded-xs"></span>
+<span class="w-2 bg-power-green h-2 rounded-xs"></span>
+</div>
+<!-- Metrics -->
+<div class="space-y-2 pt-2 text-[11px]">
+<div>
+<div class="flex justify-between text-slate-300 font-mono mb-1">
+<span class="">METODOLOGIAS ATIVAS</span>
+<span class="text-secondary-container font-bold">100%</span>
+</div>
+<div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
+<div class="bg-speed-blue h-full w-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-slate-300 font-mono mb-1">
+<span class="">RACIONAL CLÍNICO</span>
+<span class="text-secondary-container font-bold">MAX</span>
+</div>
+<div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700">
+<div class="bg-primary h-full w-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Checkpoint info footer -->
+<div class="flex items-center justify-between text-slate-400 font-label-sm text-[11px] pt-1">
+<span class="flex items-center gap-1"><span class="spin-ring text-amber-400">●</span> ENGINE INTEGRADA</span>
+<span class="text-amber-400 font-bold">STATUS: ATIVO</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stage Checkpoint Bar -->
+<div class="mt-8 pt-4 border-t-2 border-slate-200 flex flex-wrap items-center justify-between gap-4 font-label-sm text-xs text-slate-600">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 bg-secondary-container text-dark-slate border-2 border-dark-slate font-bold rounded-lg shadow-[2px_2px_0px_0px_#0f172a]">CHECKPOINT</span>
+<span class="font-medium">CAMPUS VIRTUAL · EXPERIÊNCIA BASEADA EM EVIDÊNCIAS CIENTÍFICAS</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-slate-100 border border-dark-slate rounded font-bold text-dark-slate">CO-OP PRONTO</span>
+<span class="">•</span>
+<span class="px-2 py-0.5 bg-slate-100 border border-dark-slate rounded font-bold text-dark-slate">SISTEMA DE CARDS TCG</span>
+</div>
+</div>
+</section>
+<!-- SECTION TITLE: STAGE 01 -->
+<div class="flex items-center gap-3 bg-white neo-box p-3 rounded-xl">
+<div class="px-3 py-1 bg-speed-blue text-white font-label-md text-xs font-bold rounded-lg border-2 border-dark-slate shadow-[2px_2px_0px_0px_#0f172a]">
+        STAGE 01
+      </div>
+<h2 class="font-headline-md text-xl sm:text-2xl font-bold text-dark-slate">
+        Ficha do Professor — Legendary TCG Card
+      </h2>
+</div>
+<!-- 2. PROFESSOR TCG LEGENDARY CARD SECTION -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8" id="about">
+<!-- Legendary Creature Card Neo-Brutalist Container -->
+<div class="lg:col-span-8 neo-tcg-card bg-[#1e293b] rounded-2xl p-3 sm:p-4 text-slate-900 border-[2.5px] border-dark-slate shadow-[6px_6px_0px_0px_#0f172a]">
+<!-- Card Inner Frame (Clean Parchment / Modern Silver-Gold Gradient) -->
+<div class="bg-gradient-to-b from-[#fbfbf9] via-[#f4f4f0] to-[#eae8df] border-2 border-[#a8a29e] rounded-xl p-3 sm:p-4 space-y-3 tcg-holo-shimmer">
+<!-- 1. Header: Name & Mana Gems -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-2 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<h3 class="font-headline-md text-base sm:text-lg font-black text-dark-slate tracking-tight">Prof. Dr. Aldair de França Neto</h3>
+</div>
+<!-- Mana Cost Gems -->
+<div class="flex items-center gap-1.5"><span class="mana-gem bg-slate-200 text-slate-800 text-[10px]" title="Competência">BIO</span><span class="mana-gem bg-speed-blue text-white text-[10px]" title="Experiência">EXP</span><span class="mana-gem bg-primary text-white text-[10px]" title="Didática">DID</span><span class="mana-gem bg-power-green text-white text-[10px]" title="Inovação">INOV</span></div>
+</div>
+<!-- 2. Card Portrait Frame -->
+<div class="bg-gradient-to-br from-slate-900 via-speed-dark to-slate-800 border-2 border-dark-slate rounded-xl p-4 text-white relative overflow-hidden">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+<div class="space-y-1">
+<span class="bg-speed-blue text-white text-[10px] font-label-md font-bold px-2 py-0.5 rounded border border-white/30 inline-block">
+                  P1 · DOCENTE &amp; DESIGNER
+                </span>
+<h4 class="font-headline-md text-lg text-white font-bold">Docente em Saúde Multidisciplinar &amp; Game Designer Educacional</h4>
+<p class="text-xs text-slate-300 font-mono">Doutor em Ciências (ICB/USP) • Mestre (ISCB/UECE) • Pesquisa &amp; Ensino Multidisciplinar</p>
+</div>
+<div class="bg-slate-950/70 border border-amber-400/50 px-3 py-1.5 rounded-xl text-center">
+<span class="font-label-sm text-[10px] text-amber-400 font-bold block">LVL.99</span>
+<span class="text-[9px] font-mono text-slate-400">EXP: MAX</span>
+</div>
+</div>
+</div>
+<!-- 3. Type Line & Rarity Badge -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-1.5 flex items-center justify-between text-xs font-bold shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-dark-slate tracking-wide">Card Acadêmico — Docente &amp; Pesquisador</span><span class="px-2.5 py-0.5 bg-secondary-container text-dark-slate border border-dark-slate rounded-md font-label-sm text-[10px] font-extrabold flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">verified</span> DOCÊNCIA MASTER</span></div>
+<!-- 4. Text Box: Rules, Formation Slots, and Quote -->
+<div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner">
+<!-- Academic Inventory Slots -->
+<div>
+<span class="font-label-sm font-bold text-[10px] text-slate-500 uppercase tracking-wider block mb-1.5">
+                INVENTÁRIO DE FORMAÇÃO (SLOTS ATIVOS):
+              </span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+<div class="p-2.5 border-2 border-slate-200 bg-slate-50 rounded-xl">
+<span class="font-label-sm text-[9px] text-primary block font-bold">🎓 DOUTORADO</span>
+<p class="text-xs font-bold text-dark-slate">Ciências (Fisiologia Humana)</p>
+<span class="text-[10px] text-slate-500 block font-mono">ICB / USP</span>
+</div>
+<div class="p-2.5 border-2 border-slate-200 bg-slate-50 rounded-xl">
+<span class="font-label-sm text-[9px] text-power-green block font-bold">📘 MESTRADO</span>
+<p class="text-xs font-bold text-dark-slate">Ciências (Fisiologia Humana)</p>
+<span class="text-[10px] text-slate-500 block font-mono">ISCB / UECE</span>
+</div>
+<div class="p-2.5 border-2 border-slate-200 bg-slate-50 rounded-xl">
+<span class="font-label-sm text-[9px] text-speed-blue block font-bold">🏫 GRADUAÇÃO</span>
+<p class="text-xs font-bold text-dark-slate">Ciências Biológicas</p>
+<span class="text-[10px] text-slate-500 block font-mono">UECE (Licenciatura)</span>
+</div>
+</div>
+</div>
+<hr class="border-slate-200">
+<!-- Flavour Text -->
+<p class="text-xs italic text-slate-600 leading-relaxed font-serif">
+              "Docente e pesquisador dedicado ao ensino de Conteúdos Multidisciplinares na Saúde Humana. Meu trabalho busca integrar conhecimento científico rigoroso, metodologias ativas e tecnologias educacionais para criar experiências que estimulem o raciocínio clínico e a tomada de decisão."
+            </p>
+</div>
+<!-- 5. Card Bottom: Artist info & Power/Toughness -->
+<div class="flex items-center justify-between text-xs font-mono text-slate-700 px-1 pt-1"><span class="">001/001 • AFN Studio Education Engine</span><div class="bg-white border-2 border-dark-slate px-3 py-1 rounded-lg font-headline-md font-black text-dark-slate shadow-[2px_2px_0px_0px_#0f172a]">99 / 99</div></div>
+</div>
+</div>
+<!-- Right Side: Neo-Brutalist Attributes & Speed Stats HUD -->
+<div class="lg:col-span-4 bg-white neo-box rounded-2xl p-6 flex flex-col justify-between">
+<div>
+<!-- Header -->
+<div class="flex items-center justify-between border-b-2 border-slate-100 pb-3 mb-6">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-secondary-container border border-dark-slate rounded-full"></span>
+<span class="font-headline-md font-bold text-sm text-dark-slate uppercase">Atributos &amp; Maestria</span>
+</div>
+<span class="px-2 py-0.5 bg-speed-blue text-white font-label-sm text-[10px] font-bold rounded border border-dark-slate">
+              RANK S
+            </span>
+</div>
+<!-- Stats Bars with clean modern UI -->
+<div class="space-y-4">
+<div>
+<div class="flex justify-between font-label-sm text-xs mb-1">
+<span class="text-dark-slate font-bold">SAÚDE MULTIDISCIPLINAR</span>
+<span class="text-power-green font-bold">[MAX]</span>
+</div>
+<div class="w-full bg-slate-100 border-2 border-dark-slate h-3.5 p-0.5 rounded-md flex gap-1">
+<span class="h-full flex-1 bg-power-green rounded-xs"></span>
+<span class="h-full flex-1 bg-power-green rounded-xs"></span>
+<span class="h-full flex-1 bg-power-green rounded-xs"></span>
+<span class="h-full flex-1 bg-power-green rounded-xs"></span>
+<span class="h-full flex-1 bg-power-green rounded-xs"></span>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-xs mb-1">
+<span class="text-dark-slate font-bold">GAMIFICAÇÃO &amp; MOTIVAÇÃO</span>
+<span class="text-secondary-container font-bold text-amber-500">[MAX]</span>
+</div>
+<div class="w-full bg-slate-100 border-2 border-dark-slate h-3.5 p-0.5 rounded-md flex gap-1">
+<span class="h-full flex-1 bg-secondary-container rounded-xs"></span>
+<span class="h-full flex-1 bg-secondary-container rounded-xs"></span>
+<span class="h-full flex-1 bg-secondary-container rounded-xs"></span>
+<span class="h-full flex-1 bg-secondary-container rounded-xs"></span>
+<span class="h-full flex-1 bg-secondary-container rounded-xs"></span>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-xs mb-1">
+<span class="text-dark-slate font-bold">SERIOUS GAMES</span>
+<span class="text-primary font-bold">[MAX]</span>
+</div>
+<div class="w-full bg-slate-100 border-2 border-dark-slate h-3.5 p-0.5 rounded-md flex gap-1">
+<span class="h-full flex-1 bg-primary rounded-xs"></span>
+<span class="h-full flex-1 bg-primary rounded-xs"></span>
+<span class="h-full flex-1 bg-primary rounded-xs"></span>
+<span class="h-full flex-1 bg-primary rounded-xs"></span>
+<span class="h-full flex-1 bg-primary rounded-xs"></span>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-xs mb-1">
+<span class="text-dark-slate font-bold">METODOLOGIAS ATIVAS</span>
+<span class="text-speed-blue font-bold">[MAX]</span>
+</div>
+<div class="w-full bg-slate-100 border-2 border-dark-slate h-3.5 p-0.5 rounded-md flex gap-1">
+<span class="h-full flex-1 bg-speed-blue rounded-xs"></span>
+<span class="h-full flex-1 bg-speed-blue rounded-xs"></span>
+<span class="h-full flex-1 bg-speed-blue rounded-xs"></span>
+<span class="h-full flex-1 bg-speed-blue rounded-xs"></span>
+<span class="h-full flex-1 bg-speed-blue rounded-xs"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- CNPq verification & Lattes CTA -->
+<div class="pt-6 mt-6 border-t-2 border-slate-100 space-y-3">
+<div class="flex items-center justify-between text-xs font-mono text-slate-500">
+<span class="">PASSPORT CNPq:</span>
+<span class="text-power-green font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">check_circle</span> VERIFICADO
+            </span>
+</div>
+<a class="w-full py-2.5 bg-speed-blue text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+<span class="">CONSULTAR LATTES OFICIAL</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+</section>
+<!-- SECTION TITLE: STAGE 02 -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 bg-white neo-box p-3 rounded-xl">
+<div class="flex items-center gap-3">
+<div class="px-3 py-1 bg-primary text-white font-label-md text-xs font-bold rounded-lg border-2 border-dark-slate shadow-[2px_2px_0px_0px_#0f172a]">
+          STAGE 02
+        </div>
+<h2 class="font-headline-md text-xl sm:text-2xl font-bold text-dark-slate">
+          Cartas de Missão Prontas para Jogar (Serious Games)
+        </h2>
+</div>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-dark-slate rounded-xl text-xs font-label-sm font-bold shadow-[2px_2px_0px_0px_#0f172a]">
+<span class="w-2 h-2 rounded-full bg-power-green inline-block"></span>
+<span class="">COMPATÍVEL COM COMPUTADOR E CELULAR</span>
+</div>
+</div>
+<!-- 3. CARDS DE MISSÃO: JOGOS EM DESTAQUE -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-8" id="games">
+<!-- CARD 1: CÓDIGO LACTATO -->
+<article class="neo-tcg-card bg-[#1e293b] rounded-2xl p-3 sm:p-4 text-slate-900 border-[2.5px] border-dark-slate">
+<div class="bg-gradient-to-b from-[#fef2f2] via-[#fff8f8] to-[#fee2e2] border-2 border-red-300 rounded-xl p-3 sm:p-4 space-y-3 tcg-holo-shimmer">
+<!-- Name & Mana Cost -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-2 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-primary rounded-sm border border-dark-slate inline-block"></span>
+<h3 class="font-headline-md text-lg font-black text-primary tracking-tight">Código Lactato</h3>
+</div>
+<div class="flex items-center gap-1.5"><span class="px-2 py-0.5 bg-slate-100 border border-dark-slate rounded font-label-sm text-[10px] font-bold text-dark-slate">NÍVEL 4</span><span class="px-2 py-0.5 bg-primary text-white border border-dark-slate rounded font-label-sm text-[10px] font-bold">CLÍNICA</span></div>
+</div>
+<!-- Visual Frame -->
+<div class="bg-gradient-to-br from-[#7f1d1d] via-[#991b1b] to-[#450a0a] border-2 border-dark-slate rounded-xl p-4 text-white">
+<div class="flex justify-between items-start">
+<div>
+<span class="px-2 py-0.5 bg-primary/90 border border-white/30 text-[10px] font-label-md font-bold text-white rounded">
+                  STAGE 1: EMERGENCY ROOM
+                </span>
+<h4 class="text-sm font-bold mt-2 text-red-100">Paciente Crítico em Choque Séptico</h4>
+<p class="text-xs text-red-200">Telemetria de Lactato &amp; Curva de Perfusão</p>
+</div>
+<div class="bg-black/40 border border-red-400/40 px-2.5 py-1 rounded-lg text-center">
+<span class="text-[9px] font-label-sm text-red-300 block">STATUS</span>
+<span class="text-xs font-bold text-red-100">CRÍTICO</span>
+</div>
+</div>
+</div>
+<!-- Type Line & Rarity -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-1.5 flex items-center justify-between text-xs font-bold shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-dark-slate">Escape Room Clínico Digital</span><span class="px-2.5 py-0.5 bg-red-100 text-primary border border-primary rounded font-label-sm text-[10px] font-bold uppercase tracking-wider">CASO CRÍTICO ESSENCIAL</span></div>
+<!-- Rules & Objective Box -->
+<div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner text-xs">
+<p class="text-slate-700 leading-relaxed font-mono">
+<strong class="text-dark-slate font-bold">Efeito de Missão:</strong> Você está diante de um paciente crítico. Interprete os sinais fisiológicos, colete pistas bioquímicas, resolva puzzles e tome decisões sob pressão para salvar o paciente.
+            </p>
+<div class="space-y-1.5 pt-1">
+<span class="font-label-sm text-[10px] text-primary font-bold uppercase tracking-wider block">
+                REGRAS DE ATIVAÇÃO DA FASE:
+              </span>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-primary">timer</span> 5 Etapas Clínicas
+                </span>
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-primary">extension</span> Escape Room · Quizzes · Puzzles
+                </span>
+<span class="px-2.5 py-1 bg-red-50 border border-red-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-primary">devices</span> Celular ou Computador
+                </span>
+</div>
+</div>
+<hr class="border-red-100">
+<p class="italic text-slate-500 font-serif">
+              "O tempo corre na UTI, e o lactato não perdoa erros de raciocínio hemodinâmico."
+            </p>
+</div>
+<!-- Card Bottom: Difficulty & Action Button -->
+<div class="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
+<div class="flex items-center text-primary text-[16px]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-slate-300">star</span>
+</div>
+<span class="font-bold text-xs bg-red-100 border border-red-300 px-2 py-0.5 rounded">4 / 5</span>
+</div>
+<a class="w-full sm:w-auto px-5 py-2.5 bg-primary text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="projetos.html">
+<span class="">INICIAR MISSÃO</span>
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</a>
+</div>
+</div>
+</article>
+<!-- CARD 2: CÓDIGO INFLAMAÇÃO -->
+<article class="neo-tcg-card bg-[#1e293b] rounded-2xl p-3 sm:p-4 text-slate-900 border-[2.5px] border-dark-slate">
+<div class="bg-gradient-to-b from-[#f0fdf4] via-[#f7fee7] to-[#dcfce7] border-2 border-emerald-300 rounded-xl p-3 sm:p-4 space-y-3 tcg-holo-shimmer">
+<!-- Name & Mana Cost -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-2 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-power-green rounded-sm border border-dark-slate inline-block"></span>
+<h3 class="font-headline-md text-lg font-black text-power-green tracking-tight">Código Inflamação</h3>
+</div>
+<div class="flex items-center gap-1.5"><span class="px-2 py-0.5 bg-slate-100 border border-dark-slate rounded font-label-sm text-[10px] font-bold text-dark-slate">NÍVEL 5</span><span class="px-2 py-0.5 bg-power-green text-white border border-dark-slate rounded font-label-sm text-[10px] font-bold">PATOLOGIA</span></div>
+</div>
+<!-- Visual Frame -->
+<div class="bg-gradient-to-br from-[#064e3b] via-[#065f46] to-[#022c22] border-2 border-dark-slate rounded-xl p-4 text-white">
+<div class="flex justify-between items-start">
+<div>
+<span class="px-2 py-0.5 bg-power-green/90 border border-white/30 text-[10px] font-label-md font-bold text-white rounded">
+                  STAGE 2: NIGHT SHIFT PRONTO-SOCORRO
+                </span>
+<h4 class="text-sm font-bold mt-2 text-emerald-100">Leito 12 · Resposta Inflamatória Aguda</h4>
+<p class="text-xs text-emerald-200">Lâminas Histopatológicas, Laudos &amp; Condutas</p>
+</div>
+<div class="bg-black/40 border border-emerald-400/40 px-2.5 py-1 rounded-lg text-center">
+<span class="text-[9px] font-label-sm text-emerald-300 block">TURNO</span>
+<span class="text-xs font-bold text-emerald-100">LEITO 12</span>
+</div>
+</div>
+</div>
+<!-- Type Line & Rarity -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-1.5 flex items-center justify-between text-xs font-bold shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-dark-slate">Serious Game de Patologia</span><span class="px-2.5 py-0.5 bg-secondary-container text-dark-slate border border-dark-slate rounded font-label-sm text-[10px] font-bold uppercase tracking-wider">MISSÃO AVANÇADA</span></div>
+<!-- Rules & Objective Box -->
+<div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner text-xs">
+<p class="text-slate-700 leading-relaxed font-mono">
+<strong class="text-dark-slate font-bold">Efeito de Missão:</strong> Um plantão noturno no pronto-socorro para dominar a inflamação aguda: examine lâminas citológicas, atenda casos reais, decida a terapêutica e passe o plantão com segurança diagnóstica.
+            </p>
+<div class="space-y-1.5 pt-1">
+<span class="font-label-sm text-[10px] text-power-green font-bold uppercase tracking-wider block">
+                REGRAS DE ATIVAÇÃO DA FASE:
+              </span>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-power-green">nightlight</span> 3 Turnos · 21 Atividades
+                </span>
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-power-green">biotech</span> Lâminas Histológicas &amp; Decisões
+                </span>
+<span class="px-2.5 py-1 bg-emerald-50 border border-emerald-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-power-green">school</span> Modo História &amp; Professor
+                </span>
+</div>
+</div>
+<hr class="border-emerald-100">
+<p class="italic text-slate-500 font-serif">
+              "O leito 12 aguarda sua avaliação microscópica antes que o amanhecer chegue."
+            </p>
+</div>
+<!-- Card Bottom: Difficulty & Action Button -->
+<div class="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
+<div class="flex items-center text-primary text-[16px]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-bold text-xs bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded">5 / 5</span>
+</div>
+<a class="w-full sm:w-auto px-5 py-2.5 bg-power-green text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="projetos.html">
+<span class="">ENTRAR NO PLANTÃO</span>
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</a>
+</div>
+</div>
+</article>
+</section>
+<!-- SECTION TITLE: STAGE 03 -->
+<div class="flex items-center gap-3 pt-4 bg-white neo-box p-3 rounded-xl">
+<div class="px-3 py-1 bg-secondary-container text-dark-slate font-label-md text-xs font-bold rounded-lg border-2 border-dark-slate shadow-[2px_2px_0px_0px_#0f172a]">
+        STAGE 03
+      </div>
+<h2 class="font-headline-md text-xl sm:text-2xl font-bold text-dark-slate">
+        Power-ups de Ensino &amp; Aprendizagem
+      </h2>
+</div>
+<!-- 4. POWER-UP PILLARS: RELÍQUIAS E ENCANTAMENTOS TCG -->
+<section class="space-y-6" id="pillars">
 
-<footer>
-  <div class="wrap footer-inner">
-    <span>© 2026 ALDAIR DE FRANÇA NETO</span>
-    <span><a href="projetos.html">TODOS OS PROJETOS →</a></span>
-  </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"><!-- Card 1: Serious Games (Red Deck / Mana {2}{R}) -->
+<div class="neo-tcg-card bg-slate-950 rounded-2xl p-2.5 sm:p-3 text-slate-900 border-[2.5px] border-dark-slate shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between hover:-translate-y-1 transition-transform relative group"><div class="bg-gradient-to-b from-[#fef2f2] via-[#fff8f8] to-[#fee2e2] border-2 border-red-300 rounded-xl p-2 sm:p-2.5 flex flex-col h-full space-y-2 tcg-holo-shimmer"><div class="bg-white border-2 border-dark-slate rounded-lg px-2.5 py-1.5 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">sports_esports</span><h3 class="font-headline-md text-[13px] font-black text-slate-900 tracking-tight leading-none">Serious Games</h3></div><div class="flex items-center gap-1"><span class="px-2 py-0.5 bg-red-100 text-primary border border-primary/50 rounded font-label-sm text-[9px] font-bold uppercase">JOGO</span></div></div><div class="relative bg-gradient-to-br from-[#7f1d1d] via-[#991b1b] to-[#450a0a] border-2 border-dark-slate rounded-lg h-28 overflow-hidden flex items-center justify-center shadow-inner group-hover:scale-[1.01] transition-transform"><div class="absolute inset-0 bg-[radial-gradient(#f87171_1px,transparent_1px)] [background-size:8px_8px] opacity-25"></div><div class="relative z-10 w-16 h-16 rounded-full bg-slate-950/60 border-2 border-amber-400/80 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.5)]"><span class="material-symbols-outlined text-amber-400 text-[32px]" style="font-variation-settings: 'FILL' 1;">sports_esports</span></div><div class="absolute bottom-1 right-1.5 px-1.5 py-0.5 bg-black/60 rounded border border-red-400/40 font-label-sm text-[8px] text-amber-300 font-bold uppercase tracking-wider">Simulação Clínica</div></div><div class="bg-white border-2 border-dark-slate rounded-lg px-2 py-1 flex items-center justify-between text-slate-900 shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-[10.5px] font-bold text-dark-slate leading-none">Pilar Pedagógico — Imersão Ativa</span><div class="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-400 text-amber-600 font-label-sm text-[9px] font-extrabold"><span class="material-symbols-outlined text-[12px]">star</span> MASTER</div></div><div class="bg-white border-2 border-dark-slate rounded-lg p-2.5 space-y-2 text-[11px] leading-snug flex-1 flex flex-col justify-between shadow-inner"><div class="space-y-1.5 text-slate-800"><p class="font-mono text-[10.5px]"><strong class="font-bold text-primary font-body-md">Imersão Deliberada</strong> — Ao iniciar a simulação, estudantes tomam decisões críticas sob pressão em ambiente controlado.</p><p class="font-mono text-[10.5px]">Erros diagnósticos geram refatoração imediata em vez de dano ao paciente real.</p></div><div class="pt-1.5 border-t border-red-200/80"><p class="italic text-[10px] text-slate-600 font-serif leading-tight">"O ambiente seguro do jogo é a forja onde o raciocínio clínico ganha tempera."</p></div></div><div class="flex items-end justify-between pt-0.5 px-0.5 font-mono text-[9px] text-slate-700"><div class="leading-tight"><div class="font-bold text-slate-900">001/004 • AFN EDU</div><div class="text-[8px] text-slate-500">ESTRATÉGIA CIENTÍFICA</div></div><div class="bg-white border-2 border-dark-slate px-2 py-0.5 rounded-md font-headline-md font-black text-primary shadow-[2px_2px_0px_0px_#0f172a] text-center min-w-[52px]">+50 XP</div></div></div></div>
+
+<!-- Card 2: Gamificação (Gold/White Deck / Mana {1}{W}) -->
+<div class="neo-tcg-card bg-slate-950 rounded-2xl p-2.5 sm:p-3 text-slate-900 border-[2.5px] border-dark-slate shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between hover:-translate-y-1 transition-transform relative group"><div class="bg-gradient-to-b from-[#fefce8] via-[#fffbeb] to-[#fef08a]/30 border-2 border-amber-300 rounded-xl p-2 sm:p-2.5 flex flex-col h-full space-y-2 tcg-holo-shimmer"><div class="bg-white border-2 border-dark-slate rounded-lg px-2.5 py-1.5 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-amber-500 text-[18px]" style="font-variation-settings: 'FILL' 1;">award_star</span><h3 class="font-headline-md text-[13px] font-black text-slate-900 tracking-tight leading-none">Gamificação</h3></div><div class="flex items-center gap-1"><span class="px-2 py-0.5 bg-secondary-container text-dark-slate border border-dark-slate rounded font-label-sm text-[9px] font-bold uppercase">MOTIVAÇÃO</span></div></div><div class="relative bg-gradient-to-br from-[#78350f] via-[#92400e] to-[#451a03] border-2 border-dark-slate rounded-lg h-28 overflow-hidden flex items-center justify-center shadow-inner group-hover:scale-[1.01] transition-transform"><div class="absolute inset-0 bg-[radial-gradient(#fde047_1px,transparent_1px)] [background-size:8px_8px] opacity-25"></div><div class="relative z-10 w-16 h-16 rounded-full bg-slate-950/60 border-2 border-amber-300 flex items-center justify-center shadow-[0_0_15px_rgba(250,204,21,0.5)]"><span class="material-symbols-outlined text-secondary-container text-[32px]" style="font-variation-settings: 'FILL' 1;">military_tech</span></div><div class="absolute bottom-1 right-1.5 px-1.5 py-0.5 bg-black/60 rounded border border-amber-300/40 font-label-sm text-[8px] text-amber-200 font-bold uppercase tracking-wider">Ciclos de Loop</div></div><div class="bg-white border-2 border-dark-slate rounded-lg px-2 py-1 flex items-center justify-between text-slate-900 shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-[10.5px] font-bold text-dark-slate leading-none">Diretriz Metodológica — Feedback Ágil</span><div class="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-400 text-amber-600 font-label-sm text-[9px] font-extrabold"><span class="material-symbols-outlined text-[12px]">star</span> MASTER</div></div><div class="bg-white border-2 border-dark-slate rounded-lg p-2.5 space-y-2 text-[11px] leading-snug flex-1 flex flex-col justify-between shadow-inner"><div class="space-y-1.5 text-slate-800"><p class="font-mono text-[10.5px]"><strong class="font-bold text-amber-600 font-body-md">Feedback Contínuo</strong> — Mecânicas de progressão e badges concedem clareza imediata sobre cada marco alcançado.</p><p class="font-mono text-[10.5px]">Converte tarefas densas em missões com narrativa diagnóstica envolvente.</p></div><div class="pt-1.5 border-t border-amber-200/80"><p class="italic text-[10px] text-slate-600 font-serif leading-tight">"Motivar não é trivializar o conteúdo; é revelar o heroísmo do saber."</p></div></div><div class="flex items-end justify-between pt-0.5 px-0.5 font-mono text-[9px] text-slate-700"><div class="leading-tight"><div class="font-bold text-slate-900">002/004 • AFN EDU</div><div class="text-[8px] text-slate-500">ESTRATÉGIA CIENTÍFICA</div></div><div class="bg-white border-2 border-dark-slate px-2 py-0.5 rounded-md font-headline-md font-black text-amber-600 shadow-[2px_2px_0px_0px_#0f172a] text-center min-w-[52px]">NÍVEL A</div></div></div></div>
+
+<!-- Card 3: Metodologias Ativas (Green Deck / Mana {2}{G}) -->
+<div class="neo-tcg-card bg-slate-950 rounded-2xl p-2.5 sm:p-3 text-slate-900 border-[2.5px] border-dark-slate shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between hover:-translate-y-1 transition-transform relative group"><div class="bg-gradient-to-b from-[#f0fdf4] via-[#f7fee7] to-[#dcfce7] border-2 border-emerald-300 rounded-xl p-2 sm:p-2.5 flex flex-col h-full space-y-2 tcg-holo-shimmer"><div class="bg-white border-2 border-dark-slate rounded-lg px-2.5 py-1.5 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-power-green text-[18px]" style="font-variation-settings: 'FILL' 1;">potted_plant</span><h3 class="font-headline-md text-[13px] font-black text-slate-900 tracking-tight leading-none">Metodologias Ativas</h3></div><div class="flex items-center gap-1"><span class="px-2 py-0.5 bg-emerald-100 text-power-green border border-power-green/50 rounded font-label-sm text-[9px] font-bold uppercase">MÉTODO</span></div></div><div class="relative bg-gradient-to-br from-[#064e3b] via-[#065f46] to-[#022c22] border-2 border-dark-slate rounded-lg h-28 overflow-hidden flex items-center justify-center shadow-inner group-hover:scale-[1.01] transition-transform"><div class="absolute inset-0 bg-[radial-gradient(#4ade80_1px,transparent_1px)] [background-size:8px_8px] opacity-25"></div><div class="relative z-10 w-16 h-16 rounded-full bg-slate-950/60 border-2 border-emerald-300 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.5)]"><span class="material-symbols-outlined text-power-green text-[32px]" style="font-variation-settings: 'FILL' 1;">nature_people</span></div><div class="absolute bottom-1 right-1.5 px-1.5 py-0.5 bg-black/60 rounded border border-emerald-400/40 font-label-sm text-[8px] text-emerald-200 font-bold uppercase tracking-wider">PBL &amp; TBL Digital</div></div><div class="bg-white border-2 border-dark-slate rounded-lg px-2 py-1 flex items-center justify-between text-slate-900 shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-[10.5px] font-bold text-dark-slate leading-none">Prática Ativa — Resolução de Problemas</span><div class="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-400 text-amber-600 font-label-sm text-[9px] font-extrabold"><span class="material-symbols-outlined text-[12px]">star</span> MASTER</div></div><div class="bg-white border-2 border-dark-slate rounded-lg p-2.5 space-y-2 text-[11px] leading-snug flex-1 flex flex-col justify-between shadow-inner"><div class="space-y-1.5 text-slate-800"><p class="font-mono text-[10.5px]"><strong class="font-bold text-power-green font-body-md">Protagonismo Investigativo</strong> — Alunos assumem o centro da tomada de decisão clínica.</p><p class="font-mono text-[10.5px]">Problemas autênticos desbloqueiam formulação autônoma de hipóteses e cooperação em equipe.</p></div><div class="pt-1.5 border-t border-emerald-200/80"><p class="italic text-[10px] text-slate-600 font-serif leading-tight">"A resposta fixa se dissipa; o método investigativo floresce eternamente."</p></div></div><div class="flex items-end justify-between pt-0.5 px-0.5 font-mono text-[9px] text-slate-700"><div class="leading-tight"><div class="font-bold text-slate-900">003/004 • AFN EDU</div><div class="text-[8px] text-slate-500">ESTRATÉGIA CIENTÍFICA</div></div><div class="bg-white border-2 border-dark-slate px-2 py-0.5 rounded-md font-headline-md font-black text-power-green shadow-[2px_2px_0px_0px_#0f172a] text-center min-w-[52px]">100%</div></div></div></div>
+
+<!-- Card 4: Ciência & Evidência (Blue Deck / Mana {2}{U}) -->
+<div class="neo-tcg-card bg-slate-950 rounded-2xl p-2.5 sm:p-3 text-slate-900 border-[2.5px] border-dark-slate shadow-[6px_6px_0px_0px_#0f172a] flex flex-col justify-between hover:-translate-y-1 transition-transform relative group"><div class="bg-gradient-to-b from-[#eff6ff] via-[#f0f9ff] to-[#dbeafe] border-2 border-blue-200 rounded-xl p-2 sm:p-2.5 flex flex-col h-full space-y-2 tcg-holo-shimmer"><div class="bg-white border-2 border-dark-slate rounded-lg px-2.5 py-1.5 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-speed-blue text-[18px]" style="font-variation-settings: 'FILL' 1;">science</span><h3 class="font-headline-md text-[13px] font-black text-slate-900 tracking-tight leading-none">Ciência &amp; Evidência</h3></div><div class="flex items-center gap-1"><span class="px-2 py-0.5 bg-blue-100 text-speed-blue border border-speed-blue/50 rounded font-label-sm text-[9px] font-bold uppercase">EVIDÊNCIA</span></div></div><div class="relative bg-gradient-to-br from-[#0c4a6e] via-[#1e3a8a] to-[#0f172a] border-2 border-dark-slate rounded-lg h-28 overflow-hidden flex items-center justify-center shadow-inner group-hover:scale-[1.01] transition-transform"><div class="absolute inset-0 bg-[radial-gradient(#60a5fa_1px,transparent_1px)] [background-size:8px_8px] opacity-25"></div><div class="relative z-10 w-16 h-16 rounded-full bg-slate-950/60 border-2 border-sky-300 flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)]"><span class="material-symbols-outlined text-sky-400 text-[32px]" style="font-variation-settings: 'FILL' 1;">psychology</span></div><div class="absolute bottom-1 right-1.5 px-1.5 py-0.5 bg-black/60 rounded border border-blue-400/40 font-label-sm text-[8px] text-sky-200 font-bold uppercase tracking-wider">Rigor Fisiológico</div></div><div class="bg-white border-2 border-dark-slate rounded-lg px-2 py-1 flex items-center justify-between text-slate-900 shadow-[2px_2px_0px_0px_#0f172a]"><span class="font-headline-md text-[10.5px] font-bold text-dark-slate leading-none">Fundamento Científico — Base em Evidências</span><div class="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-400 text-amber-600 font-label-sm text-[9px] font-extrabold"><span class="material-symbols-outlined text-[12px]">star</span> MASTER</div></div><div class="bg-white border-2 border-dark-slate rounded-lg p-2.5 space-y-2 text-[11px] leading-snug flex-1 flex flex-col justify-between shadow-inner"><div class="space-y-1.5 text-slate-800"><p class="font-mono text-[10.5px]"><strong class="font-bold text-speed-blue font-body-md">Rigor Biológico</strong> — Fundamentado nas diretrizes mais recentes da literatura científica internacional.</p><p class="font-mono text-[10.5px]">Anula conceitos desatualizados e ancora a prática médica em dados confiáveis.</p></div><div class="pt-1.5 border-t border-blue-200/80"><p class="italic text-[10px] text-slate-600 font-serif leading-tight">"Sem evidência sólida, a intuição clínica navega em mar bravio sem bússola."</p></div></div><div class="flex items-end justify-between pt-0.5 px-0.5 font-mono text-[9px] text-slate-700"><div class="leading-tight"><div class="font-bold text-slate-900">004/004 • AFN EDU</div><div class="text-[8px] text-slate-500">ESTRATÉGIA CIENTÍFICA</div></div><div class="bg-white border-2 border-dark-slate px-2 py-0.5 rounded-md font-headline-md font-black text-speed-blue shadow-[2px_2px_0px_0px_#0f172a] text-center min-w-[52px]">NÍVEL 1</div></div></div></div></div>
+</section>
+<!-- 5. STAGE 04 // CO-OP & CONTATO -->
+<section class="bg-white neo-box rounded-2xl p-6 sm:p-10 relative overflow-hidden" id="contact">
+<!-- Section Tag -->
+<div class="flex items-center justify-between border-b-2 border-slate-100 pb-4 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 bg-speed-blue text-white rounded-xl border-2 border-dark-slate flex items-center justify-center font-bold text-sm shadow-[2px_2px_0px_0px_#0f172a]"><span class="material-symbols-outlined text-[20px]">hub</span></div>
+<div>
+<span class="font-label-sm text-xs text-speed-blue font-bold block">HUB DE COLABORAÇÃO // MODO CO-OP</span>
+<h3 class="font-headline-md text-lg font-bold text-dark-slate">Vamos Conversar &amp; Pesquisar</h3>
+</div>
+</div>
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-power-green/50 rounded-xl text-power-green font-label-sm text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-power-green animate-ping"></span>
+<span class="">PLAYER 2 DISPONÍVEL</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<!-- Partnership pitch -->
+<div class="lg:col-span-7 space-y-5">
+<h4 class="font-headline-lg text-2xl font-bold text-dark-slate">
+            Parcerias, Pesquisa &amp; Desenvolvimento em Educação
+          </h4>
+<p class="font-body-md text-slate-600 leading-relaxed">
+            Estou aberto ao compartilhamento de ideias, desenvolvimento de projetos e parcerias voltadas à inovação na educação em saúde. Se você trabalha com ensino, pesquisa ou desenvolvimento de tecnologias educacionais, entre em contato.
+          </p>
+<div class="flex flex-wrap gap-2.5 pt-1">
+<span class="px-3 py-1.5 bg-slate-100 border-2 border-slate-300 font-label-sm text-xs text-slate-800 rounded-xl font-bold">
+              ✔ CONSULTORIA PEDAGÓGICA
+            </span>
+<span class="px-3 py-1.5 bg-slate-100 border-2 border-slate-300 font-label-sm text-xs text-slate-800 rounded-xl font-bold">
+              ✔ OFICINAS &amp; PALESTRAS
+            </span>
+<span class="px-3 py-1.5 bg-slate-100 border-2 border-slate-300 font-label-sm text-xs text-slate-800 rounded-xl font-bold">
+              ✔ CO-DESENVOLVIMENTO DE JOGOS
+            </span>
+</div>
+</div>
+<!-- Direct Email Card -->
+<div class="lg:col-span-5">
+<div class="bg-slate-50 border-2 border-dark-slate p-6 rounded-2xl shadow-[4px_4px_0px_0px_#0f172a] space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-xs text-primary font-bold uppercase tracking-wider">CANAL DIRETO:</span>
+<span class="px-2 py-0.5 bg-emerald-100 text-power-green font-label-sm text-[10px] font-bold rounded border border-emerald-300">ONLINE</span>
+</div>
+<div class="bg-white border-2 border-dark-slate p-3 rounded-xl font-mono text-xs sm:text-sm font-bold text-dark-slate break-all shadow-inner">
+<span id="emailText" class="">prof.aldair.franca@gmail.com</span>
+</div>
+<div class="space-y-2.5">
+<a class="w-full py-3 bg-primary text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="mailto:prof.aldair.franca@gmail.com">
+<span class="material-symbols-outlined text-[18px]">send</span>
+                ENVIAR E-MAIL AGORA
+              </a>
+<button class="w-full py-2.5 bg-white text-dark-slate neo-btn rounded-xl font-label-sm text-xs font-bold flex items-center justify-center gap-1.5" onclick="navigator.clipboard.writeText('prof.aldair.franca@gmail.com'); alert('E-mail copiado com sucesso!');">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+                COPIAR ENDEREÇO
+              </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- MODERN NEO-BRUTALIST FOOTER -->
+<footer class="mt-16 bg-white border-t-2 border-dark-slate py-10 px-6 text-dark-slate relative z-10">
+<div class="max-w-7xl mx-auto flex flex-col items-center gap-6 text-center">
+<!-- Brand & Hub Name -->
+<div class="flex items-center gap-2.5">
+<span class="w-3.5 h-3.5 rounded-full bg-secondary-container border border-dark-slate inline-block"></span>
+<span class="font-headline-md text-lg font-bold tracking-tight text-dark-slate">
+          AFN HEALTH EDUCATION STUDIO
+        </span>
+<span class="px-2 py-0.5 bg-blue-50 border border-speed-blue text-speed-blue font-label-sm text-[10px] font-bold rounded-md">
+          TCG &amp; GAMIFIED LAB
+        </span>
+</div>
+<!-- Footer Quick Links -->
+<div class="flex flex-wrap justify-center gap-4 sm:gap-6 font-label-sm text-xs text-slate-600 font-bold">
+<a class="hover:text-primary transition-colors" href="projetos.html">
+          TODOS OS PROJETOS
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="atividades.html">
+          ATIVIDADE PRESENCIAL
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="http://lattes.cnpq.br/4010253873678059" rel="noopener noreferrer" target="_blank">
+          CURRÍCULO LATTES
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="https://www.researchgate.net" rel="noopener noreferrer" target="_blank">
+          RESEARCHGATE
+        </a>
+<span class="">•</span>
+<a class="hover:text-primary transition-colors" href="#contact">
+          CO-OP PARTNERS
+        </a>
+</div>
+<!-- Divider line -->
+<div class="w-24 h-1 bg-dark-slate rounded-full"></div>
+<!-- Copyright -->
+<div class="space-y-1 text-slate-500 font-body-md text-xs">
+<p class="">© 2024 AFN Health Education Studio — Prof. Dr. Aldair de França Neto. Todos os direitos reservados.</p>
+<p class="font-mono text-[11px] text-slate-400">Educação e Inovação em Saúde Multidisciplinar.</p>
+</div>
+<!-- Back to Top Button -->
+<a class="mt-2 inline-flex items-center gap-1.5 text-xs font-label-sm text-dark-slate bg-slate-100 hover:bg-slate-200 border-2 border-dark-slate px-4 py-2 rounded-xl shadow-[2px_2px_0px_0px_#0f172a] active:translate-y-0.5 transition-all font-bold" href="#">
+<span class="material-symbols-outlined text-[15px]">arrow_upward</span>
+        VOLTAR AO TOPO
+      </a>
+</div>
 </footer>
 
-</body>
-</html>
+
+
+
+
+
+</body></html>
