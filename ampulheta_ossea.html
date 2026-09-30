@@ -160,7 +160,7 @@ button{font-family:inherit;}
 
 /* SLOTS */
 .slot{
-  position:absolute; width:var(--cw); aspect-ratio:5/7;
+  position:absolute; width:14%; aspect-ratio:5/7;   /* = SLOT_W do script */
   transform:translate(-50%,-50%); z-index:3;
   border-radius:8px;
 }
@@ -198,7 +198,7 @@ button{font-family:inherit;}
 .marca-dono.p2{background:linear-gradient(180deg,#c3dd96,#8aa662); color:#1a2410;}
 .marca-dono.p3{background:linear-gradient(180deg,#e3a196,#a83226); color:#2a0b06;}
 .slot.errado .carta,.slot.fora .carta{border-color:#c0432f; box-shadow:0 0 0 2px rgba(192,67,47,.55), 0 6px 16px rgba(0,0,0,.6);}
-.slot.marcado .carta{border-color:var(--gold-soft); box-shadow:0 0 0 3px rgba(236,212,137,.6), 0 8px 20px rgba(0,0,0,.55);}
+.slot.marcado .carta{border-color:#FFD23F; box-shadow:0 0 0 3px rgba(255,210,63,.65), 0 0 22px rgba(255,210,63,.35), 0 8px 20px rgba(0,0,0,.55); transform:translateY(-3px);}
 .slot.errou .carta{animation:tremer .42s;}
 @keyframes tremer{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 
@@ -340,6 +340,8 @@ button{font-family:inherit;}
   color:var(--gold-soft); border:1px solid var(--gold-dim); background:rgba(20,13,7,.78);
 }
 .chal-jogo .instr{font-size:13px; color:#dccba4; font-style:italic; max-width:22ch;}
+.chal-jogo .carta-jogo:not(.aguardando){cursor:pointer;}
+.chal-jogo.destino{cursor:pointer; border-radius:10px; outline:2px dashed #FFD23F; outline-offset:4px;}
 .chal-jogo .carta-jogo .tit{font-family:var(--font-serif); font-weight:700; font-size:9px; color:#e7d3a6; padding:3px 2px; background:rgba(20,13,7,.85); text-align:center; line-height:1.1;}
 .chal-log{margin-top:10px; font-size:12.5px; color:#c8b485; text-align:center; min-height:1.3em;}
 
@@ -638,6 +640,80 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
   .cl-foto{ width:40px; height:40px; }
   .cl-copyright{ font-size:10.5px; }
 }
+/* DUAS ÁREAS separadas — Desafio: painel do turno e mesa; solo: mesa e acervo —, cada uma com a sua moldura
+   dourada por fora da moldura na cor do jogador da vez (padrão da família de jogos de cartas) */
+#palco > .area-moldura{
+  position:relative; margin:0 0 24px; padding:20px;
+  border:5px solid var(--gold-dim); border-radius:16px;
+  background:linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  box-shadow:0 0 0 3px var(--bg-1), 8px 8px 0 rgba(0,0,0,.35), inset 0 0 90px rgba(0,0,0,.6);
+}
+#palco > .area-moldura::before, #palco > .area-moldura::after{
+  content:""; position:absolute; width:38px; height:38px; pointer-events:none;
+  border:3px solid var(--gold); opacity:.75;
+}
+#palco > .area-moldura::before{ top:9px; left:9px; border-right:none; border-bottom:none; border-radius:8px 0 0 0; }
+#palco > .area-moldura::after{ bottom:9px; right:9px; border-left:none; border-top:none; border-radius:0 0 8px 0; }
+#palco > .area-moldura > .chal-quadro{ margin:0; }
+/* no solo não há painel de turno; no Desafio não há acervo */
+#palco:not(.modo-chal) > .chal-linha-jog{ display:none; }
+#palco:not(.modo-chal) .chal-monte-zona{ display:none; }
+.chal-monte-zona{ display:flex; justify-content:center; margin:0 0 16px; }
+.chal-monte-zona .chal-sacar{ width:auto; min-width:170px; --pilha-base:72px; --pl-borda:#8a6a2e; --pl-topo:#E8C77A; --pl-rgb:232,199,122; --pl-fundo:#241a0f; --pl-lat1:#3a2a17; --pl-lat2:#5a4222; }
+.chal-emjogo-col > .chal-bloco{ justify-content:flex-start; }
+.chal-emjogo-col .chal-jogo{ flex-direction:column; }
+.chal-emjogo-col .chal-jogo .carta-jogo{ width:96px; }
+.chal-emjogo-col .chal-jogo .instr{ max-width:none; }
+/* pilha de cartas do monte de compra — uma camada por carta restante (encolhe a cada saque) */
+.chal-pilha{
+  --pilha-w:calc(var(--pilha-base, 74px) * .95);
+  position:relative; display:block; width:calc(var(--pilha-w) + 14px);
+  height:calc(var(--pilha-w) * 1260 / 900 + var(--pilha-h, 0px) + 6px);
+  transition:height .25s;
+}
+.chal-pilha-carta{
+  position:absolute; left:50%; width:var(--pilha-w); aspect-ratio:900/1260; border-radius:6px;
+  border:1.5px solid var(--pl-borda, #6D3FB8);
+  background:linear-gradient(90deg, var(--pl-lat1, #2A1244), var(--pl-lat2, #3B1D5E) 50%, var(--pl-lat1, #2A1244));
+  box-shadow:0 1px 0 rgba(232,206,122,.55), 0 2px 3px rgba(0,0,0,.55);
+}
+.chal-pilha-carta.topo{
+  border:2px solid var(--pl-topo, #B794F6);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(var(--pl-rgb, 183,148,246),.45) 0%, transparent 62%),
+    repeating-linear-gradient(45deg, rgba(var(--pl-rgb, 183,148,246),.28) 0 3px, var(--pl-fundo, #1B0B2E) 3px 9px),
+    repeating-linear-gradient(-45deg, rgba(var(--pl-rgb, 183,148,246),.16) 0 3px, transparent 3px 9px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.6);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.chal-pilha-carta.topo::before{
+  content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+  border:1px solid rgba(232,206,122,.6);
+}
+.chal-pilha-carta .ico{ position:relative; font-size:26px; line-height:1; color:#E8CE7A; filter:drop-shadow(0 2px 3px rgba(0,0,0,.65)); }
+.chal-pilha.vazia .chal-pilha-vazio{
+  position:absolute; left:50%; bottom:3px; transform:translateX(-50%); width:var(--pilha-w); aspect-ratio:900/1260;
+  border:2px dashed rgba(var(--pl-rgb, 183,148,246),.45); border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-pixel, monospace); font-size:8px; color:rgba(var(--pl-rgb, 183,148,246),.7); text-transform:uppercase;
+}
+  /* linha do jogador da vez (Desafio): área do jogador + carta em jogo lado a lado;
+     jogadores 1/3 acima do tabuleiro (carta em jogo à direita), 2/4 abaixo (à esquerda) */
+  .chal-linha-jog{ display:flex; gap:18px; align-items:stretch; margin:0 0 26px; }
+  .chal-linha-jog.embaixo{ flex-direction:row-reverse; margin:26px 0 0; }
+  .chal-linha-jog > .area-turno{ flex:1 1 auto; min-width:0; }
+  #palco .chal-linha-jog > .tabuleiro.area-moldura{ margin:0 !important; }
+  .chal-linha-jog > .chal-emjogo-col{ flex:0 0 230px; margin:0; }
+  .chal-linha-jog > .chal-emjogo-col > *{ height:100%; max-width:none; margin:0; box-sizing:border-box; }
+  .chal-hud-topo{ margin:0 0 18px; }
+  @media (max-width:760px){
+    .chal-linha-jog{ flex-direction:column; }
+    .chal-linha-jog.embaixo{ flex-direction:column-reverse; }
+    .chal-linha-jog > .chal-emjogo-col{ flex:0 0 auto; }
+  }
+
+#palco.modo-chal > .area-acervo{ display:none; }
+@media (max-width:600px){ #palco > .area-moldura{ padding:12px; } }
+
 </style>
 </head>
 <body>
@@ -650,10 +726,10 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
 <button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
 <div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
   <div class="pv-bloco">
-    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">15%</span></div>
     <div class="pv-linha">
       <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
-      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="15" aria-label="Volume da música">
       <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
     </div>
   </div>
@@ -736,47 +812,59 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
     <div class="hud" id="hud"></div>
     <div id="resultado"></div>
 
-    <!-- QUADRO 1: painel de turno do modo Desafio -->
-    <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
-      <div class="chal-ctrl" id="chalCtrl">
-        <div class="chal-cab">
-          <div class="chal-vez" id="chalVez"></div>
-          <button class="btn verd pri chal-encerrar" id="btEncerrar" type="button" style="font-size:14px; padding:12px 22px;">Encerrar turno ▸</button>
-        </div>
-        <div class="chal-mesa">
-          <div class="chal-bloco">
-            <div class="rot">Monte de compra</div>
-            <button class="chal-sacar" id="btSacar" type="button">
-              <span class="ico">🂠</span><span>Sacar carta</span>
-              <span class="rest" id="chalRest">— no monte</span>
-            </button>
+    <!-- linha do jogador da vez (Desafio): área do jogador + carta em jogo, lado a lado.
+         Jogadores 1/3: acima da mesa, carta em jogo à direita; 2/4: abaixo, à esquerda. -->
+    <div class="chal-linha-jog" id="chalLinhaJog">
+    <!-- área do jogador da vez: vez + encerrar + registro -->
+    <div class="area-moldura area-turno">
+      <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
+        <div class="chal-ctrl" id="chalCtrl">
+          <div class="chal-cab">
+            <div class="chal-vez" id="chalVez"></div>
+            <button class="btn verd pri chal-encerrar" id="btEncerrar" type="button" style="font-size:14px; padding:12px 22px;">Encerrar turno ▸</button>
           </div>
-          <div class="chal-bloco">
-            <div class="rot">Carta em jogo</div>
-            <div class="chal-jogo" id="chalJogo"><div class="instr">Saque uma carta para começar sua vez.</div></div>
-          </div>
+          <div class="chal-log" id="chalLog"></div>
         </div>
-        <div class="chal-log" id="chalLog"></div>
       </div>
+    </div>
+    <div class="chal-emjogo-col">
+      <div class="chal-bloco chal-bloco-emjogo">
+        <div class="rot">Carta em jogo</div>
+        <div class="chal-jogo" id="chalJogo"><div class="instr">Saque uma carta para começar sua vez.</div></div>
+      </div>
+    </div>
     </div>
 
     <!-- QUADRO 2: tabuleiro onde as cartas são de fato posicionadas (solo + Desafio) -->
-    <div class="chal-quadro chal-quadro-jogo">
-      <div class="mesa-cx">
-        <div class="mesa" id="mesa">
-          <div class="fundo"><img id="imgMesa" alt="Tabuleiro: ampulheta entre estruturas ósseas e folhas de outono"></div>
-          <div class="brilho"></div>
-          <svg class="setas" id="setas" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"></svg>
-          <!-- slots injetados via JS -->
+    <!-- área 2 do Desafio: mesa de jogo -->
+    <div class="area-moldura area-jogo">
+      <div class="chal-quadro chal-quadro-jogo">
+        <!-- monte de compra do Desafio: posição fixa dentro da mesa -->
+        <div class="chal-monte-zona">
+          <button class="chal-sacar" id="btSacar" type="button">
+            <span class="chal-pilha" id="chalPilha" aria-hidden="true"></span><span>Sacar carta</span>
+            <span class="rest" id="chalRest">— no monte</span>
+          </button>
+        </div>
+        <div class="mesa-cx">
+          <div class="mesa" id="mesa">
+            <div class="fundo"><img id="imgMesa" alt="Tabuleiro: ampulheta entre estruturas ósseas e folhas de outono"></div>
+            <div class="brilho"></div>
+            <svg class="setas" id="setas" viewBox="0 0 100 140" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <!-- slots injetados via JS -->
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="acervo-faixa" id="acervoFaixa">
-      <span class="tit">Acervo — cartas embaralhadas</span>
-      <span class="rule"></span>
+    <!-- área do acervo (modo solo) -->
+    <div class="area-moldura area-acervo">
+      <div class="acervo-faixa" id="acervoFaixa">
+        <span class="tit">Acervo — cartas embaralhadas</span>
+        <span class="rule"></span>
+      </div>
+      <div class="acervo" id="acervo"></div>
     </div>
-    <div class="acervo" id="acervo"></div>
   </section>
 
 </div>
@@ -784,7 +872,7 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 20 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 30 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -882,16 +970,34 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   let acervo=[], selecionada=null, slotMarcado=null, tentativas=0;
 
   // challenger
-  const CHAL={ ativo:false, jogadores:[], turno:0, fase:'sacar', monte:[], cartaSacada:null, cartaMao:null, sacou:false, semProg:0 };
+  const CHAL={ ativo:false, jogadores:[], turno:0, fase:'sacar', monte:[], cartaSacada:null, cartaMao:null, sacou:false, semProg:0, slotMarcado:null };
 
   const mesaEl=$('mesa'), setasEl=$('setas'), acervoEl=$('acervo');
 
   function baralhar(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
   /* ================= GEOMETRIA ================= */
-  const KX=33, KY=33/1.4;
-  function ang(i){ return (-90 + i*(360/N))*Math.PI/180; }
-  function pos(i){ return { x:50+KX*Math.cos(ang(i)), y:50+KY*Math.sin(ang(i)) }; }
+  /* encaixes no CONTORNO DE UM QUADRADO (grade C×R, só a borda), no sentido horário a partir
+     do canto de cima à esquerda: linha de cima →, lateral direita ↓, linha de baixo ←, lateral
+     esquerda ↑. Para 10 cartas: 4 em cima, 1 em cada lateral, 4 embaixo (a ampulheta fica no
+     vão do meio). Coordenadas em % da mesa (largura × altura, altura = 1,4 × largura);
+     cada encaixe mede 14% × 14% e sobra folga entre eles, sem se tocarem. */
+  const SLOT_W=14;
+  const QUADRO=(function(){
+    let C=4, R=3;
+    for(let c=2;c<=N;c++){ const r=(N-2*c)/2+2; if(Number.isInteger(r) && r>=2 && Math.abs(c*1-r*1.4)<Math.abs(C-R*1.4)+1e-9 && 2*c+2*(r-2)===N){ C=c; R=r; } }
+    const X0=15, X1=85, Y0=24, Y1=76;
+    const xs=[], ys=[];
+    for(let c=0;c<C;c++) xs.push(C===1?50:X0+(X1-X0)*c/(C-1));
+    for(let r=0;r<R;r++) ys.push(R===1?50:Y0+(Y1-Y0)*r/(R-1));
+    const lista=[];
+    for(let c=0;c<C;c++) lista.push({x:xs[c], y:ys[0]});                 /* cima, → */
+    for(let r=1;r<R-1;r++) lista.push({x:xs[C-1], y:ys[r]});             /* direita, ↓ */
+    for(let c=C-1;c>=0;c--) lista.push({x:xs[c], y:ys[R-1]});            /* baixo, ← */
+    for(let r=R-2;r>=1;r--) lista.push({x:xs[0], y:ys[r]});              /* esquerda, ↑ */
+    return lista;
+  })();
+  function pos(i){ return QUADRO[i]; }
 
   function construirSlots(){
     mesaEl.querySelectorAll('.slot').forEach(e=>e.remove());
@@ -906,8 +1012,10 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   function construirSetas(){
     const NS='http://www.w3.org/2000/svg'; setasEl.innerHTML='';
     for(let i=0;i<N;i++){
-      const a=(-90+i*(360/N)+(360/N)/2)*Math.PI/180, r=33;
-      const x=50+r*Math.cos(a), y=70+r*Math.sin(a), rot=(a*180/Math.PI)+90;
+      /* seta no meio do vão entre o encaixe i e o próximo, apontando no sentido do ciclo
+         (o SVG usa viewBox 0 0 100 140: y em % da altura × 1,4) */
+      const p=pos(i), q=pos((i+1)%N);
+      const x=(p.x+q.x)/2, y=(p.y+q.y)/2*1.4, rot=Math.atan2((q.y-p.y)*1.4, q.x-p.x)*180/Math.PI;
       const g=document.createElementNS(NS,'g'); g.setAttribute('transform','translate('+x+' '+y+') rotate('+rot+')');
       const fech=(i===N-1); const d='M -2.1 -2.6 L 2.2 0 L -2.1 2.6';
       const back=document.createElementNS(NS,'path'); back.setAttribute('d',d); back.setAttribute('fill','none');
@@ -928,14 +1036,14 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   /* só CHAL.cartaMao conta como "segurando" no Desafio agora — uma carta sacada
      que ainda não foi pega (CHAL.cartaSacada) não pode ser solta num slot vazio
      ainda, então não deve destacar os slots como alvo válido */
-  function segurando(){ return (modo==='solo' && (selecionada!==null||slotMarcado!==null)) || (modo==='chal' && CHAL.cartaMao!==null); }
+  function segurando(){ return (modo==='solo' && (selecionada!==null||slotMarcado!==null)) || (modo==='chal' && (CHAL.cartaMao!==null||CHAL.slotMarcado!==null)); }
 
   function renderMesa(){
     for(let i=0;i<N;i++){
       const s=mesaEl.querySelector('.slot[data-slot="'+i+'"]');
       s.classList.toggle('trava', travado[i]);
       s.classList.toggle('fora', fora[i] && !travado[i]);
-      s.classList.toggle('marcado', modo==='solo' && slotMarcado===i);
+      s.classList.toggle('marcado', (modo==='solo' && slotMarcado===i) || (modo==='chal' && CHAL.slotMarcado===i));
       s.querySelectorAll('.carta,.marca').forEach(e=>e.remove());
       const berco=s.querySelector('.berco'); berco.style.display=(slots[i]===null)?'flex':'none';
       if(slots[i]!==null){
@@ -1029,23 +1137,58 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   }
 
   /* ---------- CHALLENGER ---------- */
+  /* mesmo estilo do morte: tocar numa carta do ciclo a MARCA (fica no lugar); o próximo toque
+     num campo a move para lá — se o campo tiver carta, as duas trocam. Tocar de novo na marcada
+     desmarca. A carta sacada, depois de pega, vai para o campo tocado (trocando se ocupado). */
   function chalClicarSlot(i){
-    if(!CHAL.ativo || travado[i]) return;
-    /* segurando uma carta (pega de outro slot) → um slot vazio a recebe */
-    if(CHAL.cartaMao!==null){ if(slots[i]===null){ slots[i]=CHAL.cartaMao; CHAL.cartaMao=null; fora[i]=false; somPousa(); render(); } return; }
-    /* slot ocupado → pega para reposicionar, MESMO com uma carta recém-sacada
-       ainda esperando (CHAL.cartaSacada) — antes isso ficava bloqueado */
-    if(slots[i]!==null){ CHAL.cartaMao=slots[i]; slots[i]=null; fora[i]=false; somPega(); render(); return; }
-    /* slot vazio: não faz nada sozinho — a carta sacada só entra em jogo depois
-       de o jogador tocar nela mesma (área "carta em jogo") para pegá-la primeiro */
+    if(!CHAL.ativo || CHAL.fase==='espera' || travado[i]) return;
+    /* 1) segurando a carta sacada → posiciona aqui (troca com a que estiver no campo) */
+    if(CHAL.cartaMao!==null){
+      const antigo=slots[i];
+      slots[i]=CHAL.cartaMao; fora[i]=false;
+      CHAL.cartaMao=antigo;          /* null se o campo estava vazio */
+      somPousa(); render(); return;
+    }
+    /* 2) já existe carta marcada → este toque é o destino */
+    if(CHAL.slotMarcado!==null){
+      const o=CHAL.slotMarcado;
+      CHAL.slotMarcado=null;
+      if(o===i){ somClique(); render(); return; }
+      const a=slots[o];
+      slots[o]=slots[i]; fora[o]=false;   /* troca (ou esvazia a origem, se o destino estava vazio) */
+      slots[i]=a; fora[i]=false;
+      somPousa(); render(); return;
+    }
+    /* 3) nada marcado + campo com carta → marca para mover */
+    if(slots[i]!==null){ CHAL.slotMarcado=i; somClique(); render(); }
   }
+  /* toques na área "carta em jogo" (a lupa amplia e não conta — faz stopPropagation) */
+  function chalTocarEmJogo(){
+    if(!CHAL.ativo || CHAL.fase==='espera') return;
+    /* a) carta sacada ainda não pega → pega (descarta marcação pendente) */
+    if(CHAL.cartaSacada!==null && CHAL.cartaMao===null){
+      CHAL.slotMarcado=null; CHAL.cartaMao=CHAL.cartaSacada; CHAL.cartaSacada=null; somPega(); render(); return;
+    }
+    /* b) carta na mão, nada marcado → solta (volta a "por pegar") */
+    if(CHAL.cartaMao!==null && CHAL.slotMarcado===null){
+      CHAL.cartaSacada=CHAL.cartaMao; CHAL.cartaMao=null; somClique(); render(); return;
+    }
+    /* c) carta marcada no ciclo → vem para a área, já pega (pronta para reencaixar) */
+    if(CHAL.slotMarcado!==null && CHAL.cartaMao===null){
+      const o=CHAL.slotMarcado; CHAL.slotMarcado=null;
+      CHAL.cartaMao=slots[o]; slots[o]=null; fora[o]=false; somPega(); render();
+    }
+  }
+  $('chalJogo').addEventListener('click', chalTocarEmJogo);
   function chalSacar(){
     if(!CHAL.ativo || CHAL.fase!=='sacar' || CHAL.monte.length===0 || CHAL.cartaSacada!==null || CHAL.cartaMao!==null) return;
+    CHAL.slotMarcado=null;
     CHAL.cartaSacada=CHAL.monte.shift(); CHAL.fase='jogar'; CHAL.sacou=true; somSaca(); render();
   }
   function chalPodeEncerrar(){ return CHAL.ativo && CHAL.cartaSacada===null && CHAL.cartaMao===null && (CHAL.sacou || CHAL.monte.length===0); }
   function chalEncerrarTurno(){
     if(!chalPodeEncerrar()) return;
+    CHAL.slotMarcado=null;
     const eu=CHAL.turno, jog=CHAL.jogadores[eu];
     let ganhos=0, err=0;
     for(let i=0;i<N;i++){
@@ -1065,7 +1208,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
        antes os dois apareciam sobrepostos */
     chalVeredito(jog.nome, ganhos, fimDeCiclo?0:err, function(){
       if(fimDeCiclo){ chalFim(); return; }
-      CHAL.turno=(eu+1)%CHAL.jogadores.length; CHAL.fase='sacar'; CHAL.sacou=false; CHAL.cartaSacada=null; CHAL.cartaMao=null;
+      CHAL.turno=(eu+1)%CHAL.jogadores.length; CHAL.fase='sacar'; CHAL.sacou=false; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.slotMarcado=null;
       if(CHAL.monte.length===0 && CHAL.semProg>=CHAL.jogadores.length){ chalFim(); return; }
       chalAnunciarVez(render);
     });
@@ -1159,6 +1302,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
         const i=+el.dataset.i;
         el.querySelector('.val').textContent=CHAL.jogadores[i].pontos;
         el.classList.toggle('ok', CHAL.ativo && CHAL.turno===i);
+        el.style.display = (CHAL.ativo && CHAL.turno!==i) ? 'none' : '';   /* só o jogador da vez aparece */
       });
     }
   }
@@ -1172,7 +1316,8 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     // sacar
     const bs=$('btSacar');
     bs.disabled = !(CHAL.ativo && CHAL.fase==='sacar' && CHAL.monte.length>0 && CHAL.cartaSacada===null && CHAL.cartaMao===null);
-    $('chalRest').textContent = CHAL.monte.length+(CHAL.monte.length===1?' no monte':' no monte');
+    $('chalRest').textContent = CHAL.monte.length+(CHAL.monte.length===1?' carta no monte':' cartas no monte');
+    chalDesenharPilha($('chalPilha'), CHAL.monte.length);
     // carta em jogo
     const cj=$('chalJogo');
     let idxJogo=null;
@@ -1184,35 +1329,79 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     } else if(CHAL.cartaMao!==null){
       idxJogo=CHAL.cartaMao;
       cj.innerHTML='<div class="carta-jogo" data-carta="'+idxJogo+'"><img src="'+D.cards[idxJogo].img+'" alt=""><span class="lupa" title="Ampliar">🔍</span><div class="tit">'+D.cards[idxJogo].t+'</div></div>'+
-                   '<div class="instr">Reposicionando — toque num campo vazio.</div>';
+                   '<div class="instr">Carta na mão — toque num campo do ciclo para posicioná-la (se houver carta lá, elas <b>trocam</b>). Toque nela de novo para soltar.</div>';
+    } else if(CHAL.ativo && CHAL.slotMarcado!==null){
+      cj.innerHTML='<div class="instr">Carta marcada — toque em outro campo para <b>movê-la</b> (se houver carta lá, elas trocam), toque nela de novo para desmarcar, ou toque <b>aqui</b> para trazê-la para a mão.</div>';
     } else if(!CHAL.ativo){
       cj.innerHTML='<div class="instr">Partida encerrada.</div>';
     } else if(CHAL.monte.length===0){
-      cj.innerHTML='<div class="instr">Monte vazio: reposicione as cartas <b>FORA</b> e encerre a vez.</div>';
+      cj.innerHTML='<div class="instr">Monte vazio: reposicione as cartas <b>FORA</b> (toque para marcar, toque no destino) e encerre a vez.</div>';
     } else if(CHAL.sacou){
       cj.innerHTML='<div class="instr">Carta posicionada. Ajuste o que quiser e <b>encerre a vez</b>.</div>';
     } else {
-      cj.innerHTML='<div class="instr">Saque uma carta para começar sua vez.</div>';
+      cj.innerHTML='<div class="instr">Saque uma carta — ou, antes, toque numa carta <b>FORA</b> do ciclo para marcá-la e movê-la.</div>';
     }
+    cj.classList.toggle('destino', CHAL.ativo && CHAL.slotMarcado!==null && CHAL.cartaMao===null && CHAL.cartaSacada===null);
     if(idxJogo!==null){
       const cjc=cj.querySelector('.carta-jogo');
       const cjLupa=cjc&&cjc.querySelector('.lupa');
       if(cjLupa) cjLupa.addEventListener('click',(ev)=>{ ev.stopPropagation(); zoom(idxJogo); });
-      if(cjc) cjc.addEventListener('click', aguardandoPegar
-        ? ()=>{ CHAL.cartaMao=CHAL.cartaSacada; CHAL.cartaSacada=null; somPega(); render(); }
-        : ()=>zoom(idxJogo));
     }
     // encerrar
     $('btEncerrar').disabled = !chalPodeEncerrar();
   }
 
+  /* miniatura de monte de compra: uma carta virada para baixo por carta restante,
+     empilhadas (cada uma um pouco acima da anterior, com leve desalinhamento),
+     então a pilha encolhe a cada saque. A de cima leva o verso completo (sem número:
+     a contagem fica no texto logo abaixo). */
+  function chalDesenharPilha(el, n){
+    if (!el) return;
+    const PASSO = 4;
+    el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
+    el.classList.toggle('vazia', n === 0);
+    let h = '';
+    for (let i = 0; i < n; i++){
+      const topo = (i === n - 1);
+      const dx = ((i * 7) % 5) - 2;            /* desalinhamento fixo, sem sorteio (não "pula" a cada saque) */
+      const rot = (((i * 5) % 7) - 3) * 0.6;
+      h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
+        'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
+        (topo ? '<span class="ico">🂠</span>' : '') + '</span>';
+    }
+    if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
+    el.innerHTML = h;
+  }
+  /* Desafio: a linha do jogador da vez (área + carta em jogo) fica em lados opostos do tabuleiro —
+     jogadores 1 e 3 (índices pares) ACIMA, 2 e 4 (ímpares) ABAIXO; só a área do jogador da vez
+     aparece. A carta em jogo fica à direita da área (1/3) ou à esquerda (2/4). Fora da partida volta pra cima. */
+  let chalAreaRolar = false;
+  function chalPosicionarArea(){
+    const linha = document.getElementById('chalLinhaJog');
+    const jogo = document.querySelector('#palco > .area-jogo');
+    if (!linha || !jogo) return;
+    const embaixo = !!(modo==='chal' && CHAL.ativo) && (CHAL.turno) % 2 === 1;
+    if (embaixo){ if (jogo.nextElementSibling !== linha) jogo.after(linha); }
+    else if (jogo.previousElementSibling !== linha) jogo.before(linha);
+    linha.classList.toggle('embaixo', embaixo);
+    if (modo==='chal' && CHAL.ativo) chalAreaRolar = true;
+  }
+  /* leva a página até a linha do jogador da vez (o tabuleiro fica visível ao lado) */
+  function chalRolarParaArea(){
+    chalAreaRolar = false;
+    const linha = document.getElementById('chalLinhaJog');
+    if (linha && (modo==='chal' && CHAL.ativo)) linha.scrollIntoView({ block:'nearest', behavior:'instant' });
+  }
+
   /* ================= RENDER GLOBAL ================= */
   function render(){
     renderMesa();
+    chalPosicionarArea();
     if(modo==='solo'){
       $('acervoFaixa').style.display='flex'; acervoEl.style.display='grid';
       $('chalCtrl').classList.remove('on');
       $('chalQuadroTurno').classList.remove('on');
+      $('palco').classList.remove('modo-chal');
       $('palco').classList.remove('chal-ativo');
       $('palco').removeAttribute('data-turno');
       renderAcervo();
@@ -1220,6 +1409,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
       $('acervoFaixa').style.display='none'; acervoEl.style.display='none';
       $('chalCtrl').classList.add('on');
       $('chalQuadroTurno').classList.add('on');
+      $('palco').classList.add('modo-chal');          /* duas áreas com moldura dourada própria */
       $('palco').classList.toggle('chal-ativo', CHAL.ativo);
       if(CHAL.ativo) $('palco').setAttribute('data-turno', String(CHAL.turno));
       else $('palco').removeAttribute('data-turno');
@@ -1304,7 +1494,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     function sincronizar(){
       const ligada=els.some(e=>e.classList.contains('on'));
       if(ligada && y===null){ y=window.scrollY; raiz.classList.add('chal-anim-lock'); }
-      else if(!ligada && y!==null){ raiz.classList.remove('chal-anim-lock'); window.scrollTo({top:y, behavior:'instant'}); y=null; }
+      else if(!ligada && y!==null){ raiz.classList.remove('chal-anim-lock'); window.scrollTo({top:y, behavior:'instant'}); y=null; if(chalAreaRolar) chalRolarParaArea(); }
     }
     const mo=new MutationObserver(sincronizar);
     els.forEach(e=>mo.observe(e,{attributes:true, attributeFilter:['class']}));
@@ -1381,7 +1571,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     CHAL.jogadores=[];
     for(let i=0;i<nP;i++) CHAL.jogadores.push({nome:(nomes[i]||('Jogador '+(i+1))), pontos:0});
     CHAL.monte=baralhar(D.cards.map((_,i)=>i));
-    CHAL.turno=0; CHAL.fase='espera'; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
+    CHAL.turno=0; CHAL.fase='espera'; CHAL.cartaSacada=null; CHAL.cartaMao=null; CHAL.slotMarcado=null; CHAL.sacou=false; CHAL.semProg=0; CHAL.ativo=true;
     limparTabuleiro();
     fecharRev();
     montarHUDChal();
@@ -1428,7 +1618,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     const menosEf = document.getElementById('pvMenosEf');
     const maisEf = document.getElementById('pvMaisEf');
     const pre = [];                                        /* faixas já pré-carregadas */
-    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.15, calado = false, volEf = 1;   /* 0..1, vale pela vida da página */
 
     function url(i){ return encodeURI(PASTAS[pastaIdx] + FAIXAS[i]); }
     function abrir(i){                                     /* usa a pré-carregada, se houver e não deu erro */
@@ -1677,6 +1867,32 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   })();
 })();
 
+</script>
+<script>
+/* ===== créditos do carregamento: a foto entra rolando da borda lateral oposta e chega ao
+   seu lugar 1 s antes do fim do carregamento (7 s) ===== */
+(function(){
+  "use strict";
+  var foto = document.querySelector('.creditos-loading .cl-foto');
+  if (!foto) return;
+  var DUR_LOAD = 7000, ANTES = 1000;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var iv = setInterval(function(){
+    if (!foto.getClientRects().length) return;          /* tela de carregamento ainda escondida */
+    clearInterval(iv);
+    var r = foto.getBoundingClientRect();
+    var dist = Math.max(0, window.innerWidth - r.right - 12);  /* da borda direita até o lugar final */
+    var voltas = dist / (Math.PI * r.width);             /* gira como uma roda de verdade */
+    var giro = voltas * 360, t0 = performance.now(), dur = DUR_LOAD - ANTES;
+    /* movida pelo mesmo relógio da barra de carregamento (requestAnimationFrame) */
+    (function passo(){
+      var k = Math.min(1, (performance.now() - t0) / dur);
+      var resta = Math.pow(1 - k, 1.3);                  /* desacelera ao chegar */
+      foto.style.transform = k < 1 ? 'translateX(' + (dist * resta).toFixed(1) + 'px) rotate(' + (giro * resta).toFixed(1) + 'deg)' : '';
+      if (k < 1) requestAnimationFrame(passo);
+    })();
+  }, 40);
+})();
 </script>
 </body>
 </html>

@@ -926,6 +926,105 @@ body{
   .rep-rev-ov .rep-rev-palco{ gap:6px; }
   .rep-rev-ov .rep-rev-palco .rep-rev-nav{ width:32px; height:56px; font-size:22px; }
 }
+  /* Desafio: o tabuleiro é dividido em DUAS ÁREAS separadas (painel do turno e campo de jogo),
+     cada uma com a sua moldura dourada por fora da moldura na cor do jogador da vez
+     (padrão da família de jogos de cartas) */
+  #repChalTabuleiro.tabuleiro{ border:0; background:none; box-shadow:none; padding:0; }
+  #repChalTabuleiro.tabuleiro::before, #repChalTabuleiro.tabuleiro::after{ display:none; }
+  .tabuleiro.area-moldura{ margin:0 0 26px; padding:20px; }
+  .area-moldura > .chal-quadro{ margin:0; }
+  @media (max-width:600px){ .tabuleiro.area-moldura{ padding:12px; } }
+
+  /* Single Player: o tabuleiro também é dividido em DUAS ÁREAS com moldura dourada própria —
+     área 1 = placar + tabuleiro de jogo; área 2 = acervo de cartas (padrão da família) */
+  #repTabuleiro.tabuleiro{ border:0; background:none; box-shadow:none; padding:0; }
+  #repTabuleiro.tabuleiro::before, #repTabuleiro.tabuleiro::after{ display:none; }
+  .tabuleiro.area-moldura{ margin:0 0 26px; padding:20px; }
+  @media (max-width:600px){ .tabuleiro.area-moldura{ padding:12px; } }
+
+  /* distribuição inicial do Desafio: faixa no alto + cartas caindo nos encaixes */
+  .chal-dist{
+    position:fixed; left:50%; top:14px; z-index:125; transform:translate(-50%,-170%);
+    display:flex; gap:10px; align-items:center; max-width:92vw; padding:10px 18px;
+    border:2px solid var(--gold); border-radius:12px; background:rgba(10,16,30,.95);
+    box-shadow:0 10px 30px rgba(0,0,0,.6); pointer-events:none;
+    font-family:var(--font-pixel); font-size:11px; line-height:1.6; letter-spacing:.04em; color:#F6DD8E;
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .chal-dist.on{ transform:translate(-50%,0); }
+  .chal-voo{
+    position:fixed !important; z-index:124; margin:0 !important; pointer-events:none;
+    rotate:none !important; translate:none !important;
+    box-shadow:0 14px 34px rgba(0,0,0,.65);
+    animation:chalVoo .56s cubic-bezier(.2,.8,.3,1) both !important;
+  }
+  @keyframes chalVoo{
+    0%{ transform:translate(var(--dx),var(--dy)) rotate(-28deg) scale(1.7); opacity:0; }
+    25%{ opacity:1; }
+    100%{ transform:none; opacity:1; }
+  }
+  .dist-caiu{ animation:distCaiu .6s ease-out; }
+  @keyframes distCaiu{
+    0%{ box-shadow:0 0 0 0 rgba(255,210,63,.95); }
+    100%{ box-shadow:0 0 0 16px rgba(255,210,63,0); }
+  }
+  @media (prefers-reduced-motion:reduce){ .chal-voo{ animation-duration:.01s !important; } }
+
+  /* ===== 30/set/2026: porte das melhorias do morte (áreas opostas, pilha de compra) ===== */
+  .chal-monte-zona{ display:flex; justify-content:center; margin:0 0 18px; }
+  /* bloco "carta em jogo" ao lado da área do jogador: moldura própria, como no morte */
+  .chal-emjogo-col > .rep-chal-bloco{
+    border:2px solid rgba(201,168,90,.55); border-radius:12px; padding:14px; min-width:0;
+    background:linear-gradient(180deg, rgba(10,20,36,.75), rgba(21,39,66,.55)); justify-content:flex-start;
+  }
+  .rep-chal-monte{ --pilha-base:calc(var(--card-w-mao) * 1.3); --pl-borda:var(--mc); --pl-topo:var(--mc-claro);
+    --pl-fundo:color-mix(in srgb, var(--mc) 12%, #070b14); --pl-lat1:color-mix(in srgb, var(--mc) 30%, #0a0f1a); --pl-lat2:color-mix(in srgb, var(--mc) 50%, #0a0f1a); }
+  .rep-chal-monte .rest{ font-family:var(--font-pixel, monospace); font-size:8px; letter-spacing:.04em; text-transform:none; opacity:.85; }
+  /* pilha de cartas do monte de compra — uma camada por carta restante (encolhe a cada saque) */
+  .chal-pilha{
+    --pilha-w:calc(var(--pilha-base, 74px) * .95);
+    position:relative; display:block; width:calc(var(--pilha-w) + 14px);
+    height:calc(var(--pilha-w) * 1260 / 900 + var(--pilha-h, 0px) + 6px);
+  }
+  .chal-pilha-carta{
+    position:absolute; left:50%; width:var(--pilha-w); aspect-ratio:900/1260; border-radius:6px;
+    border:1.5px solid var(--pl-borda, #6D3FB8);
+    background:linear-gradient(90deg, var(--pl-lat1, #2A1244), var(--pl-lat2, #3B1D5E) 50%, var(--pl-lat1, #2A1244));
+    box-shadow:0 1px 0 rgba(232,206,122,.55), 0 2px 3px rgba(0,0,0,.55);
+  }
+  .chal-pilha-carta.topo{
+    border:2px solid var(--pl-topo, #B794F6);
+    background:
+      radial-gradient(circle at 50% 46%, rgba(var(--pl-rgb, 183,148,246),.45) 0%, transparent 62%),
+      repeating-linear-gradient(45deg, rgba(var(--pl-rgb, 183,148,246),.28) 0 3px, var(--pl-fundo, #1B0B2E) 3px 9px),
+      repeating-linear-gradient(-45deg, rgba(var(--pl-rgb, 183,148,246),.16) 0 3px, transparent 3px 9px);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.6);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .chal-pilha-carta.topo::before{
+    content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+    border:1px solid rgba(232,206,122,.6);
+  }
+  .chal-pilha-carta .ico{ position:relative; font-size:26px; line-height:1; color:#E8CE7A; filter:drop-shadow(0 2px 3px rgba(0,0,0,.65)); }
+  .chal-pilha.vazia .chal-pilha-vazio{
+    position:absolute; left:50%; bottom:3px; transform:translateX(-50%); width:var(--pilha-w); aspect-ratio:900/1260;
+    border:2px dashed rgba(var(--pl-rgb, 183,148,246),.45); border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-pixel, monospace); font-size:8px; color:rgba(var(--pl-rgb, 183,148,246),.7); text-transform:uppercase;
+  }
+  /* linha do jogador da vez (Desafio): área do jogador + carta em jogo lado a lado;
+     jogadores 1/3 acima do tabuleiro (carta em jogo à direita), 2/4 abaixo (à esquerda) */
+  .chal-linha-jog{ display:flex; gap:18px; align-items:stretch; margin:0 0 26px; }
+  .chal-linha-jog.embaixo{ flex-direction:row-reverse; margin:26px 0 0; }
+  .chal-linha-jog > .area-turno{ flex:1 1 auto; min-width:0; }
+  #repChalTabuleiro .chal-linha-jog > .tabuleiro.area-moldura{ margin:0 !important; }
+  .chal-linha-jog > .chal-emjogo-col{ flex:0 0 250px; margin:0; }
+  .chal-linha-jog > .chal-emjogo-col > *{ height:100%; max-width:none; margin:0; box-sizing:border-box; }
+  .chal-hud-topo{ margin:0 0 18px; }
+  @media (max-width:760px){
+    .chal-linha-jog{ flex-direction:column; }
+    .chal-linha-jog.embaixo{ flex-direction:column-reverse; }
+    .chal-linha-jog > .chal-emjogo-col{ flex:0 0 auto; }
+  }
 </style>
 </head>
 <body>
@@ -938,10 +1037,10 @@ body{
 <button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
 <div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
   <div class="pv-bloco">
-    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">15%</span></div>
     <div class="pv-linha">
       <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
-      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="15" aria-label="Volume da música">
       <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
     </div>
   </div>
@@ -1045,111 +1144,122 @@ body{
   </div>
 
   <div class="tabuleiro" id="repTabuleiro">
-
-    <div class="hud">
-      <span class="hud-item" id="repPos">POSICIONADAS: <b>0/26</b></span>
-      <span class="hud-item" id="repRod">RODADA: <b>1</b></span>
-      <button class="btn-board principal" id="repSelar" type="button" disabled>🔬 Conferir respostas</button>
-      <button class="btn-board" id="repLimpar" type="button" disabled title="Disponível ao concluir o baralho">↻ Embaralhar e recomeçar</button>
-      <button class="btn-board principal" id="repRevisar" type="button" disabled title="Disponível ao concluir o baralho">🔍 Revisar a atividade com a turma</button>
-      <button class="btn-board" id="repTrocar" type="button" disabled title="Disponível ao concluir o baralho">⇄ Trocar conjunto</button>
-    </div>
-
-    <div id="repResultado"></div>
-
-    <div class="rep-legenda">
-      <span><i class="c-c"></i> Roxa · categoria (já posicionada)</span>
-      <span><i class="c-d"></i> Azul · definição e função</span>
-      <span data-leg="clin"><i class="c-k"></i> Coral · conexão clínica</span>
-    </div>
-
-    <div class="faixa">
-      <span class="faixa-titulo">Estações dos Trios</span>
-      <span class="linha-ouro"></span>
-    </div>
-    <div class="rep-campo" id="repCampo"></div>
-
-    <div class="faixa">
-      <span class="faixa-titulo">Acervo de cartas</span>
-      <span class="linha-ouro"></span>
-    </div>
-    <div class="grimorio">
-      <div class="decks">
-        <div class="deck d-def">
-          <div class="deck-cab">
-            <span class="deck-nome">Definição e Função</span>
-            <span class="deck-conta" id="repContaDef">0</span>
-          </div>
-          <div class="rep-mao" id="repMaoDef"></div>
-        </div>
-        <div class="deck d-clin" id="repDeckClin">
-          <div class="deck-cab">
-            <span class="deck-nome">Conexão Clínica</span>
-            <span class="deck-conta" id="repContaClin">0</span>
-          </div>
-          <div class="rep-mao" id="repMaoClin"></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="tabuleiro" id="repChalTabuleiro" style="display:none;">
-
-    <!-- ---------- QUADRO 1: placar e monte único (Desafio) ---------- -->
-    <div class="chal-quadro chal-quadro-turno">
-
+      <!-- área 1: placar + tabuleiro de jogo (moldura dourada própria) -->
+      <div class="tabuleiro area-moldura">
       <div class="hud">
-        <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
-        <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
-        <button class="btn-board principal" id="repChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
-        <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+        <span class="hud-item" id="repPos">POSICIONADAS: <b>0/26</b></span>
+        <span class="hud-item" id="repRod">RODADA: <b>1</b></span>
+        <button class="btn-board principal" id="repSelar" type="button" disabled>🔬 Conferir respostas</button>
+        <button class="btn-board" id="repLimpar" type="button" disabled title="Disponível ao concluir o baralho">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board principal" id="repRevisar" type="button" disabled title="Disponível ao concluir o baralho">🔍 Revisar a atividade com a turma</button>
+        <button class="btn-board" id="repTrocar" type="button" disabled title="Disponível ao concluir o baralho">⇄ Trocar conjunto</button>
       </div>
 
-      <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
-      <div class="rep-chal-cab">
-        <div class="rep-chal-vez" id="repChalVez"></div>
-        <button class="btn-board principal rep-chal-encerrar" id="repChalEncerrar" type="button" style="font-size:14px; padding:12px 22px;" disabled>Encerrar turno ▸</button>
-      </div>
-      <div class="rep-chal-placar" id="repChalPlacar"></div>
-
-      <!-- ---------- MONTE ÚNICO — SAQUE E POSICIONE ---------- -->
-      <div class="faixa">
-        <span class="faixa-titulo">Montes de compra — escolha, saque e posicione</span>
-        <span class="linha-ouro"></span>
-      </div>
-      <div class="rep-chal-mesa">
-        <div class="rep-chal-bloco">
-          <div class="rep-chal-bloco-tit">Montes de compra</div>
-          <div class="rep-chal-montes" id="repChalMontes"></div>
-        </div>
-        <div class="rep-chal-bloco">
-          <div class="rep-chal-bloco-tit">Carta em jogo</div>
-          <div class="rep-chal-carta-atual" id="repChalCartaAtual">
-            <div class="instr">Saque uma carta para começar o turno.</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div id="repChalResultado"></div>
-
-    <!-- ---------- QUADRO 2: tabuleiro onde as cartas são posicionadas ---------- -->
-    <div class="chal-quadro chal-quadro-jogo">
+      <div id="repResultado"></div>
 
       <div class="rep-legenda">
-        <span><i class="c-c"></i> Roxa · categoria</span>
+        <span><i class="c-c"></i> Roxa · categoria (já posicionada)</span>
         <span><i class="c-d"></i> Azul · definição e função</span>
-        <span><i class="c-k"></i> Coral · conexão clínica</span>
+        <span data-leg="clin"><i class="c-k"></i> Coral · conexão clínica</span>
       </div>
 
       <div class="faixa">
         <span class="faixa-titulo">Estações dos Trios</span>
         <span class="linha-ouro"></span>
       </div>
-      <div class="rep-campo" id="repChalCampo"></div>
+      <div class="rep-campo" id="repCampo"></div>
+      </div>
 
+      <!-- área 2: acervo de cartas -->
+      <div class="tabuleiro area-moldura">
+      <div class="faixa">
+        <span class="faixa-titulo">Acervo de cartas</span>
+        <span class="linha-ouro"></span>
+      </div>
+      <div class="grimorio">
+        <div class="decks">
+          <div class="deck d-def">
+            <div class="deck-cab">
+              <span class="deck-nome">Definição e Função</span>
+              <span class="deck-conta" id="repContaDef">0</span>
+            </div>
+            <div class="rep-mao" id="repMaoDef"></div>
+          </div>
+          <div class="deck d-clin" id="repDeckClin">
+            <div class="deck-cab">
+              <span class="deck-nome">Conexão Clínica</span>
+              <span class="deck-conta" id="repContaClin">0</span>
+            </div>
+            <div class="rep-mao" id="repMaoClin"></div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+  </div>
+
+  <div class="tabuleiro" id="repChalTabuleiro" style="display:none;">
+
+    <!-- ---------- QUADRO 1: placar e monte único (Desafio) ---------- -->
+    <!-- área 1: painel do turno (moldura dourada própria) -->
+      <!-- botões da partida: fora das áreas, sempre no topo -->
+      <div class="hud chal-hud-topo">
+          <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
+          <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board principal" id="repChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
+          <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+        </div>
+
+      <!-- linha do jogador da vez: área do jogador + carta em jogo, lado a lado.
+           Jogadores 1/3: acima do tabuleiro, carta em jogo à direita; 2/4: abaixo, à esquerda. -->
+      <div class="chal-linha-jog" id="chalLinhaJog">
+    <div class="tabuleiro area-moldura area-turno">
+      <div class="chal-quadro chal-quadro-turno">
+
+        <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
+        <div class="rep-chal-cab">
+          <div class="rep-chal-vez" id="repChalVez"></div>
+          <button class="btn-board principal rep-chal-encerrar" id="repChalEncerrar" type="button" style="font-size:14px; padding:12px 22px;" disabled>Encerrar turno ▸</button>
+        </div>
+        <div class="rep-chal-placar" id="repChalPlacar"></div>
+
+        <!-- ---------- MONTE ÚNICO — SAQUE E POSICIONE ---------- -->
+      </div>
+    </div>
+      <div class="chal-emjogo-col">
+        <div class="rep-chal-bloco">
+            <div class="rep-chal-bloco-tit">Carta em jogo</div>
+            <div class="rep-chal-carta-atual" id="repChalCartaAtual">
+              <div class="instr">Saque uma carta para começar o turno.</div>
+            </div>
+          </div>
+      </div>
+      </div>
+
+    <div id="repChalResultado"></div>
+
+    <!-- ---------- QUADRO 2: tabuleiro onde as cartas são posicionadas ---------- -->
+    <!-- área 2: campo de jogo (moldura dourada própria) -->
+    <div class="tabuleiro area-moldura area-jogo">
+      <div class="chal-quadro chal-quadro-jogo">
+
+        <div class="rep-legenda">
+          <span><i class="c-c"></i> Roxa · categoria</span>
+          <span><i class="c-d"></i> Azul · definição e função</span>
+          <span><i class="c-k"></i> Coral · conexão clínica</span>
+        </div>
+          <!-- montes de compra: posição fixa dentro do tabuleiro -->
+          <div class="chal-monte-zona">
+            <div class="rep-chal-montes" id="repChalMontes"></div>
+          </div>
+
+        <div class="faixa">
+          <span class="faixa-titulo">Estações dos Trios</span>
+          <span class="linha-ouro"></span>
+        </div>
+        <div class="rep-campo" id="repChalCampo"></div>
+
+      </div>
     </div>
 
   </div>
@@ -1207,10 +1317,13 @@ body{
   </div>
 </div>
 
+<!-- ---------- FAIXA DA DISTRIBUIÇÃO INICIAL (Desafio) ---------- -->
+<div class="chal-dist" id="chalDistFaixa" aria-live="polite"><span aria-hidden="true">🃏</span><span id="chalDistTxt"></span></div>
+
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 20 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 30 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1700,7 +1813,7 @@ body{
     const menosEf = document.getElementById('pvMenosEf');
     const maisEf = document.getElementById('pvMaisEf');
     const pre = [];                                        /* faixas já pré-carregadas */
-    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, volEf = 1;   /* 0..1, vale pela vida da página */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.15, volEf = 1;   /* 0..1, vale pela vida da página */
 
     function url(i){ return encodeURI(PASTAS[pastaIdx] + FAIXAS[i]); }
     function abrir(i){                                     /* usa a pré-carregada, se houver e não deu erro */
@@ -1967,8 +2080,9 @@ body{
       b.style.setProperty('--mc', t.cor);
       b.style.setProperty('--mc-claro', t.claro);
       b.setAttribute('aria-label', 'Sacar do monte: ' + t.rot);
-      b.innerHTML = '<span class="pilha"><span class="verso"><span class="ico">🂠</span></span>' +
-        '<span class="qtd">0</span></span><span class="rot">' + t.rot + '</span>';
+      b.innerHTML = '<span class="chal-pilha" aria-hidden="true"></span><span class="rot">' + t.rot +
+        '</span><span class="rest">0 cartas</span>';
+      b.style.setProperty('--pl-rgb', chalHexRgb(t.claro));
       repChalMontesEl.appendChild(b);
     });
   }
@@ -1977,7 +2091,8 @@ body{
     const podeSacar = CHAL_REP.ativo && CHAL_REP.fase === 'sacar';
     Array.prototype.forEach.call(repChalMontesEl.querySelectorAll('.rep-chal-monte'), function(b){
       const n = (CHAL_REP.montes[b.dataset.tipo] || []).length;
-      b.querySelector('.qtd').textContent = n;
+      chalDesenharPilha(b.querySelector('.chal-pilha'), n);
+      b.querySelector('.rest').textContent = n + (n === 1 ? ' carta' : ' cartas');
       b.classList.toggle('vazio', n === 0);
       b.disabled = !podeSacar || n === 0;
       b.title = n ? n + (n === 1 ? ' carta neste monte' : ' cartas neste monte') : 'Monte esgotado';
@@ -2003,7 +2118,53 @@ body{
       if (cb) cb();
     }, 3000);
   }
+  /* miniatura de monte de compra: uma carta virada para baixo por carta restante,
+     empilhadas (cada uma um pouco acima da anterior, com leve desalinhamento),
+     então a pilha encolhe a cada saque. A de cima leva o verso completo (sem número:
+     a contagem fica no texto logo abaixo). */
+  function chalDesenharPilha(el, n){
+    if (!el) return;
+    const PASSO = 4;
+    el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
+    el.classList.toggle('vazia', n === 0);
+    let h = '';
+    for (let i = 0; i < n; i++){
+      const topo = (i === n - 1);
+      const dx = ((i * 7) % 5) - 2;            /* desalinhamento fixo, sem sorteio (não "pula" a cada saque) */
+      const rot = (((i * 5) % 7) - 3) * 0.6;
+      h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
+        'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
+        (topo ? '<span class="ico">🂠</span>' : '') + '</span>';
+    }
+    if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
+    el.innerHTML = h;
+  }
+  function chalHexRgb(h){
+    const v = parseInt(h.replace('#',''), 16);
+    return ((v >> 16) & 255) + ',' + ((v >> 8) & 255) + ',' + (v & 255);
+  }
+  /* Desafio: a linha do jogador da vez (área + carta em jogo) fica em lados opostos do tabuleiro —
+     jogadores 1 e 3 (índices pares) ACIMA, 2 e 4 (ímpares) ABAIXO; só a área do jogador da vez
+     aparece. A carta em jogo fica à direita da área (1/3) ou à esquerda (2/4). Fora da partida volta pra cima. */
+  let chalAreaRolar = false;
+  function chalPosicionarArea(){
+    const linha = document.getElementById('chalLinhaJog');
+    const jogo = document.querySelector('#repChalTabuleiro > .area-jogo');
+    if (!linha || !jogo) return;
+    const embaixo = !!(CHAL_REP.ativo) && (CHAL_REP.turno) % 2 === 1;
+    if (embaixo){ if (jogo.nextElementSibling !== linha) jogo.after(linha); }
+    else if (jogo.previousElementSibling !== linha) jogo.before(linha);
+    linha.classList.toggle('embaixo', embaixo);
+    if (CHAL_REP.ativo) chalAreaRolar = true;
+  }
+  /* leva a página até a linha do jogador da vez (o tabuleiro fica visível ao lado) */
+  function chalRolarParaArea(){
+    chalAreaRolar = false;
+    const linha = document.getElementById('chalLinhaJog');
+    if (linha && (CHAL_REP.ativo)) linha.scrollIntoView({ block:'nearest', behavior:'instant' });
+  }
   function chalRepPintarTabuleiro(){
+    chalPosicionarArea();
     if (CHAL_REP.ativo){
       repChalTabuleiro.classList.add('chal-ativo');
       repChalTabuleiro.setAttribute('data-turno', String(CHAL_REP.turno));
@@ -2015,6 +2176,7 @@ body{
   function chalRepRenderPlacar(){
     chalRepPintarTabuleiro();
     repChalPlacar.innerHTML = CHAL_REP.jogadores.map(function(j, i){
+      if (CHAL_REP.ativo && i !== CHAL_REP.turno) return '';   /* só a área do jogador da vez aparece */
       return '<div class="rep-chal-jog jog' + i + (i === CHAL_REP.turno && CHAL_REP.ativo ? ' ativo' : '') + '">' +
         '<span class="nome">' + repChalEsc(j.nome) + '</span>' +
         '<span class="pontos">' + j.pontos + ' trio' + (j.pontos === 1 ? '' : 's') + '</span>' +
@@ -2236,7 +2398,8 @@ body{
       if (cheios.length === slots.length && chaves.length === 1){
         fechados++;
         cheios.forEach(function(sl){
-          const a = parseInt(sl.dataset.autor, 10);    /* cada carta fica com quem a posicionou */
+          /* cada carta fica com quem a posicionou; a pré-posicionada (sem autor) fica com quem fecha o trio */
+          const a = sl.dataset.autor ? parseInt(sl.dataset.autor, 10) : CHAL_REP.turno;
           sl.dataset.dono = a;
           sl.dataset.alvo = sl.dataset.posto;          /* a revisão final mostra a carta deste encaixe */
           sl.classList.add('certo', 'travado', 'dono' + a);
@@ -2369,6 +2532,8 @@ body{
         raiz.classList.remove('chal-anim-lock');
         window.scrollTo({ top:y, behavior:'instant' });
         y = null;
+        /* troca de vez: a linha do jogador pode ter mudado de lado (cima × embaixo) */
+        if (chalAreaRolar) chalRolarParaArea();
       }
     }
     const mo = new MutationObserver(sincronizar);
@@ -2413,6 +2578,77 @@ body{
     }, DUR);
   }
 
+
+  /* ---------- distribuição inicial: parte das cartas já começa posicionada ----------
+     Sorteia ~CHAL_PREPOSICIONADAS do total de cartas (dos montes) e põe cada uma numa
+     estação DIFERENTE, também sorteada — assim nenhum par/trio começa pronto. As cartas
+     não têm dono: entram no par/trio de quem o completar. Animação: cada carta cai do alto
+     no seu encaixe, antes da 1ª vez (padrão da família de jogos de associação). */
+  const CHAL_PREPOSICIONADAS = 0.25;
+  let chalDistTok = 0;
+  function chalDistribuirIniciais(cb){
+    const meu = ++chalDistTok;
+    const todas = [];
+    Object.keys(CHAL_REP.montes).forEach(function(t){ CHAL_REP.montes[t].forEach(function(c){ todas.push(c); }); });
+    const n = Math.round(todas.length * CHAL_PREPOSICIONADAS);
+    const escolhidas = repEmbaralhar(todas).slice(0, n);
+    escolhidas.forEach(function(c){ const m = CHAL_REP.montes[c.tipo]; m.splice(m.indexOf(c), 1); });
+    const ests = repEmbaralhar([].slice.call(repChalCampo.querySelectorAll('.rep-estacao'))).slice(0, escolhidas.length);
+    const plano = escolhidas.map(function(c, k){ return { carta:c, slot:ests[k].querySelector('.rep-slot[data-tipo="' + c.tipo + '"]') }; });
+
+    CHAL_REP.ativo = false;                            /* ninguém mexe no tabuleiro durante a animação */
+    chalRepAtualizarResto(); chalRepAtualizarBotoes();
+    const faixa = document.getElementById('chalDistFaixa');
+    const txt = document.getElementById('chalDistTxt');
+    function contar(k){ txt.textContent = 'Distribuindo cartas iniciais… ' + k + '/' + plano.length; }
+    contar(0);
+    faixa.classList.add('on');
+    /* rola até o campo DEPOIS que a trava de rolagem do sorteio devolve a página ao lugar */
+    setTimeout(function(){
+      if (meu === chalDistTok) repChalCampo.scrollIntoView({ behavior:'smooth', block:'center' });
+    }, 80);
+
+    let k = 0;
+    function prox(){
+      if (meu !== chalDistTok) return;
+      if (k >= plano.length){ setTimeout(fim, 800); return; }
+      const item = plano[k++];
+      chalRepPreencherSlot(item.slot, item.carta.chave); delete item.slot.dataset.autor;
+      chalVoarCarta(item.slot, function(){
+        if (meu !== chalDistTok) return;
+        item.slot.classList.add('dist-caiu');
+        setTimeout(function(){ item.slot.classList.remove('dist-caiu'); }, 650);
+        somEncaixe();
+        contar(k);
+      });
+      setTimeout(prox, 620);
+    }
+    function fim(){
+      if (meu !== chalDistTok) return;
+      faixa.classList.remove('on');
+      CHAL_REP.movidos.clear();                        /* não contam como jogada de ninguém */
+      CHAL_REP.ativo = true;
+      chalRepAtualizarResto(); chalRepAtualizarBotoes(); chalRepAtualizarHud();
+      document.getElementById('repChalTabuleiro').scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(function(){ if (meu === chalDistTok) cb(); }, 700);   /* sobe até o painel antes do aviso de vez */
+    }
+    setTimeout(prox, 1000);
+  }
+  /* cópia do encaixe já preenchido "caindo" do alto da tela até ele (serve a cartas em imagem ou HTML) */
+  function chalVoarCarta(slot, cb){
+    const r = slot.getBoundingClientRect();
+    const c = slot.cloneNode(true);
+    c.removeAttribute('id');
+    c.classList.add('chal-voo');
+    c.style.left = r.left + 'px'; c.style.top = r.top + 'px';
+    c.style.width = r.width + 'px'; c.style.height = r.height + 'px';
+    c.style.setProperty('--dx', (window.innerWidth / 2 - (r.left + r.width / 2)) + 'px');
+    c.style.setProperty('--dy', (-r.top - r.height - 40) + 'px');
+    slot.parentNode.appendChild(c);
+    slot.style.visibility = 'hidden';
+    setTimeout(function(){ c.remove(); slot.style.visibility = ''; cb(); }, 560);
+  }
+
   function chalRepIniciar(nomes){
     repMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     if (repRevAtiva) repRevReset();
@@ -2438,11 +2674,12 @@ body{
     /* sorteio animado de quem começa */
     CHAL_REP.turno = Math.floor(Math.random() * CHAL_REP.jogadores.length);
     chalRepAnimarSorteio(CHAL_REP.turno, function(){
-      chalRepAnunciarVez();
       chalRepRenderPlacar();
       chalRepRenderVez();
       chalRepMostrarCarta();
       chalRepAtualizarBotoes();
+      /* ~25% das cartas já começam no tabuleiro (sorteadas a cada partida) */
+      chalDistribuirIniciais(function(){ chalRepAnunciarVez(); });
     });
     });
   }
@@ -2625,6 +2862,32 @@ body{
   titulo.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
   });
+})();
+</script>
+<script>
+/* ===== créditos do carregamento: a foto entra rolando da borda lateral oposta e chega ao
+   seu lugar 1 s antes do fim do carregamento (7 s) ===== */
+(function(){
+  "use strict";
+  var foto = document.querySelector('.creditos-loading .cl-foto');
+  if (!foto) return;
+  var DUR_LOAD = 7000, ANTES = 1000;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var iv = setInterval(function(){
+    if (!foto.getClientRects().length) return;          /* tela de carregamento ainda escondida */
+    clearInterval(iv);
+    var r = foto.getBoundingClientRect();
+    var dist = Math.max(0, window.innerWidth - r.right - 12);  /* da borda direita até o lugar final */
+    var voltas = dist / (Math.PI * r.width);             /* gira como uma roda de verdade */
+    var giro = voltas * 360, t0 = performance.now(), dur = DUR_LOAD - ANTES;
+    /* movida pelo mesmo relógio da barra de carregamento (requestAnimationFrame) */
+    (function passo(){
+      var k = Math.min(1, (performance.now() - t0) / dur);
+      var resta = Math.pow(1 - k, 1.3);                  /* desacelera ao chegar */
+      foto.style.transform = k < 1 ? 'translateX(' + (dist * resta).toFixed(1) + 'px) rotate(' + (giro * resta).toFixed(1) + 'deg)' : '';
+      if (k < 1) requestAnimationFrame(passo);
+    })();
+  }, 40);
 })();
 </script>
 </body>

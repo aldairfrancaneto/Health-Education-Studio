@@ -428,10 +428,10 @@ body{
   .mor-comum .mor-trilha{
     grid-template-columns:repeat(3,var(--mor-cw));
   }
-  /* a necrose corre na VERTICAL, numa coluna só, ficando paralela às
-     duas vias da apoptose ao lado */
+  /* a necrose corre na vertical em DUAS colunas (de dois em dois),
+     como as vias intrínseca e extrínseca da apoptose ao lado */
   .mor-campo-nec .mor-trilha{
-    grid-template-columns:var(--mor-cw);
+    grid-template-columns:repeat(2,var(--mor-cw));
     justify-content:center;
   }
   /* quando a necrose é jogada sozinha, ela não precisa mais ficar
@@ -659,7 +659,7 @@ body{
   .chal-nomes-acoes{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
   /* --- HUD de turno + placar --- */
-  .chal-hud{ display:none; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 16px; }
+  .chal-hud{ display:none; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 18px; }
   .chal-hud.on{ display:flex; }
 
   .chal-vez{
@@ -959,7 +959,13 @@ body{
   .chal-quadro-turno.on{ display:block; }
 
   /* --- painel de saque / carta atual --- */
-  .chal-painel{ display:none; margin:0 0 22px; }
+  .chal-painel{ display:none; margin:0 0 26px; }
+  .chal-bloco-emjogo{ max-width:420px; margin:0 auto; }
+  /* cabeçalho do tabuleiro: monte de compra (fixo, só no Desafio) + legenda */
+  .mor-cab-jogo{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; margin:0 0 18px; }
+  .mor-cab-jogo .mor-legenda{ flex:1 1 280px; margin:0; }
+  .chal-monte-zona{ flex:0 0 auto; }
+  #morTabuleiro:not(.modo-chal) .chal-monte-zona{ display:none; }
   .chal-painel.on{ display:block; }
   .chal-mesa{
     display:grid; gap:16px; align-items:stretch;
@@ -986,6 +992,37 @@ body{
   .chal-monte-btn[disabled]{ opacity:.4; cursor:not-allowed; filter:grayscale(.5); }
   .chal-monte-btn .ico{ font-size:30px; line-height:1; }
   .chal-monte-btn .rest{ font-family:var(--font-pixel); font-size:9px; letter-spacing:.04em; color:#C9A8E8; }
+  /* pilha de cartas do monte de compra — uma camada por carta restante */
+  .chal-pilha{
+    --pilha-w:calc(var(--mor-cw-mao) * .95);
+    position:relative; display:block; width:calc(var(--pilha-w) + 14px);
+    height:calc(var(--pilha-w) * 1260 / 900 + var(--pilha-h, 0px) + 6px);
+  }
+  .chal-pilha-carta{
+    position:absolute; left:50%; width:var(--pilha-w); aspect-ratio:900/1260; border-radius:6px;
+    border:1.5px solid #6D3FB8;
+    background:linear-gradient(90deg, #2A1244, #3B1D5E 50%, #2A1244);
+    box-shadow:0 1px 0 rgba(232,206,122,.55), 0 2px 3px rgba(0,0,0,.55);
+  }
+  .chal-pilha-carta.topo{
+    border:2px solid #B794F6;
+    background:
+      radial-gradient(circle at 50% 46%, rgba(183,148,246,.45) 0%, transparent 62%),
+      repeating-linear-gradient(45deg, rgba(183,148,246,.28) 0 3px, #1B0B2E 3px 9px),
+      repeating-linear-gradient(-45deg, rgba(183,148,246,.16) 0 3px, transparent 3px 9px);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.6);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .chal-pilha-carta.topo::before{
+    content:''; position:absolute; inset:4px; border-radius:4px; pointer-events:none;
+    border:1px solid rgba(232,206,122,.6);
+  }
+  .chal-pilha-carta .ico{ position:relative; font-size:26px; color:#E8CE7A; filter:drop-shadow(0 2px 3px rgba(0,0,0,.65)); }
+  .chal-pilha.vazia .chal-pilha-vazio{
+    position:absolute; left:50%; bottom:3px; transform:translateX(-50%); width:var(--pilha-w); aspect-ratio:900/1260;
+    border:2px dashed rgba(201,168,232,.45); border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-pixel); font-size:8px; color:rgba(201,168,232,.6); text-transform:uppercase;
+  }
 
   .chal-carta-atual{
     display:flex; flex-direction:column; align-items:center; gap:9px; min-height:120px;
@@ -1344,6 +1381,38 @@ body{
   .cl-copyright{ font-size:10.5px; }
 }
 
+  /* Desafio: o tabuleiro é dividido em DUAS ÁREAS separadas (painel do turno e campo de jogo),
+     cada uma com a sua moldura dourada por fora da moldura na cor do jogador da vez.
+     No modo clássico (1 jogador) também são duas áreas: placar + tabuleiro, e o acervo. */
+  #morTabuleiro.tabuleiro{ border:0; background:none; box-shadow:none; padding:0; }
+  #morTabuleiro.tabuleiro::before, #morTabuleiro.tabuleiro::after{ display:none; }
+  #morTabuleiro .tabuleiro.area-moldura{ margin:0 0 26px; padding:20px; }
+  #morTabuleiro .area-moldura > .chal-quadro{ margin:0; }
+  #morTabuleiro:not(.modo-chal) > .chal-linha-jog{ display:none; }
+  /* linha do jogador: área (flexível) + carta em jogo (largura fixa) lado a lado */
+  .chal-linha-jog{ display:flex; gap:18px; align-items:stretch; margin:0 0 26px; }
+  .chal-linha-jog.embaixo{ flex-direction:row-reverse; margin:26px 0 0; }
+  .chal-linha-jog > .area-turno{ flex:1 1 auto; min-width:0; }
+  #morTabuleiro .chal-linha-jog > .tabuleiro.area-moldura{ margin:0; }
+  .chal-linha-jog > .chal-painel{ flex:0 0 250px; margin:0; }
+  .chal-linha-jog > .chal-painel .chal-bloco-emjogo{ height:100%; max-width:none; box-sizing:border-box; }
+  @media (max-width:760px){
+    .chal-linha-jog, .chal-linha-jog.embaixo{ flex-direction:column; }
+    .chal-linha-jog.embaixo{ flex-direction:column-reverse; }
+    .chal-linha-jog > .chal-painel{ flex:0 0 auto; }
+  }
+  @media (max-width:600px){ #morTabuleiro .tabuleiro.area-moldura{ padding:12px; } }
+  /* carta especial ampliada direto: só a carta grande + botões (sem caixa, sem título) */
+  .chal-modal.esp-grande{ background:rgba(4,8,16,.95); padding:14px; }
+  .chal-modal.esp-grande .chal-modal-cx{ max-width:none; width:auto; background:none; border:0; box-shadow:none; padding:0; }
+  .chal-modal.esp-grande .chal-modal-ico, .chal-modal.esp-grande .chal-modal-tit{ display:none; }
+  .chal-modal.esp-grande .chal-modal-txt{ margin:0 0 12px; }
+  .chal-modal.esp-grande .chal-esp-grande{
+    width:auto; max-width:94vw; height:min(76vh, calc((100vw - 28px) * 1260 / 900)); max-height:none;
+    margin:0 auto; cursor:default; border-radius:16px;
+  }
+  .chal-modal.esp-grande .chal-esp-aviso{ margin-top:12px; }
+
 </style>
 </head>
 <body>
@@ -1356,10 +1425,10 @@ body{
 <button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
 <div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
   <div class="pv-bloco">
-    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">35%</span></div>
+    <div class="pv-tit"><span>&#127925; Música</span><span id="pvPct">15%</span></div>
     <div class="pv-linha">
       <button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música" aria-label="Reduzir o volume da música">&minus;</button>
-      <input id="pvBarra" type="range" min="0" max="100" step="5" value="35" aria-label="Volume da música">
+      <input id="pvBarra" type="range" min="0" max="100" step="5" value="15" aria-label="Volume da música">
       <button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música" aria-label="Subir o volume da música">+</button>
     </div>
   </div>
@@ -1470,143 +1539,149 @@ body{
 
     <div class="tabuleiro" id="morTabuleiro">
 
-      <div class="hud" id="morHudClassico">
-        <span class="hud-item" id="morPos">POSICIONADAS: <b>0/20</b></span>
-        <span class="hud-item" id="morRod">RODADA: <b>1</b></span>
-        <button class="btn-board principal" id="morSelar" type="button" disabled>🔬 Conferir respostas</button>
-        <button class="btn-board" id="morLimpar" type="button" disabled title="Disponível ao concluir o percurso">↻ Embaralhar e recomeçar</button>
-        <button class="btn-board" id="morTrocar" type="button" disabled title="Disponível ao concluir o percurso">⇄ Trocar conjunto</button>
-        <button class="btn-board principal" id="morRevisar" type="button" disabled title="Disponível ao concluir o percurso">🔍 Revisar a atividade com a turma</button>
+      <!-- botões da partida (Desafio): fora das áreas, sempre no topo -->
+      <div class="chal-hud" id="chalHud">
+        <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
+        <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+        <button class="btn-board principal" id="chalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
       </div>
 
       <!-- ---------- QUADRO 1: placar, monte único e cartas especiais (Challenger) ---------- -->
-      <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
+      <!-- área 1 do Desafio: painel do turno -->
+      <!-- linha do jogador da vez (Desafio): área do jogador + carta em jogo, lado a lado.
+           Jogadores 1/3: área à esquerda, carta em jogo à direita; 2/4: invertido. -->
+      <div class="chal-linha-jog" id="chalLinhaJog">
+      <div class="area-moldura area-turno">
+        <div class="chal-quadro chal-quadro-turno" id="chalQuadroTurno">
 
-        <div class="chal-hud" id="chalHud">
-          <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
-          <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
-          <button class="btn-board principal" id="chalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
-        </div>
-
-        <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
-        <div class="chal-cab" id="chalCab">
-          <div class="chal-vez" id="chalVez"></div>
-          <button class="btn-board principal chal-encerrar" id="chalEncerrar" type="button">✔ Encerrar turno</button>
-        </div>
-
-        <div class="chal-placar" id="chalPlacar"></div>
-
-        <!-- ---------- PAINEL DE TURNO (Challenger): monte, carta em jogo, bandeja, log ---------- -->
-        <div class="chal-painel" id="chalPainel">
-          <div class="faixa">
-            <span class="faixa-titulo">Monte único — saque e posicione</span>
-            <span class="linha-ouro"></span>
+          <!-- vez do jogador + Encerrar turno na mesma linha, no topo, canto direito -->
+          <div class="chal-cab" id="chalCab">
+            <div class="chal-vez" id="chalVez"></div>
+            <button class="btn-board principal chal-encerrar" id="chalEncerrar" type="button">✔ Encerrar turno</button>
           </div>
-          <div class="chal-mesa">
-            <div class="chal-bloco">
-              <div class="chal-bloco-tit">Monte de compra</div>
-              <button class="chal-monte-btn" id="chalSacar" type="button">
-                <span class="ico">🂠</span>
-                <span>Sacar carta</span>
-                <span class="rest" id="chalRest">— cartas no monte</span>
-              </button>
-            </div>
-            <div class="chal-bloco">
-              <div class="chal-bloco-tit">Carta em jogo</div>
-              <div class="chal-carta-atual" id="chalCartaAtual">
-                <div class="instr">Saque uma carta para começar o turno.</div>
-              </div>
-            </div>
+
+          <div class="chal-placar" id="chalPlacar"></div>
+
+        </div>
+      </div>
+
+      <!-- ---------- CARTA EM JOGO (Desafio): sempre entre a área do jogador da vez e o tabuleiro ---------- -->
+      <div class="chal-painel" id="chalPainel">
+        <div class="chal-bloco chal-bloco-emjogo">
+          <div class="chal-bloco-tit">Carta em jogo</div>
+          <div class="chal-carta-atual" id="chalCartaAtual">
+            <div class="instr">Saque uma carta para começar o turno.</div>
           </div>
         </div>
-
+      </div>
       </div>
 
       <div id="morResultado"></div>
 
       <!-- ---------- QUADRO 2: tabuleiro onde as cartas de fato são posicionadas ---------- -->
-      <div class="chal-quadro chal-quadro-jogo">
-
-        <div class="faixa">
-          <span class="faixa-titulo">Tabuleiro — posicione as cartas</span>
-          <span class="linha-ouro"></span>
+      <!-- área do campo de jogo (Desafio e clássico; no clássico leva também o placar) -->
+      <div class="area-moldura area-jogo tabuleiro">
+        <div class="hud" id="morHudClassico">
+          <span class="hud-item" id="morPos">POSICIONADAS: <b>0/20</b></span>
+          <span class="hud-item" id="morRod">RODADA: <b>1</b></span>
+          <button class="btn-board principal" id="morSelar" type="button" disabled>🔬 Conferir respostas</button>
+          <button class="btn-board" id="morLimpar" type="button" disabled title="Disponível ao concluir o percurso">↻ Embaralhar e recomeçar</button>
+          <button class="btn-board" id="morTrocar" type="button" disabled title="Disponível ao concluir o percurso">⇄ Trocar conjunto</button>
+          <button class="btn-board principal" id="morRevisar" type="button" disabled title="Disponível ao concluir o percurso">🔍 Revisar a atividade com a turma</button>
         </div>
+        <div class="chal-quadro chal-quadro-jogo">
 
-        <div class="mor-legenda">
-          <span data-leg="apo"><i class="c-int"></i> Apoptose — via intrínseca (mitocondrial)</span>
-          <span data-leg="apo"><i class="c-ext"></i> Apoptose — via extrínseca (receptores de morte)</span>
-          <span data-leg="apo"><i class="c-com"></i> Apoptose — fase de execução comum</span>
-          <span data-leg="nec"><i class="c-nec"></i> Necrose — curso temporal</span>
-        </div>
-
-        <!-- ---------- OS DOIS DESTINOS, LADO A LADO ---------- -->
-        <div class="mor-campos" id="morCampos">
-
-        <!-- CAMPO ESQUERDO: APOPTOSE -->
-        <div class="mor-campo mor-campo-apo" id="morCampoApo">
-
-          <div class="mor-campo-cab">
-            <span class="mor-campo-nome">APOPTOSE</span>
-            <span class="mor-campo-sub">Silenciosa · dependente de energia</span>
+          <div class="faixa">
+            <span class="faixa-titulo">Tabuleiro — posicione as cartas</span>
+            <span class="linha-ouro"></span>
           </div>
 
-          <div class="mor-vias">
+          <div class="mor-cab-jogo">
+            <!-- monte de compra do Desafio: posição fixa dentro do tabuleiro -->
+            <div class="chal-monte-zona">
+              <button class="chal-monte-btn" id="chalSacar" type="button">
+                <span class="chal-pilha" id="chalPilha" aria-hidden="true"></span>
+                <span>Sacar carta</span>
+                <span class="rest" id="chalRest">— cartas no monte</span>
+              </button>
+            </div>
+            <div class="mor-legenda">
+              <span data-leg="apo"><i class="c-int"></i> Apoptose — via intrínseca (mitocondrial)</span>
+              <span data-leg="apo"><i class="c-ext"></i> Apoptose — via extrínseca (receptores de morte)</span>
+              <span data-leg="apo"><i class="c-com"></i> Apoptose — fase de execução comum</span>
+              <span data-leg="nec"><i class="c-nec"></i> Necrose — curso temporal</span>
+            </div>
+          </div>
 
-            <div class="mor-via mor-via-intr">
-              <div class="zona-cab">
-                <span class="zona-nome">Via Intrínseca</span>
-                <span class="zona-sub">Mitocondrial</span>
-              </div>
-              <div class="mor-trilha" id="morTrilhaInt"></div>
+          <!-- ---------- OS DOIS DESTINOS, LADO A LADO ---------- -->
+          <div class="mor-campos" id="morCampos">
+
+          <!-- CAMPO ESQUERDO: APOPTOSE -->
+          <div class="mor-campo mor-campo-apo" id="morCampoApo">
+
+            <div class="mor-campo-cab">
+              <span class="mor-campo-nome">APOPTOSE</span>
+              <span class="mor-campo-sub">Silenciosa · dependente de energia</span>
             </div>
 
-            <div class="mor-via mor-via-extr">
-              <div class="zona-cab">
-                <span class="zona-nome">Via Extrínseca</span>
-                <span class="zona-sub">Receptores de morte</span>
+            <div class="mor-vias">
+
+              <div class="mor-via mor-via-intr">
+                <div class="zona-cab">
+                  <span class="zona-nome">Via Intrínseca</span>
+                  <span class="zona-sub">Mitocondrial</span>
+                </div>
+                <div class="mor-trilha" id="morTrilhaInt"></div>
               </div>
-              <div class="mor-trilha" id="morTrilhaExt"></div>
+
+              <div class="mor-via mor-via-extr">
+                <div class="zona-cab">
+                  <span class="zona-nome">Via Extrínseca</span>
+                  <span class="zona-sub">Receptores de morte</span>
+                </div>
+                <div class="mor-trilha" id="morTrilhaExt"></div>
+              </div>
+
+            </div>
+
+            <div class="mor-convergencia" aria-hidden="true">
+              <span class="ramo"></span>
+              <span class="juncao">▼ as duas vias convergem ▼</span>
+              <span class="ramo dir"></span>
+            </div>
+
+            <div class="mor-comum">
+              <div class="zona-cab">
+                <span class="zona-nome">Fase de Execução Comum</span>
+                <span class="zona-sub">Desfecho compartilhado</span>
+              </div>
+              <div class="mor-trilha" id="morTrilhaCom"></div>
             </div>
 
           </div>
 
-          <div class="mor-convergencia" aria-hidden="true">
-            <span class="ramo"></span>
-            <span class="juncao">▼ as duas vias convergem ▼</span>
-            <span class="ramo dir"></span>
-          </div>
+          <!-- CAMPO DIREITO: NECROSE -->
+          <div class="mor-campo mor-campo-nec" id="morCampoNec">
 
-          <div class="mor-comum">
+            <div class="mor-campo-cab">
+              <span class="mor-campo-nome">NECROSE</span>
+              <span class="mor-campo-sub">Inflamatória · por falência energética</span>
+            </div>
+
             <div class="zona-cab">
-              <span class="zona-nome">Fase de Execução Comum</span>
-              <span class="zona-sub">Desfecho compartilhado</span>
+              <span class="zona-nome">Linha do Tempo da Necrose</span>
+              <span class="zona-sub">Da 1ª à 6ª etapa</span>
             </div>
-            <div class="mor-trilha" id="morTrilhaCom"></div>
+            <div class="mor-trilha" id="morTrilhaNec"></div>
+
           </div>
 
         </div>
 
-        <!-- CAMPO DIREITO: NECROSE -->
-        <div class="mor-campo mor-campo-nec" id="morCampoNec">
-
-          <div class="mor-campo-cab">
-            <span class="mor-campo-nome">NECROSE</span>
-            <span class="mor-campo-sub">Inflamatória · por falência energética</span>
-          </div>
-
-          <div class="zona-cab">
-            <span class="zona-nome">Linha do Tempo da Necrose</span>
-            <span class="zona-sub">Da 1ª à 6ª etapa</span>
-          </div>
-          <div class="mor-trilha" id="morTrilhaNec"></div>
-
         </div>
-
       </div>
 
-      </div>
-
-      <div id="morAcervoClassico">
+      <div id="morAcervoClassico" class="tabuleiro area-moldura area-acervo">
         <div class="faixa">
           <span class="faixa-titulo">Acervo de cartas</span>
           <span class="linha-ouro"></span>
@@ -1733,7 +1808,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.6 &middot; Última atualização: 20 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.8 &middot; Última atualização: 30 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -2268,8 +2343,8 @@ body{
 
   /* ==============================================================
      TRILHA SONORA DA PARTIDA (exclusiva do jogo Morte celular)
-     Toca em sequência as faixas A (Duel of Arcana V1), B (Arcane Focus - Calm Version)
-     e C (Ignite the Spark - Energetic Version), com 3 s de intervalo entre elas. Começa
+     Toca em sequência Apoptosis Cascade, Necrosis Pathway, Duel of Arcana V1, Arcane Focus -
+     Calm Version e Ignite the Spark - Energetic Version, com 3 s de intervalo entre elas. Começa
      quando uma partida começa (Clássico ou Challenger) e REPETE SEM PARAR até o fim do jogo (vitória/fim da partida, com uma
      descida rápida do volume) ou até o jogador sair para os menus.
      As faixas são MP3 da pasta «Músicas dos jogos» (ou, se ela não existir, soltos ao lado
@@ -2282,7 +2357,7 @@ body{
        só os arquivos .mp3 foram enviados, sem a pasta). Sem nenhum dos dois, o jogo fica sem música. */
     const PASTAS = ['Músicas dos jogos/', ''];
     let pastaIdx = 0;
-    const FAIXAS = ['Duel of Arcana -  V1.mp3', 'Arcane Focus - Calm Version.mp3', 'Ignite the Spark - Energetic Version.mp3'];
+    const FAIXAS = ['Apoptosis Cascade (MP3).mp3', 'Necrosis Pathway (MP3).mp3', 'Duel of Arcana -  V1.mp3', 'Arcane Focus - Calm Version.mp3', 'Ignite the Spark - Energetic Version.mp3'];
     const INTERVALO_MS = 3000;
     const btn = document.getElementById('btnMusica');
     const painel = document.getElementById('painelVolume');
@@ -2295,7 +2370,7 @@ body{
     const menosEf = document.getElementById('pvMenosEf');
     const maisEf = document.getElementById('pvMaisEf');
     const pre = [];                                        /* faixas já pré-carregadas */
-    let audio = null, timer = null, tok = 0, fade = null, volume = 0.35, volEf = 1;   /* 0..1, vale pela vida da página */
+    let audio = null, timer = null, tok = 0, fade = null, volume = 0.15, volEf = 1;   /* 0..1, vale pela vida da página */
 
     function url(i){ return encodeURI(PASTAS[pastaIdx] + FAIXAS[i]); }
     function abrir(i){                                     /* usa a pré-carregada, se houver e não deu erro */
@@ -2532,6 +2607,9 @@ body{
     document.getElementById('morHudClassico').style.display   = turno ? 'none' : '';
     document.getElementById('morAcervoClassico').style.display = turno ? 'none' : '';
     document.getElementById('chalQuadroTurno').classList.toggle('on', turno);
+    /* Desafio: duas áreas com moldura dourada própria (no clássico, moldura única) */
+    morTabuleiro.classList.toggle('modo-chal', turno);
+    document.querySelectorAll('#morTabuleiro .area-turno').forEach(function(a){ a.classList.toggle('tabuleiro', turno); });
     document.getElementById('chalHud').classList.toggle('on', turno);
     document.getElementById('chalCab').classList.toggle('on', turno);
     document.getElementById('chalPainel').classList.toggle('on', turno);
@@ -2649,6 +2727,8 @@ body{
         raiz.classList.remove('chal-anim-lock');
         window.scrollTo({ top:y, behavior:'instant' });
         y = null;
+        /* troca de vez: a área do jogador pode ter mudado de lado (cima × embaixo) */
+        if (chalAreaRolar) chalRolarParaArea();
       }
     }
     const mo = new MutationObserver(sincronizar);
@@ -2884,6 +2964,28 @@ body{
   function chalAtualizarRest(){
     const n = CHAL.deck.length;
     chalRestEl.textContent = n + (n === 1 ? ' carta no monte' : ' cartas no monte');
+    chalDesenharPilha(n);
+  }
+  /* miniatura do monte de compra: uma carta virada para baixo por carta restante,
+     empilhadas (cada uma um pouco acima da anterior, com leve desalinhamento),
+     então a pilha encolhe a cada saque. A de cima leva o verso completo e a contagem. */
+  function chalDesenharPilha(n){
+    const el = document.getElementById('chalPilha');
+    if (!el) return;
+    const PASSO = 4;
+    el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
+    el.classList.toggle('vazia', n === 0);
+    let h = '';
+    for (let i = 0; i < n; i++){
+      const topo = (i === n - 1);
+      const dx = ((i * 7) % 5) - 2;            /* desalinhamento fixo, sem sorteio (não "pula" a cada saque) */
+      const rot = (((i * 5) % 7) - 3) * 0.6;
+      h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
+        'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
+        (topo ? '<span class="ico">🂠</span>' : '') + '</span>';
+    }
+    if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
+    el.innerHTML = h;
   }
 
   function chalJogAtual(){ return CHAL.jogadores[CHAL.turno]; }
@@ -2901,7 +3003,31 @@ body{
   }
 
   /* o tabuleiro assume a cor do jogador da vez — reforço visual de "de quem é a vez" */
+  /* Desafio: a área do jogador (painel do turno + especiais) fica em lados opostos do tabuleiro —
+     jogadores 1 e 3 (índices pares) em CIMA, jogadores 2 e 4 (ímpares) EMBAIXO. Só a área do
+     jogador da vez aparece; o 3 ocupa o lugar do 1 e o 4 o lugar do 2. Fora da partida volta pra cima. */
+  let chalAreaRolar = false;
+  function chalPosicionarArea(){
+    const linha = document.getElementById('chalLinhaJog');
+    const jogo = morTabuleiro.querySelector(':scope > .area-jogo');
+    if (!linha || !jogo) return;
+    const embaixo = CHAL.ativo && (CHAL.turno % 2 === 1);
+    /* a linha (área do jogador + carta em jogo) vai para cima ou para baixo do tabuleiro;
+       a carta em jogo fica à DIREITA da área nos jogadores 1/3 e à ESQUERDA nos 2/4 */
+    if (embaixo){ if (jogo.nextElementSibling !== linha) jogo.after(linha); }
+    else if (jogo.previousElementSibling !== linha) jogo.before(linha);
+    linha.classList.toggle('embaixo', embaixo);
+    if (CHAL.ativo) chalAreaRolar = true;
+  }
+  /* leva a página até a área do jogador da vez (fica visível com o pedaço do tabuleiro ao lado) */
+  function chalRolarParaArea(){
+    chalAreaRolar = false;
+    const area = document.getElementById('chalLinhaJog');
+    if (area && CHAL.ativo) area.scrollIntoView({ block:'nearest', behavior:'instant' });
+  }
+
   function chalPintarTabuleiro(){
+    chalPosicionarArea();
     if (CHAL.ativo){
       morTabuleiro.classList.add('chal-ativo');
       morTabuleiro.setAttribute('data-turno', String(CHAL.turno));
@@ -2916,6 +3042,8 @@ body{
     const permitidas = MOR_MODOS[morModo];
     chalPlacarEl.innerHTML = '';
     CHAL.jogadores.forEach(function(j, i){
+      /* só a área do jogador da vez aparece — a dos outros fica totalmente invisível */
+      if (i !== CHAL.turno) return;
       const card = document.createElement('div');
       card.className = 'chal-jog p' + i + (i === CHAL.turno ? ' ativo' : '');
 
@@ -2992,17 +3120,24 @@ body{
   function chalVerCartaEsp(k){
     const e = CHAL_ESP[k];
     const podeUsar = (k === 'sentenca' && chalSentencaDisponivel());
-    const html = '<img class="chal-esp-grande" id="chalEspGrandeImg" src="' + CHAL_ESP_IMG[k] +
-      '" alt="' + e.nome + '" title="Tocar para ampliar mais">';
+    const html = '<img class="chal-esp-grande" src="' + CHAL_ESP_IMG[k] +
+      '" alt="' + e.nome + '">';
     const botoes = [];
     if (podeUsar){
       botoes.push({ txt:'💀 Usar agora', tipo:'principal', fn:function(){ chalModalFechar(); chalLancarSentenca(); } });
     }
-    botoes.push({ txt: podeUsar ? 'Guardar' : 'Fechar', tipo:'', fn: chalModalFechar });
+    botoes.push({ txt:'✕ Fechar', tipo:'', fn: chalModalFechar });
     chalModalMsgHTML(e.ico, e.nome, html, botoes);
-    const big = document.getElementById('chalEspGrandeImg');
-    if (big) big.addEventListener('click', function(){ abrirLightbox(CHAL_ESP_IMG[k]); });
+    chalModalEl.classList.add('esp-grande');      /* abre DIRETO em tamanho grande */
   }
+  /* na carta ampliada, tocar fora dela ou apertar Esc fecha */
+  document.getElementById('chalModal').addEventListener('click', function(ev){
+    if (ev.target === this && this.classList.contains('esp-grande')) chalModalFechar();
+  });
+  document.addEventListener('keydown', function(ev){
+    if (ev.key === 'Escape' && document.getElementById('chalModal').classList.contains('esp-grande')) chalModalFechar();
+  });
+
 
   /* ---------- flip da carta jogada + tremida no alvo ---------- */
   function chalFlipCarta(k, txt){
@@ -3651,6 +3786,7 @@ body{
     chalModalMsgHTML(ico, tit, txtHtml, botoes, true);
   }
   function chalModalMsgHTML(ico, tit, html, botoes, comoTexto){
+    chalModalEl.classList.remove('esp-grande');
     chalModalIco.textContent = ico;
     chalModalTit.textContent = tit;
     if (comoTexto){ chalModalTxt.innerHTML = html; }
@@ -3827,6 +3963,32 @@ body{
   titulo.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
   });
+})();
+</script>
+<script>
+/* ===== créditos do carregamento: a foto entra rolando da borda lateral oposta e chega ao
+   seu lugar 1 s antes do fim do carregamento (7 s) ===== */
+(function(){
+  "use strict";
+  var foto = document.querySelector('.creditos-loading .cl-foto');
+  if (!foto) return;
+  var DUR_LOAD = 7000, ANTES = 1000;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var iv = setInterval(function(){
+    if (!foto.getClientRects().length) return;          /* tela de carregamento ainda escondida */
+    clearInterval(iv);
+    var r = foto.getBoundingClientRect();
+    var dist = Math.max(0, window.innerWidth - r.right - 12);  /* da borda direita até o lugar final */
+    var voltas = dist / (Math.PI * r.width);             /* gira como uma roda de verdade */
+    var giro = voltas * 360, t0 = performance.now(), dur = DUR_LOAD - ANTES;
+    /* movida pelo mesmo relógio da barra de carregamento (requestAnimationFrame) */
+    (function passo(){
+      var k = Math.min(1, (performance.now() - t0) / dur);
+      var resta = Math.pow(1 - k, 1.3);                  /* desacelera ao chegar */
+      foto.style.transform = k < 1 ? 'translateX(' + (dist * resta).toFixed(1) + 'px) rotate(' + (giro * resta).toFixed(1) + 'deg)' : '';
+      if (k < 1) requestAnimationFrame(passo);
+    })();
+  }, 40);
 })();
 </script>
 </body>
