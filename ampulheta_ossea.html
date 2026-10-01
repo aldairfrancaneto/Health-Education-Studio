@@ -714,6 +714,44 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
 #palco.modo-chal > .area-acervo{ display:none; }
 @media (max-width:600px){ #palco > .area-moldura{ padding:12px; } }
 
+
+  /* dorso ilustrado das cartas na animação de embaralhamento (SVG gerado por jcDorsoSvg) */
+  .chal-emb-pilha .chal-emb-c{ border:0; overflow:hidden; background:#0B0B14; font-size:0;
+    box-shadow:0 0 0 1px rgba(0,0,0,.65), 0 3px 9px rgba(0,0,0,.6); }
+  .chal-emb-c .jc-dorso{ display:block; width:100%; height:100%; }
+
+  /* vulto encapuzado no aviso "Vez de …" (SVG gerado por jcVultoSvg) */
+  .chal-vez-ico.jc-vulto-box{
+    font-size:0; width:clamp(220px, min(72vw, 54vh), 440px); margin:-4vh auto 0;
+    filter:drop-shadow(0 16px 30px rgba(0,0,0,.85));
+  }
+  .jc-vulto{ display:block; width:100%; height:auto; overflow:visible; }
+  .jc-vulto-corpo{ transform-origin:50% 100%; animation:jcVultoRespira 3s ease-in-out infinite; }
+  .jc-vulto-olhos{ animation:jcVultoOlhos 3s ease-in-out both; }
+  .jc-vulto-pt{ animation:jcVultoPt 2.4s ease-in-out infinite; }
+  @keyframes jcVultoRespira{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-3px) scale(1.012); } }
+  @keyframes jcVultoOlhos{ 0%{ opacity:0; } 18%{ opacity:1; } 30%{ opacity:.55; } 40%,100%{ opacity:1; } }
+  @keyframes jcVultoPt{ 0%,100%{ opacity:.2; transform:translateY(0); } 50%{ opacity:.95; transform:translateY(-4px); } }
+  @media (prefers-reduced-motion: reduce){ .jc-vulto-corpo, .jc-vulto-olhos, .jc-vulto-pt{ animation:none; } }
+
+  /* dorso ilustrado também no topo da pilha de compra (contorno na cor do monte) e no monte de especiais (vermelho, contorno na cor do dono) */
+  .chal-pilha .chal-pilha-carta.topo{ border:0; padding:0; background:#0B0B14;
+    box-shadow:0 0 0 1.5px var(--pl-topo, #E8C766), 0 6px 14px rgba(0,0,0,.6); }
+  .chal-pilha .chal-pilha-carta.topo::before{ display:none; }
+  .chal-pilha-carta.topo .jc-dorso{ position:absolute; inset:0; display:block; width:100%; height:100%; border-radius:inherit; }
+  .chal-esp-monte .verso{ border:0; padding:0; background:#1C0306;
+    box-shadow:0 0 0 2px var(--chal-cor, #E8C766), 0 4px 12px rgba(0,0,0,.5); }
+  .chal-esp-monte .verso::before{ display:none; }
+  .chal-esp-monte .verso .jc-dorso{ display:block; width:100%; height:100%; }
+
+  /* brilho da coluna "Carta em jogo" quando a carta sacada chega (jcRolarParaCartaEmJogo) */
+  .jc-chegou > *{ animation:jcChegou 1.2s ease-out; }
+  @keyframes jcChegou{
+    0%{ box-shadow:0 0 0 0 rgba(255,210,63,0); }
+    25%{ box-shadow:0 0 0 4px rgba(255,210,63,.75), 0 0 26px rgba(255,210,63,.55); }
+    100%{ box-shadow:0 0 0 0 rgba(255,210,63,0); }
+  }
+  @media (prefers-reduced-motion: reduce){ .jc-chegou > *{ animation:none; } }
 </style>
 </head>
 <body>
@@ -872,7 +910,7 @@ html.chal-anim-lock, html.chal-anim-lock body{ overflow:hidden; }
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 30 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.8 &middot; Última atualização: 30 de setembro de 2026</span>
   </div>
 </footer>
 
@@ -1184,6 +1222,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
     if(!CHAL.ativo || CHAL.fase!=='sacar' || CHAL.monte.length===0 || CHAL.cartaSacada!==null || CHAL.cartaMao!==null) return;
     CHAL.slotMarcado=null;
     CHAL.cartaSacada=CHAL.monte.shift(); CHAL.fase='jogar'; CHAL.sacou=true; somSaca(); render();
+    jcRolarParaCartaEmJogo();
   }
   function chalPodeEncerrar(){ return CHAL.ativo && CHAL.cartaSacada===null && CHAL.cartaMao===null && (CHAL.sacou || CHAL.monte.length===0); }
   function chalEncerrarTurno(){
@@ -1367,7 +1406,7 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
       const rot = (((i * 5) % 7) - 3) * 0.6;
       h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
         'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
-        (topo ? '<span class="ico">🂠</span>' : '') + '</span>';
+        (topo ? jcDorsoSvg('comum') : '') + '</span>';
     }
     if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
     el.innerHTML = h;
@@ -1501,12 +1540,242 @@ const JOGO_DADOS={"cards": [{"t": "O desgaste do rim", "l": "Envelhecimento rena
   })();
 
   /* ---------- embaralhamento animado do baralho (5 s) ---------- */
+  const JC_DORSO = {
+    faixa:'osso',
+    paletas:{
+      comum:{ f0:'#160E04', f1:'#4A3110', f2:'#86602A', ac:'#D6AE66', ac2:'#FBEBC8', ou:'#E8C766', ou2:'#FFF4D6', nu:'#2E1E08' }
+    },
+    emblema:function(p, id, n){
+      /* ósteon (sistema de Havers): lamelas concêntricas, canal central com vaso, osteócitos nas lacunas e canalículos */
+      let ost = '';
+      [[7.2, 6, .4], [10.4, 8, 1.1], [13.6, 10, .2]].forEach(function(c){
+        for (let i = 0; i < c[1]; i++){
+          const a = i / c[1] * Math.PI * 2 + c[2], x = 45 + c[0] * Math.cos(a), y = 63 + c[0] * Math.sin(a), g = a * 180 / Math.PI + 90;
+          ost += '<g transform="translate(' + n(x) + ' ' + n(y) + ') rotate(' + n(g) + ')"><ellipse rx="1.25" ry=".6" fill="' + p.nu + '" stroke="' + p.ou2 + '" stroke-width=".3"/>' +
+                 '<path d="M0 -.6 v-1.3 M0 .6 v1.3 M-.8 -.4 l-.6 -1 M.8 .4 l.6 1" stroke="' + p.ou2 + '" stroke-width=".22"/></g>';
+        }
+      });
+      let lam = '';
+      [4.2, 5.8, 8.8, 12, 15.2].forEach(function(r, i){
+        lam += '<circle cx="45" cy="63" r="' + r + '" fill="none" stroke="' + (i % 2 ? p.ou : p.ac2) + '" stroke-width="' + (i === 4 ? .9 : .45) + '" opacity="' + (i === 4 ? 1 : .8) + '"/>';
+      });
+      return '<circle cx="45" cy="63" r="16.2" fill="url(#' + id + '-cel)"/>' + lam + ost +
+        '<circle cx="45" cy="63" r="2.8" fill="' + p.nu + '" stroke="' + p.ou + '" stroke-width=".6"/>' +
+        '<circle cx="44.2" cy="62.4" r=".8" fill="#D8343F"/><circle cx="46" cy="63.8" r=".6" fill="#7FB0F0"/>';
+    }
+  };
+  /* ---------- dorso ilustrado das cartas (animação de embaralhamento) ----------
+     Mesmo desenho do "O Destino da Célula": moldura dourada com cantos
+     ornamentados, treliça de fundo, faixas temáticas em cima e embaixo e um
+     medalhão central com a ilustração do jogo. Baralho comum e especial têm o
+     mesmo dorso, só muda a paleta (especial = vermelho). Gerado uma vez como
+     <symbol> e reaproveitado com <use> em cada carta. */
+  function jcDorsoSimbolo(id, p, emblema, faixa){
+    const n = function(v){ return (+v).toFixed(2); };
+    function faixaDna(y){
+      let a = '', b = '', deg = '';
+      for (let i = 0; i <= 60; i++){
+        const x = 17 + i * 56 / 60, k = Math.sin(i / 60 * Math.PI * 4);
+        a += (i ? 'L' : 'M') + n(x) + ' ' + n(y + 3.4 * k);
+        b += (i ? 'L' : 'M') + n(x) + ' ' + n(y - 3.4 * k);
+        if (i % 4 === 2) deg += '<line x1="' + n(x) + '" y1="' + n(y + 3.4 * k) + '" x2="' + n(x) + '" y2="' + n(y - 3.4 * k) + '"/>';
+      }
+      return '<g stroke="' + p.ac + '" stroke-width=".55" opacity=".85">' + deg + '</g>' +
+        '<path d="' + a + '" fill="none" stroke="' + p.ou + '" stroke-width="1.1" stroke-linecap="round"/>' +
+        '<path d="' + b + '" fill="none" stroke="' + p.ac2 + '" stroke-width="1.1" stroke-linecap="round" opacity=".9"/>';
+    }
+    function faixaFluxo(y){            /* corrente (sangue / urina) com partículas */
+      let a = '', b = '';
+      for (let i = 0; i <= 60; i++){
+        const x = 17 + i * 56 / 60, k = Math.sin(i / 60 * Math.PI * 3);
+        a += (i ? 'L' : 'M') + n(x) + ' ' + n(y - 3 + 1.2 * k);
+        b += (i ? 'L' : 'M') + n(x) + ' ' + n(y + 3 + 1.2 * k);
+      }
+      let pt = '';
+      [22, 31, 40, 50, 59, 68].forEach(function(x, i){
+        pt += '<ellipse cx="' + x + '" cy="' + n(y + (i % 2 ? .9 : -.9)) + '" rx="1.9" ry="1.15" fill="' + p.ac2 + '" stroke="' + p.ou + '" stroke-width=".35"/>';
+      });
+      return '<path d="' + a + '" fill="none" stroke="' + p.ou + '" stroke-width="1.1" stroke-linecap="round"/>' +
+        '<path d="' + b + '" fill="none" stroke="' + p.ou + '" stroke-width="1.1" stroke-linecap="round"/>' +
+        '<path d="M17 ' + y + ' H73" stroke="' + p.ac + '" stroke-width=".4" stroke-dasharray="1.5 2" opacity=".7"/>' + pt;
+    }
+    function faixaOsso(y){              /* osso longo estilizado (diáfise + epífises) */
+      const ep = function(x, s){
+        return '<path d="M' + x + ' ' + (y - 1.8) + ' q' + (-3 * s) + ' -3.4 ' + (-5.4 * s) + ' -1.4 q' + (-1.6 * s) + ' 1.4 0 3.2 q' +
+          (-1.6 * s) + ' 1.8 0 3.2 q' + (2.4 * s) + ' 2 ' + (5.4 * s) + ' -1.4 Z"/>';
+      };
+      return '<g fill="' + p.ac2 + '" stroke="' + p.ou + '" stroke-width=".7">' +
+        '<rect x="24" y="' + (y - 1.8) + '" width="42" height="3.6" rx="1.2"/>' + ep(24, 1) + ep(66, -1) + '</g>' +
+        '<path d="M28 ' + y + ' H62" stroke="' + p.ac + '" stroke-width=".5" stroke-dasharray="2 1.5"/>' +
+        '<circle cx="14.5" cy="' + y + '" r="1.1" fill="' + p.ou + '"/><circle cx="75.5" cy="' + y + '" r="1.1" fill="' + p.ou + '"/>';
+    }
+    const fx = faixa === 'fluxo' ? faixaFluxo : faixa === 'osso' ? faixaOsso : faixaDna;
+    const canto = '<g fill="none" stroke="' + p.ou + '" stroke-width=".8">' +
+      '<path d="M7 19 L7 11 Q7 7 11 7 L19 7"/>' +
+      '<path d="M10 16 Q10 10 16 10" stroke-width=".6" opacity=".8"/>' +
+      '<circle cx="12.6" cy="12.6" r="1.6" fill="' + p.ou2 + '" stroke="none"/>' +
+      '<path d="M19 7 q2.5 -1.6 4.5 0" stroke-width=".6"/><path d="M7 19 q-1.6 2.5 0 4.5" stroke-width=".6"/></g>';
+    let anel = '', raios = '', ticks = '<g stroke="' + p.ou2 + '" opacity=".55">';
+    for (let i = 0; i < 12; i++){
+      const a = i / 12 * Math.PI * 2 + .26, r = 21.2, rr = i % 3 === 0 ? 1.9 : 1.25;
+      anel += '<circle cx="' + n(45 + r * Math.cos(a)) + '" cy="' + n(63 + r * Math.sin(a)) + '" r="' + rr + '"/>';
+    }
+    for (let i = 0; i < 16; i++){
+      const a = i / 16 * Math.PI * 2, r1 = 30.4, r2 = i % 2 ? 33 : 37.5;
+      raios += '<line x1="' + n(45 + r1 * Math.cos(a)) + '" y1="' + n(63 + r1 * Math.sin(a)) +
+               '" x2="' + n(45 + r2 * Math.cos(a)) + '" y2="' + n(63 + r2 * Math.sin(a)) + '"/>';
+    }
+    for (let i = 0; i < 48; i++){
+      const a = i / 48 * Math.PI * 2, r1 = 27.2, r2 = i % 4 ? 28.4 : 29.4;
+      ticks += '<line stroke-width="' + (i % 4 ? .3 : .55) + '" x1="' + n(45 + r1 * Math.cos(a)) + '" y1="' + n(63 + r1 * Math.sin(a)) +
+               '" x2="' + n(45 + r2 * Math.cos(a)) + '" y2="' + n(63 + r2 * Math.sin(a)) + '"/>';
+    }
+    ticks += '</g>';
+    return '<symbol id="' + id + '" viewBox="0 0 90 126">' +
+      '<defs>' +
+        '<radialGradient id="' + id + '-fd" cx="50%" cy="50%" r="70%">' +
+          '<stop offset="0" stop-color="' + p.f2 + '"/><stop offset=".55" stop-color="' + p.f1 + '"/><stop offset="1" stop-color="' + p.f0 + '"/></radialGradient>' +
+        '<radialGradient id="' + id + '-md" cx="42%" cy="38%" r="65%">' +
+          '<stop offset="0" stop-color="' + p.f2 + '"/><stop offset="1" stop-color="' + p.f0 + '"/></radialGradient>' +
+        '<radialGradient id="' + id + '-cel" cx="40%" cy="36%" r="70%">' +
+          '<stop offset="0" stop-color="' + p.ac2 + '" stop-opacity=".55"/><stop offset="1" stop-color="' + p.ac + '" stop-opacity=".18"/></radialGradient>' +
+        '<pattern id="' + id + '-tr" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+          '<path d="M0 0 H6 M0 0 V6" stroke="' + p.ac + '" stroke-width=".35" opacity=".28"/>' +
+          '<circle cx="3" cy="3" r=".45" fill="' + p.ou + '" opacity=".35"/></pattern>' +
+      '</defs>' +
+      '<rect width="90" height="126" rx="7" fill="url(#' + id + '-fd)"/>' +
+      '<rect x="4" y="4" width="82" height="118" rx="5" fill="url(#' + id + '-tr)"/>' +
+      '<rect x="3" y="3" width="84" height="120" rx="5.5" fill="none" stroke="' + p.ou + '" stroke-width="1.3"/>' +
+      '<rect x="5.6" y="5.6" width="78.8" height="114.8" rx="3.8" fill="none" stroke="' + p.ac + '" stroke-width=".5" stroke-dasharray="1.6 1.2"/>' +
+      canto +
+      '<g transform="translate(90 0) scale(-1 1)">' + canto + '</g>' +
+      '<g transform="translate(0 126) scale(1 -1)">' + canto + '</g>' +
+      '<g transform="translate(90 126) scale(-1 -1)">' + canto + '</g>' +
+      fx(19) + fx(107) +
+      '<g stroke="' + p.ou + '" stroke-width=".7" opacity=".7">' + raios + '</g>' +
+      '<path d="M45 24 L49 59 L45 63 L41 59Z M45 102 L49 67 L45 63 L41 67Z" fill="' + p.ou + '" opacity=".22"/>' +
+      '<circle cx="45" cy="63" r="25.5" fill="url(#' + id + '-md)" stroke="' + p.ou + '" stroke-width="1.4"/>' +
+      '<circle cx="45" cy="63" r="23.4" fill="none" stroke="' + p.ou2 + '" stroke-width=".4" stroke-dasharray="1 1.4"/>' +
+      '<g fill="' + p.ac2 + '" stroke="' + p.ou + '" stroke-width=".35" opacity=".9">' + anel + '</g>' +
+      emblema(p, id, n) +
+      ticks +
+      '<circle cx="45" cy="34.5" r="1.5" fill="' + p.ou2 + '"/><circle cx="45" cy="91.5" r="1.5" fill="' + p.ou2 + '"/>' +
+      '<path d="M3 63 l2.6 -3.2 2.6 3.2 -2.6 3.2Z M87 63 l-2.6 -3.2 -2.6 3.2 2.6 3.2Z" fill="' + p.ou + '" stroke="' + p.f0 + '" stroke-width=".4"/>' +
+      '</symbol>';
+  }
+  function jcDorsoGarantir(){
+    if (document.getElementById('jcDorsoDefs')) return;
+    const box = document.createElement('div');
+    box.id = 'jcDorsoDefs';
+    box.setAttribute('aria-hidden', 'true');
+    box.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    let s = '';
+    Object.keys(JC_DORSO.paletas).forEach(function(t){
+      s += jcDorsoSimbolo('jcDorso-' + t, JC_DORSO.paletas[t], JC_DORSO.emblema, JC_DORSO.faixa);
+    });
+    box.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">' + s + '</svg>';
+    document.body.appendChild(box);
+  }
+  function jcDorsoSvg(tipo){
+    jcDorsoGarantir();
+    return '<svg class="jc-dorso" viewBox="0 0 90 126" aria-hidden="true"><use href="#jcDorso-' +
+      (tipo === 'esp' ? 'esp' : 'comum') + '"/></svg>';
+  }
+  /* ---------- vulto encapuzado do aviso "Vez de …" ----------
+     Figura misteriosa de capuz, de frente, encarando quem está na tela: rosto em
+     sombra com os olhos acesos na cor do jogador da vez (--chal-cor-claro), manto
+     na paleta do baralho com acabamento dourado e, nas mãos, o medalhão com o
+     emblema do jogo (o mesmo do dorso das cartas). */
+  function jcVultoSvg(){
+    const p = JC_DORSO.paletas.comum, id = 'jcVulto', n = function(v){ return (+v).toFixed(2); };
+    const olho = 'fill:var(--chal-cor-claro,#FFD23F)';
+    const sil = 'M100 6 C86 18 62 36 60 72 C58 96 60 112 68 124 C52 130 36 138 26 152 C14 170 12 210 10 250 L190 250 C188 210 186 170 174 152 C164 138 148 130 132 124 C140 112 142 96 140 72 C138 36 114 18 100 6Z';
+    let franja = '';
+    for (let i = 0; i < 18; i++){ const x = 10 + (i + 1) * 10; franja += ' L' + n(x - 5) + ' ' + (i % 2 ? 255 : 261) + ' L' + n(x) + ' 250'; }
+    let pts = '';
+    [[30,60,1.6],[172,74,1.2],[18,150,1.1],[184,170,1.6],[44,212,1],[160,222,1.2],[100,8,1.3],[150,30,.9],[54,24,.9]].forEach(function(c, i){
+      pts += '<circle class="jc-vulto-pt" style="fill:var(--chal-cor-claro,#FFD23F);animation-delay:' + (i * -.37).toFixed(2) + 's" cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '"/>';
+    });
+    const mao = function(x, s){
+      return '<g transform="translate(' + x + ' 186) scale(' + s + ' 1)"><path d="M-9 -6 C-11 2 -7 9 0 9 C6 9 9 4 8 -3 L5 -9 C3 -11 -6 -11 -9 -6Z" fill="' + p.f1 + '" stroke="' + p.ou + '" stroke-width=".9"/>' +
+        '<path d="M-5 -8 v6 M-1.6 -9 v7 M1.8 -8.6 v6.4" stroke="' + p.f0 + '" stroke-width=".9" stroke-linecap="round"/></g>';
+    };
+    return '<svg class="jc-vulto" viewBox="0 0 200 264" aria-hidden="true">' +
+      '<defs>' +
+        '<radialGradient id="' + id + '-aura" cx="50%" cy="42%" r="55%"><stop offset="0" style="stop-color:var(--chal-cor-claro,#FFD23F);stop-opacity:.42"/><stop offset="1" style="stop-color:var(--chal-cor,#8B5CF6);stop-opacity:0"/></radialGradient>' +
+        '<linearGradient id="' + id + '-manto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + p.f2 + '"/><stop offset=".45" stop-color="' + p.f1 + '"/><stop offset="1" stop-color="' + p.f0 + '"/></linearGradient>' +
+        '<linearGradient id="' + id + '-lado" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>' +
+        '<radialGradient id="' + id + '-rosto" cx="50%" cy="40%" r="62%"><stop offset="0" stop-color="#05030A"/><stop offset=".75" stop-color="#000"/><stop offset="1" stop-color="' + p.f0 + '"/></radialGradient>' +
+        '<radialGradient id="' + id + '-md" cx="42%" cy="38%" r="65%"><stop offset="0" stop-color="' + p.f2 + '"/><stop offset="1" stop-color="' + p.f0 + '"/></radialGradient>' +
+        '<radialGradient id="' + id + '-cel" cx="40%" cy="36%" r="70%"><stop offset="0" stop-color="' + p.ac2 + '" stop-opacity=".55"/><stop offset="1" stop-color="' + p.ac + '" stop-opacity=".18"/></radialGradient>' +
+        '<filter id="' + id + '-brilho" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="2.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '</defs>' +
+      '<ellipse cx="100" cy="118" rx="98" ry="120" fill="url(#' + id + '-aura)"/>' +
+      '<g class="jc-vulto-pts">' + pts + '</g>' +
+      '<g class="jc-vulto-corpo">' +
+        /* manto + capuz (silhueta), sombra lateral e barra esfarrapada */
+        '<path d="' + sil.replace('L190 250', franja.slice(1) + ' L190 250') + '" fill="url(#' + id + '-manto)" stroke="' + p.ou + '" stroke-width="1.2"/>' +
+        '<path d="' + sil + '" fill="url(#' + id + '-lado)"/>' +
+        /* dobras do manto */
+        '<g fill="none" stroke="' + p.f0 + '" stroke-width="1.5" opacity=".75"><path d="M34 156 C28 190 26 220 26 250"/><path d="M52 160 C48 196 48 226 50 250"/><path d="M166 156 C172 190 174 220 174 250"/><path d="M148 160 C152 196 152 226 150 250"/></g>' +
+        '<g fill="none" stroke="' + p.ac + '" stroke-width=".6" opacity=".45"><path d="M37 154 C31 190 29 220 29 250"/><path d="M163 154 C169 190 171 220 171 250"/></g>' +
+        '<path d="M68 124 C56 130 44 136 34 146 M132 124 C144 130 156 136 166 146" fill="none" stroke="' + p.ou2 + '" stroke-width=".7" opacity=".6"/>' +
+        /* abertura frontal do manto com acabamento dourado e bordado */
+        '<path d="M88 124 C84 170 80 210 76 250 L124 250 C120 210 116 170 112 124Z" fill="' + p.f0 + '" opacity=".75"/>' +
+        '<path d="M88 124 C84 170 80 210 76 250 M112 124 C116 170 120 210 124 250" fill="none" stroke="' + p.ou + '" stroke-width="2"/>' +
+        '<path d="M86 132 C82 176 78 214 74 250 M114 132 C118 176 122 214 126 250" fill="none" stroke="' + p.ou2 + '" stroke-width=".6" stroke-dasharray="2 3" opacity=".8"/>' +
+        /* capuz: borda dupla, rosto em sombra */
+        '<path d="M100 6 Q101 20 100 32" fill="none" stroke="' + p.ou2 + '" stroke-width=".8" opacity=".7"/>' +
+        '<path d="M100 32 C78 34 68 56 68 84 C68 108 82 124 100 128 C118 124 132 108 132 84 C132 56 122 34 100 32Z" fill="' + p.f0 + '" stroke="' + p.ou + '" stroke-width="2.2"/>' +
+        '<path d="M100 38 C82 40 74 60 74 86 C74 106 86 120 100 123 C114 120 126 106 126 86 C126 60 118 40 100 38Z" fill="url(#' + id + '-rosto)"/>' +
+        '<path d="M100 32 C78 34 68 56 68 84" fill="none" stroke="' + p.ou2 + '" stroke-width=".7" opacity=".7"/>' +
+        '<path d="M100 18 L102.6 24 L100 28 L97.4 24Z" fill="' + p.ou + '"/>' +
+        /* olhos acesos (cor do jogador), levemente franzidos: encarando quem joga */
+        '<g class="jc-vulto-olhos" filter="url(#' + id + '-brilho)">' +
+          '<path d="M76 85 Q86 76.5 97 83.5 Q86 91 76 85Z" style="' + olho + '"/>' +
+          '<path d="M124 85 Q114 76.5 103 83.5 Q114 91 124 85Z" style="' + olho + '"/>' +
+        '</g>' +
+        '<g fill="#fff"><ellipse cx="88" cy="84" rx="2.2" ry="1.6"/><ellipse cx="112" cy="84" rx="2.2" ry="1.6"/></g>' +
+        /* mangas e mãos segurando o medalhão do jogo */
+        '<path d="M58 150 C60 170 68 182 80 186 L84 176 C74 170 68 160 66 148Z" fill="' + p.f1 + '" stroke="' + p.ou + '" stroke-width=".8"/>' +
+        '<path d="M142 150 C140 170 132 182 120 186 L116 176 C126 170 132 160 134 148Z" fill="' + p.f1 + '" stroke="' + p.ou + '" stroke-width=".8"/>' +
+        '<path d="M100 128 L100 150" stroke="' + p.ou + '" stroke-width="1"/>' +
+        '<g transform="translate(' + n(100 - 45 * 1.12) + ' ' + n(174 - 63 * 1.12) + ') scale(1.12)">' +
+          '<circle cx="45" cy="63" r="25.5" fill="url(#' + id + '-md)" stroke="' + p.ou + '" stroke-width="1.6"/>' +
+          '<circle cx="45" cy="63" r="23.4" fill="none" stroke="' + p.ou2 + '" stroke-width=".4" stroke-dasharray="1 1.4"/>' +
+          JC_DORSO.emblema(p, id, n) +
+        '</g>' +
+        mao(80, 1) + mao(120, -1) +
+      '</g>' +
+      '</svg>';
+  }
+  (function jcVultoInstalar(){
+    function por(){
+      document.querySelectorAll('.chal-vez-ico').forEach(function(ic){
+        if (ic.querySelector('.jc-vulto')) return;
+        ic.innerHTML = jcVultoSvg();
+        ic.classList.add('jc-vulto-box');
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', por); else por();
+  })();
+  /* ao sacar do monte (que fica dentro do tabuleiro), a tela acompanha a carta até a
+     coluna "Carta em jogo" da área do jogador da vez, que dá um brilho rápido ao recebê-la */
+  function jcRolarParaCartaEmJogo(){
+    const alvo = document.querySelector('#chalLinhaJog .chal-emjogo-col, #chalLinhaJog .chal-painel');
+    if (!alvo || !alvo.getClientRects().length) return;
+    const suave = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    alvo.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block:'center' });
+    alvo.classList.remove('jc-chegou'); void alvo.offsetWidth; alvo.classList.add('jc-chegou');
+    clearTimeout(jcRolarParaCartaEmJogo.t);
+    jcRolarParaCartaEmJogo.t = setTimeout(function(){ alvo.classList.remove('jc-chegou'); }, 1300);
+  }
   let chalEmbTok=0;
   function chalEmbaralharDeck(cb){
     const ov=$('chalEmbaralho'), resE=$('chalEmbRes'), meu=++chalEmbTok;
     resE.textContent=''; ov.classList.remove('parou');
     let cartas='';
-    for(let n=0;n<8;n++) cartas+='<div class="chal-emb-c '+(n%2?'d':'e')+'" style="--n:'+n+'">🦴</div>';
+    for(let n=0;n<8;n++) cartas+='<div class="chal-emb-c '+(n%2?'d':'e')+'" style="--n:'+n+'">'+jcDorsoSvg('comum')+'</div>';
     $('chalEmbPilha').innerHTML='<div class="chal-emb-pilha">'+cartas+'</div>';
     CHAL.monte=baralhar(CHAL.monte.slice());       /* o embaralhamento de fato acontece aqui */
     ov.classList.add('on');
