@@ -61,6 +61,13 @@ canvas{display:block;width:100%;height:100%;image-rendering:auto}
 .overlay .tag{font-family:var(--f-display);font-size:calc(var(--u)*3.4);color:var(--accent);letter-spacing:.1em}
 .overlay h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*8);line-height:1.25;text-wrap:balance;text-shadow:calc(var(--u)*.8) calc(var(--u)*.8) 0 #0d0806}
 .overlay p{margin:0;font-size:calc(var(--u)*7.5);line-height:1.05;max-width:42ch;color:var(--ink)}
+.intro-txt{display:flex;flex-direction:column;gap:calc(var(--u)*3);width:min(100%,calc(var(--u)*330));font-size:calc(var(--u)*7.6);line-height:1.08}
+.overlay .intro-txt p{max-width:none;font-size:inherit;text-align:justify;hyphens:auto}
+.overlay .intro-txt .intro-obj-t{color:var(--accent);margin-bottom:calc(var(--u)*-1.5)}
+.intro-obj{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:calc(var(--u)*1.5)}
+.intro-obj li{display:grid;grid-template-columns:auto 1fr;column-gap:calc(var(--u)*3);align-items:baseline;color:var(--ink)}
+.intro-obj b{font-weight:400;color:var(--accent)}
+.intro-obj span{text-align:justify;hyphens:auto}
 .keys{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*6);font-size:calc(var(--u)*6.5);color:var(--muted)}
 .keys span{display:flex;align-items:center;gap:calc(var(--u)*2)}
 kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);background:var(--panel);border:calc(var(--u)*.6) solid var(--line);border-bottom-width:calc(var(--u)*1.4);padding:calc(var(--u)*1.2) calc(var(--u)*1.8)}
@@ -132,6 +139,25 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
 .sh-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;font-family:var(--f-display);font-size:9px;line-height:1.5;letter-spacing:.06em;color:#7a522f;border-bottom:2px solid #2a1c16;padding-bottom:8px}
 .sheet h3{margin:12px 0 2px;font-family:var(--f-display);font-weight:400;font-size:clamp(11px,1.4vw,15px);line-height:1.5}
 .sh-sub{color:#7a522f;margin-bottom:8px}
+#quiz-q{text-align:justify;hyphens:auto}
+.qopt span{flex:1;text-align:justify;hyphens:auto}
+.sh-fb{margin:10px 0 2px;padding:8px 12px;background:#e7f0e2;border:2px solid #2c6a38;border-left-width:6px;text-align:justify;hyphens:auto}
+.sh-fb b{display:block;font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.06em;color:#1f4a33;margin-bottom:4px}
+.sheet.bonus{background:#f6efd8;border-color:#d9a441}
+.sheet.bonus .sh-head{color:#a8862a}
+#dlg-choices{display:flex;flex-direction:column;gap:calc(var(--u)*1.4);margin-top:calc(var(--u)*2.5)}
+#dlg-choices:empty{display:none}
+#dlg-choices button{all:unset;cursor:pointer;font-size:calc(var(--u)*7);line-height:1.05;color:var(--ink);padding:calc(var(--u)*.6) calc(var(--u)*2);border:calc(var(--u)*.5) solid transparent}
+#dlg-choices button::before{content:'  ';white-space:pre;font-family:var(--f-display);font-size:.5em}
+#dlg-choices button.on{color:var(--accent);border-color:var(--line);background:rgba(217,164,65,.08)}
+#dlg-choices button.on::before{content:'▶ ';color:var(--accent)}
+.rev-intro{text-align:justify}
+.rev-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:6px 0 4px}
+.rev-item{font:inherit;color:inherit;text-align:left;cursor:pointer;background:#fbf6e6;border:2px solid #b3a38a;padding:6px 10px;display:flex;flex-direction:column;gap:2px}
+.rev-item small{font-family:var(--f-display);font-size:8px;letter-spacing:.05em}
+.rev-item span{font-size:.82em;line-height:1.1;overflow-wrap:anywhere}
+.rev-item.ok small{color:#1f7a43}.rev-item.err small{color:#b3261e}.rev-item.blank small{color:#7a522f}
+.rev-item.on,.rev-item:focus-visible{outline:none;border-color:#2a1c16;background:#f2d58a;box-shadow:inset 0 0 0 2px #2a1c16}
 .sheet p{margin:0 0 12px}
 .qopt{display:flex;gap:10px;align-items:flex-start;width:100%;box-sizing:border-box;text-align:left;font:inherit;color:inherit;background:#fbf6e6;border:2px solid #b3a38a;border-radius:0;padding:6px 10px;margin:0 0 6px;cursor:pointer}
 .qopt b{flex:none;font-family:var(--f-display);font-weight:400;font-size:.5em;line-height:2;background:#2a1c16;color:#f3ead2;padding:0 7px;margin-top:2px}
@@ -241,16 +267,13 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
       <div id="dialog" hidden>
         <div id="dlg-who"></div>
         <div id="dlg-text"></div>
+        <div id="dlg-choices"></div>
         <div id="dlg-next">▼ ENTER</div>
       </div>
       <div class="overlay" id="intro">
-        <span class="tag">TÉRREO · 07h30</span>
+        <span class="tag">TÉRREO · 07h30 · VÉSPERA DA PROVA</span>
         <h2>Corredor da Secretaria</h2>
-        <p id="intro-p">São 7h30 e a aula de Bioquímica começa às 8h. Pegue seu crachá na secretaria, responda as 10 folhas de atividade deixadas nas salas e entregue aos professores antes da aula.</p>
-        <div class="keys">
-          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</span>
-          <span><kbd>ENTER</kbd> interagir</span>
-        </div>
+        <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem, os professores Aldair e Heloísa passaram uma atividade de Bioquímica com 10 folhas de exercícios sobre as reações da glicólise. A prova sobre esse conteúdo será amanhã, e a aula de hoje, das 8h às 11h30, na Sala 101, será dedicada à resolução de dúvidas.</p><p>Entretanto, você esqueceu as folhas nas salas em que teve aula ontem: 101, 103 e 201.</p><p class="intro-obj-t">Seus objetivos:</p><ol class="intro-obj"><li><b>A)</b><span>Pegar o seu crachá na secretaria, aqui no térreo.</span></li><li><b>B)</b><span>Recuperar as folhas nas salas 101, 103 e 201 e responder a todas as questões.</span></li><li><b>C)</b><span>Entregar a atividade aos professores, na Sala 101, até o fim da aula, às 11h30.</span></li></ol></div>
         <button class="btn" id="btn-start" type="button">ENTER · COMEÇAR</button>
       </div>
       <div class="overlay" id="end" hidden>
@@ -297,6 +320,21 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
   </div>
 </div>
 
+<div class="modal" id="review" hidden role="dialog" aria-label="Correção comentada">
+  <div class="modal-bar">
+    <span class="mt">CORREÇÃO COMENTADA</span>
+    <span class="mh"><span><kbd>W</kbd><kbd>S</kbd><kbd>A</kbd><kbd>D</kbd> escolher</span><span><kbd>ENTER</kbd> abrir</span><span><kbd>ESC</kbd> encerrar</span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="sheet">
+      <div class="sh-head"><span>UNINOGWARTS · CORREÇÃO COM OS PROFESSORES</span><span id="rev-aluno"></span></div>
+      <h3>Tire suas dúvidas</h3>
+      <p class="rev-intro">Escolha a questão em que você ficou com dúvida. Os professores mostram o gabarito e comentam a resposta. Quando terminar, encerre a correção.</p>
+      <div class="rev-list" id="rev-list"></div>
+      <div class="sh-foot"><span></span><span class="sh-btns"><button class="mbtn primary" id="rev-done" type="button">ENCERRAR CORREÇÃO</button></span></div>
+    </div>
+  </div>
+</div>
 <div class="modal" id="quiz" hidden role="dialog" aria-label="Folha de atividade">
   <div class="modal-bar">
     <span class="mt" id="quiz-bar">PROVA</span>
@@ -309,6 +347,7 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
       <div class="sh-sub" id="quiz-sub"></div>
       <p id="quiz-q"></p>
       <div id="quiz-opts"></div>
+      <div class="sh-fb" id="quiz-fb" hidden><b id="quiz-fb-who"></b><span id="quiz-fb-t"></span></div>
       <div class="sh-foot">
         <span id="quiz-msg" aria-live="polite"></span>
         <span class="sh-btns">
@@ -591,7 +630,7 @@ function drawTorches(t){
 /* ---------- clock (drawn live) ---------- */
 function gameMinutes(){
   const el=(state==='intro'||state==='boot'||!startTime)?0:((endTime||performance.now())-startTime)/1000;
-  return Math.min(CLASS_MIN,START_MIN+Math.floor(el/SECONDS_PER_GAME_MINUTE)); // stops at class time
+  return Math.min(END_MIN,START_MIN+Math.floor(el/SECONDS_PER_GAME_MINUTE)); // stops when the class ends
 }
 function drawClock(){
   const cx=59,cy=9;
@@ -929,8 +968,8 @@ const lockerLines={
 });
 add({id:'board',name:'Quadro de avisos',wall:true,cx:132,top:12,zone:wallZone(108,48),draw:drawBoard,
   act:()=>{say([
-    {who:'QUADRO DE AVISOS',t:'AULA DE BIOQUÍMICA: Glicólise, as 10 reações. Hoje, 8h, Sala 101 (1º andar).'},
-    {who:'QUADRO DE AVISOS',t:'ATIVIDADE PRÉ-AULA: responda as 10 folhas deixadas nas carteiras das salas 101, 103 e 201 e entregue aos professores antes das 8h.'},
+    {who:'QUADRO DE AVISOS',t:'BIOQUÍMICA: aula de dúvidas sobre glicólise hoje, das 8h às 11h30, Sala 101 (1º andar).'},
+    {who:'QUADRO DE AVISOS',t:'PROVA DE BIOQUÍMICA: amanhã. Conteúdo: as 10 reações da glicólise. A lição de casa deve ser entregue até o fim da aula de hoje, às 11h30.'},
     {who:'QUADRO DE AVISOS',t:'O crachá libera a entrada nas salas. No laboratório, jaleco obrigatório. Sem exceções. (Coordenação do Curso)'},
     {who:'QUADRO DE AVISOS',t:'Dica: o cartaz com a glicólise completa está no laboratório multidisciplinar, no fim deste corredor.'},
     {who:'QUADRO DE AVISOS',t:'Também tem um panfleto: "Vende-se estetoscópio quase novo". Não é hora disso.'}
@@ -938,12 +977,12 @@ add({id:'board',name:'Quadro de avisos',wall:true,cx:132,top:12,zone:wallZone(10
 add({id:'secretaria',name:'Secretaria',wall:true,cx:188,top:14,zone:wallZone(164,48),draw:drawSecretaria,
   act:()=>{
     if(!flags.cracha) return say([
-      {who:'DONA CIDA',t:'Bom dia! Você é do 1º ano, não é? Seu crachá chegou ontem.'},
-      {who:'DONA CIDA',t:'Confere a foto... Tá ótima. É ele que abre as salas do prédio, então não perde!'},
+      {who:'DONA TATI',t:'Bom dia! Você é do 1º ano, não é? Seu crachá chegou ontem.'},
+      {who:'DONA TATI',t:'Confere a foto... Tá ótima. É ele que abre as salas do prédio, então não perde!'},
       {t:'Você pegou: CRACHÁ',item:'cracha'}
     ]);
-    say([{who:'DONA CIDA',t:'Mais alguma coisa? Corre que o professor de Bioquímica não espera ninguém.'},
-         {who:'DONA CIDA',t:'Ah, e se achar alguma coisa esquecida, a caixa de achados e perdidos fica aqui no balcão.'}]);
+    say([{who:'DONA TATI',t:'Mais alguma coisa? Corre que o professor de Bioquímica não espera ninguém.'},
+         {who:'DONA TATI',t:'Ah, e se achar alguma coisa esquecida, a caixa de achados e perdidos fica aqui no balcão.'}]);
   }});
 add({id:'cida',wall:true,deco:true,cx:188,top:14,sprite:t=>{const c=cidaSprite(t);return {c:c.c,x:180,y:15};}});
 add({id:'balcao',wall:true,deco:true,cx:188,top:30,draw:()=>{
@@ -954,9 +993,11 @@ add({id:'balcao',wall:true,deco:true,cx:188,top:30,draw:()=>{
 add({id:'almox',name:'Almoxarifado',wall:true,cx:305,top:12,zone:wallZone(288,42),draw:drawStoreDoor,
   fx:t=>r(324,31,3,2,(Math.floor(t*2)%2)?'#d0352b':'#5a2230'),
   staffOnly:true,sign:'Placa: "ALMOXARIFADO. Acesso restrito a funcionários."',
-  act(){enterRoom(this);}});
+  act(){sfx.bump();say(flags.cracha
+    ?[{t:'Você aproxima seu crachá do leitor... BIP-BIP. Luz vermelha: ACESSO NEGADO.'},{t:'O almoxarifado só abre com o crachá dos funcionários da escola.'}]
+    :[{t:this.sign},{t:'Só funcionários da escola entram aqui.'}]);}});
 add({id:'entrada',name:'Entrada da escola',wall:true,cx:5,oy:116,top:88,zone:{x:10,y:90,w:22,h:52},draw:()=>{},
-  act:()=>say([{t:'A porta de entrada da escola. Lá fora, o estacionamento já está lotando.'},{t:'Sair agora não dá: a aula começa às 8h.'}])});
+  act:()=>say([{t:'A porta de entrada da escola. Lá fora, o estacionamento já está lotando.'},{t:'Sair agora não dá: você precisa entregar a lição de casa até as 11h30.'}])});
 
 [
   {x:68,y:86,extra:null,lines:['Um banco ao lado do mapa do térreo. Bom ponto de encontro com a turma.']},
@@ -974,10 +1015,10 @@ add({id:'marina',name:'Marina',cx:124,top:126,base:160,solid:{x:96,y:144,w:56,h:
   fx:t=>{if((t%4.2)<.35){r(126,148,4,3,'#efe3c8');px(126,148,'#9aa2a9');}},
   act:()=>{
     let l;
-    if(!flags.board) l=[{who:'MARINA',t:'Bom dia! Já viu o quadro de avisos? Mudaram a aula de lugar de novo.'}];
-    else if(!flags.cracha) l=[{who:'MARINA',t:'Sem crachá você não entra em sala nenhuma. A Dona Cida, da secretaria, está entregando.'}];
+    if(!flags.board) l=[{who:'MARINA',t:'Bom dia! Já fez a lição de Bioquímica? Amanhã tem prova! Dá uma olhada no quadro de avisos.'}];
+    else if(!flags.cracha) l=[{who:'MARINA',t:'Sem crachá você não entra em sala nenhuma. A Dona Tati, da secretaria, está entregando.'}];
     else if(!flags.jaleco) l=[{who:'MARINA',t:'Quer ver o cartaz da glicólise no laboratório? Sem jaleco não deixam entrar.'},{who:'MARINA',t:'Seu armário não é o 42? Fica ali na esquerda.'}];
-    else l=[{who:'MARINA',t:'Tudo pronto? As folhas da atividade estão nas salas lá de cima. Pode ir subindo!'},{who:'MARINA',t:'Eu vou revisar as 10 reações no cartaz mais uma vez.'}];
+    else l=[{who:'MARINA',t:'Esqueceu as folhas da lição ontem? Você teve aula na 101, na 103 e na 201. Devem estar por lá!'},{who:'MARINA',t:'Eu vou revisar as 10 reações no cartaz mais uma vez.'}];
     say(l);
   }});
 add({id:'lanches',name:'Máquina de lanches',cx:248,top:168,base:210,solid:{x:236,y:198,w:24,h:12},draw:drawSnacks,
@@ -1133,7 +1174,7 @@ const pedro=add({id:'pedro',name:'Pedro (veterano)',cx:0,top:0,base:0,solid:{x:0
   act(){
     this.dir=player.x<this.x?'left':'right';
     const l=this.talkCount%2===0
-      ?[{who:'PEDRO (VETERANO)',t:'E aí, calouro! Glicólise hoje? Decora as três enzimas irreversíveis.'},
+      ?[{who:'PEDRO (VETERANO)',t:'E aí, calouro! Prova de glicólise amanhã? Decora as três enzimas irreversíveis.'},
         {who:'PEDRO (VETERANO)',t:'Hexocinase, fosfofrutocinase-1 e piruvato-cinase. Cai em toda prova.'}]
       :[{who:'PEDRO (VETERANO)',t:'Saldo final por glicose: 2 ATP, 2 NADH e 2 piruvatos.'}];
     this.talkCount++;this.pause=2.5;say(l);
@@ -1145,17 +1186,7 @@ function syncPedro(){
 }
 function resetPedro(){pedro.x=74;pedro.y=100;pedro.dir='right';pedro.pause=0;pedro.talkCount=0;syncPedro();}
 resetPedro();
-function updatePedro(dt){
-  pedro.moving=false;
-  if(state!=='play'||scene!=='terreo')return;
-  if(pedro.pause>0){pedro.pause-=dt;return;}
-  const sp=26,nx=pedro.x+(pedro.dir==='right'?sp:-sp)*dt;
-  if(Math.abs(nx-player.x)<12&&Math.abs(pedro.y-player.y)<7)return;
-  pedro.x=nx;pedro.moving=true;pedro.anim+=dt*7;
-  if(pedro.x>316){pedro.x=316;pedro.dir='left';pedro.pause=1.6;}
-  if(pedro.x<74){pedro.x=74;pedro.dir='right';pedro.pause=1.6;}
-  syncPedro();
-}
+function updatePedro(dt){} // Pedro now walks with the other corridor students (see wanderers)
 
 
 /* ======================================================================
@@ -1353,14 +1384,6 @@ add({id:'plantaA',name:'Planta',cx:21,top:178,base:210,solid:{x:14,y:200,w:14,h:
 HEAD.lucas=HEAD.player;
 CHAR_PAL.lucas=Object.assign({},CHAR_PAL.player,{H:'#f2c94c',h:'#d9a441',d:'#a8862a',i:'#2d6fb5',T:'#ef6a5c',t:'#d0352b',u:'#7a2e3e',A:'#f4f6f4',
   P:'#3a4740',p:'#2c3631',R:'#3f8a4c',r:'#2c6a38',B:'#2c3236'});
-add({id:'lucas',name:'Lucas (2º ano)',cx:180,top:52,base:78,solid:{x:175,y:74,w:10,h:4},talk:0,
-  sprite:t=>{const c=personSprite('lucas','shirt','down',0,blinkAt(t,2.7));return {c:c.c,x:172,y:55};},
-  act(){
-    const l=this.talk%2===0
-      ?[{who:'LUCAS (2º ANO)',t:'Calouro? A Sala 101 é a primeira porta à esquerda. Seu crachá abre.'}]
-      :[{who:'LUCAS (2º ANO)',t:'Dica de quem já fez a prova: a PFK-1 é inibida por ATP e citrato, e ativada por AMP.'}];
-    this.talk++;say(l);
-  }});
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
 
@@ -1698,7 +1721,7 @@ function drawReactionPoster(x,n){
 [[66,1],[100,2]].forEach(([x,n])=>add({id:'reacao'+n,name:'Cartaz da reação '+n,wall:true,cx:x+14,top:12,zone:{x:x-2,y:64,w:32,h:22},
   draw:()=>drawReactionPoster(x,n),act:()=>openPoster(n)}));
 add({id:'quadro',name:'Quadro',wall:true,cx:192,top:12,zone:{x:132,y:64,w:120,h:22},draw:drawBlackboard,
-  act:()=>say([{who:'QUADRO',t:'GLICÓLISE: glicose → 2 piruvato.'},{who:'QUADRO',t:'Saldo por glicose: 2 ATP e 2 NADH. Ainda não apagaram a aula de ontem.'}])});
+  act:()=>say([{who:'QUADRO',t:'GLICÓLISE: glicose → 2 piruvato.'},{who:'QUADRO',t:'Saldo por glicose: 2 ATP e 2 NADH. Ainda não apagaram a aula de ontem, a mesma em que você esqueceu as folhas.'}])});
 // --- Profa. Heloísa, Prof. Aldair and students with questions ---
 HEAD.aldair=HEAD.player;
 CHAR_PAL.aldair=Object.assign({},CHAR_PAL.player,{S:'#c98b62',s:'#8a5a3c',H:'#7b8186',h:'#3a2414',d:'#1d1612',i:'#3a2414',m:'#7a2e3e',
@@ -1751,8 +1774,8 @@ const aldair=add({id:'aldair',name:'Prof. Aldair',talk:0,cx:150,top:78,base:104,
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
-    const L=[[{who:'PROF. ALDAIR',t:'Bom dia! Eu sou o professor Aldair, de Bioquímica. Hoje vamos ver as 10 reações da glicólise.'},
-       {who:'PROF. ALDAIR',t:'Antes da aula, responda as 10 folhas de atividade que deixamos nas carteiras das salas 101, 103 e 201 e traga para nós.'}],
+    const L=[[{who:'PROF. ALDAIR',t:'Bom dia! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
+       {who:'PROF. ALDAIR',t:'Cadê a sua lição de casa? Esqueceu nas salas de ontem? Procure na 101, na 103 e na 201 e traga até 11h30. Amanhã tem prova!'}],
       [{who:'PROF. ALDAIR',t:'Sabe por que a hexocinase gasta ATP logo na primeira reação?'},
        {who:'PROF. ALDAIR',t:'A glicose-6-fosfato não sai da célula pelos transportadores de glicose. A fosforilação "prende" a glicose lá dentro.'}],
       [{who:'PROF. ALDAIR',t:'E a hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Guarde isso para a prova!'}]];
@@ -1770,7 +1793,7 @@ const heloisa=add({id:'heloisa',name:'Profa. Heloísa',talk:0,cx:214,top:78,base
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
     const L=[[{who:'PROFA. HELOÍSA',t:'Olá! Sou a professora Heloísa, também de Bioquímica. Seja bem-vindo à Sala 101!'},
-       {who:'PROFA. HELOÍSA',t:'Cada folha da atividade só pode ser respondida uma vez. Quando terminar as 10, eu e o professor Aldair corrigimos aqui na mesa.'}],
+       {who:'PROFA. HELOÍSA',t:'Cada folha da lição só pode ser respondida uma vez. Quando terminar as 10, eu e o professor Aldair corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
       [{who:'PROFA. HELOÍSA',t:'Já viu os cartazes das reações 1 e 2 na parede, ao lado do quadro? Eles resumem o começo da glicólise.'}],
       [{who:'PROFA. HELOÍSA',t:'A reação 2 é reversível: a fosfo-hexose-isomerase converte glicose-6-fosfato em frutose-6-fosfato, que tem um anel de cinco lados.'}]];
     say(L[this.talk%L.length]);this.talk++;
@@ -1780,7 +1803,7 @@ HEAD.ana=HEAD.player;HEAD.davi=HEAD.pedro;
 CHAR_PAL.ana=Object.assign({},CHAR_PAL.player,{H:'#fff27a',h:'#e8bf3f',d:'#a8862a',T:'#86aebb',t:'#5b8dba',u:'#2b4a6f',R:'#ec9fa8',r:'#d0352b'});
 CHAR_PAL.davi=Object.assign({},CHAR_PAL.pedro,{S:'#d9a37c',s:'#a87445',T:'#4d82c8',t:'#2d6fb5',u:'#1f2f4f',R:'#7a2e3e',r:'#5a2230'});
 const SEATED={
-  0:['bia','BIA','shirt','Oi! Senta perto da gente, a aula já vai começar.'],
+  0:['bia','BIA','shirt','Oi! Já entregou a lição? Eu entreguei e agora estou revisando para a prova de amanhã.'],
   3:['rafael','RAFAEL','shirt','Perguntei ao professor: o ATP gasto na reação 1 é recuperado depois, na fase de pagamento.'],
   5:['julia','JÚLIA','hoodie','Por que a frutose-6-fosfato tem anel de cinco lados? Vou perguntar para a professora Heloísa.'],
   6:['caio','CAIO','shirt','Estou anotando tudo. A reação 2 tem ΔG perto de zero, por isso anda nos dois sentidos.'],
@@ -1965,6 +1988,15 @@ const BENCHES=[
 ];
 BENCHES.forEach((b,i)=>add({id:'bancada'+i,name:'Bancada',cx:b.x+65,top:b.base-36,base:b.base+11,solid:{x:b.x,y:b.base-20,w:130,h:31},
   zone:{x:b.x-6,y:b.base-26,w:142,h:44},draw:()=>drawLabBench(b.x,b.base,b.v),act:()=>say(b.lines.map(t=>({t})))}));
+{ // yesterday afternoon's bonus sheet lies on the spectrophotometer bench until the player answers it
+  const bb=SCENES.salaLab.find(o=>o.id==='bancada3'),B=BENCHES[3],act0=bb.act;
+  Object.defineProperty(bb,'name',{get:()=>provas&&!provas.b?'Folha da questão bônus':'Bancada'});
+  bb.key=()=>provas&&provas.b?'1':'0';
+  bb.draw=()=>{drawLabBench(B.x,B.base,B.v);if(!(provas&&provas.b)){const x=B.x+74,y=B.base-30;
+    r(x,y,16,8,'#f4f6f4');r(x,y+8,16,1,'#9aa2a9');r(x+2,y+2,9,1,'#9aa2a9');r(x+2,y+4,11,1,'#9aa2a9');r(x+12,y+1,3,3,'#d9a441');}};
+  bb.act=()=>provas.b?act0():(flags.timeUp?say([{t:'Uma folha esquecida: a questão bônus da aula prática de ontem.'},{t:'A aula já acabou. Não dá mais tempo de responder esta folha.'}])
+    :say([{t:'Em cima da bancada, uma folha esquecida: a questão bônus da aula prática de ontem à tarde!'}],()=>openQuiz('b')));
+}
 add({id:'poster',name:'Cartaz da glicólise',wall:true,cx:37,top:11,zone:{x:14,y:64,w:46,h:22},
   draw:()=>{g.save();g.translate(-50,0);drawPoster();g.restore();},act:()=>openPoster(0)});
 add({id:'janelaLab',name:'Janela',wall:true,cx:93,top:6,zone:{x:70,y:64,w:46,h:22},draw:()=>drawCastleWindow(72,42),
@@ -2009,19 +2041,141 @@ CHAR_PAL.tiago=Object.assign({},CHAR_PAL.pedro,{S:'#d9a37c',s:'#a87445',m:'#7a2e
 CHAR_PAL.lucia={i:'#5a3d24',S:'#e8b48c',s:'#c98b62',H:'#d8dee2',h:'#b9b9c2',d:'#9aa2a9',m:'#a12a22',A:'#efe3c8',C:'#f4f6f4',c:'#1f4a33',P:'#4a5055',p:'#2c3236',B:'#3a2414',
   W:'#8e5aa8',w:'#6a3f80',x:'#7a4a94',N:'#d9a441',G:'#efe3c8'}; // purple cardigan instead of the lab coat
 CHAR_PAL.gabriel=Object.assign({},CHAR_PAL.player,{i:'#3f8a4c',S:'#e8b48c',s:'#c98b62',H:'#c9562a',h:'#a13f1c',d:'#6e2a12',T:'#4a5055',t:'#2c3236',u:'#1d2226',P:'#5a3d24',p:'#3a2414',B:'#f4f6f4',R:'#2d6fb5',r:'#1f4a8a'});
-bystander('andar1','camila','Camila (monitora)',470,84,longHair('camila',1.3),[
-  'Sou monitora de Bioquímica. As folhas da atividade de glicólise estão nas carteiras das salas 101, 103 e 201.',
-  'Cada folha só pode ser respondida uma vez. Leia o cartaz da reação na parede antes de confirmar.',
-  'Guarde isto: as reações 1, 3 e 10 são as irreversíveis da glicólise. Hexocinase, PFK-1 e piruvato-cinase.']);
-bystander('andar1','tiago','Tiago (1º ano)',160,168,t=>personSprite('tiago','shirt','down',0,blinkAt(t,2.2)),[
-  'Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
-  'A aldolase quebra a frutose-1,6-bisfosfato em duas trioses: DHAP e gliceraldeído-3-fosfato.']);
 bystander('andar2','lucia','Dona Lúcia (bibliotecária)',270,84,longHair('lucia',.4),[
   'Silêncio no corredor da biblioteca, por favor. O Lehninger fica na estante de Bioquímica.',
   'As hemácias não têm mitocôndrias. Todo o ATP delas vem da glicólise. Está no capítulo que você devia ter lido.']);
-bystander('andar2','gabriel','Gabriel (3º ano)',540,165,t=>personSprite('gabriel','hoodie','down',0,blinkAt(t,3.1)),[
+
+/* ---------- students walking the corridors ----------
+   Each one strolls back and forth along a lane of its corridor and pauses now and then. Two students
+   of the same corridor whose lanes overlap sometimes meet halfway and chat for a few seconds (speech
+   bubbles alternate over their heads). Talking to one of them interrupts the chat. */
+const WANDER={terreo:[],andar1:[],andar2:[]};
+function wanderer(sc,id,name,x0,x1,y,look,lines){
+  const who=name.toUpperCase();
+  const o={id,name,x0,x1,y0:y,x:x0+Math.random()*(x1-x0),y,dir:'down',anim:0,moving:false,wait:1+Math.random()*3,cool:5+Math.random()*10,
+    tx:null,ty:y,meet:null,chat:0,role:0,talk:0,
+    sprite(t){const c=look(this,t);return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
+    fx(t){if(this.chat>0)chatBubble(this,t);},
+    act(){stopChat(this);this.wait=4;this.dir=faceTo(this,player);say([{who,t:lines[this.talk++%lines.length]}]);}};
+  syncW(o);SCENES[sc].push(o);WANDER[sc].push(o);return o;
+}
+const faceTo=(o,p)=>Math.abs(p.x-o.x)>Math.abs(p.y-o.y)?(p.x<o.x?'left':'right'):(p.y<o.y?'up':'down');
+function stopChat(o){const p=o.meet;o.meet=null;o.chat=0;o.tx=null;o.cool=8+Math.random()*10;
+  if(p&&p.meet===o){p.meet=null;p.chat=0;p.tx=null;p.wait=1+Math.random()*2;p.cool=8+Math.random()*10;}}
+function chatBubble(o,t){
+  if(Math.floor(t/1.3)%2!==o.role)return; // the two take turns
+  const x=Math.round(o.x)-6,y=Math.round(o.y)-37,k=Math.floor(t*4)%3;
+  r(x-1,y-1,14,9,'#1d1612');r(x,y,12,7,'#f4f6f4');r(x+3,y+7,3,2,'#f4f6f4');px(x+3,y+9,'#1d1612');px(x+6,y+7,'#1d1612');
+  for(let i=0;i<3;i++)r(x+2+i*3,y+3,2,1,i<=k?'#3a2414':'#b9c2c8');
+}
+function updateWanderers(dt){
+  if(state!=='play')return;
+  const L=WANDER[scene];if(!L)return;
+  for(const o of L){
+    o.moving=false;
+    if(o.chat>0){o.chat-=dt;if(o.chat<=0)stopChat(o);continue;}
+    o.cool-=dt;
+    if(o.wait>0){o.wait-=dt;continue;}
+    if(o.tx==null){
+      // look for a partner to chat with: free, rested, lanes overlapping
+      const p=o.cool<=0&&L.find(q=>q!==o&&!q.meet&&q.chat<=0&&q.cool<=0&&Math.max(o.x0,q.x0)+20<Math.min(o.x1,q.x1));
+      if(p){
+        const lo=Math.max(o.x0,p.x0)+8,hi=Math.min(o.x1,p.x1)-8,mid=Math.max(lo,Math.min(hi,(o.x+p.x)/2)),ym=Math.round((o.y0+p.y0)/2);
+        const left=o.x<p.x?o:p,right=left===o?p:o;
+        left.tx=mid-10;right.tx=mid+10;left.ty=right.ty=ym;left.role=0;right.role=1;
+        o.meet=p;p.meet=o;p.wait=0;
+      }else{o.tx=o.x0+Math.random()*(o.x1-o.x0);o.ty=o.y0;}
+    }
+    const dx=o.tx-o.x,dy=o.ty-o.y,d=Math.hypot(dx,dy);
+    if(d<.8){
+      o.x=o.tx;o.y=o.ty;syncW(o);
+      if(o.meet){
+        const p=o.meet;
+        if(Math.hypot(p.tx-p.x,p.ty-p.y)<.8){ // both arrived: face each other and talk
+          const c=4+Math.random()*4;o.chat=p.chat=c;o.dir=faceTo(o,p);p.dir=faceTo(p,o);
+        }else o.dir=faceTo(o,p);
+        continue;
+      }
+      o.tx=null;o.wait=1.5+Math.random()*4;o.dir=Math.random()<.5?'down':o.dir;continue;
+    }
+    const st=Math.min(d,24*dt),nx=o.x+dx/d*st,ny=o.y+dy/d*st;
+    if(Math.abs(nx-player.x)<11&&Math.abs(ny-player.y)<7)continue; // waits for the player to pass
+    o.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');
+    o.x=nx;o.y=ny;o.moving=true;o.anim+=dt*7;syncW(o);
+  }
+}
+const walkLook=(who,outfit,seed)=>(o,t)=>personSprite(who,outfit,o.dir,Math.floor(o.anim),blinkAt(t,seed));
+const coatLook=(who,seed)=>(o,t)=>{const f=Math.floor(o.anim),b=blinkAt(t,seed);
+  return gridSprite(who+':'+o.dir+':'+(f%4)+':'+(b?1:0),heloisaRows(o.dir,f,b),CHAR_PAL[who],o.dir==='left');};
+HEAD.larissa=HEAD.player;HEAD.bruno=HEAD.pedro;HEAD.bruna=HEAD.player;HEAD.felipe=HEAD.player;
+CHAR_PAL.larissa={i:'#3f8a4c',S:'#e8b48c',s:'#c98b62',H:'#5a2d1a',h:'#3a2414',d:'#2a1a10',m:'#a12a22',A:'#d0352b',C:'#f4f6f4',c:'#1f4a33',P:'#1f2f4f',p:'#0e1417',B:'#7a2e3e'};
+CHAR_PAL.bruno=Object.assign({},CHAR_PAL.pedro,{S:'#c98b62',s:'#8a5a3c',T:'#e8bf3f',t:'#a8862a',u:'#7a5a1a',R:'#2b4a6f',r:'#1f2f4f',P:'#3a4740',p:'#2c3631'});
+CHAR_PAL.bruna={i:'#2d6fb5',S:'#8a5a3c',s:'#5a3a28',H:'#e8913a',h:'#a8862a',d:'#7a522f',m:'#7a2e3e',A:'#8e5aa8',C:'#f4f6f4',c:'#1f4a33',P:'#2b4a6f',p:'#1f2f4f',B:'#2c3236'};
+CHAR_PAL.felipe=Object.assign({},CHAR_PAL.player,{i:'#3a2414',S:'#d9a37c',s:'#a87445',H:'#1d1612',h:'#0e1417',d:'#0e1417',T:'#3fa682',t:'#2d8a6a',u:'#246f55',R:'#5a3d24',r:'#3a2414',P:'#4a5055',p:'#2c3236'});
+// ground floor: Pedro (west) and two students in the lab wing
+{const L=SCENES.terreo,i=L.indexOf(pedro);if(i>=0)L.splice(i,1);}
+wanderer('terreo','larissa','Larissa (2º ano)',392,676,134,coatLook('larissa',.8),[
+  'Amanhã é a prova de glicólise? No ano passado caiu muito a regulação da PFK-1.',
+  'No fígado, quem faz a reação 1 é a glicocinase. Ela não é inibida pela glicose-6-fosfato, ao contrário da hexocinase.']);
+wanderer('terreo','bruno','Bruno (1º ano)',392,676,134,walkLook('bruno','hoodie',1.7),[
+  'Vou para o laboratório rever a fermentação. Os balões enchendo de CO2 são a melhor parte!',
+  'Sem oxigênio, o piruvato vira lactato no músculo e etanol na levedura. Os dois caminhos regeneram o NAD+.']);
+// 1st floor: Lucas and Tiago west of the stairwell, Camila and Bruna east of it
+wanderer('andar1','lucas','Lucas (2º ano)',24,318,104,walkLook('lucas','shirt',2.7),[
+  'Calouro? A Sala 101 é a primeira porta à esquerda. Seu crachá abre.',
+  'Dica de quem já fez a prova: a PFK-1 é inibida por ATP e citrato, e ativada por AMP.']);
+wanderer('andar1','tiago','Tiago (1º ano)',24,318,114,walkLook('tiago','shirt',2.2),[
+  'Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
+  'A aldolase quebra a frutose-1,6-bisfosfato em duas trioses: DHAP e gliceraldeído-3-fosfato.']);
+wanderer('andar1','camila','Camila (monitora)',392,688,104,coatLook('camila',1.3),[
+  'Sou monitora de Bioquímica. Achei folhas de lição esquecidas nas carteiras das salas 101, 103 e 201. São suas?',
+  'Cada folha só pode ser respondida uma vez. Leia o cartaz da reação na parede antes de confirmar.',
+  'Guarde isto: as reações 1, 3 e 10 são as irreversíveis da glicólise. Hexocinase, PFK-1 e piruvato-cinase.']);
+wanderer('andar1','bruna','Bruna (1º ano)',392,688,114,coatLook('bruna',2.9),[
+  'Estou indo para a monitoria tirar uma dúvida sobre a aldolase.',
+  'A triose-fosfato-isomerase garante que as duas metades da glicose sigam pela fase de pagamento.']);
+// 2nd floor: Gabriel and Felipe east of the stairwell
+wanderer('andar2','gabriel','Gabriel (3º ano)',398,688,104,walkLook('gabriel','hoodie',3.1),[
   'A fase de pagamento rende 4 ATP e 2 NADH por glicose. Descontando os 2 ATP investidos, o saldo é de 2 ATP.',
   'As reações 7 e 10 fazem fosforilação no nível do substrato: fosfoglicerato-cinase e piruvato-cinase.']);
+wanderer('andar2','felipe','Felipe (2º ano)',398,688,114,walkLook('felipe','shirt',.5),[
+  'Vim devolver o Lehninger na biblioteca antes da prova.',
+  'O arsenato engana a GAPDH e a glicólise segue sem gerar o ATP da reação 7. Pegadinha clássica de prova!']);
+
+// Prof. Kido (Histologia) strolls in front of the teachers' room; every talk is a kind greeting and a joke
+HEAD.kido=HEAD.player;
+CHAR_PAL.kido=Object.assign({},CHAR_PAL.player,{i:'#3a2414',S:'#e8b48c',s:'#c98b62',H:'#d8dee2',h:'#9aa2a9',d:'#7b8186',m:'#7a2e3e',
+  P:'#3a4740',p:'#2c3631',B:'#1d2226',c:'#7a2e3e'});
+const kido=wanderer('andar1','kido','Prof. Kido (Histologia)',236,372,96,walkLook('kido','coat',1.1),['']);
+kido.cool=20;
+{
+  const W='PROF. KIDO (HISTOLOGIA)';
+  const HI=['Bom dia, jovem! Professor Kido, de Histologia, ao seu dispor. Quer ouvir uma piada?',
+    'Olá de novo! Chegou na hora certa: acabei de lembrar de mais uma.',
+    'Ah, meu ouvinte preferido! Tenho uma fresquinha para você.',
+    'Estudando muito? Então merece uma pausa de dez segundos. Lá vai!'];
+  const JOKES=[
+    ['Por que a hemácia nunca planeja as férias?','Porque ela não tem núcleo para tomar decisões!'],
+    ['Por que a célula foi ao psicólogo?','Porque estava passando por uma fase de divisão!'],
+    ['Qual é o tecido mais unido da faculdade?','O epitelial: as células vivem coladinhas e não deixam espaço nem para fofoca!'],
+    ['Por que a mitocôndria nunca fica desanimada?','Porque ela sempre tem energia para dar e vender!'],
+    ['Por que o osteoclasto vive brigando com o osteoblasto?','Porque um passa o dia construindo e o outro desmanchando tudo!'],
+    ['Por que o tecido adiposo é o amigo mais generoso?','Porque ele sempre guarda uma reserva para os momentos difíceis!'],
+    ['O que o neurônio disse para o outro no corredor?','"A gente se fala na sinapse!"']];
+  const BYE=['Hahaha! Agora volte aos estudos. Boa prova de Bioquímica amanhã!',
+    'Hehe! Rir também ativa o metabolismo. Bons estudos!',
+    'Hahaha! Essa eu vou contar na minha aula de Histologia também.'];
+  kido.act=function(){
+    stopChat(this);this.wait=5;this.dir=faceTo(this,player);
+    const k=this.talk++,j=JOKES[k%JOKES.length];
+    say([{who:W,t:HI[k%HI.length]},{who:W,t:j[0]},{who:W,t:j[1]},{who:W,t:BYE[k%BYE.length]}]);
+  };
+}
+// Pedro joins the ground-floor walkers (west of the stairs, alone on his lane)
+Object.assign(pedro,{x0:74,x1:316,y0:100,wait:1,cool:999,tx:null,ty:100,meet:null,chat:0,role:0});
+{const a0=pedro.act;pedro.act=function(){this.wait=3;this.tx=null;a0.call(this);};}
+pedro.fx=(f=>function(t){f.call(this,t);if(this.chat>0)chatBubble(this,t);})(pedro.fx);
+SCENES.terreo.push(pedro);WANDER.terreo.push(pedro);
 
 const totalAll=SCENES.terreo.concat(SCENES.andar1,SCENES.andar2,SCENES.sala101,SCENES.sala103,SCENES.sala201,SCENES.salaLab).filter(o=>!o.deco).length;
 const SCENE_W={terreo:SW1,andar1:SW1,andar2:SW1,sala101:W,sala103:W,sala201:W,salaLab:W};
@@ -2082,7 +2236,7 @@ function nearest(){
   return best;
 }
 function say(lines,onEnd){
-  dialog={lines,i:0,shown:0,onEnd};
+  dialog={lines,i:0,shown:0,onEnd,ch:0};
   state='dialog';$('dialog').hidden=false;startLine();
 }
 function startLine(){
@@ -2095,13 +2249,30 @@ function startLine(){
   renderDialog();
 }
 function renderDialog(){
-  const L=dialog.lines[dialog.i];
+  const L=dialog.lines[dialog.i],done=dialog.shown>=L.t.length,box=$('dlg-choices');
   $('dlg-text').textContent=L.t.slice(0,Math.floor(dialog.shown));
-  $('dlg-next').style.visibility=dialog.shown>=L.t.length?'visible':'hidden';
+  $('dlg-next').style.visibility=done&&!L.choices?'visible':'hidden';
+  box.textContent='';
+  if(L.choices&&done){
+    L.choices.forEach((c,i)=>{
+      const b=document.createElement('button');b.type='button';b.textContent=c.t;b.className=i===dialog.ch?'on':'';
+      b.addEventListener('click',()=>{dialog.ch=i;pickChoice();});
+      box.appendChild(b);
+    });
+  }
+}
+// a line may end with choices: W/S (or the arrows) move, ENTER picks; picking closes the dialog and runs the choice
+const dialogChoices=()=>dialog&&dialog.lines[dialog.i].choices&&dialog.shown>=dialog.lines[dialog.i].t.length?dialog.lines[dialog.i].choices:null;
+function moveChoice(d){const c=dialogChoices();if(!c)return;dialog.ch=(dialog.ch+d+c.length)%c.length;sfx.blip();renderDialog();}
+function pickChoice(){
+  const c=dialogChoices();if(!c)return;
+  const ch=c[dialog.ch];dialog=null;$('dialog').hidden=true;$('dlg-choices').textContent='';state='play';
+  sfx.blip();ch.fn();
 }
 function advance(){
   const L=dialog.lines[dialog.i];
   if(dialog.shown<L.t.length){dialog.shown=L.t.length;renderDialog();return;}
+  if(L.choices){pickChoice();return;}
   dialog.i++;
   if(dialog.i>=dialog.lines.length){
     const cb=dialog.onEnd;dialog=null;$('dialog').hidden=true;state='play';
@@ -2115,20 +2286,24 @@ function giveItem(k){
   updateObjective();
 }
 /* ---------- mission ----------
-   07h30: get the badge at the front office (it opens the rooms), answer the 10 activity sheets lying on
-   desks of rooms 101, 103 and 201, then hand them to the professors in Sala 101 before the 8h00 class.
+   Story: yesterday the professors handed out a homework sheet set (10 sheets, one per reaction). There is a
+   test tomorrow, and today's class (8h00-11h30, Sala 101) is a review session for questions. The student
+   left the sheets behind in the rooms where they had class yesterday (101, 103 and 201).
+   07h30: get the badge at the front office (it opens the rooms), find and answer the 10 sheets, then hand
+   them to the professors in Sala 101 before the class ends at 11h30.
    They grade them at their desk: PASS or more right wins (the player may keep exploring); fewer is game over.
-   At 8h00 the bell rings: unanswered sheets are locked and count as wrong. */
-const START_MIN=7*60+30,CLASS_MIN=8*60,PASS=7;
-const SECONDS_PER_GAME_MINUTE=40; // real seconds per game minute: 07h30 -> 08h00 takes 20 real minutes
-const answered=()=>Object.keys(provas).length;
+   8h00: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
+   sheets are locked and count as wrong. */
+const START_MIN=7*60+30,CLASS_MIN=8*60,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
+const SECONDS_PER_GAME_MINUTE=40; // close to real time: 07h30 -> 8h00 takes 20 real minutes, 07h30 -> 11h30 takes 2h40
+const answered=()=>Object.keys(provas).filter(k=>k!=='b').length; // regular sheets (the bonus is counted apart)
 const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+'h'+String(m%60).padStart(2,'0');
 const ROOM_SHEETS={};for(const rm in EXAM_DESKS)ROOM_SHEETS[rm]=Object.values(EXAM_DESKS[rm]); // room -> reactions on its desks
 const deskProf=SCENES.sala101.find(o=>o.id==='mesaProf');
 let clockTxt='';
 function noBadge(){
   sfx.bump();
-  say([{t:'A porta tem um leitor de crachá, e você ainda não tem o seu.'},{t:'A Dona Cida, da secretaria, no térreo, está entregando os crachás.'}]);
+  say([{t:'A porta tem um leitor de crachá, e você ainda não tem o seu.'},{t:'A Dona Tati, da secretaria, no térreo, está entregando os crachás.'}]);
 }
 // every door with a badge reader stays shut until the player has the badge
 ['sala101','sala102','sala103','sala104','professores'].map(id=>SCENES.andar1.find(o=>o.id===id))
@@ -2137,8 +2312,9 @@ function noBadge(){
 function updateObjective(){
   const t=!flags.cracha?'Pegue seu crachá na secretaria'
     :flags.graded?(flags.pass?'Atividade entregue. Explore a faculdade à vontade':'Atividade corrigida')
-    :flags.seated?'Entregue as folhas aos professores, na Sala 101'
-    :'Responda as 10 folhas de atividade nas salas 101, 103 e 201';
+    :flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp?'Busque a questão bônus no laboratório (térreo) e entregue até 11h30'
+    :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
+    :'Ache e responda as 10 folhas esquecidas nas salas 101, 103 e 201 até 11h30';
   const el=$('objective');
   el.innerHTML='<b>OBJETIVO</b><span></span>';el.lastChild.textContent=t;
 }
@@ -2146,6 +2322,7 @@ function needsMarker(o){
   if(flags.graded)return false;
   if(o.id==='locker42')return !!flags.wantJaleco&&!flags.jaleco;
   if(!flags.cracha)return o.id==='secretaria';
+  if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
   if(flags.seated)return o===aldair||o===heloisa||o.id==='sala101';
   if(o.prova)return !provas[o.prova];
   return !!ROOM_SHEETS[o.id]&&ROOM_SHEETS[o.id].some(n=>!provas[n]); // doors of rooms that still hold unanswered sheets
@@ -2163,39 +2340,97 @@ function seatProfs(){
   if(scene==='sala101')goScene('sala101',192,182,'up','SALA 101'); // short fade hides the change
 }
 function unseatProfs(){[aldair,heloisa].forEach(o=>{delete o.oy;o.noShadow=false;});delete deskProf.solids;}
+function bell(){[784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05,i*.16));}
+function classStarts(){
+  flags.bell8=true;bell();
+  say([{t:'TRIIIM! São 8h: a aula de Bioquímica começou na Sala 101.'},
+       {t:'Os professores Aldair e Heloísa vão tirar dúvidas até 11h30. Entregue as folhas antes do fim da aula.'}]);
+}
+function lastCall(){
+  flags.warn11=true;tone(660,.2,'triangle',.05);tone(523,.3,'triangle',.05,.22);
+  say([{t:'São 11h. Faltam 30 minutos para o fim da aula de Bioquímica.'},
+       {t:answered()===QUIZ_N?'Leve as folhas aos professores na Sala 101 antes das 11h30.':'Termine as folhas e entregue aos professores na Sala 101 antes das 11h30.'}]);
+}
 function timeUp(){
   flags.timeUp=true;
-  [784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05,i*.16)); // the bell
+  bell();
   say(answered()===QUIZ_N
-    ?[{t:'TRIIIM! O sinal das 8h tocou. Corra: os professores estão esperando as folhas na Sala 101.'}]
-    :[{t:'TRIIIM! O sinal das 8h tocou: a aula de Bioquímica vai começar.'},
-      {t:'Não dá mais tempo de responder. Leve as folhas que você tem aos professores, na Sala 101.'}],seatProfs);
+    ?[{t:'TRIIIM! São 11h30: a aula de Bioquímica acabou. Corra: os professores estão esperando as folhas na Sala 101.'}]
+    :[{t:'TRIIIM! São 11h30: a aula de Bioquímica acabou.'},
+      {t:'Não dá mais tempo de responder. Leve as folhas que você tem aos professores, na Sala 101, antes que eles saiam.'}],seatProfs);
 }
-// handing in: Heloísa grades reactions 1-5, Aldair 6-10, then they give the result
+// handing in: if the bonus sheet is missing the professors ask about it first; then Heloísa grades
+// reactions 1-5, Aldair 6-10 (and the bonus), and they offer to comment any question before the result
 function deliver(){
-  if(flags.graded)return say([{who:'PROF. ALDAIR',t:'Sua atividade já está corrigida: '+score()+' de '+QUIZ_N+'. Pode se sentar, a aula já vai começar.'}]);
-  const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=score()-a,total=a+b,pass=total>=PASS;
+  if(flags.graded)return say([{who:'PROF. ALDAIR',t:'Sua lição já está corrigida: '+finalScore()+' de '+QUIZ_N+'. Bons estudos para a prova de amanhã!'}]);
+  if(!provas.b&&!flags.bonusSkip){
+    flags.bonusAsked=true;updateObjective();
+    const intro=[
+      {who:'PROFA. HELOÍSA',t:'Espere... está faltando uma folha. Cadê a questão bônus?'},
+      {who:'PROF. ALDAIR',t:'Entregamos a questão bônus ontem à tarde, na aula prática do laboratório. Você deve ter esquecido em cima de uma das bancadas.'},
+      {who:'PROFA. HELOÍSA',t:'Ela vale um ponto extra na atividade. Pode ajudar, caso você precise de nota.'}];
+    if(flags.timeUp)return say(intro.concat([{who:'PROF. ALDAIR',t:'Mas a aula já acabou, não dá mais tempo de buscar. Vamos corrigir o que você trouxe.'}]),
+      ()=>{flags.bonusSkip=true;grade();});
+    return say(intro.concat([{who:'PROF. ALDAIR',t:'Quer ir buscar no laboratório, no térreo, antes de entregar? Ainda dá tempo até 11h30.',choices:[
+      {t:'Vou buscar a questão bônus no laboratório',fn:()=>say([{who:'PROFA. HELOÍSA',t:'Estamos esperando aqui. Não se atrase: o prazo é 11h30.'}])},
+      {t:'Entregar sem a questão bônus',fn:()=>{flags.bonusSkip=true;grade();}}]}]));
+  }
+  grade();
+}
+function grade(){
+  const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=score()-a,base=a+b,bon=provas.b;
+  const total=finalScore(),pass=total>=PASS;
   say([
-    {who:'PROF. ALDAIR',t:blank?'O sinal já tocou. Deixe aqui na mesa as folhas que você tem.':'Terminou as '+QUIZ_N+' folhas? Ótimo, pode deixar aqui na mesa.'},
-    {t:blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.'},
+    {who:'PROF. ALDAIR',t:blank?'A aula acabou. Deixe aqui na mesa as folhas que você tem.':'Achou e respondeu as '+QUIZ_N+' folhas da lição? Ótimo, pode deixar aqui na mesa.'},
+    {t:(blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.')+(bon?' E a questão bônus também.':'')},
     {who:'PROFA. HELOÍSA',t:'Eu corrijo as reações 1 a 5, da fase preparatória.'},
-    {who:'PROF. ALDAIR',t:'E eu fico com as reações 6 a 10, da fase de pagamento.'},
+    {who:'PROF. ALDAIR',t:'E eu fico com as reações 6 a 10, da fase de pagamento'+(bon?', e com a questão bônus.':'.')},
     {t:'Os dois corrigem em silêncio. Só se ouve a caneta riscando o papel...'},
     {who:'PROFA. HELOÍSA',t:'Fase preparatória: '+a+' de 5.'},
     {who:'PROF. ALDAIR',t:'Fase de pagamento: '+b+' de 5.'},
-    {who:'PROF. ALDAIR',t:'Sua nota na atividade: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está pronto para a aula.':'Eram necessários '+PASS+' acertos. Não foi desta vez.')}
-  ],()=>finish(pass));
+    bon?{who:'PROF. ALDAIR',t:'Questão bônus: '+(!bon.ok?'errada, não valeu o ponto extra.':base>=QUIZ_N?'certa, mas você já tinha a nota máxima.':base>=PASS?'certa! Você nem precisava, mas o ponto extra entra na nota.':'certa! O ponto extra entra na sua nota.')}
+       :{who:'PROFA. HELOÍSA',t:'Sem a questão bônus, ficamos só com as '+QUIZ_N+' folhas.'},
+    {who:'PROF. ALDAIR',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está pronto para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
+    {who:'PROFA. HELOÍSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
+      {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
+      {t:'Não, obrigado',fn:()=>finish(pass)}]}
+  ]);
 }
+/* ---------- commented correction ----------
+   After grading, the player may open any sheet (answered or blank, bonus included) to see the answer key
+   and the professor's comment; closing it returns to the list. Ending the review shows the result. */
+const reviewEl=$('review');let reviewPass=false,reviewSel=0;
+const reviewIds=()=>Object.keys(QUIZ).filter(k=>!isBonus(k)).concat(provas.b||flags.bonusAsked?['b']:[]);
+function openReview(pass){reviewPass=pass;reviewSel=0;flags.review=true;showReview();}
+function showReview(){
+  const list=$('rev-list');list.textContent='';
+  $('rev-aluno').textContent='ALUNO(A): '+(jogador||'—');
+  reviewIds().forEach((n,i)=>{
+    const a=provas[n],b=document.createElement('button');
+    b.type='button';b.className='rev-item '+(!a?'blank':a.ok?'ok':'err')+(i===reviewSel?' on':'');
+    b.innerHTML='<span></span><small></small>';
+    b.firstChild.textContent=isBonus(n)?'Questão bônus':'Reação '+n+': '+QUIZ[n].enz.split(/ [\/(]/)[0];
+    b.lastChild.textContent=!a?'EM BRANCO':a.ok?'✓ CERTA':'✗ ERRADA';
+    b.addEventListener('click',()=>{reviewSel=i;reviewOpen();});
+    list.appendChild(b);
+  });
+  keys.clear();state='review';reviewEl.hidden=false;
+}
+function reviewMove(d){const n=reviewIds().length;reviewSel=(reviewSel+d+n)%n;sfx.blip();
+  [...$('rev-list').children].forEach((b,i)=>b.classList.toggle('on',i===reviewSel));$('rev-list').children[reviewSel].scrollIntoView({block:'nearest'});}
+function reviewOpen(){reviewEl.hidden=true;openQuiz(reviewIds()[reviewSel]);}
+function reviewDone(){reviewEl.hidden=true;flags.review=false;state='play';finish(reviewPass);}
+$('rev-done').addEventListener('click',reviewDone);
 function finish(pass){
   flags.graded=true;flags.pass=pass;state='end';endTime=performance.now();keys.clear();
   updateObjective();updateScore();
-  const n=score();
+  const n=finalScore();
   $('end').classList.toggle('lose',!pass);
-  $('end-tag').textContent=pass?'ATIVIDADE CONCLUÍDA':'GAME OVER';
+  $('end-tag').textContent=pass?'LIÇÃO ENTREGUE':'GAME OVER';
   $('end-title').textContent=pass?'Parabéns'+(jogador?', '+jogador:'')+'!':'Não foi desta vez';
   $('end-text').textContent=pass
-    ?'Você tirou '+n+' de '+QUIZ_N+' na atividade e garantiu seu lugar na aula de Bioquímica das 8h.'
-    :'Você tirou '+n+' de '+QUIZ_N+' na atividade. Eram necessários '+PASS+' acertos para participar da aula de Bioquímica.';
+    ?'Você tirou '+n+' de '+QUIZ_N+' na lição de casa e entregou antes do fim da aula. Está pronto para a prova de glicólise de amanhã.'
+    :'Você tirou '+n+' de '+QUIZ_N+' na lição de casa. Eram necessários '+PASS+' acertos. Revise a glicólise antes da prova de amanhã.';
   $('st-obj').textContent=n+'/'+QUIZ_N;$('st-time').textContent=hhmm(gameMinutes());
   $('btn-again').textContent=pass?'ENTER · CONTINUAR NO CENÁRIO':'ENTER · JOGAR DE NOVO';
   if(pass)sfx.open();else{music.stop();[392,330,262,196].forEach((f,i)=>tone(f,.3,'triangle',.06,i*.22));}
@@ -2276,20 +2511,29 @@ const QUIZ={
   10:{"enz": "Piruvato-cinase (PK)", "sub": "Conversão de fosfoenolpiruvato em piruvato", "q": "Um bebê de 4 meses é levado ao pediatra com palidez cutânea e leve icterícia. O exame revela esplenomegalia e o hemograma indica anemia hemolítica não esferocítica. Os testes bioquímicos confirmam baixa atividade da enzima piruvato-cinase (PK) nos eritrócitos. A décima e última reação da glicólise transfere o grupo fosforila do fosfoenolpiruvato (PEP) para o ADP. Por que a deficiência de PK leva à lise prematura dos eritrócitos?", "o": ["Sem mitocôndrias, os eritrócitos dependem do ATP gerado pela PK para manter as bombas iônicas e a integridade da membrana.", "A falta de piruvato impede a síntese de glicogênio na hemácia, acumulando frutose-1,6-bisfosfato que rompe o núcleo celular.", "A enzima mutante passa a produzir etanol dentro dos capilares, dissolvendo a camada de fosfolipídeos do estroma eritrocitário.", "O acúmulo de PEP estimula a beta-oxidação de ácidos graxos no citosol, desidratando o eritrócito até a fagocitose pelo fígado."], "c": 0}
 };
 const QUIZ_N=Object.keys(QUIZ).length,LETTERS='ABCD';
+// professor comments shown when the answer key is revealed (correction review, or reopening a graded sheet)
+const QUIZ_FB={"1": {"who": "PROFA. HELOÍSA", "fb": "Na MODY2, a glicocinase mutante tem menor afinidade pela glicose (Km mais alto). Como ela funciona como o sensor de glicose da célula beta, é preciso uma glicemia mais alta para gerar ATP suficiente e liberar insulina. Por isso a hiperglicemia é leve e estável. A glicocinase não é inibida pela glicose-6-fosfato e não fosforila frutose no músculo."}, "2": {"who": "PROFA. HELOÍSA", "fb": "A fosfo-hexose-isomerase transforma uma aldose (glicose-6-fosfato) em uma cetose (frutose-6-fosfato), preparando a molécula para a PFK-1. Sem essa etapa, a hemácia, que não tem mitocôndrias e depende só da glicólise, produz pouco ATP e não mantém as bombas iônicas da membrana. A célula perde a forma e é destruída."}, "3": {"who": "PROFA. HELOÍSA", "fb": "A PFK-1 é a principal etapa regulatória e comprometida da glicólise. Na doença de Tarui falta a isoenzima muscular: no exercício, o músculo não consegue levar a glicose do glicogênio até piruvato e fica sem ATP, mesmo com o AMP alto, que normalmente ativaria a enzima. Citrato e ATP inibem a PFK-1, não ativam."}, "4": {"who": "PROFA. HELOÍSA", "fb": "A aldolase quebra a frutose-1,6-bisfosfato, de seis carbonos, em duas trioses-fosfato: DHAP e gliceraldeído-3-fosfato. Sem essa clivagem, a via para no fim da fase preparatória e não chega à fase de pagamento, onde o ATP é produzido. Músculo e hemácias, que usam a aldolase A, são os mais afetados."}, "5": {"who": "PROFA. HELOÍSA", "fb": "A TPI converte a DHAP em gliceraldeído-3-fosfato. Sem ela, só um dos dois gliceraldeídos-3-fosfato formados pela aldolase segue na via, e a fase de pagamento rende a metade: 2 ATP em vez de 4, o que zera o saldo líquido por glicose. A DHAP acumulada também é tóxica e contribui para o quadro neurológico."}, "6": {"who": "PROF. ALDAIR", "fb": "O arsenato ocupa o lugar do fosfato e forma 1-arseno-3-fosfoglicerato, que é instável e se hidrolisa sozinho em 3-fosfoglicerato. A via continua, mas pula a reação 7, que geraria ATP. Resultado: a glicólise segue sem saldo líquido de ATP. O NADH continua sendo formado, então o arsenato não bloqueia a enzima."}, "7": {"who": "PROF. ALDAIR", "fb": "A fosfoglicerato-cinase faz a primeira fosforilação no nível do substrato: passa o fosfato de alta energia do 1,3-bisfosfoglicerato para o ADP e gera os 2 ATP que repõem os 2 gastos na fase preparatória. Sem ela, a hemácia, que depende só da glicólise, fica sem ATP para manter a membrana e é destruída."}, "8": {"who": "PROF. ALDAIR", "fb": "A fosfoglicerato-mutase muda o grupo fosfato do carbono 3 para o carbono 2. Sem esse rearranjo, a enolase não recebe substrato e a via para antes das últimas reações. O músculo em esforço intenso, que depende muito da glicólise, fica sem ATP, o que causa as cãibras e a lesão muscular com mioglobinúria."}, "9": {"who": "PROF. ALDAIR", "fb": "O fluoreto se liga ao magnésio e ao fosfato e forma um complexo que inativa a enolase. Com a glicólise bloqueada, as células do sangue param de consumir glicose dentro do tubo, e a glicemia medida no laboratório fica mais próxima do valor real do paciente."}, "10": {"who": "PROF. ALDAIR", "fb": "A piruvato-cinase faz a segunda fosforilação no nível do substrato, que garante o saldo líquido de ATP da glicólise. Sem mitocôndrias, a hemácia depende desse ATP para manter as bombas de sódio e potássio e a forma da membrana. Sem ele, a célula se deforma e é retirada da circulação pelo baço, o que explica a anemia e a esplenomegalia."}};
+for(const k in QUIZ_FB)Object.assign(QUIZ[k],QUIZ_FB[k]);
+// extra sheet: left on a lab bench after yesterday afternoon's practical class; a right answer adds one point (grade capped at 10)
+QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, são produzidas quatro moléculas de ATP; na fase de pagamento, são consumidas duas.", "Na fase de investimento, a glicose é convertida em piruvato sem consumo de ATP.", "Na fase de investimento, são consumidas duas moléculas de ATP; na fase de pagamento, são produzidas quatro moléculas de ATP e dois NADH.", "Na fase de pagamento, são consumidas duas moléculas de ATP para formar glicose-6-fosfato e frutose-6-fosfato."], "c": 2, "who": "PROF. ALDAIR", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
+const isBonus=n=>n==='b';
+const bonusOk=()=>!!(provas.b&&provas.b.ok);
+function finalScore(){return Math.min(QUIZ_N,score()+(bonusOk()?1:0));}
 const quizEl=$('quiz'),quizOpts=$('quiz-opts');
 let quiz=null; // sheet on screen: {n,sel}
-function score(){return Object.values(provas).filter(a=>a.ok).length;}
+function score(){return Object.keys(provas).filter(k=>k!=='b'&&provas[k].ok).length;} // the 10 regular sheets only
 function updateScore(){ // sheets answered so far; the grade only after the professors correct them
   $('pts-label').textContent=flags.graded?'NOTA':'FOLHAS';
-  $('pts-k').textContent=(flags.graded?score():answered())+'/'+QUIZ_N;
+  $('pts-k').textContent=(flags.graded?finalScore():answered())+'/'+QUIZ_N+(provas.b&&!flags.graded?' +B':'');
 }
 function openQuiz(n){
-  if(!provas[n]&&flags.timeUp)return say([{t:'O sinal das 8h já tocou. Não dá mais tempo de responder esta folha.'}]);
+  if(!provas[n]&&flags.timeUp&&!flags.review)return say([{t:'A aula já acabou. Não dá mais tempo de responder esta folha.'}]);
   const q=QUIZ[n];
   quiz={n,sel:-1};
-  $('quiz-bar').textContent='ATIVIDADE · REAÇÃO '+n;
+  $('quiz-bar').textContent=isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
   $('quiz-aluno').textContent='ALUNO(A): '+(jogador||'—');
-  $('quiz-title').textContent='Reação '+n+': '+q.enz;
+  $('quiz-title').textContent=isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
+  quizEl.querySelector('.sheet').classList.toggle('bonus',isBonus(n));
   $('quiz-sub').textContent=q.sub;
   $('quiz-q').innerHTML=q.q;
   quizOpts.textContent='';
@@ -2305,18 +2549,22 @@ function openQuiz(n){
   tone(660,.06,'square',.03);
 }
 function renderQuiz(){
-  const q=QUIZ[quiz.n],a=provas[quiz.n],msg=$('quiz-msg');
-  const shown=a&&flags.graded&&flags.pass; // the answer key only appears after the professors grade the sheets
+  const q=QUIZ[quiz.n],a=provas[quiz.n],msg=$('quiz-msg'),rev=!!flags.review;
+  // the answer key and the professor's comment appear in the correction review, or on graded sheets after a pass
+  const shown=rev||(a&&flags.graded&&flags.pass);
   [...quizOpts.children].forEach((b,i)=>{
-    b.className='qopt'+(shown?(i===q.c?' right':i===a.sel?' wrong':' off'):a?(i===a.sel?' sel':' off'):(i===quiz.sel?' sel':''));
-    b.disabled=!!a;
+    b.className='qopt'+(shown?(i===q.c?' right':a&&i===a.sel?' wrong':' off'):a?(i===a.sel?' sel':' off'):(i===quiz.sel?' sel':''));
+    b.disabled=!!a||rev;
   });
-  msg.className=shown?(a.ok?'ok':'err'):'';
-  msg.textContent=shown?(a.ok?'Resposta correta.':'Resposta errada. Gabarito: letra '+LETTERS[q.c]+'.')
+  msg.className=shown?(a&&a.ok?'ok':'err'):'';
+  msg.textContent=shown?(!a?'Em branco. Gabarito: letra '+LETTERS[q.c]+'.':a.ok?'Resposta correta.':'Resposta errada. Gabarito: letra '+LETTERS[q.c]+'.')
     :a?'Resposta registrada. Os professores corrigem quando você entregar as folhas.'
+    :isBonus(quiz.n)?'Questão bônus: vale um ponto extra na atividade. Só pode ser respondida uma vez.'
     :'Atenção: esta folha só pode ser respondida uma vez.';
-  $('quiz-back').hidden=!!a;
-  $('quiz-ok').textContent=a?'FECHAR':'CONFIRMAR RESPOSTA';
+  $('quiz-fb').hidden=!shown;
+  if(shown){$('quiz-fb-who').textContent='COMENTÁRIO · '+q.who;$('quiz-fb-t').textContent=q.fb;}
+  $('quiz-back').hidden=!!a||rev;
+  $('quiz-ok').textContent=rev?'VOLTAR À LISTA':a?'FECHAR':'CONFIRMAR RESPOSTA';
   fitQuiz();
 }
 // shrink the sheet's text until the whole sheet fits the screen, so it never needs a scrollbar
@@ -2331,17 +2579,17 @@ function fitQuiz(){
 }
 addEventListener('resize',fitQuiz);
 function quizPick(i){
-  if(!quiz||provas[quiz.n])return;
+  if(!quiz||provas[quiz.n]||flags.review)return;
   quiz.sel=i;renderQuiz();sfx.blip();
   quizOpts.children[i].scrollIntoView({block:'nearest'});
 }
 function quizMove(d){
-  if(!quiz||provas[quiz.n])return;
+  if(!quiz||provas[quiz.n]||flags.review)return;
   quizPick(quiz.sel<0?(d>0?0:3):(quiz.sel+d+4)%4);
 }
 function quizEnter(){
   if(!quiz)return;
-  if(provas[quiz.n]){closeQuiz();return;}
+  if(provas[quiz.n]||flags.review){closeQuiz();return;}
   if(quiz.sel<0){$('quiz-msg').textContent='Escolha uma alternativa antes de confirmar.';sfx.bump();return;}
   const ok=quiz.sel===QUIZ[quiz.n].c;
   provas[quiz.n]={sel:quiz.sel,ok};
@@ -2351,8 +2599,9 @@ function quizEnter(){
 }
 function closeQuiz(){
   quizEl.hidden=true;quiz=null;state='play';keys.clear();
+  if(flags.review){showReview();return;}
   if(answered()===QUIZ_N&&!flags.seated){
-    say([{t:'Você respondeu as '+QUIZ_N+' folhas da atividade.'},{t:'Leve as folhas aos professores Aldair e Heloísa, na Sala 101. Eles vão corrigir.'}],seatProfs);
+    say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair e Heloísa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
   }
 }
 $('quiz-ok').addEventListener('click',quizEnter);
@@ -2477,6 +2726,16 @@ addEventListener('keydown',e=>{
     else if(k>=0&&!e.repeat){quizPick(k);} // A, B, C or D marks that option
     return;
   }
+  if(state==='review'){
+    if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)reviewOpen();}
+    else if(e.code==='Escape'){e.preventDefault();reviewDone();}
+    else if(e.code==='KeyW'||e.code==='ArrowUp'||e.code==='KeyA'||e.code==='ArrowLeft'){e.preventDefault();reviewMove(-1);}
+    else if(e.code==='KeyS'||e.code==='ArrowDown'||e.code==='KeyD'||e.code==='ArrowRight'){e.preventDefault();reviewMove(1);}
+    return;
+  }
+  if(state==='dialog'&&dialogChoices()&&(e.code==='KeyW'||e.code==='ArrowUp'||e.code==='KeyS'||e.code==='ArrowDown')){
+    e.preventDefault();moveChoice(e.code==='KeyW'||e.code==='ArrowUp'?-1:1);return;
+  }
   if(state==='poster'){
     if(e.code==='Enter'||e.code==='NumpadEnter'||e.code==='Escape'){e.preventDefault();if(!e.repeat)closePoster();}
     else if(e.code==='KeyW'||e.code==='ArrowUp'){e.preventDefault();posterBody.scrollBy(0,-70);}
@@ -2529,11 +2788,16 @@ function update(dt){
   }
   updateFade(dt);music.tick(dt);
   if(banner){banner.t-=dt;if(banner.t<=0)banner=null;}
-  updatePedro(dt);
+  updatePedro(dt);updateWanderers(dt);
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
-  if(state==='play'&&!flags.timeUp&&!flags.graded&&gameMinutes()>=CLASS_MIN)timeUp();
+  if(state==='play'&&!flags.graded){
+    const gm=gameMinutes();
+    if(!flags.bell8&&gm>=CLASS_MIN)classStarts();
+    else if(!flags.warn11&&gm>=WARN_MIN&&!flags.timeUp)lastCall();
+    else if(!flags.timeUp&&gm>=END_MIN)timeUp();
+  }
   player.moving=false;
   if(state!=='play')return;
   let vx=0,vy=0;
@@ -2621,7 +2885,6 @@ reset();state='boot';
 // called by the opening screens once the player has typed a name
 window.registrarJogador=n=>{
   jogador=String(n||'').trim().slice(0,32);
-  if(jogador)$('intro-p').textContent=jogador+', são 7h30 e a aula de Bioquímica começa às 8h. Pegue seu crachá na secretaria, responda as 10 folhas de atividade deixadas nas salas e entregue aos professores antes da aula.';
   state='intro';$('btn-start').focus({preventScroll:true});
 };
 requestAnimationFrame(loop);
