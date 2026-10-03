@@ -121,6 +121,8 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .ctl-help ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.2em;line-height:1.05}
 .ctl-help li{display:flex;align-items:center;gap:.45em}
 .ctl-help .gpb{font-size:.4em;flex:none}
+/* story screen: its own opaque screen, the game is not visible behind it until COMEÇAR */
+#intro{background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%);z-index:20}
 #intro .ctl-help{display:none;font-size:calc(var(--u)*6.2)}
 body.gp #intro .ctl-help{display:flex}
 /* Pause menu (Menu button on the controller, P on the keyboard) */
@@ -155,9 +157,9 @@ body.gp #intro .ctl-help{display:flex}
 .modal:not(.zoom) .modal-body img{max-width:none;max-height:none;box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){#dlg-next,.slot.pop .box{animation:none}}
 /* Opening screens (press start, fake loading, player name): full-viewport layers above the game */
-.tela-titulo,.tela-carregando,.tela-nome{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:56px 24px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%)}
+.tela-titulo,.tela-carregando,.tela-personagem,.tela-nome{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:56px 24px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%)}
 .tela-titulo{cursor:pointer}
-.tela-titulo::after,.tela-carregando::after,.tela-nome::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
+.tela-titulo::after,.tela-carregando::after,.tela-personagem::after,.tela-nome::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
 .tt-ico{font-size:4.4rem;line-height:1}
 .tt-titulo{font-family:var(--f-display);font-size:clamp(22px,5.5vw,40px);line-height:1.6;color:var(--accent);text-shadow:3px 3px 0 rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.03em}
 .tt-titulo small{display:block;font-size:.6em;color:var(--ink)}
@@ -173,6 +175,20 @@ body.gp #intro .ctl-help{display:flex}
 .cl-copyright{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.3}
 @media (max-width:420px){.creditos-loading{left:8px;bottom:12px;padding:6px 12px 6px 6px;gap:8px;max-width:min(84vw,320px)}.cl-foto{width:40px;height:40px}.cl-copyright{font-size:10.5px}}
 .tn-ico{font-size:3.4rem;line-height:1}
+.tn-ico canvas{display:block;width:48px;height:72px;image-rendering:pixelated;margin:0 auto}
+/* Character screen: boy or girl (thumbnails drawn from the game's own sprites) */
+.tp-opcoes{position:relative;z-index:1;display:flex;gap:clamp(16px,5vw,48px);justify-content:center;flex-wrap:wrap}
+.tp-carta{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:16px;width:clamp(140px,26vw,190px);padding:22px 12px 18px;background:#0d0806;border:4px solid var(--line);box-shadow:0 6px 0 #0d0806;transition:transform .12s}
+.tp-carta canvas{display:block;width:96px;height:144px;image-rendering:pixelated}
+.tp-nome{font-family:var(--f-display);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.tp-carta:hover{transform:translateY(-3px)}
+.tp-carta.on{border-color:var(--accent);background:#2a1a10;transform:translateY(-4px)}
+.tp-carta.on .tp-nome{color:var(--accent)}
+.tp-carta.on .tp-nome::before{content:"▶ "}
+.tp-carta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.tp-dica{position:relative;z-index:1;margin:0;font-size:20px;color:var(--muted)}
+.tp-dica .so-gp{display:none}body.gp .tp-dica .so-gp{display:inline}body.gp .tp-dica .so-tec{display:none}
+@media (max-height:520px){.tela-personagem{gap:14px;padding-block:16px}.tp-carta{padding:12px 10px;gap:8px}.tp-carta canvas{width:64px;height:96px}}
 .tn-titulo{font-family:var(--f-display);font-size:clamp(17px,4.2vw,26px);line-height:1.6;color:var(--accent);text-shadow:3px 3px 0 rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.03em}
 .tela-nome form{position:relative;z-index:1;margin:0}
 .tn-campo{width:min(440px,84vw);box-sizing:border-box;font-family:var(--f-display);font-size:15px;letter-spacing:.04em;color:#fff;text-align:center;padding:16px 12px;background:#0d0806;border:4px solid var(--line);border-radius:0;outline:none}
@@ -228,6 +244,24 @@ body.gp #intro .ctl-help{display:flex}
 #quiz-msg.ok{color:#1f7a43}
 #quiz-msg.err{color:#b3261e}
 .sh-btns{display:flex;flex-wrap:wrap;gap:8px}
+/* Word search (optional extra activity, lab side table) */
+#caca .quiz-body{align-items:center}
+.caca-sheet{--cs:clamp(18px,min(calc((100dvh - 200px) / 10),calc((100vw - 420px) / 10)),44px);width:auto;max-width:100%}
+.caca-wrap{display:flex;gap:clamp(12px,2.4vw,28px);align-items:flex-start;margin-top:10px}
+.caca-grid{display:grid;grid-template-columns:repeat(10,var(--cs));grid-auto-rows:var(--cs);border:2px solid #2a1c16;background:#fbf6e6;touch-action:none;user-select:none;-webkit-user-select:none;flex:none;cursor:pointer}
+.caca-grid div{display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:calc(var(--cs)*.46);color:#2a1c16;border:1px solid rgba(122,82,47,.12);box-sizing:border-box}
+.caca-grid div.f{color:#1a1206}
+.caca-grid div.pv{background:#f2c94c!important}
+.caca-grid div.an{background:#d9a441!important;color:#1a1606}
+.caca-grid div.cur{outline:3px solid #2d6fb5;outline-offset:-3px}
+body:not(.kb) .caca-grid div.cur{outline:none}
+.caca-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;min-width:min(260px,40vw);max-width:330px}
+.caca-list li{line-height:1;padding:3px 6px;border-left:6px solid #c9b994}
+.caca-list li b{font-family:var(--f-display);font-weight:400;font-size:clamp(9px,1.05vw,12px);letter-spacing:.06em}
+.caca-list li small{display:block;margin-top:3px;font-size:.82em;color:#5a3d24}
+.caca-list li:not(.ok) small{display:none}
+.caca-list li.ok b{text-decoration:line-through;text-decoration-thickness:2px}
+@media (max-aspect-ratio:1/1){.caca-wrap{flex-direction:column;align-items:center}.caca-sheet{--cs:clamp(16px,min(calc((100vw - 70px) / 10),calc((100dvh - 380px) / 10)),40px)}.caca-list{max-width:none;width:100%}}
 /* Page footer (same information as the other games); it takes its own row below the game, so the game area shrinks instead of the page scrolling */
 .site-footer{flex:none;padding:7px 14px;border-top:1px solid rgba(255,255,255,.15);background:#0d0806;color:rgba(255,255,255,.55);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12.5px;letter-spacing:.02em;text-align:left;line-height:1.5}
 .site-footer strong{color:rgba(255,255,255,.8)}
@@ -296,8 +330,18 @@ body.gp #intro .ctl-help{display:flex}
   </div>
 </div>
 
+<div class="tela-personagem" id="telaPersonagem" style="display:none;">
+  <div class="tn-titulo">Escolha seu personagem</div>
+  <div class="tp-opcoes" role="radiogroup" aria-label="Personagem">
+    <button class="tp-carta on" type="button" role="radio" aria-checked="true" data-gen="m"><canvas aria-hidden="true"></canvas><span class="tp-nome">Menino</span></button>
+    <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="f"><canvas aria-hidden="true"></canvas><span class="tp-nome">Menina</span></button>
+  </div>
+  <p class="tp-dica"><span class="so-tec">← → escolher · ENTER confirmar</span><span class="so-gp"><span class="gpb d"><i>✚</i></span> escolher · <span class="gpb a">A</span> confirmar</span></p>
+  <button class="tn-btn" id="btnPersonagem" type="button">▶ Continuar</button>
+</div>
+
 <div class="tela-nome" id="telaNome" style="display:none;">
-  <div class="tn-ico" aria-hidden="true">🧑‍🎓</div>
+  <div class="tn-ico" id="tnIco" aria-hidden="true">🧑‍🎓</div>
   <div class="tn-titulo">Identifique-se</div>
   <form id="formNome" autocomplete="off">
     <input class="tn-campo" id="campoNome" type="text" name="nome" maxlength="32"
@@ -329,7 +373,7 @@ body.gp #intro .ctl-help{display:flex}
       <div class="overlay" id="intro">
         <span class="tag">TÉRREO · 07h30 · VÉSPERA DA PROVA</span>
         <h2>Corredor da Secretaria</h2>
-        <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem você passou o dia estudando glicólise com a Marina, nas salas em que foi tendo aula. Mas, depois disso, não viu mais as suas folhas da atividade de Bioquímica.</p><p>A Marina está sentada no banco do corredor, aqui no térreo. Você quer perguntar se ela viu as suas folhas.</p><p class="intro-obj-t">Seu objetivo:</p><ol class="intro-obj"><li><b>▶</b><span>Falar com a Marina.</span></li></ol></div>
+        <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem você passou o dia estudando glicólise com a Marina, nas salas em que foi tendo aula. Mas, depois disso, não viu mais as suas folhas da atividade de Bioquímica.</p><p>A Marina está sentada na mesa de estudos perto da escada, aqui no térreo. Você quer perguntar se ela viu as suas folhas.</p><p class="intro-obj-t">Seu objetivo:</p><ol class="intro-obj"><li><b>▶</b><span>Falar com a Marina.</span></li></ol></div>
         <div class="ctl-help" id="intro-ctl"></div>
         <button class="btn" id="btn-start" type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · COMEÇAR">ENTER · COMEÇAR</button>
       </div>
@@ -361,7 +405,7 @@ body.gp #intro .ctl-help{display:flex}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 3 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 1.4 &middot; Última atualização: 3 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -396,6 +440,7 @@ body.gp #intro .ctl-help{display:flex}
   <div class="pause-box">
     <div class="pz-tit">⏸ PAUSA</div>
     <div class="pz-obj"><b>OBJETIVO</b><span id="pz-obj"></span></div>
+    <div class="pz-obj" id="pz-extra-box" hidden><b>EXTRA · OPCIONAL</b><span id="pz-extra"></span></div>
     <div class="pz-menu" id="pz-menu"></div>
     <div class="ctl-help" id="pz-ajuda" hidden></div>
     <div class="pz-hint" data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher · ◀ ▶ volume · <span class=&quot;gpb a&quot;>A</span> confirmar · <span class=&quot;gpb b&quot;>B</span> voltar · <span class=&quot;gpb m&quot;><i>≡</i></span> fechar"><span><kbd>W</kbd><kbd>S</kbd> escolher</span><span><kbd>A</kbd><kbd>D</kbd> volume</span><span><kbd>ENTER</kbd> confirmar</span><span><kbd>ESC</kbd> voltar</span></div>
@@ -420,6 +465,27 @@ body.gp #intro .ctl-help{display:flex}
           <button class="mbtn" id="quiz-back" type="button">DEIXAR PARA DEPOIS</button>
           <button class="mbtn primary" id="quiz-ok" type="button">CONFIRMAR RESPOSTA</button>
         </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="caca" hidden role="dialog" aria-label="Caça-palavras da glicólise">
+  <div class="modal-bar">
+    <span class="mt">CAÇA-PALAVRAS · REVISÃO DA GLICÓLISE</span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> mover"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> 1ª e última letra"><kbd>ENTER</kbd> 1ª e última letra</span><span data-gp="<span class=&quot;gpb b&quot;>B</span> sair"><kbd>ESC</kbd> sair</span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="sheet caca-sheet">
+      <div class="sh-head"><span>UNINOGWARTS · MONITORIA DE BIOQUÍMICA · OPCIONAL</span><span id="caca-aluno"></span></div>
+      <div class="sh-sub" style="margin:8px 0 0">Ache as 7 palavras-chave da glicólise. Elas podem estar na horizontal, na vertical ou na diagonal. Marque a primeira e a última letra (ou arraste por cima da palavra).</div>
+      <div class="caca-wrap">
+        <div class="caca-grid" id="caca-grid"></div>
+        <ul class="caca-list" id="caca-list"></ul>
+      </div>
+      <div class="sh-foot">
+        <span id="caca-msg" aria-live="polite"></span>
+        <span class="sh-btns"><button class="mbtn primary" id="caca-close" type="button">DEIXAR PARA DEPOIS</button></span>
       </div>
     </div>
   </div>
@@ -594,16 +660,18 @@ const sfx={
 };
 
 /* ---------- state ---------- */
-let state,flags,inspected,player,dialog,startTime,endTime,labOpen,provas,jogador='',pauseAt=0;
+let state,flags,inspected,player,dialog,startTime,endTime,labOpen,provas,jogador='',genero='m',pauseAt=0,gameMin=0; // gameMin: game minutes elapsed since 07h30 (fractional)
+const gen=(m,f)=>genero==='f'?f:m; // gendered words for the chosen character (boy / girl)
 const me=()=>(jogador||'Você').toUpperCase(); // speaker tag for the player's own lines
 function reset(){
   flags={board:false,jaleco:false,cracha:false,poster:false,up:false,sala101:false,sala103:false,lab:false,aud:false};
-  inspected=new Set();provas={}; // provas: answered exam sheets, {reaction:{sel,ok}}
+  inspected=new Set();provas={};if(typeof caca!=='undefined')caca=null; // provas: answered exam sheets, {reaction:{sel,ok}}
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
-  dialog=null;labOpen=false;startTime=0;endTime=0;
+  dialog=null;labOpen=false;startTime=0;endTime=0;gameMin=0;
   ['jaleco','cracha'].forEach(k=>$('slot-'+k).classList.remove('got'));
   if(typeof pedro!=='undefined')resetPedro();
+  if(typeof jan!=='undefined')janReset();
   if(typeof aldair!=='undefined'){initWalker(aldair);initWalker(heloisa);unseatProfs();}
   updateObjective();updateScore();
 }
@@ -656,10 +724,7 @@ function buildBg(){
   bgctx.putImageData(id,0,0);
   // wall contact shadow, dithered
   r(0,48,SW1,1,'#3e372f');for(let x=0;x<SW1;x+=2)px(x,49,'#4e463d');for(let x=1;x<SW1;x+=4)px(x,50,'#5e564c');
-  // wet floor patch
-  pxEllipse(196,114,26,8,'#7b8186');pxEllipse(214,106,12,4,'#7b8186');
-  for(let x=172;x<222;x+=2)px(x,107,'#9aa2a9');
-  r(182,110,6,1,'#b9c2c8');r(206,104,5,1,'#b9c2c8');r(198,118,3,1,'#b9c2c8');
+  // (the wet floor patch follows the janitor: drawJanitorFloor)
   // shadow of the staircase parapet
   for(let yy=50;yy<132;yy++){const sw=Math.round((132-yy)/12);for(let k=0;k<sw;k++){if(((yy+k)&1)===0||k>0)px(329-k,yy,'#4e463d');}}
   // burgundy rug at the entrance
@@ -696,8 +761,7 @@ function drawTorches(t){
 
 /* ---------- clock (drawn live) ---------- */
 function gameMinutes(){
-  const el=(state==='intro'||state==='boot'||!startTime)?0:((endTime||pauseAt||performance.now())-startTime)/1000;
-  return Math.min(END_MIN,START_MIN+Math.floor(el/SECONDS_PER_GAME_MINUTE)); // stops when the class ends
+  return Math.min(END_MIN,START_MIN+Math.floor(gameMin)); // stops when the class ends
 }
 function drawClock(){
   const cx=59,cy=9;
@@ -719,16 +783,16 @@ function drawLocker(x,num,mine){
   r(x+12,36,2,5,'#c99a3c');r(x+12,41,2,2,'#e8bf3f');
   if(num%3===1){px(x+5,40,'#3a2414');px(x+6,41,'#3a2414');}
   if(mine&&!flags.jaleco){r(x+3,36,7,7,'#f2c94c');r(x+4,38,5,1,'#a8862a');r(x+4,40,4,1,'#a8862a');}
-  if(mine&&jogador)drawNameTag(x+1,17);
+  if(mine&&jogador)drawNameTag(x,18);
 }
 // the player's locker: a paper name tag, a little crooked, its top-right corner peeling off
-function drawNameTag(x,y){
-  let s='';for(const ch of jogador.trim().split(/\s+/)[0].toUpperCase()){if(pxW(s+ch)>13)break;s+=ch;}
-  const w=Math.max(9,pxW(s)+4),drop=i=>Math.floor(i/7); // one pixel lower every 7 columns
-  for(let i=0;i<w;i++)r(x+i,y+drop(i),1,7,'#efe3c8');
-  r(x+w-2,y+drop(w-2),2,1,'#5a3d24');px(x+w-1,y+drop(w-1)+1,'#5a3d24'); // peeled corner shows the door
-  px(x+w-2,y+drop(w-2)+1,'#d9c7a0');
-  let cx=x+2;
+function drawNameTag(x,y){ // small: at most 14x6 px, it fits inside the locker door
+  let s='';for(const ch of jogador.trim().split(/\s+/)[0].toUpperCase()){if(pxW(s+ch)>12)break;s+=ch;}
+  const w=Math.max(7,pxW(s)+2),drop=i=>Math.floor(i/8); // one pixel lower every 8 columns
+  x+=Math.floor((16-w)/2);
+  for(let i=0;i<w;i++)r(x+i,y+drop(i),1,6,'#efe3c8');
+  px(x+w-1,y+drop(w-1),'#5a3d24');px(x+w-2,y+drop(w-2),'#d9c7a0'); // peeled corner shows the door
+  let cx=x+1;
   for(const ch of s){pxText(ch,cx,y+1+drop(cx-x),'#2d6fb5');cx+=pxW(ch)+1;}
 }
 function drawBoard(){
@@ -990,12 +1054,56 @@ function personRows(who,outfit,dir,f,blink){
   else{const fr=[0,1,0,2][f%4];legs=legSet.front[fr];}
   return head.concat(torso,legs);
 }
+// playable characters: the boy (blue T-shirt, jeans, brown sneakers, red headphones round the neck) and the girl
+// (lilac blouse, grey trousers, burgundy sneakers, backpack and a coral hair bow). Both keep long trousers and closed
+// shoes under the lab coat; inside the lab the accessories follow the lab rules: no headphones, long hair tied up.
+CHAR_PAL.playerF=Object.assign({},CHAR_PAL.player,{T:'#b07cc6',t:'#8e5aa8',u:'#5e3a72',A:'#f4f6f4',P:'#4a5055',p:'#2c3236',B:'#7a2e3e',
+  R:'#3fa682',r:'#2d8a6a',F:'#ef6a5c',f:'#b8402f'});
+CHAR_PAL.player.J='#d0352b';CHAR_PAL.player.j='#2c3236';
+function setCells(rows,cells){const a=rows.map(r_=>r_.split(''));for(const [y,x,ch] of cells)if(a[y])a[y][x]=ch;return a.map(r_=>r_.join(''));}
+// boy: headphones resting on the neck (cups on the collarbones), off inside the lab
+function headphones(rows,view){
+  return view==='right'?setCells(rows,[[12,6,'J'],[12,7,'J'],[13,6,'J'],[13,7,'J'],[11,8,'j']])
+    :setCells(rows,[[12,4,'J'],[12,5,'J'],[13,4,'J'],[13,5,'J'],[12,10,'J'],[12,11,'J'],[13,10,'J'],[13,11,'J'],[12,6,'j'],[12,9,'j']]);
+}
+// girl in the lab: hair pulled up into a bun held by the coral scrunchie (front/back), a ponytail from the side
+const BUN_TOP=['......oooo......','.....oHhhdo.....','..ooHFFffFFhoo..'];
+function girlLabHead(view){
+  if(view!=='right')return BUN_TOP.concat(HEAD.player[view].slice(3));
+  return setCells(HEAD.player.right,[[1,1,'o'],[1,2,'F'],[2,0,'o'],[2,1,'F'],[3,0,'o'],[3,1,'h'],[4,0,'o'],[4,1,'h'],[5,0,'o'],[5,1,'h'],[6,0,'o'],[6,1,'h'],[7,1,'o']]);
+}
+function girlRows(outfit,dir,f,blink,lab){
+  const view=dir==='left'?'right':dir,coat=outfit==='coat',legSet=coat?LEGS.short:LEGS.long,torso=TORSO[outfit][view];
+  const legs=view==='right'?legSet.side[(f%2===1)?1:0]:legSet.front[[0,1,0,2][f%4]];
+  let rows;
+  if(lab){rows=girlLabHead(view).concat(torso,legs);if(blink&&view!=='up')rows=blinkRows(rows,7,8);return rows;}
+  if(view==='down'){
+    rows=MARINA_ROWS.slice(0,13).concat(torso.slice(1),legs).map(r_=>r_.split(''));
+    [[13,'ohho','ohho'],[14,'ohh','hho'],[15,'od','do']].forEach(([y,a,b])=>{
+      for(let i=0;i<a.length;i++)rows[y][i]=a[i];for(let i=0;i<b.length;i++)rows[y][16-b.length+i]=b[i];});
+    rows=rows.map(a=>a.join(''));
+    rows=setCells(rows,[[1,10,'F'],[1,12,'F'],[2,10,'F'],[2,11,'f'],[2,12,'F']]); // hair bow
+    if(blink)rows=blinkRows(rows,7,8);
+  }else if(view==='up'){
+    rows=HEAD.player.up.slice(0,11).concat(['..ohhhhhhhhhho..','...ohhhhhhhho...'],torso.slice(1),legs);
+    rows=overlayHair(rows,[[13,3,12],[14,4,11],[15,5,10]]);
+    rows=setCells(rows,[[1,3,'F'],[1,5,'F'],[2,3,'F'],[2,4,'f'],[2,5,'F']]);
+  }else{
+    rows=HEAD.player.right.concat(torso,legs);
+    rows=overlayHair(rows,[[9,2,6],[10,2,6],[11,3,6],[12,4,7],[13,4,7],[14,5,7]]);
+    rows=setCells(rows,[[2,2,'F'],[2,4,'F'],[3,2,'F'],[3,3,'f'],[3,4,'F']]);
+    if(blink)rows=blinkRows(rows,7,8);
+  }
+  return rows;
+}
 function personSprite(who,outfit,dir,f,blink){
-  let rows=personRows(who,outfit,dir,f,blink);
+  const girl=who==='player'&&genero==='f',lab=who==='player'&&scene==='salaLab';
+  let rows=girl?girlRows(outfit,dir,f,blink,lab):personRows(who,outfit,dir,f,blink);
+  if(who==='player'&&!girl&&!lab)rows=headphones(rows,dir==='left'?'right':dir);
   const badge=who!=='player'||flags.cracha;
   if(!badge)rows=rows.map(r_=>r_.replace(/[Cc]/g,'W'));
-  const key=[who,outfit,dir,f%4,blink?1:0,badge?'b':''].join(':');
-  return gridSprite(key,rows,CHAR_PAL[who],dir==='left');
+  const key=[who+(girl?'F':'')+(lab?'L':''),outfit,dir,f%4,blink?1:0,badge?'b':''].join(':');
+  return gridSprite(key,rows,girl?CHAR_PAL.playerF:CHAR_PAL[who],dir==='left');
 }
 function drawCharSprite(s,x,y){fctx.drawImage(s.c,Math.round(x)-8,Math.round(y)-s.h+1);}
 function blinkAt(t,seed){return ((t+seed)%3.7)<.14;}
@@ -1004,14 +1112,16 @@ function marinaSprite(t){
   const b=blinkAt(t,1.3);
   return gridSprite('marina'+(b?'b':''),b?blinkRows(MARINA_ROWS,7,8):MARINA_ROWS,CHAR_PAL.marina,false);
 }
+function marinaSeated(t){
+  const b=blinkAt(t,1.3),rows=MARINA_ROWS.slice(0,20);
+  return gridSprite('marinaSeat'+(b?'b':''),b?blinkRows(rows,7,8):rows,CHAR_PAL.marina,false);
+}
 function cidaSprite(t){
   const b=blinkAt(t,2.1);
   return gridSprite('cida'+(b?'b':''),b?blinkRows(CIDA_ROWS,8,9):CIDA_ROWS,CHAR_PAL.cida,false);
 }
-function drawMarinaBench(t){
-  drawBenchAt(96,160,null);
-  r(136,141,9,8,'#2d8a6a');r(137,140,7,2,'#246f55');r(136,144,9,1,'#246f55');px(140,146,'#c99a3c');
-}
+// Marina's things on the study table closest to the stairs (mesaEstudo1): her green backpack on the floor beside it
+function drawMarinaBag(){r(486,104,9,8,'#2d8a6a');r(487,103,7,2,'#246f55');r(486,107,9,1,'#246f55');px(490,109,'#c99a3c');}
 
 /* ---------- objects ---------- */
 let objects=[];const SCENES={terreo:objects};
@@ -1047,7 +1157,7 @@ const lockerLines={
 });
 add({id:'board',name:'Quadro de avisos',wall:true,cx:132,top:12,zone:wallZone(108,48),draw:drawBoard,
   act:()=>{say([
-    {who:'QUADRO DE AVISOS',t:'BIOQUÍMICA: aula de dúvidas sobre glicólise hoje, das 8h às 11h30, Sala 101 (1º andar).'},
+    {who:'QUADRO DE AVISOS',t:'BIOQUÍMICA: aula de dúvidas sobre glicólise hoje, das 7h50 às 11h30, Sala 101 (1º andar).'},
     {who:'QUADRO DE AVISOS',t:'PROVA DE BIOQUÍMICA: amanhã. Conteúdo: as 10 reações da glicólise. A lição de casa deve ser entregue até o fim da aula de hoje, às 11h30.'},
     {who:'QUADRO DE AVISOS',t:'O crachá libera a entrada nas salas. No laboratório, jaleco obrigatório. Sem exceções. (Coordenação do Curso)'},
     {who:'QUADRO DE AVISOS',t:'Dica: o cartaz com a glicólise completa está no laboratório multidisciplinar, no fim deste corredor.'},
@@ -1089,10 +1199,13 @@ add({id:'entrada',name:'Entrada da escola',wall:true,cx:5,oy:116,top:88,zone:{x:
   add({id:'banco'+(i+1),name:'Banco',cx:b.x+28,top:b.y-22,base:b.y,solid:{x:b.x,y:b.y-16,w:56,h:16},
     draw:()=>drawBenchAt(b.x,b.y,b.extra),act:()=>say(b.lines.map(t=>({t})))});
 });
-add({id:'bancoMarina',deco:true,cx:124,top:138,base:159,solid:{x:96,y:144,w:56,h:16},draw:t=>drawMarinaBench(t)});
-add({id:'marina',name:'Marina',cx:124,top:126,base:160,solid:{x:96,y:144,w:56,h:16},
-  sprite:t=>{const c=marinaSprite(t);return {c:c.c,x:116,y:133};},
-  fx:t=>{if((t%4.2)<.35){r(126,148,4,3,'#efe3c8');px(126,148,'#9aa2a9');}},
+add({id:'bancoMarina',name:'Banco',cx:124,top:138,base:159,solid:{x:96,y:144,w:56,h:16},draw:()=>drawBenchAt(96,160,null),
+  act:()=>say([{t:'Um banco vazio no corredor, perto do mapa do térreo.'}])});
+// Marina studies at the study table closest to the stairs, on its far-left seat facing the corridor: that chair is
+// left out of the table and only her head and torso are drawn, right against the table top (her legs go under it)
+add({id:'marinaBag',deco:true,cx:490,top:100,base:112,solid:{x:486,y:108,w:9,h:4},key:()=>flags&&flags.seated?1:0,draw:()=>{if(!flags.seated)drawMarinaBag();}});
+const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noShadow:true,solid:{x:440,y:92,w:10,h:4},
+  sprite:t=>{if(flags.seated)return null;const c=marinaSeated(t);return {c:c.c,x:437,y:72};},
   act:()=>{
     // first talk: the player asks about the lost sheets; Marina points to the professors and to the new badges
     if(!flags.marina) return say([
@@ -1108,6 +1221,7 @@ add({id:'marina',name:'Marina',cx:124,top:126,base:160,solid:{x:96,y:144,w:56,h:
     else l=[{who:'MARINA',t:'Já respondeu tudo? Corre entregar para os professores na Sala 101!'}];
     say(l);
   }});
+{const Z={x:416,y:66,w:80,h:72},OFF={x:-99,y:-99,w:0,h:0};Object.defineProperty(marinaT,'zone',{get:()=>flags&&flags.seated?OFF:Z});}
 add({id:'lanches',name:'Máquina de lanches',cx:248,top:168,base:210,solid:{x:236,y:198,w:24,h:12},draw:drawSnacks,
   act:()=>say([{t:'Máquina de lanches: barra de cereal, amendoim, chocolate.'},{t:'Glicose de absorção rápida... mas fica para o intervalo.'}])});
 add({id:'bebedouro',name:'Bebedouro',cx:274,top:182,base:210,solid:{x:266,y:198,w:16,h:12},draw:drawFountain,
@@ -1125,29 +1239,9 @@ add({id:'mapa',name:'Mapa do térreo',cx:55,top:55,base:88,solid:{x:46,y:82,w:19
 add({id:'escada',name:'Escada',deco:true,cx:352,top:0,mark:{x:352,y:24},base:0,solid:{x:329,y:46,w:45,h:88},
   solids:[{x:329,y:44,w:8,h:92},{x:369,y:44,w:6,h:92}],
   fx:t=>{const f=Math.floor(t*8+2)%3,tx=331;r(tx,18-f%2,4,4,'#e8913a');r(tx+1,15+(f===2?1:0),2,4,'#f2c94c');px(tx+1+(f===1?1:0),14,'#fff27a');},noShadow:true,draw:drawStairs});
-add({id:'placa',name:'Piso molhado',cx:178,top:108,base:122,solid:{x:173,y:116,w:11,h:6},draw:()=>{g.save();g.translate(-22,0);drawWetSign();g.restore();},
-  act:()=>say([{t:'Placa amarela: CUIDADO, PISO MOLHADO.'},{t:'Melhor dar a volta.'}])});
-add({id:'carrinho',name:'Carrinho de limpeza',cx:239,top:94,base:120,solid:{x:228,y:112,w:22,h:8},draw:drawCart,
-  act:()=>say([{t:'Carrinho de limpeza: balde, rodo e um borrifador azul.'},{t:'É o carrinho do Seu Antônio, o zelador.'}])});
 HEAD.zelador=HEAD.player;
 CHAR_PAL.zelador=Object.assign({},CHAR_PAL.player,{S:'#c98b62',s:'#8a5a3c',H:'#d8dee2',h:'#9aa2a9',d:'#7b8186',i:'#3a2414',m:'#5a3a28',
   T:'#5b8dba',t:'#2b4a6f',u:'#1f2f4f',A:'#2b4a6f',R:'#2b4a6f',r:'#2b4a6f',P:'#2b4a6f',p:'#1f2f4f',B:'#1d2226'});
-add({id:'zelador',name:'Seu Antônio (zelador)',cx:216,top:100,base:126,solid:{x:211,y:122,w:10,h:4},talk:0,
-  sprite:t=>{const c=personSprite('zelador','shirt','left',0,blinkAt(t,1.9));return {c:c.c,x:208,y:103};},
-  fx:t=>{
-    // mop: handle from his hands down to a head that sweeps across the puddle
-    const sw=Math.round(Math.sin(t*5)*4),hx=198+sw,hy=124;
-    pxLine(210,113,hx+3,hy-1,'#a87445');pxLine(211,113,hx+4,hy-1,'#7a522f');
-    r(hx-3,hy,12,3,'#d8dee2');r(hx-3,hy+2,12,1,'#9aa2a9');px(hx-4,hy+1,'#b9c2c8');px(hx+9,hy+1,'#b9c2c8');
-    if(Math.floor(t*6)%2)px(hx-6,hy+2,'#a9c7d2');else px(hx+11,hy+1,'#a9c7d2');
-    r(207,111,4,3,'#c98b62');
-  },
-  act(){
-    const l=this.talk%2===0
-      ?[{who:'SEU ANTÔNIO (ZELADOR)',t:'Cuidado, doutor! Acabei de passar o pano, está escorregadio.'}]
-      :[{who:'SEU ANTÔNIO (ZELADOR)',t:'Dizem que a glicose dá energia, né? Pois eu gasto um monte esfregando esse castelo inteiro!'}];
-    this.talk++;say(l);
-  }});
 
 /* ---------- ground floor east wing: library ---------- */
 function drawLibraryDoor(x=492){
@@ -1216,8 +1310,9 @@ add({id:'lab',name:'Laboratório multidisciplinar',wall:true,cx:522,top:0,mark:{
 add({id:'normas',name:'Normas do laboratório',wall:true,cx:468,top:14,zone:wallZone(446,44),draw:()=>drawLabRules(450),
   act:()=>say([{who:'NORMAS DO LABORATÓRIO',t:'Jaleco de manga longa, calça comprida e sapato fechado.'},
                {who:'NORMAS DO LABORATÓRIO',t:'Cabelo preso, óculos de proteção e nada de comer ou beber nas bancadas.'}])});
-function drawStudyTable(x,y=120){
+function drawStudyTable(x,y=120,noChair){ // noChair: leaves out the far-left chair (Marina sits there)
   for(const cx of [x+8,x+28])for(const cy of [y-9,y+21]){
+    if(noChair&&cx===x+8&&cy===y-9)continue;
     r(cx,cy,10,7,'#4a3020');r(cx,cy,10,1,'#7a522f');r(cx+1,cy+7,2,2,'#2a1a10');r(cx+7,cy+7,2,2,'#2a1a10');
   }
   r(x,y,48,20,'#7a522f');r(x,y,48,1,'#a87445');r(x+1,y+1,46,16,'#8a5a34');r(x,y+18,48,2,'#5a3d24');
@@ -1231,8 +1326,8 @@ add({id:'harden',name:'Retrato de Harden',wall:true,cx:607,top:11,zone:wallZone(
   act:()=>say([{t:'Retrato de Arthur Harden, Nobel de Química de 1929.'},{t:'Estudando a fermentação, ele identificou a frutose-1,6-bifosfato, um intermediário da glicólise.'}])});
 add({id:'menten',name:'Retrato de Menten',wall:true,cx:637,top:11,zone:wallZone(624,26),draw:()=>drawPortrait(626,'#2e1d12',false,{female:true,coat:'#2b4a6f'}),
   act:()=>say([{t:'Retrato de Maud Menten, médica e bioquímica canadense.'},{t:'Com Leonor Michaelis, ela descreveu em 1913 a equação da cinética enzimática de Michaelis-Menten.'}])});
-add({id:'mesaEstudo1',name:'Mesa de estudo',cx:456,top:80,base:120,solid:{x:430,y:84,w:52,h:36},
-  draw:()=>{g.save();g.translate(0,-28);drawStudyTable(432);studyItems1(432);g.restore();},
+add({id:'mesaEstudo1',name:'Mesa de estudo',cx:456,top:80,base:120,solid:{x:430,y:84,w:52,h:36},key:()=>flags&&flags.seated?1:0,
+  draw:()=>{g.save();g.translate(0,-28);drawStudyTable(432,120,!flags.seated);studyItems1(432);g.restore();},
   act:()=>say([{t:'Uma mesa de estudo em grupo. Tem anotações sobre as reações da fase preparatória e um modelo de molécula.'},{t:'Num canto da folha: "Reações 1 e 3 gastam ATP".'}])});
 function studyItems3(x,y){r(x+6,y+3,10,10,'#efe3c8');r(x+7,y+5,8,1,'#9aa2a9');r(x+7,y+8,6,1,'#9aa2a9');
   r(x+20,y+4,8,8,'#d9a441');r(x+21,y+5,6,1,'#f2c94c');pxEllipse(x+38,y+9,4,3,'#5aa865');px(x+36,y+7,'#f4f6f4');}
@@ -1261,7 +1356,7 @@ const pedro=add({id:'pedro',name:'Pedro (veterano)',cx:0,top:0,base:0,solid:{x:0
   act(){
     this.dir=player.x<this.x?'left':'right';
     const l=this.talkCount%2===0
-      ?[{who:'PEDRO (VETERANO)',t:'E aí, calouro! Prova de glicólise amanhã? Decora as três enzimas irreversíveis.'},
+      ?[{who:'PEDRO (VETERANO)',t:'E aí, '+gen('calouro','caloura')+'! Prova de glicólise amanhã? Decora as três enzimas irreversíveis.'},
         {who:'PEDRO (VETERANO)',t:'Hexocinase, fosfofrutocinase-1 e piruvato-cinase. Cai em toda prova.'}]
       :[{who:'PEDRO (VETERANO)',t:'Saldo final por glicose: 2 ATP, 2 NADH e 2 piruvatos.'}];
     this.talkCount++;this.pause=2.5;say(l);
@@ -1756,13 +1851,25 @@ function drawClassCabinet(){
   r(x+4,19,2,10,'#a9c7d2');
   r(x+3,51,38,18,'#5a3d24');r(x+21,51,1,18,'#2a1a10');pxEllipse(x+18,60,1,1,'#c99a3c');pxEllipse(x+25,60,1,1,'#c99a3c');
 }
-// exam sheets: desk index -> glycolysis reaction, in the classroom whose wall posters cover that reaction
-const EXAM_DESKS={sala101:{1:1,2:2},sala103:{1:3,4:4,7:5,10:6},sala201:{2:7,4:8,9:9,11:10}};
+// exam sheets: each classroom keeps its sheets in one pile on a single front-row desk (desk index -> reactions),
+// in the classroom whose wall posters cover those reactions
+const EXAM_DESKS={sala101:{1:[1,2]},sala103:{2:[3,4,5,6]},sala201:{1:[7,8,9,10]}};
 // '' not answered, 'done' answered, 'ok'/'err' once the professors have graded it
 function examState(n){const a=provas&&provas[n];return !a?'':(flags.graded&&flags.pass)?(a.ok?'ok':'err'):'done';}
-function examDesk(o,n,x,base){
-  if(!n)return o;
-  return Object.assign(o,{name:'Folha da reação '+n,prova:n,key:()=>examState(n),draw:()=>drawStudentDesk(x,base,'exam'+examState(n)),act:()=>openQuiz(n)});
+function examDesk(o,list,x,base){
+  if(!list)return o;
+  return Object.assign(o,{name:'Folhas da atividade',provas:list,key:()=>list.map(examState).join(','),
+    draw:()=>drawStudentDesk(x,base,{pile:list.map(examState)}),act:()=>sheetPile(list)});
+}
+// the pile on the desk: the player picks which sheet to read (answered ones open read-only)
+let pileBack=null; // pile to return to after answering one of its sheets
+function sheetPile(list){
+  const st=n=>{const e=examState(n);return e==='ok'?'certa':e==='err'?'errada':e?'respondida':'em branco';};
+  const left=list.filter(n=>!provas[n]).length;
+  say([{t:'Em cima da carteira, uma pilha com '+list.length+' folhas da sua atividade de glicólise'+
+      (!left?', todas já respondidas.':left<list.length?', '+left+' ainda em branco.':'.')+' Qual você quer pegar?',
+    choices:list.map(n=>({t:'Folha da reação '+n+' · '+st(n),fn:()=>{openQuiz(n);if(quiz)pileBack=list;}}))
+      .concat([{t:'Deixar a pilha na carteira',fn:()=>{}}])}]);
 }
 function drawStudentDesk(x,base,extra,seat){
   r(x,base-20,30,5,'#a87445');r(x,base-20,30,1,'#c38f5c');r(x,base-15,30,2,'#7a522f');
@@ -1771,7 +1878,16 @@ function drawStudentDesk(x,base,extra,seat){
   r(x+8,base-5,14,3,'#4a3020');r(x+9,base-2,2,2,'#2a1a10');r(x+19,base-2,2,2,'#2a1a10');
   if(extra==='book'){r(x+6,base-21,8,3,'#2d6fb5');r(x+6,base-21,8,1,'#4d82c8');}
   if(extra==='paper'){r(x+16,base-20,8,3,'#f4f6f4');r(x+17,base-19,5,1,'#9aa2a9');}
-  if(extra&&extra.startsWith('exam')){
+  if(extra&&extra.pile){
+    // pile of activity sheets fanned out; the left edge of each one shows its state (blue answered, green/red graded)
+    const n=extra.pile.length,x0=x+15-Math.floor((14+(n-1)*2)/2);
+    extra.pile.forEach((m,i)=>{const sx=x0+i*2,sy=base-23-i;
+      r(sx,sy,14,7,'#f4f6f4');r(sx,sy+7,14,1,'#9aa2a9');r(sx,sy,1,7,'#c9cfd3');
+      if(m)r(sx,sy+1,2,5,m==='ok'?'#2f9e5a':m==='err'?'#d0352b':'#2d6fb5');});
+    const tx=x0+(n-1)*2,ty=base-23-(n-1);
+    r(tx+3,ty+2,7,1,'#9aa2a9');r(tx+3,ty+4,9,1,'#9aa2a9');
+  }
+  else if(extra&&extra.startsWith('exam')){
     // activity sheet; a blue mark once answered, green or red after grading
     r(x+8,base-23,14,7,'#f4f6f4');r(x+8,base-16,14,1,'#9aa2a9');
     r(x+10,base-21,7,1,'#9aa2a9');r(x+10,base-19,10,1,'#9aa2a9');r(x+10,base-17,8,1,'#9aa2a9');
@@ -1779,7 +1895,8 @@ function drawStudentDesk(x,base,extra,seat){
   }
   if(seat){
     // seated student seen from behind: head and back over the chair, backrest drawn in front
-    const c=personSprite(seat[0],seat[2],'up',0,false).c;
+    const c=seat[0]==='marina'?gridSprite('marinaBack',heloisaRows('up',0,false),CHAR_PAL.marina,false).c // long hair from behind
+      :personSprite(seat[0],seat[2],'up',0,false).c;
     g.drawImage(c,0,0,16,18,x+7,base-23,16,18);
     r(x+8,base-5,14,3,'#4a3020');r(x+8,base-5,14,1,'#5a3d24');
   }
@@ -1889,7 +2006,7 @@ const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
-    const L=[[{who:'PROFA. ROSA',t:'Olá! Sou a professora Rosa, também de Bioquímica. Seja bem-vindo à Sala 101!'},
+    const L=[[{who:'PROFA. ROSA',t:'Olá! Sou a professora Rosa, também de Bioquímica. Seja '+gen('bem-vindo','bem-vinda')+' à Sala 101!'},
        ...(flags.profs?[]:sheetsTalk('PROFA. ROSA')),
        {who:'PROFA. ROSA',t:'Cada folha da lição só pode ser respondida uma vez. Quando terminar as 10, eu e o professor Aldair Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
       [{who:'PROFA. ROSA',t:'Já viu os cartazes das reações 1 e 2 na parede, ao lado do quadro? Eles resumem o começo da glicólise.'}],
@@ -1918,8 +2035,17 @@ add({id:'armario101',name:'Armário',cx:344,top:12,base:72,solid:{x:320,y:64,w:4
   act:()=>say([{t:'O armário da sala está trancado. Pelo vidro, você vê modelos moleculares, rolos de cartazes e caixas de giz.'}])});
 const DESK_LINES=['Uma carteira de madeira com o tampo riscado.','Alguém gravou no tampo: "Embden esteve aqui".','Uma carteira com um livro esquecido embaixo.',
   'Esta carteira balança um pouquinho. Melhor escolher outra.','Uma carteira vazia, com uma folha de exercícios sobre a hexocinase.','Alguém desenhou uma molécula de ATP no tampo.'];
+// once the professors sit down to grade, Marina comes in and studies at desk 4 (2nd row, by the left wall)
+const MARINA_DESK=4,MARINA_SEAT=['marina','MARINA','coat','Também vim tirar dúvidas com os professores! Enquanto eles corrigem, estou revisando as 10 reações da glicólise.'];
 [132,162,192].forEach((base,ri)=>[44,98,232,286].forEach((x,ci)=>{
   const k=ri*4+ci,extra=k===2?'book':k===7?'paper':null;
+  if(k===MARINA_DESK){
+    const o=add({id:'carteira'+k,cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},key:()=>flags&&flags.seated?1:0,
+      draw:()=>drawStudentDesk(x,base,null,flags.seated?MARINA_SEAT:null),
+      act:()=>say(flags.seated?[{who:'MARINA',t:MARINA_SEAT[3]}]:[{t:DESK_LINES[k%DESK_LINES.length]}])});
+    Object.defineProperty(o,'name',{get:()=>flags&&flags.seated?'Marina':'Carteira'});
+    return;
+  }
   const st=SEATED[k];
   examDesk(add({id:'carteira'+k,name:st?st[1].charAt(0)+st[1].slice(1).toLowerCase():'Carteira',cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},
     draw:()=>drawStudentDesk(x,base,st?null:extra,st),
@@ -2112,6 +2238,22 @@ add({id:'quadroLab',name:'Quadro branco',wall:true,cx:207,top:14,zone:{x:178,y:6
   draw:()=>{r(178,14,58,36,'#9aa2a9');r(180,16,54,32,'#f4f6f4');pxText('AULA PRÁTICA',207,19,'#1f4a33','center');
     r(184,28,46,1,'#b9c2c8');pxText('FERMENTAÇÃO',207,31,'#2d6fb5','center');r(186,40,12,1,'#d0352b');r(202,40,20,1,'#2d6fb5');r(180,48,54,2,'#7b8186');},
   act:()=>say([{who:'QUADRO',t:'AULA PRÁTICA: FERMENTAÇÃO. Glicose → 2 piruvato → 2 etanol + 2 CO2.'},{who:'QUADRO',t:'Sem oxigênio, a levedura regenera o NAD+ produzindo etanol.'}])});
+// steel side table in the free corner left of the door: Camila's word search (optional review activity)
+function drawCacaTable(){
+  const x=54,w=52;
+  r(x,188,w,9,'#d8dee2');r(x,188,w,1,'#f4f6f4');r(x+w-1,188,1,9,'#9aa2a9');
+  r(x,197,w,9,'#9aa2a9');r(x,197,w,1,'#7b8186');r(x+4,200,16,1,'#7b8186');r(x+w-20,200,16,1,'#7b8186');
+  r(x+2,206,3,5,'#4a5055');r(x+w-5,206,3,5,'#4a5055');
+  // the word-search sheet (a letter grid), a pencil and the monitoring sign
+  const done=flags&&flags.caca;
+  r(x+5,189,22,8,'#f4f6f4');r(x+5,196,22,1,'#b9c2c8');
+  for(let i=0;i<6;i++)for(let j=0;j<3;j++)px(x+7+i*3,190+j*2,'#7b8186');
+  if(done){r(x+7,190,15,1,'#5aa865');r(x+10,192,12,1,'#ef6a5c');r(x+7,194,9,1,'#4d82c8');}
+  r(x+30,193,10,1,'#f2c94c');px(x+40,193,'#efe3c8');px(x+41,193,'#1d1612');px(x+29,193,'#ec9fa8');
+  r(x+38,182,12,8,'#d9a441');r(x+38,182,12,1,'#f2c94c');r(x+40,184,8,1,'#7a522f');r(x+40,186,6,1,'#7a522f');r(x+43,190,2,1,'#7a522f');
+}
+add({id:'mesaCaca',name:'Caça-palavras',cx:80,top:180,base:208,solid:{x:54,y:196,w:52,h:12},zone:{x:44,y:182,w:72,h:30},
+  key:()=>flags&&flags.caca?1:0,draw:drawCacaTable,act:()=>openCaca()});
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
 // benches that sit right next to a study table are taken out (too crowded)
@@ -2227,7 +2369,7 @@ wanderer('andar1','tiago','Tiago (1º ano)',24,318,114,walkLook('tiago','shirt',
   'Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
   'A aldolase quebra a frutose-1,6-bisfosfato em duas trioses: DHAP e gliceraldeído-3-fosfato.']);
 wanderer('andar1','camila','Camila (monitora)',392,688,104,coatLook('camila',1.3),[
-  'Sou monitora de Bioquímica. Achei folhas de lição esquecidas nas carteiras das salas 101, 103 e 201. São suas?',
+  'Sou monitora de Bioquímica. Vi umas pilhas de folhas de lição esquecidas em cima de uma carteira em cada sala: na 101, na 103 e na 201. São suas?',
   'Cada folha só pode ser respondida uma vez. Leia o cartaz da reação na parede antes de confirmar.',
   'Guarde isto: as reações 1, 3 e 10 são as irreversíveis da glicólise. Hexocinase, PFK-1 e piruvato-cinase.']);
 wanderer('andar1','bruna','Bruna (1º ano)',392,688,114,coatLook('bruna',2.9),[
@@ -2276,6 +2418,108 @@ Object.assign(pedro,{x0:74,x1:316,y0:100,wait:1,cool:999,tx:null,ty:100,meet:nul
 pedro.fx=(f=>function(t){f.call(this,t);if(this.chat>0)chatBubble(this,t);})(pedro.fx);
 SCENES.terreo.push(pedro);WANDER.terreo.push(pedro);
 
+/* ---------- Seu Antônio, the janitor, cleans a different spot every 8 game minutes ----------
+   He takes his cart along: in the player's corridor he walks there pushing it (by the corridor lane and the
+   stairs when the next spot is on another floor); out of sight he just moves. While he mops, the wet-floor
+   sign and the puddle stay beside him. Every next spot is on another floor or far along the same corridor. */
+const JAN_SPOTS=[
+  {sc:'terreo',x:216,y:126,name:'o corredor da secretaria'},
+  {sc:'terreo',x:60,y:136,name:'a entrada do térreo'},
+  {sc:'terreo',x:524,y:150,name:'o corredor do laboratório'},
+  {sc:'andar1',x:130,y:90,name:'o corredor do 1º andar, perto da Sala 101'},
+  {sc:'andar1',x:50,y:168,name:'o fundo do corredor do 1º andar'},
+  {sc:'andar2',x:465,y:90,name:'a frente da biblioteca, no 2º andar'},
+  {sc:'andar2',x:225,y:90,name:'o corredor do 2º andar, perto da Sala 202'}];
+const JAN_LANE={terreo:138,andar1:108,andar2:108},JAN_EVERY=8; // game minutes between two spots
+// stairs between two corridors: JAN_STAIRS[corridor][other floor] = where he leaves / arrives
+const JAN_STAIRS={terreo:{andar1:[352,140],andar2:[352,140]},andar1:{terreo:[352,120],andar2:[572,98]},andar2:{terreo:[363,122],andar1:[363,122]}};
+const jan={spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,talk:0}; // last: game minute of the last move
+const janBaked={};
+const janSpr=(k,fn)=>janBaked[k]||(janBaked[k]=bake(fn));
+const janCleaning=()=>!jan.path.length&&jan.to<0;
+const zelObj={id:'zelador',name:'Seu Antônio (zelador)',
+  sprite(t){const b=blinkAt(t,1.9),c=janCleaning()?personSprite('zelador','shirt','left',0,b):personSprite('zelador','shirt',jan.dir,Math.floor(jan.anim),b);
+    return {c:c.c,x:Math.round(jan.x)-8,y:Math.round(jan.y)-23};},
+  fx(t){
+    if(!janCleaning())return;
+    // mop: handle from his hands down to a head that sweeps across the puddle
+    const X=Math.round(jan.x),Y=Math.round(jan.y),sw=Math.round(Math.sin(t*5)*4),hx=X-18+sw,hy=Y-2;
+    pxLine(X-6,Y-13,hx+3,hy-1,'#a87445');pxLine(X-5,Y-13,hx+4,hy-1,'#7a522f');
+    r(hx-3,hy,12,3,'#d8dee2');r(hx-3,hy+2,12,1,'#9aa2a9');px(hx-4,hy+1,'#b9c2c8');px(hx+9,hy+1,'#b9c2c8');
+    if(Math.floor(t*6)%2)px(hx-6,hy+2,'#a9c7d2');else px(hx+11,hy+1,'#a9c7d2');
+    r(X-9,Y-15,4,3,'#c98b62');
+  },
+  act(){
+    const W_='SEU ANTÔNIO (ZELADOR)';
+    if(!janCleaning()){jan.wait=3;return say([{who:W_,t:'Com licença, '+gen('doutor','doutora')+'! Agora vou limpar '+JAN_SPOTS[jan.to].name+'.'}]);}
+    const l=this.talk%2===0
+      ?[{who:W_,t:'Cuidado, '+gen('doutor','doutora')+'! Acabei de passar o pano, está escorregadio.'}]
+      :[{who:W_,t:'Dizem que a glicose dá energia, né? Pois eu gasto um monte esfregando esse castelo inteiro!'}];
+    this.talk=(this.talk||0)+1;say(l);
+  }};
+const cartObj={id:'carrinho',name:'Carrinho de limpeza',
+  sprite(){const s_=janSpr('cart',drawCart),o=janCartDx();return {c:s_.c,x:s_.x+o,y:s_.y+Math.round(jan.y)-126};},
+  act:()=>say([{t:'Carrinho de limpeza: balde, rodo e um borrifador azul.'},{t:'É o carrinho do Seu Antônio, o zelador.'}])};
+const signObj={id:'placa',name:'Piso molhado',
+  sprite(){const s_=janSpr('sign',()=>{g.save();g.translate(-22,0);drawWetSign();g.restore();});return {c:s_.c,x:s_.x+Math.round(jan.x)-210,y:s_.y+Math.round(jan.y)-126};},
+  act:()=>say([{t:'Placa amarela: CUIDADO, PISO MOLHADO.'},{t:'Melhor dar a volta.'}])};
+// the cart goes ahead of him: on his right while mopping or walking right, on his left when walking left
+function janCartDx(){return Math.round(jan.x)-216+(jan.side<0&&!janCleaning()?-44:0);}
+function janSync(){
+  const X=Math.round(jan.x),Y=Math.round(jan.y),cx0=X+12+(jan.side<0&&!janCleaning()?-44:0);
+  Object.assign(zelObj,{cx:X,top:Y-26,base:Y,solid:{x:X-5,y:Y-4,w:10,h:4}});zelObj.zone=expand(zelObj.solid,10);
+  Object.assign(cartObj,{cx:cx0+11,top:Y-32,base:Y-6,solid:{x:cx0,y:Y-14,w:22,h:8}});cartObj.zone=expand(cartObj.solid,10);
+  Object.assign(signObj,{cx:X-31,top:Y-18,base:Y-4,solid:{x:X-36,y:Y-10,w:11,h:6}});signObj.zone=expand(signObj.solid,10);
+}
+function janPlace(){ // puts him (and the cart, and the sign while he mops) in his corridor
+  for(const k of ['terreo','andar1','andar2']){const L=SCENES[k];for(const o of [zelObj,cartObj,signObj]){const i=L.indexOf(o);if(i>=0)L.splice(i,1);}}
+  SCENES[jan.sc].push(zelObj,cartObj);if(janCleaning())SCENES[jan.sc].push(signObj);
+  janSync();
+}
+function janReset(){Object.assign(jan,{spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,wait:0});janPlace();}
+function janArrive(){const s_=JAN_SPOTS[jan.to];Object.assign(jan,{spot:jan.to,to:-1,path:[],leaving:false,x:s_.x,y:s_.y,dir:'left',moving:false,side:1});janPlace();}
+const janRoute=(x0,x1,y1)=>[[x0,JAN_LANE[jan.sc]],[x1,JAN_LANE[jan.sc]],[x1,y1]];
+function janSwitch(){ // takes the stairs: appears on the other floor (walking from its stairs if the player is there)
+  const from=jan.sc,s_=JAN_SPOTS[jan.to];jan.sc=s_.sc;jan.leaving=false;
+  if(scene===jan.sc&&state!=='intro'){const e=JAN_STAIRS[jan.sc][from];jan.x=e[0];jan.y=e[1];jan.path=janRoute(e[0],s_.x,s_.y);janPlace();}
+  else janArrive();
+}
+function janGo(i){
+  jan.to=i;const s_=JAN_SPOTS[i],seen=scene===jan.sc;
+  if(s_.sc===jan.sc){if(seen){jan.path=janRoute(jan.x,s_.x,s_.y);janPlace();}else janArrive();return;}
+  if(seen){const e=JAN_STAIRS[jan.sc][s_.sc];jan.path=janRoute(jan.x,e[0],e[1]);jan.leaving=true;janPlace();}
+  else janSwitch();
+}
+function janUpdate(dt){
+  const m=gameMinutes();if(jan.last==null)jan.last=START_MIN;
+  if(janCleaning()&&m<END_MIN&&m-jan.last>=JAN_EVERY){
+    jan.last=m;const cur=JAN_SPOTS[jan.spot];
+    const far=JAN_SPOTS.map((s_,i)=>i).filter(i=>i!==jan.spot&&(JAN_SPOTS[i].sc!==cur.sc||Math.abs(JAN_SPOTS[i].x-cur.x)>250));
+    janGo(far[(Math.random()*far.length)|0]);
+  }
+  jan.moving=false;
+  if(!jan.path.length)return;
+  if(scene!==jan.sc){if(jan.leaving)janSwitch();else janArrive();return;} // the player left his corridor
+  if(state!=='play')return;
+  if(jan.wait>0){jan.wait-=dt;return;}
+  const [tx,ty]=jan.path[0],dx=tx-jan.x,dy=ty-jan.y,d=Math.hypot(dx,dy);
+  if(d<.6){jan.x=tx;jan.y=ty;jan.path.shift();
+    if(!jan.path.length){if(jan.leaving)janSwitch();else janArrive();}
+    else janSync();return;}
+  const st=Math.min(d,20*dt),nx=jan.x+dx/d*st,ny=jan.y+dy/d*st,cx0=nx+12+(jan.side<0?-44:0);
+  if((Math.abs(nx-player.x)<12&&Math.abs(ny-player.y)<8)||(player.x>cx0-6&&player.x<cx0+28&&Math.abs(ny-player.y)<12))return; // waits for the player to pass
+  if(Math.abs(dx)>Math.abs(dy)){jan.dir=dx<0?'left':'right';jan.side=dx<0?-1:1;}else jan.dir=dy<0?'up':'down';
+  jan.x=nx;jan.y=ny;jan.moving=true;jan.anim+=dt*6;janSync();
+}
+// wet patch under the mop, drawn on the floor before everything else
+function drawJanitorFloor(){
+  if(jan.sc!==scene||!janCleaning())return;
+  const X=Math.round(jan.x),Y=Math.round(jan.y);
+  pxEllipse(X-16,Y-12,20,7,'#7b8186');pxEllipse(X-2,Y-20,10,4,'#7b8186');
+  for(let x=X-34;x<X+4;x+=2)px(x,Y-19,'#9aa2a9');
+  r(X-30,Y-16,6,1,'#b9c2c8');r(X-8,Y-22,5,1,'#b9c2c8');r(X-16,Y-8,3,1,'#b9c2c8');
+}
+janReset();
 const totalAll=SCENES.terreo.concat(SCENES.andar1,SCENES.andar2,SCENES.sala101,SCENES.sala103,SCENES.sala201,SCENES.salaLab).filter(o=>!o.deco).length;
 const SCENE_W={terreo:SW1,andar1:SW1,andar2:SW1,sala101:W,sala103:W,sala201:W,salaLab:W};
 TORCHES.sala101=[];TORCHES.sala103=[];TORCHES.sala201=[];TORCHES.salaLab=[];
@@ -2386,18 +2630,25 @@ function giveItem(k){
 }
 /* ---------- mission ----------
    Story: yesterday the professors handed out a homework sheet set (10 sheets, one per reaction). There is a
-   test tomorrow, and today's class (8h00-11h30, Sala 101) is a review session for questions. The student
+   test tomorrow, and today's class (7h50-11h30, Sala 101) is a review session for questions. The student
    left the sheets behind in the rooms where they had class yesterday (101, 103 and 201).
    07h30: get the badge at the front office (it opens the rooms), find and answer the 10 sheets, then hand
    them to the professors in Sala 101 before the class ends at 11h30.
    They grade them at their desk: PASS or more right wins (the player may keep exploring); fewer is game over.
-   8h00: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
+   7h50: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
    sheets are locked and count as wrong. */
-const START_MIN=7*60+30,CLASS_MIN=8*60,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
-const SECONDS_PER_GAME_MINUTE=40; // close to real time: 07h30 -> 8h00 takes 20 real minutes, 07h30 -> 11h30 takes 2h40
+const START_MIN=7*60+30,CLASS_MIN=7*60+50,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
+const SECONDS_PER_GAME_MINUTE=40; // close to real time: 07h30 -> 7h50 takes about 13 real minutes, 07h30 -> 11h30 takes 2h40
+const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet: real time, 1 minute = 60 s
+// advances the clock (called every frame; it stands still in the pause menu, before the start and after the end)
+function tickClock(dt){
+  if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause')return;
+  const reading=state==='quiz'&&quiz&&!provas[quiz.n]&&!flags.review;
+  gameMin+=dt/(reading?SECONDS_PER_READING_MINUTE:SECONDS_PER_GAME_MINUTE);
+}
 const answered=()=>Object.keys(provas).filter(k=>k!=='b').length; // regular sheets (the bonus is counted apart)
 const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+'h'+String(m%60).padStart(2,'0');
-const ROOM_SHEETS={};for(const rm in EXAM_DESKS)ROOM_SHEETS[rm]=Object.values(EXAM_DESKS[rm]); // room -> reactions on its desks
+const ROOM_SHEETS={};for(const rm in EXAM_DESKS)ROOM_SHEETS[rm]=Object.values(EXAM_DESKS[rm]).flat(); // room -> reactions on its desks
 const deskProf=SCENES.sala101.find(o=>o.id==='mesaProf');
 let clockTxt='';
 function noBadge(){
@@ -2420,13 +2671,14 @@ function updateObjective(){
   el.innerHTML='<b>OBJETIVO</b><span></span>';el.lastChild.textContent=t;
 }
 function needsMarker(o){
+  if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca; // optional extra, shown even after grading
   if(flags.graded)return false;
   if(o.id==='locker42')return !!flags.wantJaleco&&!flags.jaleco;
   if(!flags.cracha)return o.id===(flags.marina?'secretaria':'marina');
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
   if(flags.seated)return o===aldair||o===heloisa||o.id==='sala101';
   if(!flags.profs&&!answered())return o===aldair||o===heloisa||o.id==='sala101';
-  if(o.prova)return !provas[o.prova];
+  if(o.provas)return o.provas.some(n=>!provas[n]);
   return !!ROOM_SHEETS[o.id]&&ROOM_SHEETS[o.id].some(n=>!provas[n]); // doors of rooms that still hold unanswered sheets
 }
 // the professors stop walking and wait seated behind their desk
@@ -2445,7 +2697,7 @@ function unseatProfs(){[aldair,heloisa].forEach(o=>{delete o.oy;o.noShadow=false
 function bell(){[784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05,i*.16));}
 function classStarts(){
   flags.bell8=true;bell();
-  say([{t:'TRIIIM! São 8h: a aula de Bioquímica começou na Sala 101.'},
+  say([{t:'TRIIIM! São 7h50: a aula de Bioquímica começou na Sala 101.'},
        {t:'Os professores Aldair Neto e Rosa vão tirar dúvidas até 11h30. Entregue as folhas antes do fim da aula.'}]);
 }
 function lastCall(){
@@ -2492,10 +2744,10 @@ function grade(){
     {who:'PROF. ALDAIR NETO',t:'Fase de pagamento: '+b+' de 5.'},
     bon?{who:'PROF. ALDAIR NETO',t:'Questão bônus: '+(!bon.ok?'errada, não valeu o ponto extra.':base>=QUIZ_N?'certa, mas você já tinha a nota máxima.':base>=PASS?'certa! Você nem precisava, mas o ponto extra entra na nota.':'certa! O ponto extra entra na sua nota.')}
        :{who:'PROFA. ROSA',t:'Sem a questão bônus, ficamos só com as '+QUIZ_N+' folhas.'},
-    {who:'PROF. ALDAIR NETO',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está pronto para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
+    {who:'PROF. ALDAIR NETO',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está '+gen('pronto','pronta')+' para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
     {who:'PROFA. ROSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
       {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
-      {t:'Não, obrigado',fn:()=>finish(pass)}]}
+      {t:gen('Não, obrigado','Não, obrigada'),fn:()=>finish(pass)}]}
   ]);
 }
 /* ---------- commented correction ----------
@@ -2506,7 +2758,7 @@ const reviewIds=()=>Object.keys(QUIZ).filter(k=>!isBonus(k)).concat(provas.b||fl
 function openReview(pass){reviewPass=pass;reviewSel=0;flags.review=true;showReview();}
 function showReview(){
   const list=$('rev-list');list.textContent='';
-  $('rev-aluno').textContent='ALUNO(A): '+(jogador||'—');
+  $('rev-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
   reviewIds().forEach((n,i)=>{
     const a=provas[n],b=document.createElement('button');
     b.type='button';b.className='rev-item '+(!a?'blank':a.ok?'ok':'err')+(i===reviewSel?' on':'');
@@ -2633,7 +2885,7 @@ function openQuiz(n){
   const q=QUIZ[n];
   quiz={n,sel:-1};
   $('quiz-bar').textContent=isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
-  $('quiz-aluno').textContent='ALUNO(A): '+(jogador||'—');
+  $('quiz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
   $('quiz-title').textContent=isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
   quizEl.querySelector('.sheet').classList.toggle('bonus',isBonus(n));
   $('quiz-sub').textContent=q.sub;
@@ -2694,14 +2946,17 @@ function quizEnter(){
   if(provas[quiz.n]||flags.review){closeQuiz();return;}
   if(quiz.sel<0){$('quiz-msg').textContent='Escolha uma alternativa antes de confirmar.';sfx.bump();return;}
   const ok=quiz.sel===QUIZ[quiz.n].c;
-  provas[quiz.n]={sel:quiz.sel,ok};
+  provas[quiz.n]={sel:quiz.sel,ok};quiz.fresh=true;
   updateScore();renderQuiz();
   sfx.item(); // no right/wrong feedback here: the professors do the grading
   $('quiz-msg').scrollIntoView({block:'nearest'});
 }
 function closeQuiz(){
+  const pile=pileBack,justDone=quiz&&provas[quiz.n]&&quiz.fresh;pileBack=null;
   quizEl.hidden=true;quiz=null;state='play';keys.clear();
   if(flags.review){showReview();return;}
+  // back to the pile while it still has blank sheets (unless this was the last one of the whole set)
+  if(pile&&justDone&&!flags.timeUp&&answered()<QUIZ_N&&pile.some(n=>!provas[n])){sheetPile(pile);return;}
   if(answered()===QUIZ_N&&!flags.seated){
     say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
   }
@@ -2709,20 +2964,167 @@ function closeQuiz(){
 $('quiz-ok').addEventListener('click',quizEnter);
 $('quiz-back').addEventListener('click',closeQuiz);
 
+/* ---------- word search (optional extra: Camila, the biochemistry monitor, left it on the lab side table) ----------
+   10x10 grid, made at random once per game; words go right, down or diagonally and may be marked from either
+   end. Keyboard / controller: move the cursor, ENTER (A) on the first and on the last letter. Mouse / touch:
+   drag over the word, or click the first and then the last letter. Every word found shows a review tip. */
+const CACA_N=10,CACA_WORDS=[
+  ['GLICOSE','Açúcar de 6 carbonos que entra na glicólise.'],
+  ['PIRUVATO','Produto final da glicólise: 2 por glicose, com 3 carbonos cada.'],
+  ['CITOSOL','Onde a glicólise acontece na célula.'],
+  ['ATP','Gasta 2 na fase preparatória e gera 4 na de pagamento: saldo de 2.'],
+  ['NADH','Formado na reação 6, pela gliceraldeído-3-fosfato desidrogenase.'],
+  ['LACTATO','Sem oxigênio, o músculo reduz o piruvato a lactato e regenera o NAD+.'],
+  ['HEXOCINASE','Reação 1: fosforila a glicose. É irreversível.']
+];
+const CACA_COLORS=['#9fd8a6','#f5b7a0','#a9c9ef','#f2dc84','#d7b4e6','#a7e0d8','#f3b3c9','#c9d98a','#e8c49a','#b7c3f0'];
+const cacaEl=$('caca'),cacaGridEl=$('caca-grid');
+let caca=null; // {grid, found:{word:[cells]}, cur, anchor}
+function cacaMake(){
+  const DIRS=[[0,1],[1,0],[1,1],[-1,1]],FILL='AAEEIIOOSSRRNTCLDUMPGHVFBQZXJ';
+  const ALL=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+  const count=(gr,w)=>{let n=0;for(let r0=0;r0<CACA_N;r0++)for(let c0=0;c0<CACA_N;c0++)for(const [dr,dc] of ALL){
+    let k=0;while(k<w.length){const rr=r0+dr*k,cc=c0+dc*k;if(rr<0||cc<0||rr>=CACA_N||cc>=CACA_N||gr[rr][cc]!==w[k])break;k++;}if(k===w.length)n++;}return n;};
+  for(let tries=0;tries<400;tries++){
+    const gr=Array.from({length:CACA_N},()=>Array(CACA_N).fill(''));let ok=true;
+    for(const [w] of CACA_WORDS.slice().sort((a,b)=>b[0].length-a[0].length)){
+      let placed=false;
+      for(let t=0;t<300&&!placed;t++){
+        const [dr,dc]=DIRS[(Math.random()*DIRS.length)|0],r0=(Math.random()*CACA_N)|0,c0=(Math.random()*CACA_N)|0;
+        let fit=true;
+        for(let k=0;k<w.length;k++){const rr=r0+dr*k,cc=c0+dc*k;if(rr<0||cc<0||rr>=CACA_N||cc>=CACA_N||(gr[rr][cc]&&gr[rr][cc]!==w[k])){fit=false;break;}}
+        if(fit){for(let k=0;k<w.length;k++)gr[r0+dr*k][c0+dc*k]=w[k];placed=true;}
+      }
+      if(!placed){ok=false;break;}
+    }
+    if(!ok)continue;
+    for(const row of gr)for(let c=0;c<CACA_N;c++)if(!row[c])row[c]=FILL[(Math.random()*FILL.length)|0];
+    if(CACA_WORDS.every(([w])=>count(gr,w)===1))return gr; // every word appears exactly once
+  }
+  return null;
+}
+function cacaLine(a,b){ // cells from a to b if they are in a straight line (8 directions)
+  const dr=Math.sign(b.r-a.r),dc=Math.sign(b.c-a.c),n=Math.max(Math.abs(b.r-a.r),Math.abs(b.c-a.c));
+  if(a.r!==b.r&&a.c!==b.c&&Math.abs(b.r-a.r)!==Math.abs(b.c-a.c))return null;
+  return Array.from({length:n+1},(_,k)=>({r:a.r+dr*k,c:a.c+dc*k}));
+}
+function openCaca(){
+  if(!caca){const gr=cacaMake();if(!gr)return;caca={grid:gr,found:{},cur:{r:0,c:0},anchor:null,drag:false};}
+  if(!flags.cacaDica)flags.cacaDica=true;
+  $('caca-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  cacaGridEl.textContent='';
+  caca.grid.forEach((row,r0)=>row.forEach((ch,c0)=>{const d=document.createElement('div');d.textContent=ch;d.dataset.r=r0;d.dataset.c=c0;cacaGridEl.appendChild(d);}));
+  caca.anchor=null;
+  $('caca-msg').textContent=flags.caca?'Você já achou todas as palavras. Bom estudo!':'Monitoria: atividade opcional, não vale nota. Boa revisão!';
+  keys.clear();state='caca';cacaEl.hidden=false;renderCaca();fitCaca();tone(660,.06,'square',.03);
+}
+// the letter cells shrink until the whole sheet fits the screen (no scrollbar)
+function fitCaca(){
+  if(cacaEl.hidden)return;
+  const sh=cacaEl.querySelector('.caca-sheet'),body=sh.parentNode;
+  let cs=44;sh.style.setProperty('--cs',cs+'px');
+  while(cs>14&&(sh.offsetHeight>body.clientHeight-8||sh.scrollWidth>body.clientWidth)){cs--;sh.style.setProperty('--cs',cs+'px');}
+}
+addEventListener('resize',fitCaca);
+function renderCaca(){
+  const cells=cacaGridEl.children,col={};
+  CACA_WORDS.forEach(([w],i)=>{const f=caca.found[w];if(f)f.forEach(p=>{col[p.r*CACA_N+p.c]=CACA_COLORS[i];});});
+  const pv={};if(caca.anchor){const L=cacaLine(caca.anchor,caca.cur);if(L)L.forEach(p=>{pv[p.r*CACA_N+p.c]=1;});}
+  for(let i=0;i<cells.length;i++){
+    const d=cells[i],r0=(i/CACA_N)|0,c0=i%CACA_N;
+    d.style.background=col[i]||'';d.className=(col[i]?'f':'')+(pv[i]?' pv':'')+(caca.anchor&&caca.anchor.r===r0&&caca.anchor.c===c0?' an':'')+(caca.cur.r===r0&&caca.cur.c===c0?' cur':'');
+  }
+  const list=$('caca-list');list.textContent='';
+  CACA_WORDS.forEach(([w,tip],i)=>{const li=document.createElement('li');li.className=caca.found[w]?'ok':'';
+    if(caca.found[w])li.style.borderLeftColor=CACA_COLORS[i];
+    li.innerHTML='<b></b><small></small>';li.firstChild.textContent=w;li.lastChild.textContent=tip;list.appendChild(li);});
+  $('caca-close').textContent=flags.caca?'FECHAR':'DEIXAR PARA DEPOIS';
+}
+const cacaCount=()=>caca?Object.keys(caca.found).length:0;
+function cacaTry(a,b){
+  const L=cacaLine(a,b);caca.anchor=null;
+  if(!L||L.length<2){renderCaca();return;}
+  const str=L.map(p=>caca.grid[p.r][p.c]).join(''),rev=str.split('').reverse().join('');
+  const hit=CACA_WORDS.find(([w])=>w===str||w===rev);
+  const msg=$('caca-msg');
+  if(hit&&!caca.found[hit[0]]){
+    caca.found[hit[0]]=L;sfx.item();
+    if(cacaCount()===CACA_WORDS.length){flags.caca=true;msg.textContent='Parabéns! Você achou as '+CACA_WORDS.length+' palavras da glicólise!';tone(1046,.3,'triangle',.05,.5);}
+    else msg.textContent=hit[0]+'! Faltam '+(CACA_WORDS.length-cacaCount())+'.';
+  }else if(hit){msg.textContent='Você já tinha achado '+hit[0]+'.';sfx.blip();}
+  else{msg.textContent='"'+str+'" não está na lista. Tente de novo.';sfx.bump();}
+  renderCaca();updatePauseExtra();
+}
+function cacaMove(dr,dc){caca.cur={r:(caca.cur.r+dr+CACA_N)%CACA_N,c:(caca.cur.c+dc+CACA_N)%CACA_N};document.body.classList.add('kb');renderCaca();}
+function cacaEnter(){
+  document.body.classList.add('kb');
+  if(!caca.anchor){caca.anchor={...caca.cur};sfx.blip();renderCaca();}
+  else if(caca.anchor.r===caca.cur.r&&caca.anchor.c===caca.cur.c){caca.anchor=null;renderCaca();}
+  else cacaTry(caca.anchor,caca.cur);
+}
+function closeCaca(){
+  if(state!=='caca')return;
+  cacaEl.hidden=true;state='play';keys.clear();
+  if(flags.caca&&!flags.cacaDone){flags.cacaDone=true;
+    say([{t:'Caça-palavras completo! Glicose, piruvato, citosol, ATP, NADH, lactato... Uma boa revisão para a prova de amanhã.'},
+         {t:'A monitora Camila, no 1º andar, vai gostar de saber.'}]);}
+}
+function cacaCell(e){const t=document.elementFromPoint(e.clientX,e.clientY);return t&&t.parentNode===cacaGridEl?{r:+t.dataset.r,c:+t.dataset.c}:null;}
+cacaGridEl.addEventListener('pointerdown',e=>{
+  const p=cacaCell(e);if(!p||state!=='caca')return;e.preventDefault();document.body.classList.remove('kb');
+  if(caca.anchor&&!(caca.anchor.r===p.r&&caca.anchor.c===p.c)){caca.cur=p;cacaTry(caca.anchor,p);return;} // second click
+  caca.anchor=p;caca.cur=p;caca.drag=true;sfx.blip();renderCaca();
+});
+cacaGridEl.addEventListener('pointermove',e=>{
+  if(!caca||!caca.drag)return;const p=cacaCell(e);
+  if(p&&(p.r!==caca.cur.r||p.c!==caca.cur.c)){caca.cur=p;renderCaca();}
+});
+addEventListener('pointerup',e=>{
+  if(!caca||!caca.drag)return;caca.drag=false;
+  const p=cacaCell(e)||caca.cur;
+  if(caca.anchor&&(p.r!==caca.anchor.r||p.c!==caca.anchor.c))cacaTry(caca.anchor,p); // dragged over a word
+});
+$('caca-close').addEventListener('click',closeCaca);
+// Camila, the monitor, invites the player to the word search and asks about it afterwards
+{
+  const cam=SCENES.andar1.find(o=>o.id==='camila'),act0=cam.act,CW='CAMILA (MONITORA)';
+  cam.rem=0;
+  cam.act=function(){
+    const face=()=>{stopChat(this);this.wait=4;this.dir=faceTo(this,player);};
+    if(!flags.cacaTold){face();flags.cacaTold=flags.cacaDica=true;updatePauseExtra();
+      return say([{who:CW,t:'Oi! Sou a Camila, monitora de Bioquímica. Amanhã tem prova de glicólise, né?'},
+        {who:CW,t:'Deixei um caça-palavras da glicólise na mesinha do laboratório, no térreo, ao lado da porta. São 7 palavras-chave da matéria.'},
+        {who:CW,t:'É opcional e não vale nota. Mas cada palavra que você achar vem com uma dica de revisão. Ajuda muito para a prova!'},
+        {who:CW,t:'Se encontrar todas, passe aqui para me contar.'}]);}
+    if(flags.caca&&!flags.cacaThanks){face();flags.cacaThanks=true;
+      return say([{who:me(),t:'Camila, achei as '+CACA_WORDS.length+' palavras do caça-palavras!'},
+        {who:CW,t:'Que demais! Glicose, piruvato, citosol, ATP, NADH, lactato... Você revisou a glicólise do começo ao fim.'},
+        {who:CW,t:'Agora é descansar e ir bem na prova de amanhã. Boa sorte!'}]);}
+    if(!flags.caca&&this.rem++%2===0){face();
+      return say([{who:CW,t:cacaCount()?'Já achou '+cacaCount()+' das '+CACA_WORDS.length+' palavras do caça-palavras? Continue, a revisão vale a pena!'
+        :'Já passou no laboratório? O caça-palavras da glicólise está na mesinha ao lado da porta. É ótimo para revisar!'}]);}
+    return act0.call(this);
+  };
+}
+function updatePauseExtra(){
+  const box=$('pz-extra-box');box.hidden=!flags.cacaDica;
+  $('pz-extra').textContent=flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')';
+}
+
 /* ---------- music ----------
-   One playlist per part of the building: the ground floor (and its lab) plays one, the upper floors
-   (and their classrooms) another. Each playlist runs its tracks in order and starts over at the end.
+   One playlist per floor, each with its own combination of tracks: ground floor (and its lab), 1st floor
+   (and Salas 101/103), 2nd floor (and Sala 201). Each playlist runs its tracks in order and starts over at the end.
    Changing zone cross-fades; coming back, the zone's track resumes where it stopped.
    The MP3s live in the folder next to the game; without them the game simply runs silent. */
 const MUSIC_DIRS=['Músicas dos jogos/',''];
 const TRACKS={lab:'Laboratory of the Archmage (MP3).mp3',cour:'Courtyard of Enchantment.mp3',
   alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3'};
-const PLAYLISTS={terreo:['lab','cour'],andares:['alc','whim']};
-const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andares',andar2:'andares',sala101:'andares',sala103:'andares',sala201:'andares'};
+const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab']};
+const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2'};
 const music=(()=>{
   const FADE=.8; // seconds for a full fade
   let els={},dir=0,cur=null,vol=.15,zone=null;
-  const pos={terreo:0,andares:0}; // current track of each playlist
+  const pos={terreo:0,andar1:0,andar2:0}; // current track of each playlist
   const level=()=>muted?0:vol;
   const track=z=>PLAYLISTS[z][pos[z]];
   function el(k){
@@ -2735,8 +3137,9 @@ const music=(()=>{
       const k2=cur;cur=null;if(k2)play(k2);
     });
     a.addEventListener('ended',()=>{ // next track of its playlist (fades in from silence)
-      for(const z in PLAYLISTS)if(PLAYLISTS[z].includes(k))pos[z]=(pos[z]+1)%PLAYLISTS[z].length;
-      if(cur===k&&zone){cur=null;play(track(zone));preloadNext();}
+      if(cur!==k||!zone)return; // a track shared by two floors only moves the playlist of the floor playing it
+      pos[zone]=(pos[zone]+1)%PLAYLISTS[zone].length;
+      el(k).currentTime=0;cur=null;play(track(zone));preloadNext();
     });
     return els[k]=a;
   }
@@ -2853,6 +3256,16 @@ function onKey(e){
     else if(k>=0&&!e.repeat){quizPick(k);} // A, B, C or D marks that option
     return;
   }
+  if(state==='caca'){
+    e.preventDefault&&e.preventDefault();
+    if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)cacaEnter();}
+    else if(e.code==='Escape'){if(caca.anchor){caca.anchor=null;renderCaca();}else closeCaca();}
+    else if(e.code==='KeyW'||e.code==='ArrowUp')cacaMove(-1,0);
+    else if(e.code==='KeyS'||e.code==='ArrowDown')cacaMove(1,0);
+    else if(e.code==='KeyA'||e.code==='ArrowLeft')cacaMove(0,-1);
+    else if(e.code==='KeyD'||e.code==='ArrowRight')cacaMove(0,1);
+    return;
+  }
   if(state==='review'){
     if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)reviewOpen();}
     else if(e.code==='Escape'){e.preventDefault();reviewDone();}
@@ -2899,6 +3312,7 @@ if('gamepadInputEmulation' in navigator)try{navigator.gamepadInputEmulation='gam
 const keyLabel=()=>padOn?'<span class="gpb a">A</span>':'ENTER';
 function padKey(code,repeat){
   if(state==='boot'){ // opening screens: the name screen has its own keyboard; A or Menu leaves the title screen
+    if(window.telaPersonagemPad&&window.telaPersonagemPad(code))return;
     if(window.telaNomePad&&window.telaNomePad(code))return;
     if((code==='Enter'||code==='Menu')&&$('telaTitulo').style.display!=='none')$('telaTitulo').click();
     return;
@@ -2969,7 +3383,7 @@ function pauseItems(){
     .concat([{id:'controles',t:'Como jogar com o controle'}]);
 }
 function renderPause(){
-  const o=$('objective').lastChild;$('pz-obj').textContent=o?o.textContent:'';
+  const o=$('objective').lastChild;$('pz-obj').textContent=o?o.textContent:'';updatePauseExtra();
   $('pz-menu').hidden=pauseHelp;$('pz-ajuda').hidden=!pauseHelp;
   const box=$('pz-menu');box.textContent='';
   pauseItems().forEach((it,i)=>{
@@ -3038,7 +3452,7 @@ function update(dt){
   }
   updateFade(dt);music.tick(dt);
   if(banner){banner.t-=dt;if(banner.t<=0)banner=null;}
-  updatePedro(dt);updateWanderers(dt);
+  updatePedro(dt);updateWanderers(dt);janUpdate(dt);
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
@@ -3084,6 +3498,7 @@ function render(t){
   camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(player.x-W/2)));
   fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,salaLab:bgLab}[scene],0,0);
   if(scene==='terreo')drawClock();
+  drawJanitorFloor();
   drawTorches(t);
   for(const o of objects)if(o.wall){blit(spriteOf(o,t));if(o.fx){g=fctx;o.fx(t);}}
   const items=objects.filter(o=>!o.wall);
@@ -3126,13 +3541,20 @@ function render(t){
 
 let last=performance.now();
 function loop(now){
-  const dt=Math.min(.05,(now-last)/1000);last=now;
+  const raw=Math.min(1,(now-last)/1000),dt=Math.min(.05,raw);last=now;
+  tickClock(raw); // the clock follows real time, even when frames come slowly
   pollPad();if(state==='pause')music.tick(dt);else update(dt);render(now/1000);
   requestAnimationFrame(loop);
 }
 buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);buildBgSala(bgS201ctx,WIN201,91);buildBgLab();
 reset();state='boot';
 // called by the opening screens once the player has typed a name
+// thumbnail for the character screen (g: 'm' boy, 'f' girl), facing down in everyday clothes
+window.miniaturaPersonagem=(cv,gn,blink)=>{
+  const old=genero;genero=gn;const s=personSprite('player','shirt','down',0,!!blink);genero=old;
+  const c=cv.getContext('2d');cv.width=16;cv.height=s.h;c.clearRect(0,0,16,s.h);c.drawImage(s.c,0,0);
+};
+window.registrarPersonagem=gn=>{genero=gn==='f'?'f':'m';};
 window.registrarJogador=n=>{
   jogador=String(n||'').trim().slice(0,32);
   state='intro';$('btn-start').focus({preventScroll:true});
@@ -3142,7 +3564,7 @@ requestAnimationFrame(loop);
 </script>
 
 <script>
-/* ===== opening screens: press start -> fake loading (7 s) -> player name -> game ===== */
+/* ===== opening screens: press start -> fake loading (7 s) -> character (boy/girl) -> player name -> story (#intro) -> game ===== */
 (function(){
   "use strict";
   var titulo = document.getElementById('telaTitulo');
@@ -3171,8 +3593,56 @@ requestAnimationFrame(loop);
     o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + 0.02);
   }
 
-  function pedirNome(){
+  /* character screen: two thumbnails (boy / girl) drawn by the game's sprite code; they blink now and then */
+  var telaPersonagem = document.getElementById('telaPersonagem');
+  var cartas = Array.prototype.slice.call(telaPersonagem.querySelectorAll('.tp-carta'));
+  var escolha = 0, piscaIv = null;
+  function desenharCartas(piscando){
+    cartas.forEach(function(c, i){ if (window.miniaturaPersonagem) window.miniaturaPersonagem(c.querySelector('canvas'), c.dataset.gen, piscando === i); });
+  }
+  function escolher(i){
+    escolha = i;
+    cartas.forEach(function(c, k){ c.classList.toggle('on', k === i); c.setAttribute('aria-checked', k === i ? 'true' : 'false'); });
+  }
+  function pedirPersonagem(){
     carregando.style.display = 'none';
+    telaPersonagem.style.display = '';
+    desenharCartas(-1);
+    var n = 0;
+    piscaIv = setInterval(function(){ n++; desenharCartas(n % 6 === 0 ? 0 : n % 6 === 3 ? 1 : -1); }, 600);
+    try{ cartas[escolha].focus({preventScroll: true}); }catch(e){}
+  }
+  function confirmarPersonagem(){
+    if (telaPersonagem.style.display === 'none') return;
+    clearInterval(piscaIv);
+    bipLoad(660, 0, .08, 'square', .05); bipLoad(990, .07, .14, 'square', .05);
+    var gn = cartas[escolha].dataset.gen;
+    if (window.registrarPersonagem) window.registrarPersonagem(gn);
+    var ico = document.getElementById('tnIco');   // the name screen shows the chosen character instead of the emoji
+    if (ico && window.miniaturaPersonagem){ ico.textContent = ''; var cv = document.createElement('canvas'); ico.appendChild(cv); window.miniaturaPersonagem(cv, gn, false); }
+    telaPersonagem.style.display = 'none';
+    pedirNome();
+  }
+  cartas.forEach(function(c, i){
+    c.addEventListener('click', function(){ if (escolha !== i){ escolher(i); bipLoad(520, 0, .03, 'square', .03); } else confirmarPersonagem(); });
+    c.addEventListener('dblclick', confirmarPersonagem);
+  });
+  document.getElementById('btnPersonagem').addEventListener('click', confirmarPersonagem);
+  document.addEventListener('keydown', function(e){
+    if (telaPersonagem.style.display === 'none') return;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'a' || e.key === 'd' || e.key === 'A' || e.key === 'D'){
+      e.preventDefault(); escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); try{ cartas[escolha].focus({preventScroll: true}); }catch(err){}
+    } else if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); confirmarPersonagem(); }
+  });
+  // called by the game's controller code while the opening screens are up; true = handled here
+  window.telaPersonagemPad = function(code){
+    if (telaPersonagem.style.display === 'none') return false;
+    if (code === 'ArrowLeft' || code === 'ArrowRight'){ escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); }
+    else if (code === 'Enter' || code === 'Menu') confirmarPersonagem();
+    return true;
+  };
+
+  function pedirNome(){
     telaNome.style.display = '';
     if (usaTeclado()){ campoNome.readOnly = true; marcar(); }
     else { try{ campoNome.focus(); }catch(e){} }
@@ -3253,7 +3723,7 @@ requestAnimationFrame(loop);
       if (p < 100){ requestAnimationFrame(passo); }
       else {
         bipLoad(880, 0, .12, 'triangle', .12); bipLoad(1175, .1, .18, 'triangle', .12);
-        setTimeout(pedirNome, 420);
+        setTimeout(pedirPersonagem, 420);
       }
     }
     requestAnimationFrame(passo);
