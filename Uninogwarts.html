@@ -38,6 +38,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hi
 .slot svg{width:70%;height:70%;shape-rendering:crispEdges;opacity:.2}
 .slot.got svg{opacity:1}
 .slot.pop .box{animation:pop .5s steps(4)}
+.slot .box{position:relative}
+.slot .cnt{position:absolute;right:calc(var(--u)*-1.4);bottom:calc(var(--u)*-1.4);font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*2.2);line-height:1;color:#1a1606;background:var(--accent);padding:calc(var(--u)*.5) calc(var(--u)*.7)}
+.slot .cnt:empty{display:none}
 @keyframes pop{0%{transform:scale(1.5)}100%{transform:scale(1)}}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -121,10 +124,6 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .ctl-help ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.2em;line-height:1.05}
 .ctl-help li{display:flex;align-items:center;gap:.45em}
 .ctl-help .gpb{font-size:.4em;flex:none}
-/* story screen: its own opaque screen, the game is not visible behind it until COMEÇAR */
-#intro{background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%);z-index:20}
-#intro .ctl-help{display:none;font-size:calc(var(--u)*6.2)}
-body.gp #intro .ctl-help{display:flex}
 /* Pause menu (Menu button on the controller, P on the keyboard) */
 #pausa{align-items:center;justify-content:center}
 .pause-box{width:min(620px,100%);max-height:100%;overflow:auto;background:var(--panel);border:4px solid var(--ink);box-shadow:8px 8px 0 #0d0806;padding:22px 26px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px}
@@ -157,10 +156,26 @@ body.gp #intro .ctl-help{display:flex}
 .modal:not(.zoom) .modal-body img{max-width:none;max-height:none;box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){#dlg-next,.slot.pop .box{animation:none}}
 /* Opening screens (press start, fake loading, player name): full-viewport layers above the game */
-.tela-titulo,.tela-carregando,.tela-personagem,.tela-nome{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:56px 24px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%)}
+.tela-titulo,.tela-carregando,.tela-personagem,.tela-nome,.tela-enredo{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:56px 24px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%)}
 .tela-titulo{cursor:pointer}
-.tela-titulo::after,.tela-carregando::after,.tela-personagem::after,.tela-nome::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
-.tt-ico{font-size:4.4rem;line-height:1}
+.tela-titulo::after,.tela-carregando::after,.tela-personagem::after,.tela-nome::after,.tela-enredo::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
+.tt-ico{font-size:clamp(5.5rem,17vh,10rem);line-height:1;filter:drop-shadow(0 6px 0 rgba(0,0,0,.35))}
+.tt-estandarte{position:absolute;top:0;z-index:1;width:48px;height:96px;image-rendering:pixelated;pointer-events:none}
+.tt-estandarte.e{left:max(70px,9%)}.tt-estandarte.d{right:max(70px,9%)}
+@media (max-width:600px),(max-height:520px){.tt-estandarte{display:none}}
+/* Story screen: its own screen between the name and the game (nothing of the game shows) */
+.tela-enredo{gap:18px;padding:56px 24px}
+.tela-enredo[hidden]{display:none}
+.tela-enredo>*{position:relative;z-index:1}
+.te-tag{font-family:var(--f-display);font-size:11px;letter-spacing:.12em;color:var(--accent)}
+.te-titulo{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(17px,3.2vw,28px);line-height:1.5;color:var(--accent);text-shadow:3px 3px 0 rgba(0,0,0,.4);text-wrap:balance}
+.te-titulo small{display:block;font-size:.5em;color:var(--ink);letter-spacing:.08em}
+.tela-enredo .intro-txt{width:min(100%,760px);font-size:clamp(19px,2.3vw,25px);line-height:1.12;gap:10px;text-align:left}
+.tela-enredo .intro-txt p{margin:0;text-align:justify;hyphens:auto}
+.tela-enredo .intro-txt .intro-obj-t{color:var(--accent);margin-bottom:-4px}
+.tela-enredo .ctl-help{display:none;font-size:21px}
+body.gp .tela-enredo .ctl-help{display:flex}
+@media (max-width:600px),(max-height:520px){.tela-enredo{padding:24px 16px;gap:10px}}
 .tt-titulo{font-family:var(--f-display);font-size:clamp(22px,5.5vw,40px);line-height:1.6;color:var(--accent);text-shadow:3px 3px 0 rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.03em}
 .tt-titulo small{display:block;font-size:.6em;color:var(--ink)}
 .tt-start{margin-top:6px;font-family:var(--f-display);font-size:16px;letter-spacing:.1em;color:#fff;text-transform:uppercase;animation:ttBlink 1s steps(1) infinite}
@@ -187,6 +202,13 @@ body.gp #intro .ctl-help{display:flex}
 .tp-carta.on .tp-nome::before{content:"▶ "}
 .tp-carta:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .tp-dica{position:relative;z-index:1;margin:0;font-size:20px;color:var(--muted)}
+.tp-pele{position:relative;z-index:1;display:flex;align-items:center;gap:12px;padding:8px 14px;border:3px solid transparent}
+.tp-pele.foco,.tp-opcoes.foco{outline:3px dashed rgba(217,164,65,.55);outline-offset:6px}
+.tp-rot{font-family:var(--f-display);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-right:6px}
+.tp-cor{all:unset;box-sizing:border-box;cursor:pointer;width:34px;height:34px;background:linear-gradient(135deg,var(--c) 0 55%,var(--d) 55% 100%);border:3px solid #0d0806;box-shadow:0 3px 0 #0d0806}
+.tp-cor:hover{transform:translateY(-2px)}
+.tp-cor.on{outline:3px solid var(--accent);outline-offset:2px;transform:translateY(-3px)}
+.tp-cor:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .tp-dica .so-gp{display:none}body.gp .tp-dica .so-gp{display:inline}body.gp .tp-dica .so-tec{display:none}
 @media (max-height:520px){.tela-personagem{gap:14px;padding-block:16px}.tp-carta{padding:12px 10px;gap:8px}.tp-carta canvas{width:64px;height:96px}}
 .tn-titulo{font-family:var(--f-display);font-size:clamp(17px,4.2vw,26px);line-height:1.6;color:var(--accent);text-shadow:3px 3px 0 rgba(0,0,0,.4);text-transform:uppercase;letter-spacing:.03em}
@@ -313,6 +335,8 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 </div>
 <div id="app">
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
+  <svg class="tt-estandarte e" viewBox="0 0 16 32" aria-hidden="true" shape-rendering="crispEdges"><rect x="0" y="0" width="16" height="2" fill="#a8862a"/><rect x="0" y="0" width="16" height="1" fill="#f2c94c"/><rect x="1" y="2" width="14" height="26" fill="#7a2e3e"/><rect x="1" y="2" width="1" height="26" fill="#d9a441"/><rect x="14" y="2" width="1" height="26" fill="#d9a441"/><polygon points="1,28 8,24 15,28 15,32 8,28 1,32" fill="#7a2e3e"/><rect x="2" y="27" width="12" height="1" fill="#d9a441"/><rect x="5" y="9" width="6" height="8" fill="#d9a441"/><rect x="5" y="7" width="2" height="2" fill="#d9a441"/><rect x="9" y="7" width="2" height="2" fill="#d9a441"/><rect x="7" y="13" width="2" height="4" fill="#5a2230"/><rect x="5" y="19" width="6" height="1" fill="#f2c94c"/></svg>
+  <svg class="tt-estandarte d" viewBox="0 0 16 32" aria-hidden="true" shape-rendering="crispEdges"><rect x="0" y="0" width="16" height="2" fill="#a8862a"/><rect x="0" y="0" width="16" height="1" fill="#f2c94c"/><rect x="1" y="2" width="14" height="26" fill="#7a2e3e"/><rect x="1" y="2" width="1" height="26" fill="#d9a441"/><rect x="14" y="2" width="1" height="26" fill="#d9a441"/><polygon points="1,28 8,24 15,28 15,32 8,28 1,32" fill="#7a2e3e"/><rect x="2" y="27" width="12" height="1" fill="#d9a441"/><rect x="5" y="9" width="6" height="8" fill="#d9a441"/><rect x="5" y="7" width="2" height="2" fill="#d9a441"/><rect x="9" y="7" width="2" height="2" fill="#d9a441"/><rect x="7" y="13" width="2" height="4" fill="#5a2230"/><rect x="5" y="19" width="6" height="1" fill="#f2c94c"/></svg>
   <div class="tt-ico" aria-hidden="true">🏰</div>
   <div class="tt-titulo">Uninogwarts<small>Desafio bioquímico</small></div>
   <div class="tt-start">▶ Press Start</div>
@@ -330,13 +354,29 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </div>
 </div>
 
+<div class="tela-enredo" id="intro" hidden>
+  <span class="te-tag">TÉRREO · 07h30 · VÉSPERA DA PROVA</span>
+  <h2 class="te-titulo">O Mistério das Folhas Perdidas<small>Uma manhã de glicólise em Uninogwarts</small></h2>
+  <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem você passou o dia estudando glicólise com a Marina, nas salas em que foi tendo aula. Mas, depois disso, não viu mais as suas folhas da atividade de Bioquímica.</p><p>A Marina está sentada na mesa de estudos perto da escada, aqui no térreo. Você quer perguntar se ela viu as suas folhas.</p><p class="intro-obj-t">Seu objetivo:</p><ol class="intro-obj"><li><b>▶</b><span>Falar com a Marina.</span></li></ol></div>
+  <div class="ctl-help" id="intro-ctl"></div>
+  <button class="tn-btn" id="btn-start" type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · COMEÇAR">▶ ENTER · COMEÇAR</button>
+</div>
+
 <div class="tela-personagem" id="telaPersonagem" style="display:none;">
   <div class="tn-titulo">Escolha seu personagem</div>
   <div class="tp-opcoes" role="radiogroup" aria-label="Personagem">
     <button class="tp-carta on" type="button" role="radio" aria-checked="true" data-gen="m"><canvas aria-hidden="true"></canvas><span class="tp-nome">Menino</span></button>
     <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="f"><canvas aria-hidden="true"></canvas><span class="tp-nome">Menina</span></button>
   </div>
-  <p class="tp-dica"><span class="so-tec">← → escolher · ENTER confirmar</span><span class="so-gp"><span class="gpb d"><i>✚</i></span> escolher · <span class="gpb a">A</span> confirmar</span></p>
+  <div class="tp-pele" role="radiogroup" aria-label="Cor da pele">
+    <span class="tp-rot">Cor da pele</span>
+    <button class="tp-cor" type="button" role="radio" data-sk="0" style="--c:#f1d0b0;--d:#d39f7a" aria-label="Pele clara"></button>
+    <button class="tp-cor on" type="button" role="radio" data-sk="1" style="--c:#d9a37c;--d:#a87445" aria-label="Pele média clara" aria-checked="true"></button>
+    <button class="tp-cor" type="button" role="radio" data-sk="2" style="--c:#c98b62;--d:#8a5a3c" aria-label="Pele média"></button>
+    <button class="tp-cor" type="button" role="radio" data-sk="3" style="--c:#a8683f;--d:#6e4228" aria-label="Pele morena"></button>
+    <button class="tp-cor" type="button" role="radio" data-sk="4" style="--c:#74462a;--d:#4a2a18" aria-label="Pele escura"></button>
+  </div>
+  <p class="tp-dica"><span class="so-gp"><span class="gpb d"><i>✚</i></span> escolher · ↑ ↓ cor da pele · <span class="gpb a">A</span> confirmar</span></p>
   <button class="tn-btn" id="btnPersonagem" type="button">▶ Continuar</button>
 </div>
 
@@ -349,7 +389,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </form>
   <p class="tn-erro" id="tnErro" hidden>Digite seu nome para continuar.</p>
   <div class="tn-teclado" id="tnTeclado" role="group" aria-label="Teclado na tela"></div>
-  <p class="tn-dica"><span class="gpb d"><i>✚</i></span> escolher · <span class="gpb a">A</span> digitar · <span class="gpb b">B</span> apagar · <span class="gpb x">X</span> espaço · <span class="gpb m"><i>≡</i></span> pronto</p>
+  <p class="tn-dica"><span class="gpb d"><i>✚</i></span> escolher · <span class="gpb a">A</span> digitar · <span class="gpb y">Y</span> apagar · <span class="gpb x">X</span> espaço · <span class="gpb m"><i>≡</i></span> pronto</p>
   <button class="tn-btn" id="btnNome" type="button">▶ Iniciar aventura</button>
 </div>
 
@@ -361,6 +401,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
         <span id="objective" class="objective" aria-live="polite"></span>
     <div class="inv" aria-label="Inventário">
       <div class="slot" id="slot-jaleco" title="Jaleco"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="6" height="2" fill="#c9cfd3"/><rect x="2" y="2" width="8" height="9" fill="#f4f6f4"/><rect x="5" y="2" width="2" height="5" fill="#2d6fb5"/><rect x="1" y="3" width="1" height="6" fill="#f4f6f4"/><rect x="10" y="3" width="1" height="6" fill="#f4f6f4"/><rect x="6" y="3" width="1" height="8" fill="#c9cfd3"/><rect x="3" y="7" width="2" height="2" fill="#9aa3a9"/></svg></div></div>
+      <div class="slot" id="slot-folhas" title="Folhas da atividade"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="7" height="9" fill="#d8dee2"/><rect x="2" y="2" width="7" height="9" fill="#f4f6f4"/><rect x="3" y="4" width="5" height="1" fill="#9aa2a9"/><rect x="3" y="6" width="5" height="1" fill="#9aa2a9"/><rect x="3" y="8" width="3" height="1" fill="#9aa2a9"/><rect x="3" y="2" width="5" height="1" fill="#2d6fb5"/></svg><b class="cnt" id="folhas-cnt"></b></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
       </div>
@@ -369,13 +410,6 @@ body:not(.kb) .caca-grid div.cur{outline:none}
         <div id="dlg-text"></div>
         <div id="dlg-choices"></div>
         <div id="dlg-next" data-gp="▼ <span class=&quot;gpb a&quot;>A</span>">▼ ENTER</div>
-      </div>
-      <div class="overlay" id="intro">
-        <span class="tag">TÉRREO · 07h30 · VÉSPERA DA PROVA</span>
-        <h2>Corredor da Secretaria</h2>
-        <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem você passou o dia estudando glicólise com a Marina, nas salas em que foi tendo aula. Mas, depois disso, não viu mais as suas folhas da atividade de Bioquímica.</p><p>A Marina está sentada na mesa de estudos perto da escada, aqui no térreo. Você quer perguntar se ela viu as suas folhas.</p><p class="intro-obj-t">Seu objetivo:</p><ol class="intro-obj"><li><b>▶</b><span>Falar com a Marina.</span></li></ol></div>
-        <div class="ctl-help" id="intro-ctl"></div>
-        <button class="btn" id="btn-start" type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · COMEÇAR">ENTER · COMEÇAR</button>
       </div>
       <div class="overlay" id="end" hidden>
         <span class="tag" id="end-tag">ATIVIDADE CONCLUÍDA</span>
@@ -405,7 +439,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.4 &middot; Última atualização: 3 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 3 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -424,7 +458,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <div class="modal" id="review" hidden role="dialog" aria-label="Correção comentada">
   <div class="modal-bar">
     <span class="mt">CORREÇÃO COMENTADA</span>
-    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd><kbd>A</kbd><kbd>D</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> abrir"><kbd>ENTER</kbd> abrir</span><span data-gp="<span class=&quot;gpb b&quot;>B</span> encerrar"><kbd>ESC</kbd> encerrar</span></span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd><kbd>A</kbd><kbd>D</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> abrir"><kbd>ENTER</kbd> abrir</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> encerrar"><kbd>ESC</kbd> encerrar</span></span>
   </div>
   <div class="quiz-body">
     <div class="sheet">
@@ -443,13 +477,13 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     <div class="pz-obj" id="pz-extra-box" hidden><b>EXTRA · OPCIONAL</b><span id="pz-extra"></span></div>
     <div class="pz-menu" id="pz-menu"></div>
     <div class="ctl-help" id="pz-ajuda" hidden></div>
-    <div class="pz-hint" data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher · ◀ ▶ volume · <span class=&quot;gpb a&quot;>A</span> confirmar · <span class=&quot;gpb b&quot;>B</span> voltar · <span class=&quot;gpb m&quot;><i>≡</i></span> fechar"><span><kbd>W</kbd><kbd>S</kbd> escolher</span><span><kbd>A</kbd><kbd>D</kbd> volume</span><span><kbd>ENTER</kbd> confirmar</span><span><kbd>ESC</kbd> voltar</span></div>
+    <div class="pz-hint" data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher · ◀ ▶ volume · <span class=&quot;gpb a&quot;>A</span> confirmar · <span class=&quot;gpb x&quot;>X</span> voltar · <span class=&quot;gpb m&quot;><i>≡</i></span> fechar"><span><kbd>W</kbd><kbd>S</kbd> escolher</span><span><kbd>A</kbd><kbd>D</kbd> volume</span><span><kbd>ENTER</kbd> confirmar</span><span><kbd>ESC</kbd> voltar</span></div>
   </div>
 </div>
 <div class="modal" id="quiz" hidden role="dialog" aria-label="Folha de atividade">
   <div class="modal-bar">
     <span class="mt" id="quiz-bar">PROVA</span>
-    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> confirmar"><kbd>ENTER</kbd> confirmar</span><span data-gp="<span class=&quot;gpb b&quot;>B</span> sair"><kbd>ESC</kbd> sair</span></span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> confirmar"><kbd>ENTER</kbd> confirmar</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> sair"><kbd>ESC</kbd> sair</span></span>
   </div>
   <div class="quiz-body" id="quiz-body">
     <div class="sheet">
@@ -473,7 +507,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <div class="modal" id="caca" hidden role="dialog" aria-label="Caça-palavras da glicólise">
   <div class="modal-bar">
     <span class="mt">CAÇA-PALAVRAS · REVISÃO DA GLICÓLISE</span>
-    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> mover"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> 1ª e última letra"><kbd>ENTER</kbd> 1ª e última letra</span><span data-gp="<span class=&quot;gpb b&quot;>B</span> sair"><kbd>ESC</kbd> sair</span></span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> mover"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> 1ª e última letra"><kbd>ENTER</kbd> 1ª e última letra</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> sair"><kbd>ESC</kbd> sair</span></span>
   </div>
   <div class="quiz-body">
     <div class="sheet caca-sheet">
@@ -661,7 +695,13 @@ const sfx={
 
 /* ---------- state ---------- */
 let state,flags,inspected,player,dialog,startTime,endTime,labOpen,provas,jogador='',genero='m',pauseAt=0,gameMin=0; // gameMin: game minutes elapsed since 07h30 (fractional)
-const gen=(m,f)=>genero==='f'?f:m; // gendered words for the chosen character (boy / girl)
+const gen=(m,f)=>genero==='f'?f:m;
+// skin tones of the playable characters (S skin, s shade), chosen on the character screen; 1 is the original
+const SKINS=[['#f1d0b0','#d39f7a'],['#d9a37c','#a87445'],['#c98b62','#8a5a3c'],['#a8683f','#6e4228'],['#74462a','#4a2a18']];
+let pele=1;const palCache={};
+function playerPal(girl){const k=(girl?'f':'m')+pele;
+  return palCache[k]||(palCache[k]=Object.assign({},girl?CHAR_PAL.playerF:CHAR_PAL.player,{S:SKINS[pele][0],s:SKINS[pele][1]}));}
+const nome1=()=>(jogador||'').trim().split(/\s+/)[0]||gen('aluno','aluna'); // first name, for people who know the player // gendered words for the chosen character (boy / girl)
 const me=()=>(jogador||'Você').toUpperCase(); // speaker tag for the player's own lines
 function reset(){
   flags={board:false,jaleco:false,cracha:false,poster:false,up:false,sala101:false,sala103:false,lab:false,aud:false};
@@ -669,7 +709,7 @@ function reset(){
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
   dialog=null;labOpen=false;startTime=0;endTime=0;gameMin=0;
-  ['jaleco','cracha'].forEach(k=>$('slot-'+k).classList.remove('got'));
+  ['jaleco','cracha','folhas'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
   if(typeof aldair!=='undefined'){initWalker(aldair);initWalker(heloisa);unseatProfs();}
@@ -1102,8 +1142,8 @@ function personSprite(who,outfit,dir,f,blink){
   if(who==='player'&&!girl&&!lab)rows=headphones(rows,dir==='left'?'right':dir);
   const badge=who!=='player'||flags.cracha;
   if(!badge)rows=rows.map(r_=>r_.replace(/[Cc]/g,'W'));
-  const key=[who+(girl?'F':'')+(lab?'L':''),outfit,dir,f%4,blink?1:0,badge?'b':''].join(':');
-  return gridSprite(key,rows,girl?CHAR_PAL.playerF:CHAR_PAL[who],dir==='left');
+  const key=[who+(girl?'F':'')+(lab?'L':'')+(who==='player'?pele:''),outfit,dir,f%4,blink?1:0,badge?'b':''].join(':');
+  return gridSprite(key,rows,who==='player'?playerPal(girl):CHAR_PAL[who],dir==='left');
 }
 function drawCharSprite(s,x,y){fctx.drawImage(s.c,Math.round(x)-8,Math.round(y)-s.h+1);}
 function blinkAt(t,seed){return ((t+seed)%3.7)<.14;}
@@ -1169,7 +1209,7 @@ add({id:'secretaria',name:'Secretaria',wall:true,cx:188,top:14,zone:wallZone(164
       {who:'DONA TATI',t:'Bom dia! Você é do 1º ano, não é? Seu crachá chegou ontem.'},
       {who:'DONA TATI',t:'Confere a foto... Tá ótima. É ele que abre as salas do prédio, então não perde!'},
       {t:'Você pegou: CRACHÁ',item:'cracha'},
-      {who:'DONA TATI',t:'Ah, e se precisar entrar no laboratório, só o crachá não basta: lá dentro é obrigatório usar jaleco.'}
+      {who:'DONA TATI',t:'Ah, e se precisar usar o laboratório, se informe antes com algum professor, lá na sala dos professores, no 1º andar.'}
     ]);
     say([{who:'DONA TATI',t:'Mais alguma coisa? Corre que o professor de Bioquímica não espera ninguém.'},
          {who:'DONA TATI',t:'Ah, e se achar alguma coisa esquecida, a caixa de achados e perdidos fica aqui no balcão.'}]);
@@ -1300,10 +1340,10 @@ add({id:'lab',name:'Laboratório multidisciplinar',wall:true,cx:522,top:0,mark:{
   fx:doorLed(494,56,()=>flags.lab),
   act:()=>{
     if(!flags.cracha)return noBadge();
-    if(!flags.jaleco){ // the lab coat is in the player's locker
+    if(!flags.jaleco){ // the lab coat is in the player's locker (the door does not say so)
       flags.wantJaleco=true;sfx.bump();
       return say([{t:'Você aproxima o crachá do leitor... BIP-BIP. Luz vermelha.'},
-        {t:'Aviso na porta: "Entrada somente de jaleco." O seu ficou no armário 42, perto da entrada.'}]);
+        {t:'Aviso na porta: "Acesso permitido somente com jaleco."'}]);
     }
     flags.lab=true;goScene('salaLab',192,186,'up','LABORATÓRIO');
   }});
@@ -1856,11 +1896,25 @@ function drawClassCabinet(){
 const EXAM_DESKS={sala101:{1:[1,2]},sala103:{2:[3,4,5,6]},sala201:{1:[7,8,9,10]}};
 // '' not answered, 'done' answered, 'ok'/'err' once the professors have graded it
 function examState(n){const a=provas&&provas[n];return !a?'':(flags.graded&&flags.pass)?(a.ok?'ok':'err'):'done';}
+const pileGone=list=>flags&&(flags.graded||(flags.held||[]).includes(list[0])); // collected into the inventory, or handed in
 function examDesk(o,list,x,base){
   if(!list)return o;
-  return Object.assign(o,{name:'Folhas da atividade',provas:list,key:()=>list.map(examState).join(','),
-    draw:()=>drawStudentDesk(x,base,{pile:list.map(examState)}),act:()=>sheetPile(list)});
+  const act0=o.act;
+  Object.defineProperty(o,'name',{get:()=>pileGone(list)?'Carteira':'Folhas da atividade'});
+  return Object.assign(o,{provas:list,key:()=>pileGone(list)?'gone':list.map(examState).join(','),
+    draw:()=>drawStudentDesk(x,base,pileGone(list)?null:{pile:list.map(examState)}),act:()=>pileGone(list)?act0():sheetPile(list)});
 }
+// all the sheets of a pile answered: the player picks them up (inventory slot with the number of sheets held)
+function collectPile(list,room){
+  flags.held=(flags.held||[]).concat(list);
+  const s_=$('slot-folhas');s_.classList.add('got','pop');setTimeout(()=>s_.classList.remove('pop'),600);
+  $('folhas-cnt').textContent=flags.held.length;
+  sfx.item();
+  return [{t:'Você terminou as '+list.length+' folhas da '+room+'. Junta todas da carteira e guarda com você.'},
+          {t:'Você pegou: FOLHAS DA ATIVIDADE ('+flags.held.length+' de '+QUIZ_N+')'}];
+}
+// handing in: the sheets leave the inventory
+function handSheets(){const s_=$('slot-folhas');s_.classList.remove('got');$('folhas-cnt').textContent='';flags.held=[];}
 // the pile on the desk: the player picks which sheet to read (answered ones open read-only)
 let pileBack=null; // pile to return to after answering one of its sheets
 function sheetPile(list){
@@ -1942,17 +1996,81 @@ function glassesFx(x,y){const t=y-23;r(x-5,t+6,4,1,'#1d1612');r(x+2,t+6,4,1,'#1d
   r(x-5,t+6,1,4,'#1d1612');r(x+5,t+6,1,4,'#1d1612');r(x-1,t+7,3,1,'#1d1612');}
 /* Professors walk from student to student (waypoints along the aisles), pausing beside each one. */
 function syncW(o){o.cx=o.x;o.base=o.y;o.top=o.y-26;o.solid={x:o.x-5,y:o.y-4,w:10,h:4};o.zone=expand(o.solid,10);}
-function initWalker(o){o.ri=1;o.wait=2;o.anim=0;o.moving=false;o.x=o.route[0].x;o.y=o.route[0].y;o.dir=o.route[0].face||'down';syncW(o);}
+function initWalker(o){o.detour=null;o.back=false;o.ri=1;o.wait=2;o.anim=0;o.moving=false;o.x=o.route[0].x;o.y=o.route[0].y;o.dir=o.route[0].face||'down';syncW(o);}
 function updateWalker(o,dt){
   o.moving=false;
   if(state!=='play')return;
   if(o.wait>0){o.wait-=dt;return;}
+  if(o.back){o.back=false;const r0=o.route[o.ri];o.detour=findPath(o,r0.x,r0.y)||[];} // back to the route after joining a talk
+  if(o.detour&&o.detour.length){
+    const [tx,ty]=o.detour[0],ex=tx-o.x,ey=ty-o.y,e=Math.hypot(ex,ey);
+    if(e<.6){o.x=tx;o.y=ty;o.detour.shift();syncW(o);return;}
+    const st=Math.min(e,(o.speed||22)*dt);if(Math.abs(o.x+ex/e*st-player.x)<11&&Math.abs(o.y+ey/e*st-player.y)<7)return;
+    o.dir=Math.abs(ex)>Math.abs(ey)?(ex<0?'left':'right'):(ey<0?'up':'down');
+    o.x+=ex/e*st;o.y+=ey/e*st;o.moving=true;o.anim+=dt*6;syncW(o);return;
+  }
   const tg=o.route[o.ri],dx=tg.x-o.x,dy=tg.y-o.y,d=Math.hypot(dx,dy);
   if(d<.6){o.x=tg.x;o.y=tg.y;if(tg.face)o.dir=tg.face;if(tg.wait)o.wait=tg.wait;o.ri=(o.ri+1)%o.route.length;syncW(o);return;}
   const st=Math.min(d,(o.speed||22)*dt),nx=o.x+dx/d*st,ny=o.y+dy/d*st;
   if(Math.abs(nx-player.x)<11&&Math.abs(ny-player.y)<7)return;
   o.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');
   o.x=nx;o.y=ny;o.moving=true;o.anim+=dt*6;syncW(o);
+}
+/* A talk with lines from both professors: the one not asked walks over (around the desks) and stands
+   beside the player first; meanwhile the player waits (state 'gather'). Afterwards both go back to their rounds. */
+function walkBlocked(x,y,self){
+  if(x-5<10||x+5>SCENE_W[scene]-10||y-4<66||y>210)return true;
+  if(Math.abs(x-player.x)<10&&y>player.y-6&&y-4<player.y+2)return true;
+  for(const o of objects){if(o===self)continue;const list=o.solids||(o.solid?[o.solid]:[]);
+    for(const s_ of list)if(x+5>s_.x&&x-5<s_.x+s_.w&&y>s_.y&&y-4<s_.y+s_.h)return true;}
+  return false;
+}
+function findPath(self,tx,ty){ // breadth-first search on a 4 px grid; returns the corner points up to (tx,ty)
+  const S=4,cols=Math.ceil(SCENE_W[scene]/S),rows=Math.ceil(H/S),k=(c,r_)=>r_*cols+c;
+  const s0=k(Math.round(self.x/S),Math.round(self.y/S)),prev=new Int32Array(cols*rows).fill(-2),q=[s0];prev[s0]=-1;
+  for(let h=0;h<q.length;h++){
+    const cur=q[h],c=cur%cols,r0=(cur/cols)|0;
+    if(Math.abs(c*S-tx)<=S&&Math.abs(r0*S-ty)<=S){
+      const pts=[[tx,ty]];let n=cur;
+      while(n!==s0&&n>=0){pts.push([(n%cols)*S,((n/cols)|0)*S]);n=prev[n];}
+      pts.reverse();
+      return pts.filter((p_,i)=>{if(i===0||i===pts.length-1)return true;const a=pts[i-1],b=pts[i+1];return !((a[0]===p_[0]&&p_[0]===b[0])||(a[1]===p_[1]&&p_[1]===b[1]));});
+    }
+    for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nc=c+dc,nr=r0+dr;if(nc<0||nr<0||nc>=cols||nr>=rows)continue;const nk=k(nc,nr);
+      if(prev[nk]!==-2||walkBlocked(nc*S,nr*S,self))continue;prev[nk]=cur;q.push(nk);
+    }
+  }
+  return null;
+}
+let gatherSt=null;
+function profSay(asked,lines,onEnd){
+  const both=lines.some(l=>l.who==='PROF. ALDAIR NETO')&&lines.some(l=>l.who==='PROFA. ROSA');
+  const other=asked===aldair?heloisa:aldair;
+  if(!both||scene!=='sala101'||flags.seated||Math.hypot(other.x-player.x,other.y-player.y)<26){
+    if(both){other.dir=faceTo(other,player);other.wait=Math.max(other.wait,4);}
+    return say(lines,onEnd);
+  }
+  let best=null;
+  // side by side with the player (no one hidden behind anyone); above or below only if the sides are taken
+  for(const [dx,dy] of [[-16,0],[16,0],[-20,3],[20,3],[-24,0],[24,0],[-18,-8],[18,-8],[-18,10],[18,10],[0,-18],[0,22]]){
+    const x=Math.round(player.x+dx),y=Math.round(player.y+dy);
+    if(Math.hypot(x-asked.x,y-asked.y)<14||walkBlocked(x,y,other))continue;
+    const p_=findPath(other,x,y);if(p_){best=p_;break;}
+  }
+  if(!best)return say(lines,onEnd);
+  gatherSt={o:other,path:best,t:0,lines,onEnd};state='gather';keys.clear();
+}
+function updateGather(dt){
+  const G=gatherSt,o=G.o;G.t+=dt;o.moving=false;
+  if(!G.path.length||G.t>6){
+    if(G.path.length){const e=G.path[G.path.length-1];o.x=e[0];o.y=e[1];}
+    o.dir=faceTo(o,player);o.wait=Math.max(o.wait,4);o.back=true;syncW(o);gatherSt=null;state='play';say(G.lines,G.onEnd);return;
+  }
+  const [tx,ty]=G.path[0],dx=tx-o.x,dy=ty-o.y,d=Math.hypot(dx,dy);
+  if(d<.6){o.x=tx;o.y=ty;G.path.shift();syncW(o);return;}
+  const st=Math.min(d,70*dt);o.x+=dx/d*st;o.y+=dy/d*st;
+  o.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');o.moving=true;o.anim+=dt*10;syncW(o);
 }
 // Rosa's long hair in every direction
 function overlayHair(rows,cells){const a=rows.map(r_=>r_.split(''));for(const [y,x0,x1] of cells)for(let x=x0;x<=x1;x++)if(a[y]&&a[y][x]!=='.')a[y][x]='h';return a.map(r_=>r_.join(''));}
@@ -1987,13 +2105,13 @@ const aldair=add({id:'aldair',name:'Prof. Aldair Neto',talk:0,cx:150,top:78,base
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
-    const L=[[{who:'PROF. ALDAIR NETO',t:'Bom dia! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
+    const L=[[{who:'PROF. ALDAIR NETO',t:'Bom dia, '+nome1()+'! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
        ...(flags.profs?[]:sheetsTalk('PROF. ALDAIR NETO'))],
       [{who:'PROF. ALDAIR NETO',t:'Sabe por que a hexocinase gasta ATP logo na primeira reação?'},
        {who:'PROF. ALDAIR NETO',t:'A glicose-6-fosfato não sai da célula pelos transportadores de glicose. A fosforilação "prende" a glicose lá dentro.'}],
       [{who:'PROF. ALDAIR NETO',t:'E a hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Guarde isso para a prova!'}]];
     const first=this.talk%L.length===0; // the first talk says where the sheets may be: the search begins
-    say(L[this.talk%L.length],first?()=>{flags.profs=true;updateObjective();}:undefined);this.talk++;
+    profSay(this,L[this.talk%L.length],first?()=>{flags.profs=true;updateObjective();}:undefined);this.talk++;
   }});
 const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104,solid:{x:209,y:100,w:10,h:4},
   speed:27,
@@ -2006,13 +2124,13 @@ const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
-    const L=[[{who:'PROFA. ROSA',t:'Olá! Sou a professora Rosa, também de Bioquímica. Seja '+gen('bem-vindo','bem-vinda')+' à Sala 101!'},
+    const L=[[{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! Que bom te ver aqui na 101 hoje.'},
        ...(flags.profs?[]:sheetsTalk('PROFA. ROSA')),
-       {who:'PROFA. ROSA',t:'Cada folha da lição só pode ser respondida uma vez. Quando terminar as 10, eu e o professor Aldair Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
+       {who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Aldair Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
       [{who:'PROFA. ROSA',t:'Já viu os cartazes das reações 1 e 2 na parede, ao lado do quadro? Eles resumem o começo da glicólise.'}],
       [{who:'PROFA. ROSA',t:'A reação 2 é reversível: a fosfo-hexose-isomerase converte glicose-6-fosfato em frutose-6-fosfato, que tem um anel de cinco lados.'}]];
     const first=this.talk%L.length===0; // that talk says where the sheets are: the search begins
-    say(L[this.talk%L.length],first?()=>{flags.profs=true;updateObjective();}:undefined);this.talk++;
+    profSay(this,L[this.talk%L.length],first?()=>{flags.profs=true;updateObjective();}:undefined);this.talk++;
   }});
 initWalker(aldair);initWalker(heloisa);
 HEAD.ana=HEAD.player;HEAD.davi=HEAD.pedro;
@@ -2391,7 +2509,7 @@ const kido=wanderer('andar1','kido','Prof. Kiko (Histologia)',236,372,96,walkLoo
 kido.cool=20;
 {
   const W='PROF. KIKO (HISTOLOGIA)';
-  const HI=['Bom dia, jovem! Professor Kiko, de Histologia, ao seu dispor. Quer ouvir uma piada?',
+  const HI=[()=>'Bom dia, '+nome1()+'! Que bom te ver de novo. Quer ouvir uma piada?',
     'Olá de novo! Chegou na hora certa: acabei de lembrar de mais uma.',
     'Ah, meu ouvinte preferido! Tenho uma fresquinha para você.',
     'Estudando muito? Então merece uma pausa de dez segundos. Lá vai!'];
@@ -2409,7 +2527,10 @@ kido.cool=20;
   kido.act=function(){
     stopChat(this);this.wait=5;this.dir=faceTo(this,player);
     const k=this.talk++,j=JOKES[k%JOKES.length];
-    say([{who:W,t:HI[k%HI.length]},{who:W,t:j[0]},{who:W,t:j[1]},{who:W,t:BYE[k%BYE.length]}]);
+    const hi=HI[k%HI.length];
+    say([{who:W,t:typeof hi==='function'?hi():hi},{who:W,t:j[0]},{who:W,t:j[1]},{who:W,t:BYE[k%BYE.length]},
+      // the professor in front of the teachers' room is the one who explains the lab rule
+      ...(flags.jaleco?[]:[{who:W,t:'Ah, ia me esquecendo! Se você for ao laboratório: além do crachá, lá dentro é obrigatório usar jaleco.'}])]);
   };
 }
 // Pedro joins the ground-floor walkers (west of the stairs, alone on his lane)
@@ -2588,6 +2709,7 @@ function startLine(){
   $('dlg-who').textContent=L.who||'';
   $('dialog').classList.toggle('item',!!L.item);
   if(L.item){giveItem(L.item);sfx.item();dialog.shown=L.t.length;}
+  if(L.run)L.run(); // a line may change the game when it shows up (e.g. sheets leaving the inventory)
   if(L.fx==='open'){labOpen=true;sfx.open();}
   renderDialog();
 }
@@ -2638,8 +2760,8 @@ function giveItem(k){
    7h50: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
    sheets are locked and count as wrong. */
 const START_MIN=7*60+30,CLASS_MIN=7*60+50,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
-const SECONDS_PER_GAME_MINUTE=40; // close to real time: 07h30 -> 7h50 takes about 13 real minutes, 07h30 -> 11h30 takes 2h40
-const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet: real time, 1 minute = 60 s
+const SECONDS_PER_GAME_MINUTE=30; // outside the sheets: 07h30 -> 7h50 takes 10 real minutes, 07h30 -> 11h30 takes 2 hours
+const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet (the 10 sheets or the bonus): real time, 1 minute = 60 s
 // advances the clock (called every frame; it stands still in the pause menu, before the start and after the end)
 function tickClock(dt){
   if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause')return;
@@ -2686,7 +2808,7 @@ function seatProfs(){
   if(flags.seated)return;
   flags.seated=true;
   [[aldair,176],[heloisa,208]].forEach(([o,x])=>{
-    o.x=x;o.y=80;o.dir='down';o.anim=0;o.moving=false;syncW(o);
+    o.x=x;o.y=80;o.dir='down';o.anim=0;o.moving=false;o.detour=null;o.back=false;syncW(o);
     o.solid={x,y:80,w:0,h:0};o.zone={x:x-16,y:66,w:32,h:46};o.oy=84;o.noShadow=true;
   });
   deskProf.solids=[{x:152,y:62,w:80,h:30}]; // nobody walks behind the desk while they sit there
@@ -2736,7 +2858,7 @@ function grade(){
   const total=finalScore(),pass=total>=PASS;
   say([
     {who:'PROF. ALDAIR NETO',t:blank?'A aula acabou. Deixe aqui na mesa as folhas que você tem.':'Achou e respondeu as '+QUIZ_N+' folhas da lição? Ótimo, pode deixar aqui na mesa.'},
-    {t:(blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.')+(bon?' E a questão bônus também.':'')},
+    {run:handSheets,t:(blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.')+(bon?' E a questão bônus também.':'')},
     {who:'PROFA. ROSA',t:'Eu corrijo as reações 1 a 5, da fase preparatória.'},
     {who:'PROF. ALDAIR NETO',t:'E eu fico com as reações 6 a 10, da fase de pagamento'+(bon?', e com a questão bônus.':'.')},
     {t:'Os dois corrigem em silêncio. Só se ouve a caneta riscando o papel...'},
@@ -2955,8 +3077,15 @@ function closeQuiz(){
   const pile=pileBack,justDone=quiz&&provas[quiz.n]&&quiz.fresh;pileBack=null;
   quizEl.hidden=true;quiz=null;state='play';keys.clear();
   if(flags.review){showReview();return;}
-  // back to the pile while it still has blank sheets (unless this was the last one of the whole set)
-  if(pile&&justDone&&!flags.timeUp&&answered()<QUIZ_N&&pile.some(n=>!provas[n])){sheetPile(pile);return;}
+  // back to the pile while it still has blank sheets; a finished pile goes to the inventory
+  if(pile&&justDone&&!flags.timeUp&&pile.some(n=>!provas[n])){sheetPile(pile);return;}
+  if(pile&&justDone&&!pile.some(n=>!provas[n])){
+    const room={sala101:'Sala 101',sala103:'Sala 103',sala201:'Sala 201'}[scene]||'sala';
+    const got=collectPile(pile,room);
+    if(answered()===QUIZ_N&&!flags.seated)
+      return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}]),seatProfs);
+    return say(got);
+  }
   if(answered()===QUIZ_N&&!flags.seated){
     say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
   }
@@ -3216,7 +3345,17 @@ fsBtn.addEventListener('click',e=>{
   const el=document.documentElement,fn=fsEl()?(document.exitFullscreen||document.webkitExitFullscreen):(el.requestFullscreen||el.webkitRequestFullscreen);
   if(fn){try{const p=fn.call(fsEl()?document:el);if(p&&p.catch)p.catch(()=>{});}catch(err){}}
 });
-['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,syncFs));
+// the right mouse button does nothing on any game screen (no context menu, no image saving or dragging)
+['contextmenu','dragstart'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault()));
+addEventListener('mousedown',e=>{if(e.button===2)e.preventDefault();});
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,()=>{
+  syncFs();
+  if(fsEl()&&navigator.keyboard&&navigator.keyboard.lock)navigator.keyboard.lock(['Escape']).catch(()=>{});
+}));
+// on the Xbox the B button arrives as a key too: ignore it
+if(/xbox/i.test(navigator.userAgent))addEventListener('keydown',e=>{
+  if(e.key==='GamepadB'||e.keyCode===196||e.key==='Escape'||e.key==='BrowserBack'){e.preventDefault();e.stopImmediatePropagation();}
+},true);
 syncFs();
 
 /* ---------- input ---------- */
@@ -3303,10 +3442,11 @@ $('dialog').addEventListener('click',()=>{if(state==='dialog'&&!dialogChoices())
 cv.addEventListener('click',()=>{unlockAudio();if(state==='play')interact();});
 
 /* ---------- game controller (Xbox and other standard-mapping pads, through the Gamepad API) ----------
-   A = ENTER, B = ESC (leaves a sheet, closes the review), Y = Z (zooms the poster), X = space on the name
-   keyboard, Menu (≡) = pause menu (or start/confirm on the opening screens), left stick or d-pad = arrows.
+   A = ENTER, X = ESC in sheets, review, word search, poster and pause (and space on the name keyboard),
+   Y = Z (zooms the poster; deletes on the name keyboard), B does nothing (on the Xbox it left full screen), Menu (≡) = pause menu (or start/confirm on the opening screens), left stick or d-pad = arrows.
    Presses go through the same handler as the keyboard. */
-const PAD_BTN={0:'Enter',1:'Escape',2:'KeyX',3:'KeyZ',9:'Menu',12:'ArrowUp',13:'ArrowDown',14:'ArrowLeft',15:'ArrowRight'};
+const PAD_BTN={0:'Enter',2:'KeyX',3:'KeyZ',9:'Menu', // B (1) is switched off: on the Xbox it kept leaving full screen
+ 12:'ArrowUp',13:'ArrowDown',14:'ArrowLeft',15:'ArrowRight'};
 const padHeld={};let padOn=false,padBAt=0;
 if('gamepadInputEmulation' in navigator)try{navigator.gamepadInputEmulation='gamepad';}catch(e){} // old Edge on Xbox: no mouse cursor
 const keyLabel=()=>padOn?'<span class="gpb a">A</span>':'ENTER';
@@ -3317,6 +3457,7 @@ function padKey(code,repeat){
     if((code==='Enter'||code==='Menu')&&$('telaTitulo').style.display!=='none')$('telaTitulo').click();
     return;
   }
+  if(code==='KeyX'&&['quiz','review','caca','poster','pause'].includes(state))code='Escape'; // X: leave the sheet, back, close
   if(code==='Menu'){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
@@ -3330,10 +3471,10 @@ function padMode(){
   document.querySelectorAll('[data-gp]').forEach(el=>{el.innerHTML=el.dataset.gp;});
   if(!$('end').hidden)$('btn-again').innerHTML=$('btn-again').innerHTML.replace('ENTER',keyLabel());
   if(window.telaNomePad)window.telaNomePad('show'); // name screen already open: switch to the on-screen keyboard
-  // Edge on Xbox turns B into the browser's Back button: keep the page and treat it as ESC
+  // Edge on Xbox turns B into the browser's Back button: keep the page and do nothing (B is switched off)
   if(/xbox/i.test(navigator.userAgent)){
     history.pushState({uninog:1},'');
-    addEventListener('popstate',()=>{history.pushState({uninog:1},'');if(performance.now()-padBAt>400)padKey('Escape',false);});
+    addEventListener('popstate',()=>{history.pushState({uninog:1},'');});
   }
 }
 function pollPad(){
@@ -3366,7 +3507,7 @@ const CTL_HELP='<svg viewBox="0 0 120 80" aria-hidden="true">'
   +'</svg><ul>'
   +'<li><span class="gpb d"><i>✚</i></span>Analógico ou direcional: andar e escolher</li>'
   +'<li><span class="gpb a">A</span>Falar, examinar, confirmar</li>'
-  +'<li><span class="gpb b">B</span>Sair da folha, voltar, fechar</li>'
+  +'<li><span class="gpb x">X</span>Sair da folha, voltar, fechar</li>'
   +'<li><span class="gpb y">Y</span>Ampliar o cartaz</li>'
   +'<li><span class="gpb m"><i>≡</i></span>Pausa: objetivo, volume e cartaz</li></ul>';
 $('intro-ctl').innerHTML=CTL_HELP;$('pz-ajuda').innerHTML=CTL_HELP;
@@ -3454,6 +3595,7 @@ function update(dt){
   if(banner){banner.t-=dt;if(banner.t<=0)banner=null;}
   updatePedro(dt);updateWanderers(dt);janUpdate(dt);
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
+  if(state==='gather'&&gatherSt)updateGather(dt);
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
   if(state==='play'&&!flags.graded){
@@ -3550,14 +3692,14 @@ buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);bui
 reset();state='boot';
 // called by the opening screens once the player has typed a name
 // thumbnail for the character screen (g: 'm' boy, 'f' girl), facing down in everyday clothes
-window.miniaturaPersonagem=(cv,gn,blink)=>{
-  const old=genero;genero=gn;const s=personSprite('player','shirt','down',0,!!blink);genero=old;
+window.miniaturaPersonagem=(cv,gn,blink,sk)=>{
+  const old=genero,oldP=pele;genero=gn;if(sk!=null)pele=sk;const s=personSprite('player','shirt','down',0,!!blink);genero=old;pele=oldP;
   const c=cv.getContext('2d');cv.width=16;cv.height=s.h;c.clearRect(0,0,16,s.h);c.drawImage(s.c,0,0);
 };
-window.registrarPersonagem=gn=>{genero=gn==='f'?'f':'m';};
+window.registrarPersonagem=(gn,sk)=>{genero=gn==='f'?'f':'m';if(sk!=null)pele=sk;};
 window.registrarJogador=n=>{
   jogador=String(n||'').trim().slice(0,32);
-  state='intro';$('btn-start').focus({preventScroll:true});
+  state='intro';$('intro').hidden=false;$('btn-start').focus({preventScroll:true});
 };
 requestAnimationFrame(loop);
 })();
@@ -3596,10 +3738,23 @@ requestAnimationFrame(loop);
   /* character screen: two thumbnails (boy / girl) drawn by the game's sprite code; they blink now and then */
   var telaPersonagem = document.getElementById('telaPersonagem');
   var cartas = Array.prototype.slice.call(telaPersonagem.querySelectorAll('.tp-carta'));
-  var escolha = 0, piscaIv = null;
+  var escolha = 0, piscaIv = null, pele = 1, linha = 0; // linha: 0 = the two characters, 1 = the skin tones
+  var cores = Array.prototype.slice.call(telaPersonagem.querySelectorAll('.tp-cor'));
   function desenharCartas(piscando){
-    cartas.forEach(function(c, i){ if (window.miniaturaPersonagem) window.miniaturaPersonagem(c.querySelector('canvas'), c.dataset.gen, piscando === i); });
+    cartas.forEach(function(c, i){ if (window.miniaturaPersonagem) window.miniaturaPersonagem(c.querySelector('canvas'), c.dataset.gen, piscando === i, pele); });
   }
+  function escolherPele(k){
+    pele = (k + cores.length) % cores.length;
+    cores.forEach(function(b, i){ b.classList.toggle('on', i === pele); b.setAttribute('aria-checked', i === pele ? 'true' : 'false'); });
+    desenharCartas(-1); bipLoad(520, 0, .03, 'square', .03);
+  }
+  function marcarLinha(l){
+    linha = l;
+    telaPersonagem.querySelector('.tp-opcoes').classList.toggle('foco', l === 0);
+    telaPersonagem.querySelector('.tp-pele').classList.toggle('foco', l === 1);
+    try{ (l === 0 ? cartas[escolha] : cores[pele]).focus({preventScroll: true}); }catch(e){}
+  }
+  cores.forEach(function(b, i){ b.addEventListener('click', function(){ escolherPele(i); linha = 1; }); });
   function escolher(i){
     escolha = i;
     cartas.forEach(function(c, k){ c.classList.toggle('on', k === i); c.setAttribute('aria-checked', k === i ? 'true' : 'false'); });
@@ -3617,9 +3772,9 @@ requestAnimationFrame(loop);
     clearInterval(piscaIv);
     bipLoad(660, 0, .08, 'square', .05); bipLoad(990, .07, .14, 'square', .05);
     var gn = cartas[escolha].dataset.gen;
-    if (window.registrarPersonagem) window.registrarPersonagem(gn);
+    if (window.registrarPersonagem) window.registrarPersonagem(gn, pele);
     var ico = document.getElementById('tnIco');   // the name screen shows the chosen character instead of the emoji
-    if (ico && window.miniaturaPersonagem){ ico.textContent = ''; var cv = document.createElement('canvas'); ico.appendChild(cv); window.miniaturaPersonagem(cv, gn, false); }
+    if (ico && window.miniaturaPersonagem){ ico.textContent = ''; var cv = document.createElement('canvas'); ico.appendChild(cv); window.miniaturaPersonagem(cv, gn, false, pele); }
     telaPersonagem.style.display = 'none';
     pedirNome();
   }
@@ -3630,14 +3785,20 @@ requestAnimationFrame(loop);
   document.getElementById('btnPersonagem').addEventListener('click', confirmarPersonagem);
   document.addEventListener('keydown', function(e){
     if (telaPersonagem.style.display === 'none') return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'a' || e.key === 'd' || e.key === 'A' || e.key === 'D'){
-      e.preventDefault(); escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); try{ cartas[escolha].focus({preventScroll: true}); }catch(err){}
-    } else if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); confirmarPersonagem(); }
+    var k = e.key.toLowerCase();
+    if (k === 'arrowup' || k === 'w' || k === 'arrowdown' || k === 's'){ e.preventDefault(); marcarLinha(1 - linha); }
+    else if (k === 'arrowleft' || k === 'arrowright' || k === 'a' || k === 'd'){
+      e.preventDefault();
+      if (linha === 1){ escolherPele(pele + (k === 'arrowleft' || k === 'a' ? -1 : 1)); marcarLinha(1); }
+      else { escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
+    } else if (e.key === 'Enter' || (e.key === ' ' && linha === 0)){ e.preventDefault(); confirmarPersonagem(); }
   });
   // called by the game's controller code while the opening screens are up; true = handled here
   window.telaPersonagemPad = function(code){
     if (telaPersonagem.style.display === 'none') return false;
-    if (code === 'ArrowLeft' || code === 'ArrowRight'){ escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); }
+    if (code === 'ArrowUp' || code === 'ArrowDown') marcarLinha(1 - linha);
+    else if ((code === 'ArrowLeft' || code === 'ArrowRight') && linha === 1){ escolherPele(pele + (code === 'ArrowLeft' ? -1 : 1)); marcarLinha(1); }
+    else if (code === 'ArrowLeft' || code === 'ArrowRight'){ escolher(1 - escolha); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
     else if (code === 'Enter' || code === 'Menu') confirmarPersonagem();
     return true;
   };
@@ -3701,7 +3862,7 @@ requestAnimationFrame(loop);
     else if (code === 'ArrowLeft') mover(0, -1);
     else if (code === 'ArrowRight') mover(0, 1);
     else if (code === 'Enter') botoes[cur.r][cur.c].click();
-    else if (code === 'Escape') acao('apagar');
+    else if (code === 'KeyZ') acao('apagar');
     else if (code === 'KeyX') acao('espaco');
     else if (code === 'Menu') acao('pronto');
     return true;
