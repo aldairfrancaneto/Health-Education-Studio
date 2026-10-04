@@ -35,6 +35,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .objective{flex:0 1 auto;margin-right:auto;background:rgba(29,22,18,.88);padding:calc(var(--u)*1) calc(var(--u)*2) calc(var(--u)*1) 0;min-width:0;display:flex;align-items:center;gap:calc(var(--u)*3);font-size:calc(var(--u)*6.4);line-height:1;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .objective b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*2.6);letter-spacing:.08em;color:#1a1606;background:var(--accent);padding:calc(var(--u)*1) calc(var(--u)*1.6)}
 .objective span{overflow:hidden;text-overflow:ellipsis}
+/* accepted side quests, stacked just above the main objective (blue, like their "!") */
+.side-obj{position:absolute;left:calc(var(--u)*12);bottom:calc(var(--u)*11.5);max-width:calc(100% - var(--u)*24);display:flex;flex-direction:column;align-items:flex-start;gap:calc(var(--u)*1);pointer-events:none}
+.side-obj div{max-width:100%;background:rgba(18,26,38,.88);padding:calc(var(--u)*.8) calc(var(--u)*2) calc(var(--u)*.8) 0;display:flex;align-items:center;gap:calc(var(--u)*2.4);font-size:calc(var(--u)*5);line-height:1;color:#d7e8f7;white-space:nowrap;overflow:hidden}
+.side-obj b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*2.2);letter-spacing:.08em;color:#08182a;background:#5fb4f0;padding:calc(var(--u)*.8) calc(var(--u)*1.4)}
+.side-obj span{overflow:hidden;text-overflow:ellipsis}
 .inv{display:flex;gap:calc(var(--u)*2);flex:none}
 .slot .box{width:calc(var(--u)*8);height:calc(var(--u)*8);display:grid;place-items:center;border:calc(var(--u)*.6) dashed var(--line);box-sizing:border-box}
 .slot.got .box{border:calc(var(--u)*.6) solid var(--accent);background:var(--panel)}
@@ -325,6 +330,31 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 .duelo-timer.low i{background:#b3261e}
 #duelo-q{margin:0 0 10px}
 #duelo-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
+.sg-sheet{width:min(100%,900px);background:#ece0c4;border-color:#c99a3c}
+.sg-sheet .sh-head{color:#7a2e3e}
+#sg-txt{margin:10px 0 8px}
+#sg-txt i{display:block;font-style:italic;color:#5a2230;margin-bottom:6px;font-size:1.1em}
+#sg-slots{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:4px 0 12px}
+.sg-slot{border:2px solid #b3a38a;background:#fbf6e6;text-align:center;padding:2px 0 4px}
+.sg-slot small{display:block;font-family:var(--f-display);font-size:8px;line-height:1.8;color:#7a522f}
+.sg-slot b{font-family:var(--f-display);font-weight:400;font-size:clamp(12px,1.7vw,20px);line-height:1.3;color:#b3a38a}
+.sg-slot.got b{color:#2a1c16}
+.sg-slot.lock{border-color:#7a2e3e;background:#f6dcd4}.sg-slot.lock small{color:#7a2e3e}
+#sg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 8px}
+#sg-list:has(.sg-row){display:block}
+.sg-sec{font-family:var(--f-display);font-size:9px;line-height:1.6;color:#7a522f;margin:10px 0 4px}
+.sg-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:4px 8px;border:2px solid transparent;margin-bottom:4px;background:#fbf6e6}
+.sg-row.sel{border-color:#2a1c16;background:#f2e2b0}
+.sg-row>span{flex:1 1 200px}
+.sg-row button{font-family:var(--f-display);font-size:8px;padding:6px 8px;border:2px solid #b3a38a;background:#f3ead2;color:#2a1c16;cursor:pointer}
+.sg-row button:disabled{cursor:default}
+.sg-row button.a.on{background:#1f7a43;color:#fff;border-color:#1f7a43}
+.sg-row button.f.on{background:#b3261e;color:#fff;border-color:#b3261e}
+.sg-row button.n.on{background:#5d646a;color:#fff;border-color:#5d646a}
+.sg-row.wrong{box-shadow:inset 5px 0 0 #b3261e}.sg-row.right{box-shadow:inset 5px 0 0 #1f7a43}
+#sg-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
+#sg-msg.ok{color:#1f7a43}#sg-msg.err{color:#b3261e}
+#sg-ok.kb{outline:3px solid #2a1c16;outline-offset:2px}
 #duelo-msg.ok{color:#1f7a43}#duelo-msg.err{color:#b3261e}
 /* Page footer (same information as the other games); it takes its own row below the game, so the game area shrinks instead of the page scrolling */
 .site-footer{flex:none;padding:7px 14px;border-top:1px solid rgba(255,255,255,.15);background:#0d0806;color:rgba(255,255,255,.55);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12.5px;letter-spacing:.02em;text-align:left;line-height:1.5}
@@ -336,10 +366,12 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 /* Fullscreen and volume buttons: icon-only, top-right corner of the page, same pattern as the other games.
    They never cover the game: fit() reserves a strip above it (#app.strip) when the side margins are too narrow. */
 #app.strip{padding-top:44px}
-#btnTelaCheia,#btnMusica{position:absolute;top:8px;z-index:60;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;font-size:15px;line-height:1;color:rgba(217,164,65,.8);background:transparent;border:1px solid rgba(217,164,65,.3);border-radius:6px;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease}
+#btnTelaCheia,#btnMusica,#btnPausa{position:absolute;top:8px;z-index:60;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;font-size:15px;line-height:1;color:rgba(217,164,65,.8);background:transparent;border:1px solid rgba(217,164,65,.3);border-radius:6px;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease}
 #btnTelaCheia{right:10px}
 #btnMusica{right:46px}
-#btnTelaCheia:hover,#btnTelaCheia:focus-visible,#btnMusica:hover,#btnMusica:focus-visible,#btnMusica[aria-expanded="true"]{color:var(--accent);border-color:#a8862a;background:rgba(13,8,6,.6);outline:none}
+#btnPausa{right:82px}
+#btnPausa svg{width:12px;height:12px;display:block}
+#btnTelaCheia:hover,#btnTelaCheia:focus-visible,#btnPausa:hover,#btnPausa:focus-visible,#btnPausa[aria-pressed="true"],#btnMusica:hover,#btnMusica:focus-visible,#btnMusica[aria-expanded="true"]{color:var(--accent);border-color:#a8862a;background:rgba(13,8,6,.6);outline:none}
 #painelVolume{position:absolute;top:44px;right:10px;z-index:61;display:none;flex-direction:column;gap:11px;align-items:stretch;width:212px;padding:9px 11px 11px;box-sizing:border-box;background:rgba(22,16,13,.97);border:1px solid #a8862a;border-radius:10px;box-shadow:0 8px 22px rgba(0,0,0,.55)}
 #painelVolume.on{display:flex}
 #painelVolume .pv-bloco{display:flex;flex-direction:column;gap:6px}
@@ -349,7 +381,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 #painelVolume .pv-passo:hover,#painelVolume .pv-passo:focus-visible{background:rgba(217,164,65,.24)}
 #painelVolume .pv-passo[disabled]{opacity:.35;cursor:not-allowed}
 #painelVolume input[type=range]{flex:1 1 auto;min-width:0;accent-color:var(--accent);cursor:pointer}
-.modal-bar{padding-right:84px} /* keeps the poster/exam top bar clear of those buttons */
+.modal-bar{padding-right:120px} /* keeps the poster/exam top bar clear of those buttons */
 </style>
 
 <style>body{margin:0}</style>
@@ -357,6 +389,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 </head>
 <body>
 <button id="btnTelaCheia" type="button" title="Tela cheia" aria-label="Entrar em tela cheia"><span class="btn-tc-ico" aria-hidden="true">&#9974;</span></button>
+<button id="btnPausa" type="button" title="Pausa" aria-label="Pausar o jogo" aria-pressed="false" hidden><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" rx=".6" fill="currentColor"/><rect x="7" y="1" width="3" height="10" rx=".6" fill="currentColor"/></svg></button>
 <button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
 <div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
   <div class="pv-bloco">
@@ -453,6 +486,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   <main id="stage">
     <div id="frame">
       <canvas id="game" aria-label="Corredor da faculdade de medicina"></canvas>
+      <div id="side-obj" class="side-obj" aria-live="polite"></div>
       <div class="hud">
         <span class="pts" aria-label="Relógio e folhas respondidas"><b id="hud-clock">07h30</b> · <span id="pts-label">FOLHAS</span> <b id="pts-k">0/10</b></span>
         <span id="objective" class="objective" aria-live="polite"></span>
@@ -462,6 +496,8 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="slot opt" id="slot-caderno" title="Caderno do Tiago"><div class="box"><svg viewBox="0 0 12 12"><rect x="2" y="1" width="8" height="10" fill="#e8853a"/><rect x="2" y="1" width="1" height="10" fill="#a8541a"/><rect x="4" y="5" width="5" height="1" fill="#f4f6f4"/><rect x="6" y="2" width="2" height="2" fill="#3fa682"/><rect x="7" y="8" width="2" height="2" fill="#d0352b"/><rect x="4" y="8" width="1" height="1" fill="#e8bf3f"/></svg></div></div>
       <div class="slot opt" id="slot-adesivo" title="Adesivo Glicose de Ouro (presente do Tiago)"><div class="box"><svg viewBox="0 0 12 12"><rect x="4" y="1" width="4" height="1" fill="#a8862a"/><rect x="3" y="2" width="6" height="1" fill="#f2c94c"/><rect x="2" y="3" width="8" height="6" fill="#f2c94c"/><rect x="1" y="4" width="10" height="4" fill="#f2c94c"/><rect x="3" y="9" width="6" height="1" fill="#d9a441"/><rect x="4" y="10" width="4" height="1" fill="#a8862a"/><rect x="3" y="3" width="2" height="1" fill="#fff27a"/><rect x="4" y="5" width="1" height="1" fill="#2a1a10"/><rect x="7" y="5" width="1" height="1" fill="#2a1a10"/><rect x="4" y="7" width="4" height="1" fill="#2a1a10"/><rect x="3" y="6" width="1" height="1" fill="#2a1a10"/><rect x="8" y="6" width="1" height="1" fill="#2a1a10"/></svg></div></div>
       <div class="slot opt" id="slot-trofeu" title="Troféu de papel do Duelo Relâmpago"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="6" height="4" fill="#f4f6f4"/><rect x="2" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="9" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="5" y="2" width="2" height="1" fill="#d9a441"/><rect x="5" y="5" width="2" height="3" fill="#d8dee2"/><rect x="3" y="8" width="6" height="2" fill="#f4f6f4"/><rect x="3" y="10" width="6" height="1" fill="#9aa2a9"/></svg></div></div>
+      <div class="slot opt" id="slot-enigma" title="Fichas do bilhete anônimo"><div class="box"><svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="9" fill="#e8d9a8"/><rect x="3" y="1" width="8" height="9" fill="#f3e6bd"/><rect x="4" y="3" width="5" height="1" fill="#a8862a"/><rect x="4" y="5" width="4" height="1" fill="#a8862a"/><rect x="7" y="7" width="3" height="2" fill="#a12a22"/><rect x="8" y="6" width="1" height="1" fill="#a12a22"/></svg><b class="cnt" id="enigma-cnt"></b></div></div>
+      <div class="slot opt" id="slot-convite" title="Carta-convite da Liga de Metabolismo"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="3" width="10" height="7" fill="#efe3c8"/><rect x="1" y="3" width="10" height="1" fill="#d8c79a"/><rect x="2" y="4" width="2" height="1" fill="#b3a38a"/><rect x="4" y="5" width="4" height="1" fill="#b3a38a"/><rect x="8" y="4" width="2" height="1" fill="#b3a38a"/><rect x="5" y="6" width="2" height="2" fill="#a12a22"/><rect x="4" y="6" width="1" height="1" fill="#7a2e3e"/></svg></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
       </div>
@@ -499,7 +535,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.4 &middot; Última atualização: 4 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.6 &middot; Última atualização: 4 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -605,6 +641,26 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </div>
 </div>
 
+<div class="modal" id="segredo" hidden role="dialog" aria-label="Enigma da sala oculta">
+  <div class="modal-bar">
+    <span class="mt" id="sg-bar">ENIGMA</span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd><kbd>A</kbd><kbd>D</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> confirmar"><kbd>ENTER</kbd> confirmar</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> sair"><kbd>ESC</kbd> sair</span></span>
+  </div>
+  <div class="quiz-body" id="sg-body">
+    <div class="sheet sg-sheet">
+      <div class="sh-head"><span id="sg-head"></span><span id="sg-aluno"></span></div>
+      <div id="sg-txt"></div>
+      <div id="sg-slots"></div>
+      <div id="sg-list"></div>
+      <div class="sh-fb" id="sg-fb" hidden><b>O QUE A SALA ENSINA</b><span></span></div>
+      <div class="sh-foot">
+        <span id="sg-msg" aria-live="polite"></span>
+        <span class="sh-btns"><button class="mbtn" id="sg-close" type="button">AFASTAR-SE</button><button class="mbtn primary" id="sg-ok" type="button">TENTAR ABRIR</button></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 (()=>{
 const W=384,H=224,SW1=704; // screen size; the 1st floor is wider and scrolls
@@ -646,7 +702,7 @@ function fit(){
   // the top-right buttons take a strip above the game, unless the side margins are wide enough to hold them
   let b=stage.getBoundingClientRect();
   const app=$('app'),strip=app.classList.contains('strip'),h0=b.height+(strip?36:0);
-  const need=(b.width-W*Math.min(b.width/W,h0/H))/2<64;
+  const need=(b.width-W*Math.min(b.width/W,h0/H))/2<100; // room for the three buttons
   if(need!==strip){app.classList.toggle('strip',need);b=stage.getBoundingClientRect();}
   const s=Math.max(.5,Math.min(b.width/W,b.height/H));
   frameEl.style.width=Math.floor(W*s)+'px';
@@ -797,9 +853,10 @@ function reset(){
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
   dialog=null;labOpen=false;startTime=0;endTime=0;gameMin=0;
-  ['jaleco','cracha','folhas','caderno','adesivo','trofeu'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
+  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','enigma','convite'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
+  alostReset();
   if(typeof SEATS!=='undefined'){ // nobody stays seated from the last game
     for(const k in SEATS)SEATS[k].forEach(st=>st.by=null);
     for(const k in WANDER)WANDER[k].forEach(o=>{if(o.seat||o.sitting>0){o.sitting=0;o.seat=null;o.queue=[];o.tx=null;o.noShadow=false;o.x=Math.max(o.x0,Math.min(o.x1,o.x));o.y=o.y0;syncW(o);}});
@@ -1746,7 +1803,7 @@ add({id:'secretaria',name:'Secretaria',wall:true,cx:188,top:14,zone:wallZone(164
     const cad=flags.tiagoQ===4?[
       {who:me(),t:'Dona Tati, um caderno laranja, cheio de adesivos, veio parar nos achados e perdidos? É do Tiago, do 1º ano.'},
       {who:'DONA TATI',t:'Veio, sim! O Seu Antônio trouxe ontem no fim do dia. Está aqui na caixa. Entrega para ele, viu?'},
-      {t:'Você pegou: CADERNO DO TIAGO',item:'caderno',run:()=>{flags.tiagoQ=5;}}]:[];
+      {t:'Você pegou: CADERNO DO TIAGO',item:'caderno',run:()=>{flags.tiagoQ=5;updatePauseExtra();}}]:[];
     if(!flags.cracha) return say([
       {who:'DONA TATI',t:'Bom dia! Você é do 1º ano, não é? Seu crachá chegou ontem.'},
       {who:'DONA TATI',t:'Confere a foto... Tá ótima. É ele que abre as salas do prédio, então não perde!'},
@@ -3138,7 +3195,7 @@ const JAN_SPOTS=[
   {sc:'andar1',x:50,y:168,name:'o fundo do corredor do 1º andar'},
   {sc:'andar2',x:465,y:90,name:'a frente da biblioteca, no 2º andar'},
   {sc:'andar2',x:225,y:90,name:'o corredor do 2º andar, perto da Sala 202'}];
-const JAN_LANE={terreo:138,andar1:108,andar2:108},JAN_EVERY=8; // game minutes between two spots
+const JAN_LANE={terreo:138,andar1:108,andar2:108},JAN_EVERY=180; // REAL seconds between two spots (3 minutes, whatever the game clock speed)
 // stairs between two corridors: JAN_STAIRS[corridor][other floor] = where he leaves / arrives
 const JAN_STAIRS={terreo:{andar1:[352,140],andar2:[352,140]},andar1:{terreo:[352,120],andar2:[572,98]},andar2:{terreo:[363,122],andar1:[363,122]}};
 const jan={spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,talk:0}; // last: game minute of the last move
@@ -3160,7 +3217,7 @@ const zelObj={id:'zelador',name:'Seu Antônio (zelador)',
   act(){
     const W_='SEU ANTÔNIO (ZELADOR)';
     if(flags.tiagoQ===3){ // side quest: he picked up Tiago's notebook yesterday
-      jan.wait=4;flags.tiagoQ=4;
+      jan.wait=4;flags.tiagoQ=4;updatePauseExtra();
       return say([{who:me(),t:'Seu Antônio, o senhor recolheu um caderno laranja ontem, no 2º andar?'},
         {who:W_,t:'Um cheio de adesivos? Recolhi, sim, '+gen('doutor','doutora')+'! Levei para a caixa de achados e perdidos da secretaria.'},
         {who:W_,t:'Pede para a Dona Tati, lá no térreo. Ela guarda tudo direitinho.'}]);
@@ -3208,9 +3265,10 @@ function janGo(i){
   else janSwitch();
 }
 function janUpdate(dt){
-  const m=gameMinutes();if(jan.last==null)jan.last=START_MIN;
-  if(janCleaning()&&m<END_MIN&&m-jan.last>=JAN_EVERY){
-    jan.last=m;const cur=JAN_SPOTS[jan.spot];
+  const m=gameMinutes();if(jan.last==null)jan.last=0; // jan.last: real seconds spent cleaning the current spot
+  if(janCleaning()&&startTime&&state!=='intro'&&state!=='boot')jan.last+=frameRaw; // real time, even when frames come slowly
+  if(janCleaning()&&m<END_MIN&&jan.last>=JAN_EVERY){
+    jan.last=0;const cur=JAN_SPOTS[jan.spot];
     const far=JAN_SPOTS.map((s_,i)=>i).filter(i=>i!==jan.spot&&(JAN_SPOTS[i].sc!==cur.sc||Math.abs(JAN_SPOTS[i].x-cur.x)>250));
     janGo(far[(Math.random()*far.length)|0]);
   }
@@ -3274,12 +3332,12 @@ function updateFade(dt){
   if(!fade)return;
   fade.t+=dt;
   if(fade.phase==='out'&&fade.t>=fade.dur){
-    const to=fade.to;scene=to.name;objects=SCENES[scene];music.scene(scene);
+    const to=fade.to,from=scene;scene=to.name;objects=SCENES[scene];music.scene(scene);alostScene(from,scene);
     player.x=to.x;player.y=to.y;player.dir=to.dir;
     if(scene==='andar1')flags.up=true;
     banner={text:to.label,t:2.2};updateObjective();
     fade.phase='in';fade.t=0;
-  }else if(fade.phase==='in'&&fade.t>=fade.dur){fade=null;state='play';}
+  }else if(fade.phase==='in'&&fade.t>=fade.dur){fade=null;state='play';if(onArrive){const f=onArrive;onArrive=null;f();}}
 }
 
 /* ---------- interaction ---------- */
@@ -3356,7 +3414,7 @@ function giveItem(k){
    7h50: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
    sheets are locked and count as wrong. */
 const START_MIN=7*60+30,CLASS_MIN=7*60+50,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
-const SECONDS_PER_GAME_MINUTE=30; // outside the sheets: 07h30 -> 7h50 takes 10 real minutes, 07h30 -> 11h30 takes 2 hours
+const SECONDS_PER_GAME_MINUTE=15; // outside the sheets: 07h30 -> 7h50 takes 5 real minutes, 07h30 -> 11h30 takes 1 hour
 const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet (the 10 sheets or the bonus): real time, 1 minute = 60 s
 // advances the clock (called every frame; it stands still in the pause menu, before the start and after the end)
 function tickClock(dt){
@@ -3388,10 +3446,10 @@ function updateObjective(){
     :'Ache e responda as 10 folhas esquecidas nas salas 101, 103 e 201 até 11h30';
   const el=$('objective');
   el.innerHTML='<b>OBJETIVO</b><span></span>';el.lastChild.textContent=t;
+  renderSideObj();
 }
+// golden "!": the main story only (side quests have their own blue "!", see sideNeeds)
 function needsMarker(o){
-  if(sideMarker(o))return true; // optional side quest (Tiago's notebook), shown even after grading
-  if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca; // optional extra, shown even after grading
   if(flags.graded)return false;
   if(o.id==='locker42')return !!flags.wantJaleco&&!flags.jaleco;
   if(!flags.cracha)return o.id===(flags.marina?'secretaria':'marina');
@@ -3737,7 +3795,7 @@ function cacaLine(a,b){ // cells from a to b if they are in a straight line (8 d
 }
 function openCaca(){
   if(!caca){const gr=cacaMake();if(!gr)return;caca={grid:gr,found:{},cur:{r:0,c:0},anchor:null,drag:false};}
-  if(!flags.cacaDica)flags.cacaDica=true;
+  if(!flags.cacaDica){flags.cacaDica=true;updatePauseExtra();}
   $('caca-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
   cacaGridEl.textContent='';
   caca.grid.forEach((row,r0)=>row.forEach((ch,c0)=>{const d=document.createElement('div');d.textContent=ch;d.dataset.r=r0;d.dataset.c=c0;cacaGridEl.appendChild(d);}));
@@ -3823,7 +3881,7 @@ $('caca-close').addEventListener('click',closeCaca);
         {who:CW,t:'Deixei um caça-palavras da glicólise na mesinha do laboratório, no térreo, ao lado da porta. São 7 palavras-chave da matéria.'},
         {who:CW,t:'É opcional e não vale nota. Mas cada palavra que você achar vem com uma dica de revisão. Ajuda muito para a prova!'},
         {who:CW,t:'Se encontrar todas, passe aqui para me contar.'}]);}
-    if(flags.caca&&!flags.cacaThanks){face();flags.cacaThanks=true;
+    if(flags.caca&&!flags.cacaThanks){face();flags.cacaThanks=true;updatePauseExtra();
       return say([{who:me(),t:'Camila, achei as '+CACA_WORDS.length+' palavras do caça-palavras!'},
         {who:CW,t:'Que demais! Glicose, piruvato, citosol, ATP, NADH, lactato... Você revisou a glicólise do começo ao fim.'},
         {who:CW,t:'Agora é descansar e ir bem na prova de amanhã. Boa sorte!'}]);}
@@ -3833,16 +3891,52 @@ $('caca-close').addEventListener('click',closeCaca);
     return act0.call(this);
   };
 }
+/* Side quests: a blue "!" over whoever offers one or is the next step of an accepted one (sideNeeds, shown even
+   after grading), and each accepted, unfinished side quest gets a blue "EXTRA" line above the main objective. */
+function sideNeeds(o){
+  if(flags.alost){ // the room that is not there
+    if(o.id==='locker42')return flags.alost===1||flags.alost===3;
+    if(FICHA_AT[o.id])return flags.alost===2&&!fichaSet()[FICHA_AT[o.id]];
+    if(o.id==='paredeSecreta')return (flags.alost===4||flags.alost===5)&&!flags.secretOpen;
+    if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1;
+  }
+  if(sideMarker(o))return true; // next step of Tiago's notebook
+  if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca;
+  if(o.id==='tiago')return !flags.tiagoQ; // he still has a request (also after a "not now")
+  if(o.id==='camila')return !flags.cacaTold||(!!flags.caca&&!flags.cacaThanks);
+  if(o.id==='gabriel')return !flags.duelWin;
+  return false;
+}
+const TIAGO_STEP=['',
+  'pergunte ao Gabriel (3º ano), no 2º andar',
+  'fale com a Dona Lúcia, a bibliotecária, no 2º andar',
+  'procure o Seu Antônio, o zelador (ele muda de lugar)',
+  'peça à Dona Tati, nos achados e perdidos da secretaria',
+  'devolva o caderno ao Tiago, no 1º andar',
+  'devolvido! O Tiago agora é seu amigo'];
+function sideActive(){ // accepted and not finished yet
+  const L=[],q=flags.tiagoQ||0;
+  if(q>=1&&q<=5)L.push('Caderno do Tiago: '+TIAGO_STEP[q]);
+  if(flags.cacaDica&&!flags.caca)L.push('Caça-palavras na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
+  if(flags.caca&&flags.cacaTold&&!flags.cacaThanks)L.push('Conte à Camila, no 1º andar, que achou todas as palavras');
+  const a=flags.alost;
+  if(a===2)L.push('Bilhete anônimo: ache as fichas com o selo dos três cadeados ('+fichaCount()+' de 10)');
+  if(a===3)L.push('Bilhete anônimo: ponha as 10 fichas em ordem (armário 42)');
+  if(a===4)L.push('Bilhete anônimo: caminhe três vezes diante da parede sem porta');
+  if(a===5)L.push('Sala oculta: abra as três portas de ferro ('+(flags.portas||0)+' de 3)');
+  if(flags.duelOn&&!flags.duelWin)L.push('Duelo Relâmpago: acerte '+DUEL_WIN+' de '+DUEL_N+' contra o Gabriel, no 2º andar');
+  return L;
+}
+function renderSideObj(){
+  const el=$('side-obj');el.textContent='';
+  for(const t of sideActive()){const d=document.createElement('div');d.innerHTML='<b>EXTRA</b><span></span>';d.lastChild.textContent=t;el.appendChild(d);}
+}
 function updatePauseExtra(){
+  renderSideObj();
   const L=[],q=flags.tiagoQ||0;
   if(flags.cacaDica)L.push(flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
-  if(q)L.push('Caderno do Tiago: '+['',
-    'pergunte ao Gabriel (3º ano), no 2º andar',
-    'fale com a Dona Lúcia, a bibliotecária, no 2º andar',
-    'procure o Seu Antônio, o zelador (ele muda de lugar)',
-    'peça à Dona Tati, nos achados e perdidos da secretaria',
-    'devolva o caderno ao Tiago, no 1º andar',
-    'devolvido! O Tiago agora é seu amigo'][q]);
+  if(q)L.push('Caderno do Tiago: '+TIAGO_STEP[q]);
+  if(flags.alost>=2)L.push(flags.alost===6?'A sala que não está lá: convite da Liga de Metabolismo recebido':'A sala que não está lá: '+sideActive().find(t=>/^(Bilhete|Sala oculta)/.test(t)));
   if(flags.duelTold)L.push(flags.duelWin?'Duelo Relâmpago: você venceu o Gabriel!':'Duelo Relâmpago: vença o Gabriel (3º ano), no 2º andar, acertando '+DUEL_WIN+' de '+DUEL_N);
   $('pz-extra-box').hidden=!L.length;$('pz-extra').textContent=L.join('\n');
 }
@@ -3891,7 +3985,7 @@ const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
   const luc=SCENES.andar2.find(o=>o.id==='lucia'),act0=luc.act,LW='DONA LÚCIA (BIBLIOTECÁRIA)';
   luc.act=function(){
     if(flags.tiagoQ!==2)return act0.call(this);
-    flags.tiagoQ=3;
+    flags.tiagoQ=3;updatePauseExtra();
     say([{who:me(),t:'Dona Lúcia, a senhora viu um caderno laranja, cheio de adesivos? É do Tiago, do 1º ano.'},
       {who:LW,t:'Aquele que ficou no balcão da biblioteca ontem? No fim do dia, o Seu Antônio, o zelador, recolheu tudo o que ficou esquecido.'},
       {who:LW,t:'Ele vive limpando algum canto do prédio. Procure o carrinho de limpeza dele.'}]);
@@ -3925,6 +4019,7 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 function openDuel(){
   const qs=shuffle(DUEL_Q.slice()).slice(0,DUEL_N).map(([q,...o])=>{const opts=shuffle(o.map((t,i)=>({t,ok:!i})));return {q,o:opts.map(x=>x.t),c:opts.findIndex(x=>x.ok)};});
   duel={qs,i:0,sel:0,ok:0,t:DUEL_T,lock:0,ans:[],done:false};
+  if(!flags.duelOn){flags.duelOn=true;updatePauseExtra();} // accepted: shown next to the objective until won
   $('duelo-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
   keys.clear();state='duelo';dueloEl.hidden=false;renderDuel();duelBar();
   [523,659,784].forEach((f,i)=>tone(f,.1,'square',.04,i*.1));
@@ -4015,6 +4110,411 @@ $('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();})
   };
 }
 
+/* ---------- side quest: the room that is not there ----------
+   Enabled the first time the player walks out of the lab: Larissa (2nd year) bumps into them and, right after,
+   an anonymous envelope shows up in locker 42. flags.alost: 1 envelope waiting, 2 collecting the 10 cards
+   (flags.fichaSet), 3 all found (to put in order), 4 the word ALOSTÉRICO is known (walk three times past the
+   blank wall at the east end of the 2nd floor), 5 inside the hidden room (flags.portas: iron doors opened,
+   in order: reactions 1, 3 and 10), 6 done (Larissa reveals the Liga; invitation letter).
+   Hints come from people with no other side quest: Pedro, Lucas, Bruna, Felipe and Prof. Kiko.
+   The hidden door closes behind the player; three new passes open it again (also after the quest). */
+const FICHAS={1:['Hexocinase','A'],2:['Fosfo-hexose-isomerase','L'],3:['Fosfofrutocinase-1 (PFK-1)','O'],4:['Aldolase','S'],
+  5:['Triose-fosfato-isomerase','T'],6:['Gliceraldeído-3-fosfato-desidrogenase','É'],7:['Fosfoglicerato-cinase','R'],
+  8:['Fosfoglicerato-mutase','I'],9:['Enolase','C'],10:['Piruvato-cinase','O']};
+const FICHA_LOCK=[1,3,10];
+const FICHA_AT={board:1,menten:2,warburg:3,harden:4,bruna:5,embden:6,lanches:7,meyerhof:8,cori:9,lehninger:10}; // object id -> card
+const FICHA_SPOT={
+  board:'Atrás do quadro de avisos, presa com uma tachinha enferrujada, há uma ficha amarelada com o selo dos três cadeados.',
+  menten:'Encaixada atrás da moldura do retrato de Maud Menten, uma ficha amarelada, com o mesmo selo de cera.',
+  warburg:'Atrás do retrato de Otto Warburg, alguém prendeu uma ficha com fita adesiva velha.',
+  harden:'No canto da moldura do retrato de Arthur Harden, uma ficha dobrada ao meio.',
+  embden:'Enfiada entre a moldura e a parede, atrás do retrato de Embden, uma ficha com o selo dos cadeados.',
+  lanches:'Embaixo da máquina de lanches, quase sumida na poeira, uma ficha amarelada com o selo dos cadeados.',
+  meyerhof:'Presa atrás do retrato de Meyerhof, uma ficha antiga. O papel está amarelado nas bordas.',
+  cori:'Atrás do retrato dos Cori, uma ficha com o selo de cera dos três cadeados.',
+  lehninger:'Encaixada na moldura do retrato de Lehninger, a última ficha da parede, com o selo dos cadeados.'};
+const LW='LARISSA (2º ANO)',WORD='ALOSTÉRICO';
+var wallPass={n:0,side:null},secretAnim=-1,onArrive=null,sg=null;
+const SECRET_DUR=2.4;
+const fichaSet=()=>flags.fichaSet||(flags.fichaSet={});
+const fichaCount=()=>Object.keys(fichaSet()).length;
+function syncEnigma(){const n=fichaCount();$('enigma-cnt').textContent=flags.alost>=2&&flags.alost<4&&n?String(n):'';}
+function fichaLines(n){
+  const [enz,l]=FICHAS[n];
+  return [{t:'FICHA: '+enz.toUpperCase()+' · letra "'+l+'"'+(FICHA_LOCK.includes(n)?'. No canto, um pequeno cadeado gravado.':'.'),item:'enigma',
+    run:()=>{fichaSet()[n]=true;syncEnigma();updatePauseExtra();}}];
+}
+function lastFicha(){ // after the 10th card: put them in order now or later (locker 42)
+  if(fichaCount()<10)return;
+  flags.alost=3;updatePauseExtra();
+  say([{t:'Você tem as dez fichas. Espalhadas assim, as letras não dizem nada.'},
+    {t:'Talvez a ordem importe. A ordem das reações?',choices:[
+      {t:'Organizar as fichas agora',fn:()=>openSegredo('ordem')},
+      {t:'Depois (no armário 42)',fn:()=>{}}]}]);
+}
+// Larissa bumps into the player at the lab door (the envelope appears in locker 42 right after)
+function alostStart(){
+  const la=SCENES.terreo.find(o=>o.id==='larissa');
+  if(la&&!(la.sitting>0)&&!la.seat){stopChat(la);la.x=Math.min(la.x1,player.x+16);la.y=player.y+8;la.tx=null;la.queue=[];la.wait=0;la.dir='left';syncW(la);}
+  say([{t:'Na saída do laboratório, alguém de jaleco esbarra em você com pressa.'},
+    {who:LW,t:'Ai! Desculpa, desculpa... Estou atrasada.'},
+    {t:'Ela segue apressada pelo corredor, sem olhar para trás.'}],()=>{flags.alost=1;updatePauseExtra();});
+}
+// called by updateFade when the scene changes
+function alostScene(from,to){
+  if(from==='salaLab'&&to!=='salaLab'&&!flags.alost&&startTime)onArrive=alostStart;
+  if(to==='salaOculta'){
+    if(flags.alost===4){flags.alost=5;updatePauseExtra();}
+    if(!flags.ocVisto){flags.ocVisto=true;onArrive=()=>say([
+      {t:'Um laboratório antigo, iluminado só por velas. Há poeira em tudo e um cheiro de papel velho.'},
+      {t:'No alto da parede, um friso com dez passos. O 1º, o 3º e o 10º estão pintados de vermelho, com um cadeado.'},
+      {t:'Embaixo deles, três portas de ferro. Cada uma tem uma inscrição gravada acima da fechadura.'}]);}
+  }
+  if(from==='salaOculta'){
+    flags.secretOpen=false;secretAnim=-1;wallPass={n:0,side:null};larissaOut();
+    onArrive=()=>say([{t:'Atrás de você, os tijolos voltam ao lugar, um a um. A parede está lisa de novo.'}]);
+  }
+}
+// three passes along the blank wall (from one end to the other) open the hidden door
+function alostTick(dt){
+  if(secretAnim>=0&&secretAnim<SECRET_DUR)secretAnim+=dt;
+  if(scene!=='andar2'){wallPass.n=0;wallPass.side=null;return;}
+  if(state!=='play'||flags.secretOpen||!(flags.alost>=4)||player.x<648)return;
+  const s=player.y<=86?'top':player.y>=142?'bot':null;
+  if(!s||s===wallPass.side)return;
+  const counted=!!wallPass.side;wallPass.side=s;
+  if(!counted)return;
+  wallPass.n++;
+  if(wallPass.n===1){tone(196,.5,'sine',.04);say([{t:'Ao passar rente à parede, você sente o ar esfriar. A pedra parece... morna.'}]);}
+  else if(wallPass.n===2){tone(147,.6,'sine',.05);say([{t:'Um estalo seco, como pedra se acomodando. Uma linha fina de luz desenha um contorno na parede.'}]);}
+  else{
+    say([{t:'Na terceira passagem, o corredor parece ficar em silêncio.',run:()=>{flags.secretOpen=true;secretAnim=0;[98,131,165,196].forEach((f,i)=>tone(f,.5,'triangle',.05,i*.45));}},
+      {t:'Os tijolos começam a se mover, um a um, sem fazer barulho.'},
+      {t:'Onde antes havia só pedra, agora há uma porta de madeira escura, com tachas de ferro.'}]);
+  }
+}
+function drawSecretDoor(t){
+  const X=691,open=flags.secretOpen,p=open?(secretAnim<0?1:Math.min(1,secretAnim/SECRET_DUR)):0;
+  if(!open){ // before: only a faint outline of light after the second pass
+    if(scene==='andar2'&&wallPass.n>=2&&flags.alost>=4)for(let y=80;y<146;y+=3){px(693,y,'#e8bf3f');if(y<92)px(694+((y/3)%9),80,'#e8bf3f');}
+    return;
+  }
+  r(X,78,13,70,'#776f63');r(X,78,1,70,'#9a9084');r(X,78,13,2,'#9a9084');
+  r(X+2,82,11,62,'#1d1612');
+  for(const [y0,h] of [[84,28],[114,28]]){
+    r(X+3,y0,9,h,'#3a2414');r(X+3,y0,9,1,'#5a3d24');r(X+3,y0+h-1,9,1,'#2a1a10');
+    for(let yy=y0+4;yy<y0+h-2;yy+=6){px(X+5,yy,'#9aa2a9');px(X+10,yy,'#9aa2a9');}
+  }
+  r(X+2,112,11,2,'#1d1612');px(X+4,110,'#c99a3c');px(X+4,116,'#c99a3c');r(X+3,111,1,5,'#c99a3c');
+  // the bricks still in place (a fixed shuffled order), shaking just before they turn
+  const ORDER=[7,2,10,5,0,11,3,8,1,9,4,6];
+  ORDER.forEach((row,k)=>{
+    const th=(k+1)/ORDER.length;if(p>=th)return;
+    const y=78+row*6,sh=p>th-.1?(Math.floor(t*30)%2?1:-1):0;
+    r(X+sh,y,13,6,'#3e372f');r(X+sh,y+5,13,1,'#2e241d');r(X+sh+(row%2?4:8),y,1,5,'#2e241d');
+  });
+}
+SCENES.andar2.push({id:'paredeSecreta',get name(){return flags&&flags.secretOpen?'Porta escura':'Parede';},wall:true,cx:690,top:78,oy:114,
+  mark:{x:686,y:130},zone:{x:664,y:82,w:30,h:66},draw:()=>{},fx:drawSecretDoor,
+  act(){
+    if(flags.secretOpen){if(secretAnim>=0&&secretAnim<SECRET_DUR)return;return goScene('salaOculta',192,182,'up','SALA OCULTA');}
+    if(flags.alost>=4)return say([{t:'A parede de pedra está morna, como se houvesse algo vivo do outro lado.'},
+      {t:'"Diante da parede sem porta, caminhe três vezes pensando no que procura."'}]);
+    say([{t:'Uma parede lisa de pedra, sem quadro, sem porta, sem nada.'},{t:'É a única assim no corredor inteiro.'}]);
+  }});
+
+/* the hidden room: an old candle-lit lab with a frieze of the 10 steps and three iron doors (reactions 1, 3, 10) */
+const [bgOc,bgOcctx]=mk(W,H);
+SCENES.salaOculta=[];SCENE_W.salaOculta=W;TORCHES.salaOculta=[];
+STAIRS.salaOculta=[{x0:172,x1:212,up:false,edge:202,to:['andar2',680,114,'left','2º ANDAR']}];
+const OC_DOORS=[[44,1],[164,3],[284,10]],OC_CANDLES=[[18,24],[130,24],[250,24],[362,24]];
+function buildBgOculta(){
+  g=bgOcctx;const R=rng(211);
+  const pick=a=>a[(R()*a.length)|0];
+  r(0,0,W,4,'#120c09');r(0,3,W,1,'#2a1a10');
+  r(0,4,W,60,'#2a241f');
+  for(let row=0;row<7;row++){const y=4+row*8;let x=row%2?-6:-12;
+    while(x<W){const w=12+((R()*10)|0);r(x+1,y+1,w-1,7,pick(['#3e372f','#4a4239','#37302a','#433b33']));r(x+1,y+1,w-1,1,'#554c42');x+=w;}}
+  // frieze: the ten steps of the pathway, the irreversible ones in red with a padlock
+  r(0,4,W,11,'#1d1612');r(0,15,W,1,'#c99a3c');r(0,4,W,1,'#5a3d24');
+  for(let i=0;i<10;i++){
+    const x=12+i*37,red=FICHA_LOCK.includes(i+1);
+    r(x,6,28,8,red?'#5a2230':'#3a2414');r(x,6,28,1,red?'#a12a22':'#5a3d24');
+    pxText(String(i+1),x+(red?11:14),8,red?'#f2c94c':'#d9a441','center');
+    if(red){r(x+20,10,5,3,'#c99a3c');px(x+21,8,'#c99a3c');px(x+23,8,'#c99a3c');px(x+21,9,'#c99a3c');px(x+23,9,'#c99a3c');px(x+22,8,'#c99a3c');}
+    if(i<9){px(x+31,10,'#7a522f');px(x+33,10,'#7a522f');px(x+34,9,'#7a522f');px(x+34,11,'#7a522f');}
+  }
+  // wall candles (the flames are drawn every frame)
+  for(const [x,y] of OC_CANDLES){r(x-2,y+8,6,2,'#2c3236');r(x,y+10,2,3,'#2c3236');r(x-1,y+2,4,6,'#efe3c8');r(x-1,y+2,1,6,'#d8c79a');px(x+2,y+5,'#d8c79a');}
+  // old dark planks, dust
+  for(let y=64;y<212;y+=6){let x=-((y*7)%30);
+    while(x<W){const w=22+((R()*18)|0);r(x,y,w,6,pick(['#3a2414','#33200f','#402a17','#2e1d12']));r(x,y,w,1,'#4a3020');r(x+w-1,y,1,6,'#1d1612');x+=w;}
+    r(0,y+5,W,1,'#1d1612');}
+  for(let i=0;i<420;i++)px((R()*W)|0,64+((R()*148)|0),R()<.6?'#5a3d24':'#6e5a44');
+  r(0,64,W,1,'#120c09');for(let x=0;x<W;x+=2)px(x,65,'#2a1a10');
+  // side walls, bottom wall and the way out (dark oak door)
+  r(0,64,10,148,'#2e2822');for(let yy=66;yy<212;yy+=8)r(0,yy,9,1,'#1d1612');r(9,64,1,148,'#4a4239');
+  r(374,64,10,148,'#2e2822');for(let yy=70;yy<212;yy+=8)r(375,yy,9,1,'#1d1612');r(374,64,1,148,'#4a4239');
+  r(0,212,W,12,'#1d1612');r(0,212,W,1,'#4a4239');
+  r(160,190,64,34,'#4a4239');r(160,190,64,1,'#5e564c');r(163,193,58,31,'#120c09');
+  for(const lx of [164,193]){r(lx,194,27,30,'#3a2414');r(lx,194,27,1,'#5a3d24');for(let yy=198;yy<222;yy+=6){px(lx+4,yy,'#7b8186');px(lx+22,yy,'#7b8186');}}
+  pxEllipse(189,207,1,1,'#c99a3c');pxEllipse(195,207,1,1,'#c99a3c');
+  // candle light: everything far from a flame sinks into the dark (ordered dither)
+  const LIGHTS=OC_CANDLES.map(([x,y])=>[x,y+2,120]).concat([[140,86,90],[244,86,90],[192,200,70]]);
+  const id=bgOcctx.getImageData(0,0,W,H),d=id.data;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    let L=0;for(const [lx,ly,rad] of LIGHTS)L=Math.max(L,1-Math.hypot(x-lx,(y-ly)*1.15)/rad);
+    const th=BAYER[(x&3)+((y&3)<<2)]/16,k=(y*W+x)*4;
+    if(th>L*1.25){d[k]=d[k]*.55;d[k+1]=d[k+1]*.5;d[k+2]=d[k+2]*.5;}
+    else if(L>.55&&th<(L-.55)*1.4){d[k]=Math.min(255,d[k]+18);d[k+1]=Math.min(255,d[k+1]+10);}
+  }
+  bgOcctx.putImageData(id,0,0);
+  g=fctx;
+}
+function drawIronDoor(x,num,open){
+  r(x-4,16,64,48,'#5e564c');r(x-4,16,64,1,'#776f63');r(x-4,16,2,48,'#776f63');r(x+58,16,2,48,'#3e372f');
+  r(x+24,14,8,4,'#776f63');
+  if(open){
+    r(x,20,56,44,'#0b0806');r(x,20,5,44,'#4a5055');r(x+4,20,1,44,'#2c3236');
+    r(x+12,54,36,2,'#1d1612');r(x+16,48,28,2,'#161009');
+    return;
+  }
+  r(x,20,56,44,'#4a5055');r(x,20,56,1,'#7b8186');
+  for(const by of [26,43,58]){r(x,by,56,2,'#2c3236');for(let bx=x+3;bx<x+56;bx+=6)px(bx,by,'#9aa2a9');}
+  r(x+27,20,2,44,'#2c3236');
+  r(x+18,30,20,8,'#3a2414');r(x+18,30,20,1,'#5a3d24');pxText(String(num),x+28,32,'#d9a441','center');
+  r(x+24,47,8,7,'#c99a3c');r(x+24,47,8,1,'#f2c94c');r(x+25,44,1,3,'#a8862a');r(x+30,44,1,3,'#a8862a');r(x+25,43,6,1,'#a8862a');
+  px(x+28,49,'#1d1612');r(x+28,50,1,2,'#1d1612');
+}
+objects=SCENES.salaOculta;
+OC_DOORS.forEach(([x,num],i)=>add({id:'portaFerro'+(i+1),n:i+1,name:'Porta de ferro (reação '+num+')',wall:true,cx:x+28,top:16,mark:{x:x+28,y:18},
+  zone:{x:x-4,y:64,w:64,h:22},key:()=>String((flags.portas||0)>i),draw:()=>drawIronDoor(x,num,(flags.portas||0)>i),act(){portaAct(i+1);}}));
+add({id:'velas',name:'Velas',deco:true,wall:true,cx:-99,top:0,draw:()=>{},fx(t){
+  const fl=(x,y,ph)=>{const f=Math.floor(t*7+ph*3)%3;r(x,y-f%2,2,3,'#e8913a');px(x+(f===1?1:0),y-2,'#f2c94c');px(x,y-3+(f===2?1:0),'#fff27a');};
+  OC_CANDLES.forEach(([x,y],i)=>fl(x,y,i*.7));fl(139,80,.3);fl(243,80,1.4);}});
+[[140,1],[244,2]].forEach(([x,i])=>add({id:'candelabro'+i,name:'Candelabro',cx:x,top:78,base:104,solid:{x:x-4,y:100,w:8,h:4},
+  draw:()=>{r(x-1,84,2,18,'#5d646a');r(x-4,101,8,3,'#2c3236');r(x-4,86,8,1,'#5d646a');r(x-1,82,3,4,'#efe3c8');r(x-4,84,1,2,'#5d646a');r(x+3,84,1,2,'#5d646a');},
+  act:()=>say([{t:'Um candelabro de ferro. As velas são novas: alguém esteve aqui há pouco tempo.'}])}));
+add({id:'bancadaVelha',name:'Bancada antiga',cx:52,top:130,base:178,solid:{x:18,y:160,w:70,h:18},
+  draw:()=>{const x=18;r(x,150,70,8,'#5a3d24');r(x,150,70,1,'#7a522f');r(x,158,70,12,'#3a2414');r(x+2,170,4,8,'#2a1a10');r(x+64,170,4,8,'#2a1a10');
+    r(x+6,138,6,12,'#86aebb');r(x+6,138,6,2,'#9aa2a9');r(x+16,142,10,8,'#5aa865');r(x+18,139,6,3,'#86aebb');r(x+32,136,4,14,'#d8dee2');r(x+32,143,4,7,'#a12a22');
+    r(x+42,144,14,6,'#efe3c8');r(x+43,145,10,1,'#9aa2a9');r(x+43,147,8,1,'#9aa2a9');r(x+60,140,5,10,'#7a522f');
+    for(let i=0;i<5;i++){px(x+1+i,151+i,'#b9c2c8');px(x+1,151+i*2,'#b9c2c8');}},
+  act:()=>say([{t:'Uma bancada antiga, coberta de poeira. Frascos com rótulos escritos à mão: "G6P", "F-1,6-BP", "ATP", "AMP".'},
+    {t:'A letra dos rótulos é a mesma das fichas.'}])});
+add({id:'estanteVelha',name:'Estante antiga',cx:332,top:110,base:178,solid:{x:298,y:166,w:68,h:12},
+  draw:()=>{const x=298;r(x,112,68,66,'#3a2414');r(x,112,68,2,'#5a3d24');r(x+3,116,62,58,'#1d1612');
+    for(const sy of [134,152,172]){r(x+2,sy,64,2,'#5a3d24');}
+    const C=['#7a2e3e','#2b4a6f','#1f4a33','#5a3d24','#7a522f','#4a5055','#a8862a'];let k=0;
+    for(const sy of [118,136,154])for(let bx=x+4;bx<x+62;){const w=3+((k*7)%3),h=12+((k*5)%4);r(bx,sy+16-h,w,h,C[k%C.length]);r(bx,sy+16-h,w,1,'#9a9084');bx+=w+1;k++;}},
+  act:()=>say([{t:'Livros antigos de Bioquímica, de lombadas gastas. Muitos têm anotações a lápis nas margens.'},
+    {t:'Na contracapa de vários deles, as mesmas iniciais: "Prof. E. M.".'}])});
+objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
+objects=SCENES.terreo;
+// Larissa waits in the room after the third door opens (until the player leaves)
+const larissaOc={id:'larissaOc',name:'Larissa (2º ano)',cx:312,top:70,base:96,solid:{x:307,y:92,w:10,h:4},zone:{x:296,y:72,w:32,h:36},
+  sprite:t=>{const c=personSprite('larissa','coat','down',0,blinkAt(t,.8));return {c:c.c,x:304,y:73};},
+  act:()=>say([{who:LW,t:'A Liga se reúne aqui. Traga suas dúvidas de metabolismo... e nem uma palavra sobre a sala, combinado?'}])};
+function larissaIn(){const L=SCENES.salaOculta;if(!L.includes(larissaOc))L.push(larissaOc);}
+function larissaOut(){const L=SCENES.salaOculta,i=L.indexOf(larissaOc);if(i>=0)L.splice(i,1);}
+
+/* the three iron doors: an inscription, then a panel where each molecule goes to ABRE, FECHA or NÃO REGULA */
+const PORTAS={
+  1:{num:1,insc:'"Paro quando o que eu faço começa a sobrar."',
+    rows:[['Glicose-6-fosfato','F'],['AMP','N'],['Frutose-2,6-bisfosfato','N']],
+    fb:'A hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Quando a G6P se acumula, a enzima desacelera e a célula para de capturar glicose. AMP e frutose-2,6-bisfosfato não regulam a hexocinase.'},
+  2:{num:3,insc:'"Sou eu quem decide. Energia sobrando me fecha, energia faltando me abre. E a insulina me manda um recado."',
+    rows:[['ATP','F'],['AMP','A'],['Frutose-2,6-bisfosfato','A'],['Glicose-6-fosfato','N']],
+    sit:[['Músculo em repouso, com ATP sobrando','F'],['Músculo numa corrida, com o AMP subindo','A']],
+    fb:'A PFK-1 é o principal ponto de controle da glicólise. ATP em excesso a inibe (energia sobrando); o AMP desfaz essa inibição (energia faltando). A frutose-2,6-bisfosfato é o ativador mais potente, e sua produção aumenta com a insulina. Por isso, em repouso a porta fica fechada e, na corrida, abre.'},
+  3:{num:10,insc:'"Sei quem vem pela escada antes que chegue."',
+    rows:[['Frutose-1,6-bisfosfato','A'],['ATP','F'],['Frutose-2,6-bisfosfato','N']],
+    fb:'A piruvato-cinase é ativada pela frutose-1,6-bisfosfato, o produto da PFK-1: quando a reação 3 acelera, a reação 10 se prepara antes de o substrato chegar (ativação por antecipação, feedforward). ATP em excesso a inibe. A frutose-2,6-bisfosfato age na PFK-1, não aqui.'}};
+const OPT_TXT={A:'ABRE',F:'FECHA',N:'NÃO REGULA'};
+function portaAct(n){
+  const P=PORTAS[n],k=flags.portas||0;
+  if(k>=n)return say([{t:n===3?'A terceira porta está aberta. Foi ali que estavam as páginas que faltavam.':'A porta está aberta. Atrás dela, um corredor curto termina em pedra, e uma corrente de ar frio passa por você.'}]);
+  if(k<n-1)return say([{who:'INSCRIÇÃO',t:P.insc},{t:'A fechadura nem se mexe. Esta porta parece depender da anterior.'}]);
+  say([{t:'Gravado no ferro, acima da fechadura da porta da reação '+P.num+':'},{who:'INSCRIÇÃO',t:P.insc},
+    {t:'Abaixo, encaixes vazios e uma caixinha com fichas de moléculas.',choices:[
+      {t:'Tentar abrir',fn:()=>openSegredo('porta',n)},{t:'Afastar-se',fn:()=>{}}]}]);
+}
+function portaFinal(n){
+  flags.portas=n;updatePauseExtra();sfx.open();
+  if(n<3)return say([{t:'Com um estalo metálico, o cadeado cai e a porta de ferro se abre devagar.'},
+    {t:n===1?'Atrás dela, só escuridão. A segunda porta, a da reação 3, parece esperar por você.':'Mais uma aberta. Resta a porta da reação 10.'}]);
+  say([{t:'A terceira porta se abre com um rangido longo. Lá dentro, sobre uma mesa, há páginas soltas, escritas à mão.'},
+    {t:'São as páginas que faltavam no caderno de capa preta do Lucas: as reações 1, 3 e 10, e como cada uma é regulada.'},
+    {t:'Uma vela se acende sozinha... Não: alguém a acendeu.',run:()=>{larissaIn();setMood('larissa','smug',12);}},
+    {who:LW,t:'Achei que você chegaria até aqui.'},
+    {who:me(),t:'Larissa?! Foi você que deixou o bilhete no meu armário?'},
+    {who:LW,t:'Desculpe pelo esbarrão no laboratório. Eu precisava ver de perto quem ia receber o envelope deste ano.'},
+    {who:LW,t:'Esta sala é o ponto de encontro da Liga de Metabolismo. Todo ano, um calouro recebe o bilhete. Pouquíssimos chegam à terceira porta.'},
+    {who:LW,t:'A Liga não procura quem decora as dez reações. Procura quem entende onde a via se decide: nas três que não têm volta.'},
+    {who:LW,t:gen('Bem-vindo','Bem-vinda')+', '+nome1()+'. Isto é seu.',run:()=>setMood('player','happy',4)},
+    {t:'Você recebeu: CARTA-CONVITE DA LIGA DE METABOLISMO',item:'convite',run:()=>{flags.alost=6;updatePauseExtra();}},
+    {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'}]);
+}
+
+/* the modal: put the cards in order (mode 'ordem') or fill an iron door's slots (mode 'porta') */
+const sgEl=$('segredo');
+function openSegredo(mode,n){
+  if(mode==='ordem')sg={mode,cards:shuffle(Object.keys(FICHAS).map(Number)),placed:0,sel:0,msg:'',ok:false};
+  else{const P=PORTAS[n];sg={mode,n,rows:P.rows.map(([t,a])=>({t,a,v:null,o:'AFN'})).concat((P.sit||[]).map(([t,a],i)=>({t,a,v:null,o:'AF',sit:!i}))),sel:0,tries:0,msg:'',ok:false};}
+  $('sg-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  keys.clear();state='segredo';sgEl.hidden=false;renderSeg();fitSeg();tone(330,.12,'triangle',.04);
+}
+function renderSeg(){
+  const txt=$('sg-txt'),slots=$('sg-slots'),list=$('sg-list'),fb=$('sg-fb'),msg=$('sg-msg'),ok=$('sg-ok');
+  slots.textContent='';list.textContent='';msg.className=sg.ok?'ok':sg.err?'err':'';msg.textContent=sg.msg;
+  fb.hidden=!sg.ok;
+  if(sg.mode==='ordem'){
+    $('sg-bar').textContent='O BILHETE ANÔNIMO · AS DEZ FICHAS';$('sg-head').textContent='UNINOGWARTS · FICHAS COM O SELO DOS TRÊS CADEADOS';
+    txt.innerHTML='';txt.textContent=sg.ok?'As letras formam uma palavra:':'Coloque as fichas na ordem em que as reações acontecem na glicólise, da 1ª à 10ª. Escolha a ficha da próxima reação.';
+    slots.hidden=false;
+    for(let i=1;i<=10;i++){const d=document.createElement('div');const lock=FICHA_LOCK.includes(i)&&sg.placed>=i;
+      d.className='sg-slot'+(lock?' lock':'')+(sg.placed>=i?' got':'');d.innerHTML='<small></small><b></b>';
+      d.firstChild.textContent=i+(lock?' 🔒':'');d.lastChild.textContent=sg.placed>=i?FICHAS[i][1]:'?';slots.appendChild(d);}
+    if(sg.ok){fb.lastChild.textContent='ALOSTÉRICO: regulado por moléculas que se ligam à enzima fora do sítio ativo. É assim que a célula controla as três reações que não têm volta, a 1, a 3 e a 10. No verso da última ficha, a mesma letra caprichada: "Diante da parede sem porta, caminhe três vezes pensando no que procura."';}
+    else sg.cards.forEach((n,i)=>{const b=document.createElement('button');b.type='button';b.className='qopt'+(i===sg.sel?' sel':'');
+      b.innerHTML='<b></b><span></span>';b.firstChild.textContent=FICHAS[n][1];b.lastChild.textContent=FICHAS[n][0];
+      b.addEventListener('click',e=>{e.stopPropagation();sg.sel=i;sgPick();});list.appendChild(b);});
+    $('sg-close').textContent=sg.ok?'FECHAR':'DEIXAR PARA DEPOIS';ok.hidden=!sg.ok;ok.textContent='CONTINUAR';ok.classList.toggle('kb',sg.ok);
+    return;
+  }
+  const P=PORTAS[sg.n];
+  $('sg-bar').textContent='A SALA OCULTA · PORTA DE FERRO DA REAÇÃO '+P.num;$('sg-head').textContent='UNINOGWARTS · PORTA DA REAÇÃO '+P.num;
+  txt.innerHTML='<i></i><span>Coloque cada molécula num encaixe: ABRE (ativa a enzima), FECHA (inibe) ou NÃO REGULA (não age sobre esta enzima).</span>';
+  txt.firstChild.textContent=P.insc;slots.hidden=true;
+  fb.lastChild.textContent=P.fb;
+  sg.rows.forEach((rw,i)=>{
+    if(rw.sit){const h=document.createElement('div');h.className='sg-sec';h.textContent='E nestas situações, a porta abre ou fecha?';list.appendChild(h);}
+    const d=document.createElement('div');
+    d.className='sg-row'+(i===sg.sel&&!sg.ok?' sel':'')+(sg.ok?' right':sg.tries>=2&&rw.v&&rw.v!==rw.a?' wrong':'');
+    d.innerHTML='<span></span>';d.firstChild.textContent=rw.t;
+    for(const k of rw.o){const b=document.createElement('button');b.type='button';b.className=k.toLowerCase()+(rw.v===k?' on':'');b.textContent=OPT_TXT[k];
+      b.disabled=sg.ok;b.addEventListener('click',e=>{e.stopPropagation();sg.sel=i;rw.v=k;sfx.blip();renderSeg();});d.appendChild(b);}
+    list.appendChild(d);
+  });
+  $('sg-close').textContent='AFASTAR-SE';ok.hidden=false;ok.textContent=sg.ok?'ABRIR A PORTA':'TENTAR ABRIR';ok.classList.toggle('kb',sg.ok||sg.sel===sg.rows.length);
+}
+function fitSeg(){
+  if(sgEl.hidden)return;
+  const sh=sgEl.querySelector('.sheet'),room=$('sg-body').clientHeight-10;
+  sh.style.fontSize='';
+  let fs=parseFloat(getComputedStyle(sh).fontSize);
+  while(fs>12&&sh.offsetHeight>room){fs-=1;sh.style.fontSize=fs+'px';}
+}
+addEventListener('resize',fitSeg);
+function sgPick(){ // order mode: the selected card goes next if it is the right reaction
+  if(sg.ok)return;
+  const n=sg.cards[sg.sel];
+  if(n===sg.placed+1){sg.placed++;sg.cards.splice(sg.sel,1);sg.sel=Math.min(sg.sel,sg.cards.length-1);sg.err=false;
+    tone(523+sg.placed*40,.08,'square',.04);
+    if(sg.placed===10){sg.ok=true;sg.msg=WORD;sfx.open();}else sg.msg='Reação '+sg.placed+': '+FICHAS[sg.placed][0]+'.';}
+  else{sfx.bump();sg.err=true;sg.msg='Essa ficha não vem agora. Qual é a reação '+(sg.placed+1)+'?';}
+  renderSeg();fitSeg();
+}
+function sgTry(){ // door mode
+  if(sg.ok)return closeSegredo();
+  if(sg.rows.some(rw=>!rw.v)){sg.err=true;sg.msg='Ainda há encaixes vazios.';sfx.bump();return renderSeg();}
+  const k=sg.rows.filter(rw=>rw.v===rw.a).length;
+  if(k===sg.rows.length){sg.ok=true;sg.err=false;sg.msg='Clique! A fechadura cede.';[392,523,659].forEach((f,i)=>tone(f,.12,'triangle',.05,i*.1));}
+  else{sg.tries++;sg.err=true;sg.msg='A porta range, mas não abre. '+k+' de '+sg.rows.length+' encaixes estão certos.'+(sg.tries>=2?' Os errados estão marcados.':'');sfx.bump();}
+  renderSeg();fitSeg();
+}
+function closeSegredo(){
+  if(state!=='segredo')return;
+  const s=sg;sg=null;sgEl.hidden=true;state='play';keys.clear();
+  if(s.mode==='ordem'&&s.ok){flags.alost=4;syncEnigma();updatePauseExtra();
+    return say([{t:'As letras formam: A-L-O-S-T-É-R-I-C-O.'},{t:'No verso da última ficha: "Diante da parede sem porta, caminhe três vezes pensando no que procura."'},
+      {who:me(),t:'Parede sem porta... No fim do corredor do 2º andar, a parede da direita não tem nada. Nem quadro, nem porta.'}]);}
+  if(s.mode==='porta'&&s.ok)portaFinal(s.n);
+}
+function sgEnter(){
+  if(!sg)return;
+  if(sg.mode==='ordem')return sg.ok?closeSegredo():sgPick();
+  if(sg.ok||sg.sel>=sg.rows.length)return sgTry();
+  const rw=sg.rows[sg.sel],i=rw.v?rw.o.indexOf(rw.v):-1;rw.v=rw.o[(i+1)%rw.o.length];sfx.blip();renderSeg();
+}
+function sgMove(d,side){
+  if(!sg||sg.ok)return;
+  if(sg.mode==='ordem'){const n=sg.cards.length;if(n){sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg();}return;}
+  if(side){const rw=sg.rows[sg.sel];if(!rw)return;const i=rw.v?rw.o.indexOf(rw.v):(d>0?-1:rw.o.length);rw.v=rw.o[Math.max(0,Math.min(rw.o.length-1,i+d))];sfx.blip();return renderSeg();}
+  const n=sg.rows.length+1;sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg();
+}
+$('sg-close').addEventListener('click',e=>{e.stopPropagation();closeSegredo();});
+$('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.mode==='ordem')closeSegredo();else sgTry();});
+
+/* hints and cards from the characters, and the envelope in locker 42 */
+{
+  const face=o=>{if('meet' in o)stopChat(o);o.wait=4;if(!(o.sitting>0))o.dir=faceTo(o,player);};
+  const wrap=(o,fn)=>{const a0=o.act;o.act=function(){if(fn.call(this)===false)return a0.call(this);};};
+  const find=id=>{for(const k in SCENES){const o=SCENES[k].find(q=>q.id===id);if(o)return o;}return null;};
+  const mid=()=>flags.alost>=2&&flags.alost<6;
+  // the cards hidden behind portraits, the notice board and the snack machine
+  for(const id in FICHA_SPOT)wrap(find(id),function(){
+    const n=FICHA_AT[id];if(flags.alost!==2||fichaSet()[n])return false;
+    say([{t:FICHA_SPOT[id]}].concat(fichaLines(n)),lastFicha);
+  });
+  // Bruna got an envelope too, gave up and hands over her only card
+  wrap(find('bruna'),function(){
+    if(flags.alost!==2||fichaSet()[5])return false;face(this);
+    say([{who:'BRUNA (1º ANO)',t:'Esse envelope na sua mão... Você também recebeu um? Com o selo dos três cadeados?'},
+      {who:'BRUNA (1º ANO)',t:'O meu apareceu ontem. Procurei a manhã toda e só achei uma ficha. Desisti: tenho prova amanhã.'},
+      {who:'BRUNA (1º ANO)',t:'Fica com ela. Se descobrir quem está por trás disso, me conta!'}].concat(fichaLines(5)),lastFicha);
+  });
+  wrap(find('pedro'),function(){
+    if(!mid()||flags.hintPedro)return false;flags.hintPedro=true;this.wait=3;this.dir=player.x<this.x?'left':'right';
+    say([{who:'PEDRO (VETERANO)',t:'Envelope com selo de cadeados? Hmm... Então a lenda é verdade.'},
+      {who:'PEDRO (VETERANO)',t:'Dizem que tem uma sala neste prédio que só aparece para quem entende onde a glicólise se decide.'},
+      {who:'PEDRO (VETERANO)',t:'E outra coisa: em dois anos aqui, nunca vi o Seu Antônio limpar aquela parede do fim do 2º andar. Ela nunca suja.'}]);
+  });
+  wrap(find('lucas'),function(){
+    if(!mid()||flags.hintLucas)return false;flags.hintLucas=true;face(this);
+    say([{who:'LUCAS (2º ANO)',t:'Olha isto: comprei num sebo um caderno de capa preta, de um tal "Prof. E. M.". Glicólise inteira, escrita à mão.'},
+      {who:'LUCAS (2º ANO)',t:'O estranho é que arrancaram justamente as páginas das reações 1, 3 e 10. As três irreversíveis.'},
+      {who:'LUCAS (2º ANO)',t:'Se um dia você achar essas páginas, eu pago um café.'}]);
+  });
+  wrap(kido,function(){
+    if(!mid()||flags.hintKiko)return false;flags.hintKiko=true;face(this);
+    say([{who:'PROF. KIKO (HISTOLOGIA)',t:'Uma sala que não está lá? Hahaha! Lenda de veterano, isso aí. Todo ano alguém pergunta.'},
+      {who:'PROF. KIKO (HISTOLOGIA)',t:'...Mas, se for procurar, vá '+gen('sozinho','sozinha')+'.'}]);
+  });
+  wrap(find('felipe'),function(){
+    if(mid()&&!flags.hintFelipe){flags.hintFelipe=true;face(this);
+      return say([{who:me(),t:'Felipe, você sabe alguma coisa sobre uma parede sem porta neste andar?'},
+        {who:'FELIPE (2º ANO)',t:'Parede sem porta? Que parede? Ali nunca teve nada.'},{t:'Ele desvia o olhar rápido demais.'}]);}
+    if(flags.alost===6&&!flags.felipeDone){flags.felipeDone=true;face(this);
+      return say([{who:'FELIPE (2º ANO)',t:'Ah... então você achou.'},{who:'FELIPE (2º ANO)',t:gen('Bem-vindo','Bem-vinda')+' à Liga. Sexta-feira, depois da aula. Você já sabe onde.'}]);}
+    return false;
+  });
+  wrap(find('larissa'),function(){
+    if(mid()&&!flags.hintLarissa){flags.hintLarissa=true;face(this);
+      return say([{who:LW,t:'Envelope? Que envelope? Não sei de nada, não.'},{who:LW,t:'Boa sorte na prova de amanhã.'},{t:'Ela sorri de um jeito estranho.'}]);}
+    if(flags.alost===6&&this.talk%2===0){face(this);this.talk++;return say([{who:LW,t:'Shhh. O que acontece na sala fica na sala.'}]);}
+    return false;
+  });
+  // locker 42: the envelope (drawn sticking out of the door) and, later, a place to sort the cards
+  const lk=find('locker42'),k0=lk.key,d0=lk.draw,lkAct0=lk.act;
+  lk.key=()=>k0()+'|'+(flags.alost===1);
+  lk.draw=()=>{d0();if(flags.alost===1){const x=lk.cx-8;r(x+3,36,9,6,'#efe3c8');r(x+3,36,9,1,'#d8c79a');px(x+7,39,'#a12a22');px(x+8,39,'#a12a22');}};
+  wrap(lk,function(){
+    if(flags.alost===1)return say([{t:'Tem um envelope enfiado na fresta da porta do seu armário. Lacrado com cera vermelha: um selo de três cadeados. Sem remetente.'},
+      {t:'Dentro, um bilhete escrito à mão, com letra caprichada:'},
+      {who:'BILHETE ANÔNIMO',t:'"Dez passos levam a uma sala que não está lá. Três deles não têm volta. Encontre os passos e a parede saberá."'},
+      {t:'Dez passos... Dez reações? Deve haver fichas com esse mesmo selo escondidas pelo prédio.',run:()=>{flags.alost=2;$('slot-enigma').classList.add('got');syncEnigma();updatePauseExtra();}}]);
+    if(flags.alost===3)return say([{t:'Seu armário. As dez fichas com o selo dos cadeados estão na prateleira.',choices:[
+      {t:'Organizar as fichas',fn:()=>openSegredo('ordem')},{t:'Mexer no jaleco',fn:()=>lkAct0.call(lk)},{t:'Fechar o armário',fn:()=>{}}]}]);
+    return false;
+  });
+}
+function alostReset(){
+  wallPass={n:0,side:null};secretAnim=-1;onArrive=null;larissaOut();
+  if(sg){sg=null;sgEl.hidden=true;}
+  $('enigma-cnt').textContent='';
+}
+
 /* ---------- music ----------
    One playlist per floor, each with its own combination of tracks: ground floor (and its lab), 1st floor
    (and Salas 101/103), 2nd floor (and Sala 201). Each playlist runs its tracks in order and starts over at the end.
@@ -4024,7 +4524,7 @@ const MUSIC_DIRS=['Músicas dos jogos/',''];
 const TRACKS={lab:'Laboratory of the Archmage (MP3).mp3',cour:'Courtyard of Enchantment.mp3',
   alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3'};
 const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab']};
-const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2'};
+const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',salaOculta:'andar2'};
 const music=(()=>{
   const FADE=.8; // seconds for a full fade
   let els={},dir=0,cur=null,vol=.15,zone=null;
@@ -4140,6 +4640,7 @@ function onEnter(){
   if(state==='poster'){closePoster();return;}
   if(state==='quiz'){quizEnter();return;}
   if(state==='duelo'){duelEnter();return;}
+  if(state==='segredo'){sgEnter();return;}
   if(state==='intro'){start();return;}
   if(state==='play'){interact();return;}
   if(state==='dialog'){advance();return;}
@@ -4154,14 +4655,12 @@ function onKey(e){
     if(e.repeat&&(e.code==='Enter'||e.code==='Escape'))return;
     if(e.code==='Enter'||e.code==='NumpadEnter')pauseSelect();
     else if(e.code==='Escape')pauseBackKey();
-    else if(e.code==='KeyP')closePause();
     else if(e.code==='KeyW'||e.code==='ArrowUp')pauseMove(-1);
     else if(e.code==='KeyS'||e.code==='ArrowDown')pauseMove(1);
     else if(e.code==='KeyA'||e.code==='ArrowLeft')pauseAdjust(-1);
     else if(e.code==='KeyD'||e.code==='ArrowRight')pauseAdjust(1);
     return;
   }
-  if(e.code==='KeyP'&&(state==='play'||state==='dialog')){e.preventDefault();openPause();return;}
   if(state==='quiz'){
     const k=e.key.length===1?LETTERS.indexOf(e.key.toUpperCase()):-1;
     if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)quizEnter();}
@@ -4189,6 +4688,16 @@ function onKey(e){
     else if(e.code==='KeyW'||e.code==='ArrowUp')duelMove(-1);
     else if(e.code==='KeyS'||e.code==='ArrowDown')duelMove(1);
     else if(k>=0&&!e.repeat)duelPick(k);
+    return;
+  }
+  if(state==='segredo'){
+    e.preventDefault&&e.preventDefault();
+    if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)sgEnter();}
+    else if(e.code==='Escape'){if(!e.repeat)closeSegredo();}
+    else if(e.code==='KeyW'||e.code==='ArrowUp')sgMove(-1);
+    else if(e.code==='KeyS'||e.code==='ArrowDown')sgMove(1);
+    else if(e.code==='KeyA'||e.code==='ArrowLeft')sgMove(-1,true);
+    else if(e.code==='KeyD'||e.code==='ArrowRight')sgMove(1,true);
     return;
   }
   if(state==='review'){
@@ -4251,7 +4760,7 @@ function padKey(code,repeat){
     if((code==='Enter'||code==='Menu')&&$('telaTitulo').style.display!=='none')$('telaTitulo').click();
     return;
   }
-  if(code==='KeyX'&&['quiz','review','caca','poster','pause','duelo'].includes(state))code='Escape'; // X: leave the sheet, back, close
+  if(code==='KeyX'&&['quiz','review','caca','poster','pause','duelo','segredo'].includes(state))code='Escape'; // X: leave the sheet, back, close
   if(code==='Menu'){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
@@ -4331,13 +4840,20 @@ function renderPause(){
 function openPause(){
   if(state!=='play'&&state!=='dialog')return;
   closeVol();pauseBack=state;pauseAt=performance.now();pauseSel=0;pauseHelp=false;keys.clear();
-  state='pause';pauseEl.hidden=false;renderPause();tone(520,.06,'square',.03);
+  state='pause';pauseEl.hidden=false;renderPause();tone(520,.06,'square',.03);pauseBtn.setAttribute('aria-pressed','true');
 }
 function closePause(){
   if(state!=='pause')return;
   if(!endTime)startTime+=performance.now()-pauseAt; // the paused time does not count on the clock
-  pauseAt=0;pauseEl.hidden=true;state=pauseBack;keys.clear();
+  pauseAt=0;pauseEl.hidden=true;state=pauseBack;keys.clear();pauseBtn.setAttribute('aria-pressed','false');
 }
+// the pause button sits next to volume and full screen; it only shows once the game has started
+const pauseBtn=$('btnPausa');
+pauseBtn.addEventListener('click',e=>{
+  e.stopPropagation();pauseBtn.blur();unlockAudio();
+  if(state==='pause')closePause();else openPause();
+});
+function syncPauseBtn(){const off=state==='boot'||state==='intro';if(pauseBtn.hidden!==off)pauseBtn.hidden=off;}
 function pauseMove(d){if(pauseHelp)return;const n=pauseItems().length;pauseSel=(pauseSel+d+n)%n;sfx.blip();renderPause();}
 function pauseAdjust(d){
   if(pauseHelp)return;
@@ -4391,6 +4907,7 @@ function update(dt){
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
   if(state==='gather'&&gatherSt)updateGather(dt);
   if(state==='duelo')duelTick(dt);
+  alostTick(dt);
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
   if(state==='play'&&!flags.graded){
@@ -4433,7 +4950,7 @@ let camX=0;
 function render(t){
   g=fctx;
   camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(player.x-W/2)));
-  fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,salaLab:bgLab}[scene],0,0);
+  fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,salaLab:bgLab,salaOculta:bgOc}[scene],0,0);
   if(scene==='terreo')drawClock();
   drawJanitorFloor();
   drawTorches(t);
@@ -4453,9 +4970,10 @@ function render(t){
   // quest markers
   const bob=Math.round(Math.sin(t*5)*1.5);
   for(const o of objects){
-    if(!needsMarker(o))continue;
+    const main=needsMarker(o);
+    if(!main&&!sideNeeds(o))continue; // gold: main story; blue: side quests
     const mx=Math.round(o.mark?o.mark.x:o.cx),my=(o.mark?o.mark.y:Math.max(2,o.top-13))+bob;
-    r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,'#d9a441');r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
+    r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,main?'#d9a441':'#5fb4f0');r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
   }
   // interaction prompt
   if(state==='play'){
@@ -4476,15 +4994,15 @@ function render(t){
   ctx.drawImage(frame,camX,0,W,H,0,0,cv.width,cv.height);
 }
 
-let last=performance.now();
+let last=performance.now(),frameRaw=0;
 function loop(now){
-  const raw=Math.min(1,(now-last)/1000),dt=Math.min(.05,raw);last=now;
+  const raw=Math.min(1,(now-last)/1000),dt=Math.min(.05,raw);last=now;frameRaw=raw;
   tickClock(raw); // the clock follows real time, even when frames come slowly
-  pollPad();if(state==='pause')music.tick(dt);else update(dt);render(now/1000);
+  pollPad();syncPauseBtn();if(state==='pause')music.tick(dt);else update(dt);render(now/1000);
   if(state==='intro')drawDiaryArt(now/1000);
   requestAnimationFrame(loop);
 }
-buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);buildBgSala(bgS201ctx,WIN201,91);buildBgLab();
+buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);buildBgSala(bgS201ctx,WIN201,91);buildBgLab();buildBgOculta();
 reset();state='boot';
 // called by the opening screens once the player has typed a name
 // thumbnail for the character screen (g: 'm' boy, 'f' girl), facing down in everyday clothes
