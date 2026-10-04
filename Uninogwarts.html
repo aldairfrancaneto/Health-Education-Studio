@@ -87,6 +87,8 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
 #pad{display:none;align-items:center;justify-content:space-between;gap:16px;width:100%}
 .dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:4px}
 .dpad button,.abtn{font-family:var(--f-display);font-size:11px;color:var(--ink);background:var(--panel);border:2px solid var(--line);border-bottom-width:5px;touch-action:none;user-select:none;-webkit-user-select:none}
+.dpad button{display:grid;place-items:center;padding:0}
+.dpad button svg{width:46%;height:46%;fill:currentColor;filter:drop-shadow(0 2px 0 rgba(0,0,0,.45))} /* arrows instead of W/A/S/D */
 .dpad button:active,.abtn:active,.dpad button.on{background:var(--line)}
 .abtn{width:84px;height:84px;border-radius:50%;background:var(--accent);color:#1a1606;border-color:#a8862a}
 @media (pointer:coarse){#pad{display:flex}}
@@ -95,11 +97,11 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
 @media (pointer:coarse) and (orientation:landscape){
   #app{padding:4px 8px;gap:0}
   .site-footer{display:none}
-  #pad{position:absolute;inset:0;z-index:15;align-items:flex-end;padding:0 calc(env(safe-area-inset-right,0px) + 10px) 12px calc(env(safe-area-inset-left,0px) + 10px);box-sizing:border-box;pointer-events:none}
+  #pad{position:absolute;inset:0;z-index:15;align-items:center;padding:0 calc(env(safe-area-inset-right,0px) + 10px) 0 calc(env(safe-area-inset-left,0px) + 10px);box-sizing:border-box;pointer-events:none} /* sides, mid-height */
   #pad>*{pointer-events:auto}
   .dpad{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:3px}
-  .dpad button{background:rgba(42,28,22,.7);opacity:.45}
-  .abtn{width:54px;height:54px;font-size:8px;opacity:.5;margin-bottom:44px}
+  .dpad button{background:rgba(42,28,22,.7);opacity:.55}
+  .abtn{width:58px;height:58px;font-size:8px;opacity:.55}
   .dpad button.on,.abtn:active{opacity:1}
 }
 /* Controller button glyphs (shown in the hints once a game controller is used) */
@@ -485,9 +487,9 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   <footer>
     <div id="pad">
       <div class="dpad">
-        <span></span><button data-k="KeyW" aria-label="Cima">W</button><span></span>
-        <button data-k="KeyA" aria-label="Esquerda">A</button><span></span><button data-k="KeyD" aria-label="Direita">D</button>
-        <span></span><button data-k="KeyS" aria-label="Baixo">S</button><span></span>
+        <span></span><button data-k="KeyW" aria-label="Cima"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(0deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span>
+        <button data-k="KeyA" aria-label="Esquerda"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(-90deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span><button data-k="KeyD" aria-label="Direita"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(90deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button>
+        <span></span><button data-k="KeyS" aria-label="Baixo"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(180deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span>
       </div>
       <button class="abtn" id="abtn" type="button">ENTER</button>
     </div>
@@ -4215,9 +4217,14 @@ function onKey(e){
 addEventListener('keydown',onKey);
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>keys.clear());
+// on-screen W/A/S/D: held down to walk; in dialogs, sheets, pause, word search, duel and poster each press is also
+// one arrow keystroke (an arrow, not the letter: in a sheet the letter A would pick option A)
+const DPAD_ARROW={KeyW:'ArrowUp',KeyS:'ArrowDown',KeyA:'ArrowLeft',KeyD:'ArrowRight'};
 document.querySelectorAll('.dpad button').forEach(b=>{
   const k=b.dataset.k;
-  b.addEventListener('pointerdown',e=>{e.preventDefault();unlockAudio();keys.add(k);b.classList.add('on');});
+  b.addEventListener('pointerdown',e=>{e.preventDefault();unlockAudio();b.classList.add('on');
+    if(state==='play'){keys.add(k);return;}
+    const a=DPAD_ARROW[k];onKey({code:a,key:a,repeat:false,target:b,preventDefault(){}});});
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{keys.delete(k);b.classList.remove('on');}));
 });
 $('abtn').addEventListener('click',onEnter);
