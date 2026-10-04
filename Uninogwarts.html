@@ -25,6 +25,9 @@
 html,body{height:100%}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;display:flex;flex-direction:column}
+/* No text selection anywhere: on Android a tap on a word opened Chrome's "Touch to Search" (and a long press, the selection menu) */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea{-webkit-user-select:text;user-select:text}
 #app{flex:1 1 auto;min-height:0;position:relative;display:grid;grid-template-rows:1fr auto;gap:8px;padding-inline:16px;padding-block:8px;box-sizing:border-box}
 
 /* HUD (inside the game frame, over the bottom wall strip) */
@@ -160,9 +163,6 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .tela-titulo{cursor:pointer}
 .tela-titulo::after,.tela-carregando::after,.tela-personagem::after,.tela-nome::after,.tela-enredo::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
 .tt-ico{font-size:clamp(5.5rem,17vh,10rem);line-height:1;filter:drop-shadow(0 6px 0 rgba(0,0,0,.35))}
-.tt-estandarte{position:absolute;top:0;z-index:1;width:48px;height:96px;image-rendering:pixelated;pointer-events:none}
-.tt-estandarte.e{left:max(70px,9%)}.tt-estandarte.d{right:max(70px,9%)}
-@media (max-width:600px),(max-height:520px){.tt-estandarte{display:none}}
 /* Story screen: its own screen between the name and the game (nothing of the game shows) */
 .tela-enredo{gap:18px;padding:56px 24px}
 .tela-enredo[hidden]{display:none}
@@ -284,6 +284,19 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 .caca-list li:not(.ok) small{display:none}
 .caca-list li.ok b{text-decoration:line-through;text-decoration-thickness:2px}
 @media (max-aspect-ratio:1/1){.caca-wrap{flex-direction:column;align-items:center}.caca-sheet{--cs:clamp(16px,min(calc((100vw - 70px) / 10),calc((100dvh - 380px) / 10)),40px)}.caca-list{max-width:none;width:100%}}
+/* Side quests: optional inventory items only show while held; the cereal bar stops the clock (green clock) */
+.slot.opt:not(.got){display:none}
+#hud-clock.energia{color:#8fe08f}
+#pz-extra{white-space:pre-line}
+/* Gabriel's lightning duel (optional extra): 5 questions, one shared 20-second bar */
+.duelo-sheet{width:min(100%,760px)}
+.duelo-top{display:flex;justify-content:space-between;gap:10px;margin-top:10px;font-family:var(--f-display);font-size:10px;line-height:1.6;color:#7a522f}
+.duelo-timer{height:12px;border:2px solid #2a1c16;background:#fbf6e6;margin:6px 0 12px}
+.duelo-timer i{display:block;height:100%;width:100%;background:#1f7a43}
+.duelo-timer.low i{background:#b3261e}
+#duelo-q{margin:0 0 10px}
+#duelo-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
+#duelo-msg.ok{color:#1f7a43}#duelo-msg.err{color:#b3261e}
 /* Page footer (same information as the other games); it takes its own row below the game, so the game area shrinks instead of the page scrolling */
 .site-footer{flex:none;padding:7px 14px;border-top:1px solid rgba(255,255,255,.15);background:#0d0806;color:rgba(255,255,255,.55);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12.5px;letter-spacing:.02em;text-align:left;line-height:1.5}
 .site-footer strong{color:rgba(255,255,255,.8)}
@@ -335,8 +348,6 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 </div>
 <div id="app">
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
-  <svg class="tt-estandarte e" viewBox="0 0 16 32" aria-hidden="true" shape-rendering="crispEdges"><rect x="0" y="0" width="16" height="2" fill="#a8862a"/><rect x="0" y="0" width="16" height="1" fill="#f2c94c"/><rect x="1" y="2" width="14" height="26" fill="#7a2e3e"/><rect x="1" y="2" width="1" height="26" fill="#d9a441"/><rect x="14" y="2" width="1" height="26" fill="#d9a441"/><polygon points="1,28 8,24 15,28 15,32 8,28 1,32" fill="#7a2e3e"/><rect x="2" y="27" width="12" height="1" fill="#d9a441"/><rect x="5" y="9" width="6" height="8" fill="#d9a441"/><rect x="5" y="7" width="2" height="2" fill="#d9a441"/><rect x="9" y="7" width="2" height="2" fill="#d9a441"/><rect x="7" y="13" width="2" height="4" fill="#5a2230"/><rect x="5" y="19" width="6" height="1" fill="#f2c94c"/></svg>
-  <svg class="tt-estandarte d" viewBox="0 0 16 32" aria-hidden="true" shape-rendering="crispEdges"><rect x="0" y="0" width="16" height="2" fill="#a8862a"/><rect x="0" y="0" width="16" height="1" fill="#f2c94c"/><rect x="1" y="2" width="14" height="26" fill="#7a2e3e"/><rect x="1" y="2" width="1" height="26" fill="#d9a441"/><rect x="14" y="2" width="1" height="26" fill="#d9a441"/><polygon points="1,28 8,24 15,28 15,32 8,28 1,32" fill="#7a2e3e"/><rect x="2" y="27" width="12" height="1" fill="#d9a441"/><rect x="5" y="9" width="6" height="8" fill="#d9a441"/><rect x="5" y="7" width="2" height="2" fill="#d9a441"/><rect x="9" y="7" width="2" height="2" fill="#d9a441"/><rect x="7" y="13" width="2" height="4" fill="#5a2230"/><rect x="5" y="19" width="6" height="1" fill="#f2c94c"/></svg>
   <div class="tt-ico" aria-hidden="true">🏰</div>
   <div class="tt-titulo">Uninogwarts<small>Desafio bioquímico</small></div>
   <div class="tt-start">▶ Press Start</div>
@@ -356,7 +367,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 
 <div class="tela-enredo" id="intro" hidden>
   <span class="te-tag">TÉRREO · 07h30 · VÉSPERA DA PROVA</span>
-  <h2 class="te-titulo">O Mistério das Folhas Perdidas<small>Uma manhã de glicólise em Uninogwarts</small></h2>
+  <h2 class="te-titulo">Uma manhã de glicólise em Uninogwarts</h2>
   <div id="intro-p" class="intro-txt"><p>São 7h30 da manhã. Ontem você passou o dia estudando glicólise com a Marina, nas salas em que foi tendo aula. Mas, depois disso, não viu mais as suas folhas da atividade de Bioquímica.</p><p>A Marina está sentada na mesa de estudos perto da escada, aqui no térreo. Você quer perguntar se ela viu as suas folhas.</p><p class="intro-obj-t">Seu objetivo:</p><ol class="intro-obj"><li><b>▶</b><span>Falar com a Marina.</span></li></ol></div>
   <div class="ctl-help" id="intro-ctl"></div>
   <button class="tn-btn" id="btn-start" type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · COMEÇAR">▶ ENTER · COMEÇAR</button>
@@ -402,6 +413,9 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     <div class="inv" aria-label="Inventário">
       <div class="slot" id="slot-jaleco" title="Jaleco"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="6" height="2" fill="#c9cfd3"/><rect x="2" y="2" width="8" height="9" fill="#f4f6f4"/><rect x="5" y="2" width="2" height="5" fill="#2d6fb5"/><rect x="1" y="3" width="1" height="6" fill="#f4f6f4"/><rect x="10" y="3" width="1" height="6" fill="#f4f6f4"/><rect x="6" y="3" width="1" height="8" fill="#c9cfd3"/><rect x="3" y="7" width="2" height="2" fill="#9aa3a9"/></svg></div></div>
       <div class="slot" id="slot-folhas" title="Folhas da atividade"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="7" height="9" fill="#d8dee2"/><rect x="2" y="2" width="7" height="9" fill="#f4f6f4"/><rect x="3" y="4" width="5" height="1" fill="#9aa2a9"/><rect x="3" y="6" width="5" height="1" fill="#9aa2a9"/><rect x="3" y="8" width="3" height="1" fill="#9aa2a9"/><rect x="3" y="2" width="5" height="1" fill="#2d6fb5"/></svg><b class="cnt" id="folhas-cnt"></b></div></div>
+      <div class="slot opt" id="slot-caderno" title="Caderno do Tiago"><div class="box"><svg viewBox="0 0 12 12"><rect x="2" y="1" width="8" height="10" fill="#e8853a"/><rect x="2" y="1" width="1" height="10" fill="#a8541a"/><rect x="4" y="5" width="5" height="1" fill="#f4f6f4"/><rect x="6" y="2" width="2" height="2" fill="#3fa682"/><rect x="7" y="8" width="2" height="2" fill="#d0352b"/><rect x="4" y="8" width="1" height="1" fill="#e8bf3f"/></svg></div></div>
+      <div class="slot opt" id="slot-barra" title="Barrinha de cereal"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="4" width="10" height="4" fill="#d9a441"/><rect x="0" y="3" width="1" height="6" fill="#c9cfd3"/><rect x="11" y="3" width="1" height="6" fill="#c9cfd3"/><rect x="3" y="5" width="6" height="2" fill="#7a522f"/><rect x="4" y="5" width="1" height="1" fill="#e8bf3f"/><rect x="7" y="6" width="1" height="1" fill="#e8bf3f"/></svg></div></div>
+      <div class="slot opt" id="slot-trofeu" title="Troféu de papel do Duelo Relâmpago"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="6" height="4" fill="#f4f6f4"/><rect x="2" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="9" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="5" y="2" width="2" height="1" fill="#d9a441"/><rect x="5" y="5" width="2" height="3" fill="#d8dee2"/><rect x="3" y="8" width="6" height="2" fill="#f4f6f4"/><rect x="3" y="10" width="6" height="1" fill="#9aa2a9"/></svg></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
       </div>
@@ -439,7 +453,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.5 &middot; Última atualização: 3 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.2 &middot; Última atualização: 3 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -520,6 +534,26 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="sh-foot">
         <span id="caca-msg" aria-live="polite"></span>
         <span class="sh-btns"><button class="mbtn primary" id="caca-close" type="button">DEIXAR PARA DEPOIS</button></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="duelo" hidden role="dialog" aria-label="Duelo Relâmpago">
+  <div class="modal-bar">
+    <span class="mt">DUELO RELÂMPAGO · GABRIEL (3º ANO)</span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> responder"><kbd>ENTER</kbd> responder</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> desistir"><kbd>ESC</kbd> desistir</span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="sheet duelo-sheet">
+      <div class="sh-head"><span>UNINOGWARTS · DUELO RELÂMPAGO · OPCIONAL</span><span id="duelo-aluno"></span></div>
+      <div class="duelo-top"><span id="duelo-n"></span><span id="duelo-pts"></span></div>
+      <div class="duelo-timer" id="duelo-timer"><i id="duelo-bar"></i></div>
+      <p id="duelo-q"></p>
+      <div id="duelo-opts"></div>
+      <div class="sh-foot">
+        <span id="duelo-msg" aria-live="polite"></span>
+        <span class="sh-btns"><button class="mbtn primary" id="duelo-close" type="button">DESISTIR</button></span>
       </div>
     </div>
   </div>
@@ -638,7 +672,7 @@ function bake(drawFn,hint,ink){
   const [cc,c2]=mk(bw,bh);c2.putImageData(out,0,0);
   return {c:cc,x:hx+x0-1,y:hy+y0-1};
 }
-function blit(s){if(s)fctx.drawImage(s.c,s.x,s.y);}
+function blit(s){if(s)fctx.drawImage(s.c,s.x-(s.c._ox||0),s.y-(s.c._oy||0));} // people's paper canvases have a margin
 
 /* ---------- pixel font (3x5, accents above) ---------- */
 const GL={A:['010','101','111','101','101'],B:['110','101','110','101','110'],C:['011','100','100','100','011'],D:['110','101','101','101','110'],
@@ -699,8 +733,16 @@ const gen=(m,f)=>genero==='f'?f:m;
 // skin tones of the playable characters (S skin, s shade), chosen on the character screen; 1 is the original
 const SKINS=[['#f1d0b0','#d39f7a'],['#d9a37c','#a87445'],['#c98b62','#8a5a3c'],['#a8683f','#6e4228'],['#74462a','#4a2a18']];
 let pele=1;const palCache={};
+// the player's school look: the boy like Harry Potter (messy black hair, round glasses, Gryffindor scarf), the girl
+// like Hermione (bushy brown hair); both in the grey jumper with the red tie, a leather satchel. Only the player:
+// other characters copy CHAR_PAL.player, so these colours live here.
+const PLAYER_LOOK={
+  m:{H:'#3a2e28',h:'#2a2420',d:'#1d1612',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#2c3236',p:'#1d2226',B:'#3a2e28',
+     R:'#7a522f',r:'#5a3d24',J:'#a12a22',j:'#e8bf3f'},
+  f:{H:'#a8743f',h:'#7a522f',d:'#5a3d24',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#3a4045',p:'#2c3236',B:'#3a2e28',
+     Q:'#4a5055',q:'#2c3236',R:'#7a522f',r:'#5a3d24',F:'#a12a22',f:'#7a2e3e'}};
 function playerPal(girl){const k=(girl?'f':'m')+pele;
-  return palCache[k]||(palCache[k]=Object.assign({},girl?CHAR_PAL.playerF:CHAR_PAL.player,{S:SKINS[pele][0],s:SKINS[pele][1]}));}
+  return palCache[k]||(palCache[k]=Object.assign({},girl?CHAR_PAL.playerF:CHAR_PAL.player,PLAYER_LOOK[girl?'f':'m'],{S:SKINS[pele][0],s:SKINS[pele][1]}));}
 const nome1=()=>(jogador||'').trim().split(/\s+/)[0]||gen('aluno','aluna'); // first name, for people who know the player // gendered words for the chosen character (boy / girl)
 const me=()=>(jogador||'Você').toUpperCase(); // speaker tag for the player's own lines
 function reset(){
@@ -709,7 +751,7 @@ function reset(){
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
   dialog=null;labOpen=false;startTime=0;endTime=0;gameMin=0;
-  ['jaleco','cracha','folhas'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
+  ['jaleco','cracha','folhas','caderno','barra','trofeu'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
   if(typeof aldair!=='undefined'){initWalker(aldair);initWalker(heloisa);unseatProfs();}
@@ -1136,29 +1178,433 @@ function girlRows(outfit,dir,f,blink,lab){
   }
   return rows;
 }
-function personSprite(who,outfit,dir,f,blink){
-  const girl=who==='player'&&genero==='f',lab=who==='player'&&scene==='salaLab';
-  let rows=girl?girlRows(outfit,dir,f,blink,lab):personRows(who,outfit,dir,f,blink);
-  if(who==='player'&&!girl&&!lab)rows=headphones(rows,dir==='left'?'right':dir);
-  const badge=who!=='player'||flags.cracha;
-  if(!badge)rows=rows.map(r_=>r_.replace(/[Cc]/g,'W'));
-  const key=[who+(girl?'F':'')+(lab?'L':'')+(who==='player'?pele:''),outfit,dir,f%4,blink?1:0,badge?'b':''].join(':');
-  return gridSprite(key,rows,who==='player'?playerPal(girl):CHAR_PAL[who],dir==='left');
+/* ---------- characters in the South Park style ----------
+   Every person (player and NPCs) is a construction-paper cut-out: a wide round head sitting straight on a small
+   square body (no neck), two huge white eyes touching each other with a dot pupil, a tiny line mouth, flat colours,
+   stubby arms with mitten hands and flat shoes, all with a dark outline. They face the camera when standing or
+   walking down, turn 3/4 to the side when walking left/right and show their back when walking up; walking is a
+   little hop. Drawn procedurally on the same 16x24 grid as before (feet on the last row); the canvas has a margin
+   for the outline, so it carries _ox/_oy and every draw subtracts them. Colours come from each character's palette.
+   Extras: each character has a trademark (TRAITS: cap, beard, beanie...), clothes have details (collar, print,
+   zip, pockets, laces, stripes) and a faint card texture; the face shows a mood (eyebrows, lids, mouth) and the
+   mouth flaps while that character's line is being typed in a dialog. */
+const PAPER_INK='#1d1612',PW=21,PH=30,POX=2,POY=3;
+const HAIR_STYLE={marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
+  lucas:'quiff',felipe:'fade',rafael:'curtains',tiago:'locs',bruno:'hawk',caio:'afro',julia:'afro',davi:'locs',gabriel:'shaggy',
+  ana:'buns',bia:'pixie',aldair:'sidepart',pedro:'curly',zelador:'short'};
+const GLASSES={aldair:'#5e646a',cida:'#a8862a',lucia:'#c99a3c'}; // frame colour round the eyes
+const OUTFIT_FIX={marina:'shirt',cida:'shirt',lucia:'shirt'}; // their LOOKS replace the coat/skirt
+const PAL_FIX={marina:{T:'#f4f6f4',t:'#d8dee2',u:'#b9c2c8',Q:'#7a2e3e',q:'#5a2230'},cida:{T:'#8e5aa8',t:'#6a3f80',u:'#6a3f80'}};
+// trademarks, so everyone is recognised from afar
+const TRAITS={
+  zelador:{cap:'#2b4a6f',capD:'#1f2f4f',mustache:1},
+  kido:{bowtie:'#d0352b'},
+  aldair:{beard:1},
+  gabriel:{beanie:'#2d6fb5',beanieB:'#f4f6f4',pompom:'#d0352b'},
+  lucia:{chain:'#c99a3c'},
+  heloisa:{earrings:'#e8bf3f'},
+  pedro:{cap:'#d0352b',capD:'#a12a22',backwards:1},
+  marina:{headband:'#ec9fa8'},
+  lucas:{stripes:1},bia:{stripes:1},rafael:{plaid:1},bruno:{stripes:1}};
+// Harry's hair masks (rows from the top of the head; '#' = hair)
+const HARRY_HAIR={
+  front:['..#.##..#.##.#..','.##############.','################','################','##.####.###.####','##..#..#.....###','##...........###','#.............##'],
+  side: ['...#.##.##.#....','..###########...','.#############..','###############.','######.###.#.##.','#####.....#.....','#####...........','####............','###.............'],
+  back: ['..#.##..#.##.#..','.##############.','################','################','################','################','################','################','################','################','.##.###.##.###..','..#..#...#..#...']};
+// stylish haircuts drawn by hand: F front, R side (facing right), B back, BF/BR the part behind the body (long hair);
+// '#' hair, '+' lighter strand, '-' darker strand, 's' shaved skin (only on the head), 'k' accessory (beads, tie), '.' nothing
+const HAIRCUTS={
+  quiff:{ // undercut with a big swept-up quiff
+    F:['....#######.....','..####++####....','.###++#######...','..###########s..','.ss..........ss.','.ss..........ss.','s..............s'],
+    R:['.....########...','...####++#####..','..###########-..','..ssss#####.....','.sssss..........','.sssss..........','.ssss...........','.sss............'],
+    B:['....#######.....','..###########...','.#############..','.##############.','.ssssssssssssss.','ssssssssssssssss','ssssssssssssssss','ssssssssssssssss','.ssssssssssssss.','.ssssssssssssss.']},
+  fade:{ // short on top, faded sides, sharp line-up
+    F:['.....######.....','...####+#####...','..############..','..#.########.#..','.ss..........ss.','.s............s.'],
+    R:['.....#####......','...###+####.....','..########......','.sssss#.........','.sssss..........','ssss............','sss.............'],
+    B:['.....######.....','..###########...','.#############..','.##############.','.ssssssssssssss.','ssssssssssssssss','ssssssssssssssss','.ssssssssssssss.']},
+  curtains:{ // middle part, curtain fringe to the ears
+    F:['.....######.....','...####-#####...','..#####-######..','.######-#######.','.####......####.','###..........###','###..........###','##............##','##............##','#-............-#'],
+    R:['....######......','..##########....','.#####+######...','##############..','######.....###..','######..........','######..........','#####...........','#####...........','-###............'],
+    B:['.....######.....','...##########...','..############..','.##############.','################','################','################','################','################','################','################','.#-##-####-##-#.']},
+  locs:{ // short locs with gold beads
+    F:['..#.##.##.##.#..','.##############.','################','#-#-#-#-#-#-#-#-','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#.#..........#.#','k..............k'],
+    R:['...#.##.##.#....','..###########...','.############-..','#-#-#-#-#-#-#...','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#...........','#-#-............','k.k.............'],
+    B:['..#.##.##.##.#..','.##############.','################','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#.#.#.#.#.#.#.#.','k.k.k.k.k.k.k.k.'],acc:'#e8bf3f'},
+  hawk:{ // mohawk: shaved sides, a crest front to back
+    F:['......####......','.....##++##.....','..ss########ss..','.sss########sss.','.ss..........ss.','.s............s.'],
+    R:['.....######.....','...####++##.....','..s########.....','.ssss####.......','.ssss...........','.sss............','.ss.............'],
+    B:['......####......','.....######.....','.sssss####sssss.','ssssss####ssssss','ssssss####ssssss','ssssss####ssssss','ssssss-##-ssssss','.ssss.-##-.ssss.','.sssss.--.sssss.']},
+  braids:{ // long box braids with beads, middle part
+    F:['....########....','..############..','.######-#######.','.######-#######.','###..........###','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','#-#..........#-#','k.k..........k.k'],
+    R:['....#######.....','..##########....','.############...','#############...','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','#-#-#-..........','k.k.k...........'],
+    B:['....########....','..############..','.##############.','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','#-#-#-#-#-#-#-#-','.-#-#-#-#-#-#-#.','.-#-#-#-#-#-#-#.','.-#-#-#-#-#-#-#.','..k.k.k.k.k.k...'],acc:'#e8bf3f'},
+  pony:{ // sleek high ponytail with a red scrunchie
+    F:['.....####.......','..############..','.##+###########.','.##############.','##............##','#..............#','#..............#'],
+    BF:['','','..............##','.............###','.............###','..............##','..............##','..............##','..............##','..............##','...............#','...............#'],
+    R:['....######......','.#k##########...','##k###########..','##.###########..','##.####.........','##.###..........','##.##...........','##..............','##..............','##..............','.#..............','.#..............'],
+    B:['....######......','..###########...','.######kk######.','.######--######.','.######--######.','.######--######.','.######--######.','.######--######.','.######--######.','.######--######.','......####......','......####......','......####......','......####......','.......##.......'],acc:'#d0352b'},
+  bob:{ // chin-length bob with a blunt fringe
+    F:['....########....','..####++######..','.##############.','################','################','###..........###','###..........###','###..........###','###..........###','###..........###','###..........###','-##..........##-'],
+    R:['....######......','..###++#####....','.############...','###############.','###############.','######..........','######..........','######..........','######..........','######..........','######..........','-#####..........'],
+    B:['....########....','..############..','.##############.','################','################','################','################','################','################','################','################','-##############-']},
+  buns:{ // two space buns on top
+    F:['.##..........##.','####.######.####','################','.######+#######.','.#..#.#.#.#...#.','.#............#.','##............##','##............##'],
+    R:['..##.....##.....','.####..#####....','.############...','##############..','######.#.#......','#####...........','####............','###.............'],
+    B:['.##..........##.','####.######.####','################','################','################','################','################','################','################','################','.##############.']},
+  pixie:{ // short tousled pixie, side-swept fringe
+    F:['.....######.....','...####++###....','..############..','.##############.','.#######...#..#.','.##...........#.','.#............#.'],
+    R:['....######......','..####++####....','.############...','##############..','#####..######...','####............','###.............'],
+    B:['.....######.....','...##########...','..############..','.##############.','################','################','################','################','################','################','..#.###.###.#...']},
+  wavy:{ // long wavy hair with a side part
+    F:['....#######.....','..###########...','.####-#########.','#####-##########','####.......#####','###..........###','#-............-#','-#............#-','#-............#-','-#............#-','#-............#-','-#............#-','#-............#-'],
+    BF:['','','','','','','','','','','','','###..........###','-#-..........-#-','###..........###','-#-..........-#-','###..........###','.#.#........#.#.'],
+    R:['....######......','..##########....','.#####+######...','##############..','########.##.....','######..........','#-##-...........','-##-#...........','#-##-...........','-##-#...........','#-##-...........','-##-#...........'],
+    BR:['','','','','','','','','','','','','######..........','-#-##-..........','######..........','-#-##-..........','######..........','.#.#.#..........'],
+    B:['....#######.....','..###########...','.#############..','################','################','################','################','################','################','################','################','################','################','.#-##-####-##-#.','.##############.','.#-##-####-##-#.','.##############.','..#.#.#..#.#.#..']},
+  chignon:{ // neat hair in a low bun
+    F:['....########....','..############..','.######-#######.','.##############.','###..........###','##............##','##............##','#..............#'],
+    R:['....######......','..##########....','.############...','#############...','#######.........','######..........','#####...........','#####...........','####............','-##.............','###.............','-##.............','.#..............'],
+    B:['....########....','..############..','.##############.','################','################','################','################','################','################','################','.....-####-.....','.....######.....','.....-####-.....','......####......']},
+  sidepart:{ // tidy side part
+    F:['.....######.....','...##########...','..###-########..','.####-#########.','.##.......####..','.#............#.','.#............#.'],
+    R:['....######......','..##########....','.#############..','###############.','#####.....###...','####............','###.............','##..............'],
+    B:['.....######.....','...##########...','..############..','.##############.','################','################','################','################','################','################','..############..']},
+  einstein:{ // Prof. Kiko: a high forehead and big fluffy white tufts sticking out at the sides
+    F:['.....+..#..+....','....#+.##+#.#...','.+.###....##+.#.','#+##........##+#','####........####','#+#..........#+#','###..........###','-##..........##-','.#-..........-#.','..#..........#..'],
+    R:['....+..#.+......','..#.##+###......','.#+###.##.......','##+###..........','#####...........','#+###...........','######..........','-####...........','.#-#............','..#.............'],
+    B:['.....+..#..+....','....#+.##+#.#...','.+.##########.#.','#+##############','######+#########','################','####+######+####','################','################','.##############.','..#.##-##-##.#..']},
+  shaggy:{ // long shaggy hair falling out of a beanie
+    F:['................','................','................','................','###..........###','###..........###','###..........###','##............##','##............##','##............##','##............##','##............##','#-............-#'],
+    R:['................','................','................','................','#####...........','#####...........','#####...........','####............','####............','####............','####............','-###............'],
+    B:['................','................','................','................','################','################','################','################','################','################','################','################','################','.#-##-####-##-#.']}};
+// outfits: top (tee, sweater, hoodie, jacket, flannel, cardigan, varsity, overalls, vest, coverall; the lab coat is 'coat'),
+// bottom (jeans, pants, joggers, cargo, shorts, skirt, longskirt) and shoes (sneaker, boot, flat), with their colours
+const LOOKS={
+  player_m:{top:'jacket',c:'#2f5a3a',cd:'#1f3f28',inner:'#f4f6f4',print:'#d9a441',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#2d6fb5'},
+  player_f:{top:'jacket',c:'#6f95c2',cd:'#4d75a8',inner:'#f4f6f4',stripe:'#d0352b',bottom:'skirt',b:'#3a3f5a',bd:'#2a2e44',legs:'#2c3236',shoes:'boot',sh:'#7a522f',sole:'#3a2414'},
+  pedro:{top:'hoodie',c:'#3fa682',cd:'#2d8a6a',strings:'#f4f6f4',bottom:'joggers',b:'#5d646a',bd:'#3a4740',stripe:'#f4f6f4',shoes:'sneaker',sh:'#f4f6f4',sole:'#d0352b',lace:'#2c3236'},
+  tiago:{top:'tee',c:'#e8853a',cd:'#c96a22',print:'#f4f6f4',bottom:'shorts',b:'#a8946a',bd:'#7a6a4a',shoes:'sneaker',sh:'#2c3236',sole:'#f4f6f4',lace:'#f4f6f4'},
+  gabriel:{top:'hoodie',c:'#5d646a',cd:'#3a4045',strings:'#d0352b',bottom:'jeans',b:'#2c3236',bd:'#1d2226',ripped:1,shoes:'boot',sh:'#3a2414',sole:'#1d1612'},
+  lucas:{top:'flannel',c:'#c0392b',cd:'#7a2018',inner:'#f4f6f4',bottom:'jeans',b:'#5b8dba',bd:'#3b5f8a',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#d0352b'},
+  felipe:{top:'varsity',c:'#2b4a6f',cd:'#1f2f4f',alt:'#efe3c8',altD:'#c9b994',print:'#e8bf3f',bottom:'jeans',b:'#1f2f4f',bd:'#0e1417',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#2b4a6f'},
+  bruno:{top:'overalls',c:'#4d75a8',cd:'#2b4a6f',inner:'#e8bf3f',innerD:'#a8862a',bottom:'jeans',b:'#4d75a8',bd:'#2b4a6f',shoes:'boot',sh:'#7a522f',sole:'#3a2414'},
+  marina:{top:'vest',c:'#d9a441',cd:'#a8862a',alt:'#7a2e3e',inner:'#f4f6f4',innerD:'#d8dee2',bottom:'skirt',b:'#7a2e3e',bd:'#5a2230',legs:'#f4f6f4',shoes:'flat',sh:'#3a2414'},
+  cida:{top:'cardigan',c:'#8e5aa8',cd:'#6a3f80',inner:'#efe3c8',necklace:'#e8bf3f',bottom:'pants',b:'#4a5055',bd:'#2c3236',shoes:'flat',sh:'#5a2230'},
+  zelador:{top:'coverall',c:'#2b4a6f',cd:'#1f2f4f',alt:'#f4f6f4',print:'#d0352b',bottom:'pants',b:'#2b4a6f',bd:'#1f2f4f',shoes:'boot',sh:'#2c3236',sole:'#1d1612'},
+  lucia:{top:'cardigan',c:'#8e5aa8',cd:'#6a3f80',inner:'#efe3c8',necklace:'#c99a3c',bottom:'longskirt',b:'#4a5055',bd:'#2c3236',shoes:'flat',sh:'#3a2414'},
+  bia:{top:'sweater',c:'#ec9fa8',cd:'#c97a86',alt:'#f4f6f4',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f'},
+  rafael:{top:'flannel',c:'#3f8a4c',cd:'#2c6a38',inner:'#2c3236',bottom:'jeans',b:'#4a5055',bd:'#2c3236'},
+  julia:{top:'cardigan',c:'#e8bf3f',cd:'#a8862a',inner:'#8e5aa8',bottom:'pants',b:'#2c3236',bd:'#1d2226'},
+  caio:{top:'varsity',c:'#7a2e3e',cd:'#5a2230',alt:'#f4f6f4',altD:'#d8dee2',print:'#e8bf3f',bottom:'jeans',b:'#2b4a6f',bd:'#1f2f4f'},
+  ana:{top:'overalls',c:'#ec9fa8',cd:'#c97a86',inner:'#f4f6f4',innerD:'#d8dee2',bottom:'jeans',b:'#ec9fa8',bd:'#c97a86'},
+  davi:{top:'jacket',c:'#3a2414',cd:'#2a1a10',inner:'#d0352b',print:'#f4f6f4',bottom:'jeans',b:'#2c3236',bd:'#1d2226'}};
+// what shows under the lab coat
+const COAT_IN={aldair:{inner:'#7aa6d6',tie:'#7a2e3e',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#3a2414'},
+  heloisa:{inner:'#ef6a5c',necklace:'#e8bf3f',b:'#2b4a6f',bd:'#1f2f4f',shoes:'flat',sh:'#7a2e3e'},
+  kido:{inner:'#f4f6f4',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#1d1612'},
+  larissa:{inner:'#d0352b',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#d0352b'},
+  camila:{inner:'#3fa682',b:'#2c3236',bd:'#1d2226',shoes:'boot',sh:'#3a2414',sole:'#1d1612'},
+  bruna:{inner:'#8e5aa8',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#8e5aa8'}};
+function lookOf(who,out,girl,pal){
+  const base=who==='player'?LOOKS[girl?'player_f':'player_m']:LOOKS[who]
+    ||(out==='hoodie'?{top:'hoodie',c:pal.T,cd:pal.t,strings:pal.K||'#f4f6f4'}:{top:'tee',c:pal.T||'#7b8186',cd:pal.t||'#5d646a',print:pal.A});
+  const L=Object.assign({bottom:'pants',b:pal.P||'#3a4740',bd:pal.p||'#2c3236',shoes:'sneaker',sh:pal.B||'#2c3236',sole:'#9aa2a9',lace:'#f4f6f4'},base);
+  if(out==='coat'){Object.assign(L,COAT_IN[who]||{});L.inner=(COAT_IN[who]&&COAT_IN[who].inner)||base.inner||base.c;if(L.bottom==='skirt'||L.bottom==='longskirt'||L.bottom==='shorts')L.bottom='pants';L.top='coat';}
+  return L;
 }
-function drawCharSprite(s,x,y){fctx.drawImage(s.c,Math.round(x)-8,Math.round(y)-s.h+1);}
+const palFixed={};
+function paperSpec(who,outfit,crop){
+  const girl=who==='player'&&genero==='f',lab=who==='player'&&scene==='salaLab';
+  let pal=who==='player'?playerPal(girl):CHAR_PAL[who];
+  if(PAL_FIX[who])pal=palFixed[who]||(palFixed[who]=Object.assign({},pal,PAL_FIX[who]));
+  const me_=who==='player',hair=me_?(girl?(lab?'bun':'bushy'):'messy'):HAIR_STYLE[who]||(HEAD[who]===HEAD.pedro?'curly':'short');
+  const out=OUTFIT_FIX[who]||outfit,badge=!me_||!!flags.cracha;
+  return {pal,hair,outfit:out,crop,badge,tr:TRAITS[who]||{},look:lookOf(who,out,girl,pal),
+    pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
+    scarf:false,harry:me_&&!girl,
+    phones:false,bow:false,scrunchie:girl&&lab,glasses:me_&&!girl?'#8a6a3a':GLASSES[who]||null,
+    key:[who,girl?'F':'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||''].join(':')};
+}
+// mood: 'normal' | 'happy' | 'worried' | 'angry' | 'smug' | 'surprised'; talk: mouth open
+function paperGrid(sp,view,f,blink,mood,talk){
+  const G=Array.from({length:24},()=>Array(16).fill(null));
+  const P=k=>sp.pal[k]||BASE_PAL[k];
+  const put=(x,y,c)=>{if(x>=0&&x<16&&y>=0&&y<24&&c!==undefined)G[y][x]=c;}; // null clears a pixel
+  const rect=(x0,y0,x1,y1,c)=>{for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)put(x,y,c);};
+  const ell=(x,y,cx,cy,rx,ry)=>((x+.5-cx)/rx)**2+((y+.5-cy)/ry)**2<=1;
+  const coat=sp.outfit==='coat',skirt=sp.outfit==='skirt',hood=sp.outfit==='hoodie',side=view==='side',back=view==='back',tr=sp.tr;
+  const top=coat?P('W'):P('T'),S=P('S'),h=P('h'),INK=PAPER_INK,WHITE='#f4f6f4';
+  // shoes and legs: a gap between the feet becomes an outline line
+  const lift=side?(f%2===1?2:0):[0,1,0,2][f%4]; // 1 = left foot up, 2 = right foot up
+  const feet=side?[[4,7,1],[8,11,2]]:[[3,6,1],[9,12,2]];
+  const L=sp.look,BOT=L.bottom,TOP=L.top;
+  const pants=!coat&&(BOT==='jeans'||BOT==='pants'||BOT==='joggers'||BOT==='cargo');
+  if(pants){
+    rect(3,20,12,21,L.b);put(7,20,L.bd);put(8,20,L.bd); // seam
+    if(BOT==='joggers'){if(side)rect(7,20,7,21,L.stripe);else{rect(3,20,3,21,L.stripe);rect(12,20,12,21,L.stripe);}}
+    if(BOT==='cargo'&&!back){put(4,20,L.bd);put(11,20,L.bd);}
+    if(L.ripped&&!back)put(side?9:10,21,S); // ripped knee
+    put(7,21,null);put(8,21,null);if(lift)rect(feet[lift-1][0],21,feet[lift-1][1],21,null);
+  }
+  if(!coat&&BOT==='shorts'){rect(3,20,12,20,L.b);put(7,20,L.bd);put(8,20,L.bd);}
+  for(const [a,b,k] of feet){
+    const up=lift===k?1:0;
+    if(coat)rect(a+1,21-up,b-1,21-up,L.b);
+    else if(BOT==='skirt')rect(a+1,21-up,b-1,21-up,L.legs||S);
+    else if(BOT==='shorts')rect(a+1,21-up,b-1,21-up,S);
+    if(L.shoes==='boot'){rect(a,21-up,b,22-up,L.sh);rect(a,23-up,b,23-up,L.sole||INK);}
+    else{rect(a,22-up,b,22-up,L.sh);rect(a,23-up,b,23-up,L.shoes==='flat'?L.sh:L.sole);}
+    if(up)rect(a,23,b,23,null);
+    if(L.shoes==='sneaker'&&!back){const lx=side?b-2:a+1;put(lx,22-up,L.lace);put(lx+1,22-up,L.lace);} // laces
+  }
+  // Hermione's bushy hair: a curly cloud behind the head and shoulders (body and arms in front), wavy edge
+  const H_=P('H'),d_=P('d');
+  const curl=(x,y)=>((x+y+(y>>2))%4===0&&y%3!==2)?d_:((x-y+40)%7===0&&y%3===1)?H_:h; // broken diagonal strands = waves
+  const cloud=(cx,cy,rx,ry)=>{for(let y=0;y<=17;y++)for(let x=0;x<16;x++){
+    if(!ell(x,y,cx,cy,rx,ry))continue;
+    if(!ell(x,y,cx,cy,rx-1.3,ry-1.3)&&(x*2+y)%3===0)continue; // bumps on the outline
+    put(x,y,curl(x,y));}};
+  if(sp.hair==='bushy'&&!back){if(side)cloud(6.5,8.5,7.6,9.3);else cloud(8,8.5,8.8,9.3);}
+  const HC=HAIRCUTS[sp.hair];
+  const mask=M=>{if(M)M.forEach((row,y)=>{for(let x=0;x<16;x++){const ch=row[x];if(!ch||ch==='.')continue;
+    if(ch==='s'){if(ell(x,y,8,7.5,7.7,6.3))put(x,y,P('s'));continue;}
+    put(x,y,ch==='#'?h:ch==='+'?H_:ch==='-'?d_:HC.acc||P('F')||'#d0352b');}});};
+  if(HC&&!back)mask(side?HC.BR:HC.BF); // long hair behind the shoulders
+  // backpack (side: on the back, separated by a gap)
+  if(side&&sp.pack){rect(1,14,2,19,P('R'));put(1,16,P('r'));put(2,16,P('r'));}
+  // body: a small square torso; the lab coat is longer, skirts start under a shorter top
+  const x0=side?4:3,x1=side?11:12,skirtB=!coat&&(BOT==='skirt'||BOT==='longskirt'),tBot=coat?20:skirtB?17:19;
+  const plaid=(x,y)=>x%3===0||y%3===0?L.cd:L.c;
+  rect(x0,14,x1,tBot,coat?P('W'):TOP==='overalls'?L.inner:L.c);
+  if(TOP==='flannel')for(let y=14;y<=tBot;y++)for(let x=x0;x<=x1;x++)put(x,y,plaid(x,y));
+  if(BOT==='skirt'&&!coat){rect(2,18,13,20,L.b);rect(2,20,13,20,L.bd);for(let x=3;x<=12;x+=3)put(x,19,L.bd);} // pleats
+  if(BOT==='longskirt'&&!coat){for(let y=18;y<=21;y++){const w=y>=20?1:0;rect(3-w,y,12+w,y,y===21?L.bd:L.b);}for(let x=4;x<=11;x+=3)put(x,20,L.bd);}
+  if(!coat&&TOP!=='flannel'&&TOP!=='coverall')rect(x0,tBot,x1,tBot,TOP==='overalls'?L.cd:L.cd); // ribbed hem
+  // arms: stubs beside the body (a gap makes the outline), mitten hands; sleeves end in a cuff
+  const slv=coat?P('W'):TOP==='overalls'||TOP==='vest'?L.inner:TOP==='varsity'?L.alt:L.c;
+  const cuff=coat?P('w'):TOP==='overalls'||TOP==='vest'?(L.innerD||'#d8dee2'):TOP==='varsity'?L.altD:L.cd;
+  const arms=side?[[13,14]]:[[0,1],[14,15]];
+  for(const [a,b] of arms){
+    for(let y=15;y<=17;y++)for(let x=a;x<=b;x++)put(x,y,TOP==='flannel'?plaid(x,y):slv);
+    rect(a,18,b,18,cuff);rect(a,19,b,19,S);
+  }
+  const open=TOP==='jacket'||TOP==='flannel'||TOP==='cardigan';
+  if(!back){
+    if(coat){
+      if(side){put(10,14,L.inner);put(10,15,L.inner);for(let y=16;y<=20;y++)put(10,y,P('x'));}
+      else{rect(6,14,9,14,L.inner);rect(7,15,8,16,L.inner);put(6,15,P('x'));put(9,15,P('x'));for(let y=17;y<=20;y++)put(7,y,P('x'));
+        if(L.tie){put(7,15,L.tie);put(8,15,L.tie);put(7,16,L.tie);put(8,16,L.tie);put(7,17,L.tie);}
+        if(L.necklace){put(7,16,L.necklace);put(8,16,L.necklace);put(6,14,L.necklace);put(9,14,L.necklace);}}
+      if(sp.badge){const bc=P('c')||'#1f4a33',bx=side?7:10;put(bx,15,bc);put(bx+1,15,bc);put(bx,16,'#d9a37c');put(bx+1,16,WHITE);put(bx,17,bc);put(bx+1,17,bc);} // badge with a tiny photo
+      const px0=side?5:4;rect(px0,18,px0+1,18,P('w'));put(px0,17,P('N')); // pocket with a pen
+    }else if(open){ // open jacket / flannel / cardigan over a top
+      if(side){rect(10,14,10,tBot,L.inner);rect(9,14,9,tBot,L.cd);}
+      else{
+        rect(6,14,9,tBot,L.inner);rect(5,14,5,tBot,L.cd);rect(10,14,10,tBot,L.cd);
+        if(L.stripe)for(const y of [15,17])rect(6,y,9,y,L.stripe);
+        if(L.print){put(7,16,L.print);put(8,16,L.print);}
+        if(L.necklace){put(6,14,L.necklace);put(9,14,L.necklace);put(7,15,L.necklace);put(8,15,L.necklace);}
+        if(TOP==='cardigan')for(const y of [15,17])put(5,y,L.inner); // buttons
+      }
+    }else if(TOP==='tee'){
+      rect(side?8:6,14,side?10:9,14,L.cd); // collar
+      if(L.print){const lx=side?8:6;put(lx+1,15,L.print);put(lx,16,L.print);put(lx+2,16,L.print);put(lx+1,17,L.print);} // hexagon print
+    }else if(TOP==='sweater'){
+      rect(side?8:6,14,side?10:9,14,L.cd);
+      for(let x=x0;x<=x1;x++){put(x,16,x%2?L.alt:L.c);put(x,17,x%2?L.c:L.alt);} // knitted band
+    }else if(TOP==='hoodie'){
+      rect(side?7:5,17,side?10:10,18,L.cd); // kangaroo pocket
+      put(side?10:6,15,L.strings);put(side?10:6,16,L.strings);if(!side){put(9,15,L.strings);put(9,16,L.strings);}
+    }else if(TOP==='varsity'){
+      rect(side?8:5,14,side?10:10,14,L.altD); // ribbed collar
+      for(const y of [15,17])put(side?10:7,y,WHITE); // snaps
+      rect(side?8:4,15,side?9:5,16,L.print); // letter patch
+      rect(x0,19,x1,19,L.cd);for(let x=x0;x<=x1;x+=2)put(x,19,WHITE);
+    }else if(TOP==='overalls'){
+      if(side){rect(8,15,11,tBot,L.c);put(9,14,L.c);put(9,15,'#e8bf3f');}
+      else{rect(5,15,10,tBot,L.c);put(4,14,L.c);put(4,15,L.c);put(11,14,L.c);put(11,15,L.c);put(5,15,'#e8bf3f');put(10,15,'#e8bf3f');rect(6,17,9,17,L.cd);}
+    }else if(TOP==='vest'){
+      rect(side?8:6,14,side?10:9,14,L.inner); // shirt collar
+      if(!side){put(7,15,L.inner);put(8,15,L.inner);}
+      for(let y=16;y<=18;y++)for(let x=x0;x<=x1;x++)if((x+y)%4===0||(x-y+40)%4===0)put(x,y,L.alt); // argyle
+    }else if(TOP==='coverall'){
+      for(let y=14;y<=19;y++)put(side?10:7,y,'#b9c2c8'); // zip
+      if(!side){put(5,14,L.cd);put(6,14,L.cd);put(9,14,L.cd);put(10,14,L.cd);rect(9,15,10,15,L.alt);put(10,15,L.print);rect(4,16,5,17,L.cd);}
+      else rect(8,15,9,15,L.alt);
+      rect(x0,19,x1,19,L.cd);put(side?10:7,19,'#c99a3c'); // belt and buckle
+    }
+    if(sp.pack&&!side){rect(4,14,4,17,P('R'));rect(11,14,11,17,P('R'));}
+    if(sp.pack&&side)rect(5,14,5,17,P('R'));
+    if(tr.bowtie){const bx=side?8:6;put(bx,14,tr.bowtie);put(bx+1,14,INK);put(bx+2,14,tr.bowtie);put(bx,15,tr.bowtie);put(bx+2,15,tr.bowtie);}
+  }else{
+    if(coat)rect(7,15,8,20,P('w'));
+    if(TOP==='hoodie')rect(4,14,11,15,L.cd);
+    if(TOP==='varsity'){rect(6,15,9,17,L.print);rect(x0,19,x1,19,L.cd);}
+    if(TOP==='overalls'){rect(5,16,10,tBot,L.c);put(5,14,L.c);put(6,15,L.c);put(10,14,L.c);put(9,15,L.c);}
+    if(TOP==='coverall')rect(x0,19,x1,19,L.cd);
+    if(sp.pack){rect(4,14,11,19,P('r'));rect(5,15,10,18,P('R'));rect(5,16,10,16,P('r'));put(7,17,'#b9c2c8');put(8,17,'#b9c2c8');}
+    if(sp.hair==='bushy')cloud(8,8.5,8.8,9.3); // from behind the hair covers the back
+  }
+  // head: wide and round, straight on the body
+  const inHead=(x,y)=>ell(x,y,8,7.5,7.7,6.3);
+  const capFront=(x,y)=>y<=3||(y===4&&x%2===0)||((x<=1||x>=14)&&y<=6);
+  const capSide=(x,y)=>y<=3||(y===4&&x%2===0&&x>=4)||(x<=4&&y<=8);
+  for(let y=0;y<=13;y++)for(let x=0;x<16;x++){
+    const hd=inHead(x,y),puff=sp.hair==='curly'&&ell(x,y,8,5,8.3,5.2)&&!(y===0&&x%3===0);
+    if(sp.hair==='afro'){ // a big round afro with a curly texture and a bumpy outline
+      const a=ell(x,y,8,4.8,8.5,5.9)&&!(!ell(x,y,8,4.8,7.3,4.8)&&(x*2+y)%3===0);
+      const hairA=a&&(back?y<=11:side?y<=4||x<=4:y<=4||((x<=1||x>=14)&&y<=8));
+      if(hairA)put(x,y,curl(x,y));else if(hd)put(x,y,S);
+      continue;
+    }
+    if(HC){if(hd)put(x,y,S);continue;} // hand-drawn haircut goes on top
+    if(!hd&&!puff)continue;
+    let hairy=back?(y<=9||sp.hair==='long'||sp.hair==='bushy'):side?capSide(x,y):capFront(x,y);
+    if(puff&&(!hd||y<=4||(side?x<=4:x<=1||x>=14)))hairy=true;
+    if(sp.hair==='bushy'){ // parted in the middle, framing the face
+      hairy=back||y<=3||(y===4&&x%3!==1)||(side?x<=5:x<=2||x>=13);
+      put(x,y,hairy?curl(x,y):S);continue;
+    }
+    put(x,y,hairy?h:S);
+  }
+  if(sp.hair==='spiky')for(let x=1;x<=14;x+=3){put(x,0,h);put(x+1,0,h);} // mad-scientist tufts
+  if(sp.hair==='messy'){ // Harry's untidy hair: spikes all round, a ragged fringe, a few lighter strands
+    const M_=side?HARRY_HAIR.side:back?HARRY_HAIR.back:HARRY_HAIR.front,HL=side?[[6,1],[7,2],[11,2]]:back?[[5,2],[10,3],[7,5]]:[[4,1],[5,2],[10,1],[11,2],[8,3]];
+    for(let y=0;y<=13;y++)for(let x=0;x<16;x++){
+      if(M_[y]&&M_[y][x]==='#')put(x,y,HL.some(([a,b])=>a===x&&b===y)?H_:h);
+      else if(inHead(x,y))put(x,y,y>=12&&back?P('s'):S);
+    }
+    if(back)rect(6,12,9,12,P('s'));
+  }
+  if(sp.hair==='bushy'&&!side&&!back){put(7,1,d_);put(8,2,d_);} // the parting
+  if(HC){if(back&&!/[#\-]/.test(HC.B[12]||''))rect(6,12,9,12,P('s'));mask(side?HC.R:back?HC.B:HC.F);} // nape only under short hair
+  if(hood&&!side&&!back){const hc=sp.look.c;put(2,13,hc);put(3,13,hc);put(12,13,hc);put(13,13,hc);} // hood peeking behind the head
+  if(sp.hair==='long'){
+    if(back)rect(1,13,14,16,h);
+    else if(side)rect(0,4,4,15,h);
+    else{rect(0,4,2,15,h);rect(13,4,15,15,h);}
+  }
+  if(sp.hair==='bun'){const bx=side?2:6;rect(bx,0,bx+3,1,h);if(sp.scrunchie)rect(bx,2,bx+3,2,P('F'));}
+  if(sp.bow){const bx=side?3:back?10:11;put(bx,1,P('F'));put(bx+2,1,P('F'));put(bx,2,P('F'));put(bx+2,2,P('F'));put(bx+1,1,P('f'));put(bx+1,2,P('f'));}
+  if(tr.headband)for(let x=0;x<16;x++)if(inHead(x,3))put(x,3,tr.headband);
+  // caps and the beanie sit on top of the hair
+  if(tr.cap){
+    for(let y=0;y<=3;y++)for(let x=0;x<16;x++)if(inHead(x,y)||(y===0&&x>=4&&x<=11))put(x,y,y===3?tr.capD:tr.cap);
+    if(tr.backwards){if(side)rect(0,3,2,3,tr.capD);else if(back)rect(5,4,10,4,tr.capD);}
+    else if(side)rect(10,4,15,4,tr.capD);else if(!back)rect(3,4,12,4,tr.capD); // the brim
+  }
+  if(tr.beanie){
+    for(let y=0;y<=4;y++)for(let x=0;x<16;x++)if(inHead(x,y)||(y===0&&x>=4&&x<=11))put(x,y,y===4?tr.beanieB:tr.beanie);
+    const px0=side?6:7;rect(px0,0,px0+1,0,tr.pompom);
+  }
+  if(tr.earrings&&!back){if(side)put(5,11,tr.earrings);else{put(0,10,tr.earrings);put(15,10,tr.earrings);}}
+  if(!back){
+    // the eyes: two big white ovals touching, a dot pupil; lids, brows and mouth follow the mood
+    const eyes=side?[[8.5,9],[12.5,13]]:[[5.5,6],[10.5,9]],ring=sp.glasses||INK;
+    for(const [cx,pup0] of eyes){
+      const lid=mood==='angry'||mood==='smug';
+      for(let y=5;y<=9;y++)for(let x=Math.floor(cx-2.5);x<=Math.ceil(cx+2.5);x++){
+        if(!ell(x,y,cx,7.5,2.5,2.5))continue;
+        const edge=!ell(x-1,y,cx,7.5,2.5,2.5)||!ell(x+1,y,cx,7.5,2.5,2.5)||!ell(x,y-1,cx,7.5,2.5,2.5)||!ell(x,y+1,cx,7.5,2.5,2.5);
+        put(x,y,blink?(y===7?INK:S):edge?ring:lid&&y===6?INK:lid&&y<6?S:'#ffffff');
+      }
+      if(!blink){const pup=mood==='surprised'?Math.round(cx-.5):pup0;put(pup,mood==='worried'?8:7,INK);}
+      // eyebrows: inner end up when worried/surprised, down when angry
+      if(mood!=='normal'&&mood!=='happy'&&!blink){
+        const inner=side?cx+1.5:(cx<8?cx+1.5:cx-1.5),outer=side?cx-1.5:(cx<8?cx-1.5:cx+1.5),bc=sp.glasses?ring:INK;
+        const yi=mood==='angry'?4:3,yo=mood==='angry'?3:4,ym=mood==='surprised'?3:4;
+        if(mood==='surprised')for(let x=Math.floor(cx-1);x<=Math.floor(cx+1);x++)put(x,2,bc);
+        else{put(Math.floor(outer),yo,bc);put(Math.floor(cx),ym,bc);put(Math.floor(inner),yi,bc);}
+      }
+    }
+    if(sp.glasses&&!side){put(7,7,sp.glasses);put(8,7,sp.glasses);}
+    if(sp.harry){if(side){put(5,7,sp.glasses);put(4,7,sp.glasses);}else{put(1,7,sp.glasses);put(2,7,sp.glasses);put(13,7,sp.glasses);put(14,7,sp.glasses);}} // round glasses' arms
+    if(tr.chain){const cxs=side?[5]:[1,14];for(const x of cxs)for(let y=9;y<=13;y+=2)put(x,y,tr.chain);}
+    if(tr.beard){for(let y=10;y<=13;y++)for(let x=0;x<16;x++)if(inHead(x,y)&&(side?x>=6:true)&&(y>=12||x<=(side?7:3)||x>=(side?15:12)))put(x,y,h);}
+    if(tr.mustache)rect(side?10:6,10,side?13:9,10,P('d')||h);
+    // mouth: a little dark line, a smile, a frown, an "o"; open while talking
+    const mx=side?10:7,M='#4a2018',TONGUE='#c0392b';
+    if(talk){rect(mx,11,mx+2,12,M);put(mx+1,12,TONGUE);if(mood==='happy'){put(mx-1,10,M);put(mx+3,10,M);}}
+    else if(mood==='happy'||mood==='smug'){put(mx-1,10,M);rect(mx,11,mx+2,11,M);if(mood==='happy')put(mx+3,10,M);}
+    else if(mood==='worried'){put(mx-1,12,M);rect(mx,11,mx+2,11,M);put(mx+3,12,M);}
+    else if(mood==='surprised'){rect(mx,11,mx+1,12,M);}
+    else if(mood==='angry'){rect(mx,11,mx+2,11,M);put(mx-1,12,M);put(mx+3,12,M);}
+    else rect(mx,11,mx+2,11,M);
+    if(sp.phones){if(side){rect(6,14,7,15,P('J'));}else{rect(3,14,4,15,P('J'));rect(11,14,12,15,P('J'));}}
+  }else if(sp.phones){rect(3,14,4,15,P('J'));rect(11,14,12,15,P('J'));rect(5,14,10,14,P('j'));}
+  if(sp.scarf){ // Gryffindor scarf: red and gold stripes round the neck, one end hanging
+    const sx0=side?4:3,sx1=side?11:12;for(let x=sx0;x<=sx1;x++)put(x,14,Math.floor(x/2)%2?P('J'):P('j'));
+    const ex=back?7:side?6:10;for(let y=15;y<=18;y++){put(ex,y,y%2?P('J'):P('j'));put(ex+1,y,y%2?P('J'):P('j'));}
+  }
+  if(sp.crop)for(let y=sp.crop;y<24;y++)G[y].fill(null);
+  return G;
+}
+const hexRGB={};
+const rgbOf=c=>hexRGB[c]||(hexRGB[c]=[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)]);
+// grid -> canvas with the dark cut-out outline and a faint construction-card grain
+function paperCanvas(G,mirror,hop){
+  const oy=hop?POY-1:POY,M=Array.from({length:PH},()=>new Array(PW).fill(0)),C=Array.from({length:PH},()=>new Array(PW).fill(null));
+  for(let y=0;y<24;y++)for(let x=0;x<16;x++){const c=G[y][mirror?15-x:x];if(c){M[y+oy][x+POX]=1;C[y+oy][x+POX]=c;}}
+  const at=(x,y)=>x>=0&&y>=0&&x<PW&&y<PH?M[y][x]:0;
+  const L=[];for(let y=0;y<PH;y++)for(let x=0;x<PW;x++)if(!M[y][x]&&(at(x-1,y)===1||at(x+1,y)===1||at(x,y-1)===1||at(x,y+1)===1))L.push([x,y]);
+  for(const [x,y] of L)M[y][x]=2;
+  const [c,cx]=mk(PW,PH),img=cx.createImageData(PW,PH),D=img.data;
+  for(let y=0;y<PH;y++)for(let x=0;x<PW;x++){
+    const v=M[y][x];if(!v)continue;
+    const col=v===1?C[y][x]:PAPER_INK,[R,G_,B]=rgbOf(col),i=(y*PW+x)*4;
+    const n=v===1&&col!=='#ffffff'&&col!==PAPER_INK?(((x*7+y*13)%3)-1)*2:0; // card grain, not on eyes or lines
+    D[i]=Math.max(0,Math.min(255,R+n));D[i+1]=Math.max(0,Math.min(255,G_+n));D[i+2]=Math.max(0,Math.min(255,B+n));D[i+3]=255;
+  }
+  cx.putImageData(img,0,0);c._ox=POX;c._oy=POY;
+  return {c,w:16,h:24};
+}
+function paperBuild(sp,view,f,blink,mirror,mood,talk){
+  const key='sp|'+sp.key+'|'+view+f+(blink?'b':'')+(mirror?'m':'')+mood+(talk?'t':'');
+  let s=sprCache.get(key);
+  if(!s){s=paperCanvas(paperGrid(sp,view,f,blink,mood,talk),mirror,view==='side'?f===1:f%2===1);sprCache.set(key,s);}
+  return s;
+}
+// moods: a short-lived one set by events (setMood), otherwise from the story flags
+const moodNow={};
+function setMood(who,m,sec){moodNow[who]={m,until:performance.now()/1000+sec};}
+function moodOf(who){
+  const o=moodNow[who];if(o&&o.until>performance.now()/1000)return o.m;
+  const q=flags.tiagoQ||0;
+  if(who==='tiago')return q>=1&&q<=5?'worried':q===6?'happy':'normal';
+  if(who==='gabriel')return flags.duelTold&&!flags.duelWin?'smug':'normal';
+  if(who==='camila')return flags.caca?'happy':'normal';
+  if(who==='kido')return 'happy';
+  if(who==='aldair'||who==='heloisa'||who==='player')return flags.graded?(flags.pass?'happy':'worried'):'normal';
+  return 'normal';
+}
+// who is talking: the speaker tag of the line being typed -> character id
+let speakerMap=null;
+function speakerId(tag){
+  if(tag===me())return 'player';
+  if(!speakerMap){
+    speakerMap={'DONA TATI':'cida'};
+    for(const k in SCENES)for(const o of SCENES[k])if(o.name&&o.id)speakerMap[o.name.toUpperCase()]=o.id;
+    speakerMap[zelObj.name.toUpperCase()]='zelador';
+  }
+  return speakerMap[tag];
+}
+function talking(who){
+  if(state!=='dialog'||!dialog)return false;
+  const L=dialog.lines[dialog.i];
+  return !!L.who&&dialog.shown<L.t.length&&speakerId(L.who)===who;
+}
+function personSprite(who,outfit,dir,f,blink,crop){
+  const sp=paperSpec(who,outfit,crop),view=dir==='up'?'back':dir==='down'?'front':'side';
+  const live=view!=='back',mood=live?moodOf(who):'normal',talk=live&&talking(who)&&Math.floor(performance.now()/120)%2===0;
+  return paperBuild(sp,view,view==='side'?f%2:f%4,!!blink&&live&&!talk,dir==='left',mood,talk);
+}
+function drawCharSprite(s,x,y){fctx.drawImage(s.c,Math.round(x)-8-(s.c._ox||0),Math.round(y)-s.h+1-(s.c._oy||0));}
 function blinkAt(t,seed){return ((t+seed)%3.7)<.14;}
 
-function marinaSprite(t){
-  const b=blinkAt(t,1.3);
-  return gridSprite('marina'+(b?'b':''),b?blinkRows(MARINA_ROWS,7,8):MARINA_ROWS,CHAR_PAL.marina,false);
-}
-function marinaSeated(t){
-  const b=blinkAt(t,1.3),rows=MARINA_ROWS.slice(0,20);
-  return gridSprite('marinaSeat'+(b?'b':''),b?blinkRows(rows,7,8):rows,CHAR_PAL.marina,false);
-}
+function marinaSprite(t){return personSprite('marina','skirt','down',0,blinkAt(t,1.3));}
+function marinaSeated(t){return personSprite('marina','skirt','down',0,blinkAt(t,1.3),20);} // head and body over the table
 function cidaSprite(t){
-  const b=blinkAt(t,2.1);
-  return gridSprite('cida'+(b?'b':''),b?blinkRows(CIDA_ROWS,8,9):CIDA_ROWS,CHAR_PAL.cida,false);
+  return personSprite('cida','shirt','down',0,blinkAt(t,2.1),20); // behind the counter
 }
 // Marina's things on the study table closest to the stairs (mesaEstudo1): her green backpack on the floor beside it
 function drawMarinaBag(){r(486,104,9,8,'#2d8a6a');r(487,103,7,2,'#246f55');r(486,107,9,1,'#246f55');px(490,109,'#c99a3c');}
@@ -1205,12 +1651,18 @@ add({id:'board',name:'Quadro de avisos',wall:true,cx:132,top:12,zone:wallZone(10
   ],()=>{flags.board=true;updateObjective();});}});
 add({id:'secretaria',name:'Secretaria',wall:true,cx:188,top:14,zone:wallZone(164,48),draw:drawSecretaria,
   act:()=>{
+    // side quest: the janitor left Tiago's notebook in the lost-and-found box
+    const cad=flags.tiagoQ===4?[
+      {who:me(),t:'Dona Tati, um caderno laranja, cheio de adesivos, veio parar nos achados e perdidos? É do Tiago, do 1º ano.'},
+      {who:'DONA TATI',t:'Veio, sim! O Seu Antônio trouxe ontem no fim do dia. Está aqui na caixa. Entrega para ele, viu?'},
+      {t:'Você pegou: CADERNO DO TIAGO',item:'caderno',run:()=>{flags.tiagoQ=5;}}]:[];
     if(!flags.cracha) return say([
       {who:'DONA TATI',t:'Bom dia! Você é do 1º ano, não é? Seu crachá chegou ontem.'},
       {who:'DONA TATI',t:'Confere a foto... Tá ótima. É ele que abre as salas do prédio, então não perde!'},
       {t:'Você pegou: CRACHÁ',item:'cracha'},
       {who:'DONA TATI',t:'Ah, e se precisar usar o laboratório, se informe antes com algum professor, lá na sala dos professores, no 1º andar.'}
-    ]);
+    ].concat(cad));
+    if(cad.length)return say(cad);
     say([{who:'DONA TATI',t:'Mais alguma coisa? Corre que o professor de Bioquímica não espera ninguém.'},
          {who:'DONA TATI',t:'Ah, e se achar alguma coisa esquecida, a caixa de achados e perdidos fica aqui no balcão.'}]);
   }});
@@ -1250,7 +1702,7 @@ const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noSha
     // first talk: the player asks about the lost sheets; Marina points to the professors and to the new badges
     if(!flags.marina) return say([
       {who:me(),t:'Bom dia, Marina! Você viu as minhas folhas da atividade de glicólise? Ontem a gente estudou junto nas salas em que fomos tendo aula, e depois eu não vi mais.'},
-      {who:'MARINA',t:'Bom dia! Não vi, não... Mas os professores Aldair Neto e Rosa passaram nas salas depois das aulas. Talvez eles tenham visto.'},
+      {who:'MARINA',t:'Bom dia! Não vi, não... Mas os professores Neto e Rosa passaram nas salas depois das aulas. Talvez eles tenham visto.'},
       {who:'MARINA',t:'E não esquece: hoje a gente tem que entregar as folhas de glicólise para os professores, na Sala 101, até o fim da aula, às 11h30.'},
       {who:'MARINA',t:'Ah! Chegaram os crachás. Sem ele, a porta das salas não abre. Antes de ir para a sala, pega o seu com a Dona Tati, na secretaria.'}
     ],()=>{flags.marina=true;updateObjective();});
@@ -1949,9 +2401,8 @@ function drawStudentDesk(x,base,extra,seat){
   }
   if(seat){
     // seated student seen from behind: head and back over the chair, backrest drawn in front
-    const c=seat[0]==='marina'?gridSprite('marinaBack',heloisaRows('up',0,false),CHAR_PAL.marina,false).c // long hair from behind
-      :personSprite(seat[0],seat[2],'up',0,false).c;
-    g.drawImage(c,0,0,16,18,x+7,base-23,16,18);
+    const c=personSprite(seat[0],seat[2],'up',0,false).c;
+    g.drawImage(c,0,0,PW,18+POY,x+7-POX,base-23-POY,PW,18+POY);
     r(x+8,base-5,14,3,'#4a3020');r(x+8,base-5,14,1,'#5a3d24');
   }
 }
@@ -1980,7 +2431,7 @@ function drawReactionPoster(x,n){
   draw:()=>drawReactionPoster(x,n),act:()=>openPoster(n)}));
 add({id:'quadro',name:'Quadro',wall:true,cx:192,top:12,zone:{x:132,y:64,w:120,h:22},draw:drawBlackboard,
   act:()=>say([{who:'QUADRO',t:'GLICÓLISE: glicose → 2 piruvato.'},{who:'QUADRO',t:'Saldo por glicose: 2 ATP e 2 NADH. Ainda não apagaram a aula de ontem, a mesma em que você esqueceu as folhas.'}])});
-// --- Profa. Rosa, Prof. Aldair Neto and students with questions ---
+// --- Profa. Rosa, Prof. Neto and students with questions ---
 HEAD.aldair=HEAD.player;
 CHAR_PAL.aldair=Object.assign({},CHAR_PAL.player,{S:'#c98b62',s:'#8a5a3c',H:'#7b8186',h:'#3a2414',d:'#1d1612',i:'#3a2414',m:'#7a2e3e',
   P:'#3a4740',p:'#2c3631',B:'#1d2226',c:'#1f4a33'});
@@ -2045,7 +2496,7 @@ function findPath(self,tx,ty){ // breadth-first search on a 4 px grid; returns t
 }
 let gatherSt=null;
 function profSay(asked,lines,onEnd){
-  const both=lines.some(l=>l.who==='PROF. ALDAIR NETO')&&lines.some(l=>l.who==='PROFA. ROSA');
+  const both=lines.some(l=>l.who==='PROF. NETO')&&lines.some(l=>l.who==='PROFA. ROSA');
   const other=asked===aldair?heloisa:aldair;
   if(!both||scene!=='sala101'||flags.seated||Math.hypot(other.x-player.x,other.y-player.y)<26){
     if(both){other.dir=faceTo(other,player);other.wait=Math.max(other.wait,4);}
@@ -2086,30 +2537,28 @@ function heloisaRows(dir,f,blink){
 }
 // asking about the lost sheets: the professor who is asked only guesses; the other one remembers the rooms
 function sheetsTalk(asked){
-  const other=asked==='PROFA. ROSA'?'PROF. ALDAIR NETO':'PROFA. ROSA',f=asked==='PROFA. ROSA';
+  const other=asked==='PROFA. ROSA'?'PROF. NETO':'PROFA. ROSA',f=asked==='PROFA. ROSA';
   return [
     {who:me(),t:(f?'Professora, a senhora':'Professor, o senhor')+' por acaso viu as minhas folhas da atividade de glicólise? Não sei onde deixei.'},
     {who:asked,t:'Hum... não vi, não. Talvez você tenha esquecido nas salas em que teve aula ontem.'},
     {who:other,t:'Ontem vocês tiveram aula aqui na 101, na 103 e na 201. Lembro de ter visto, de longe, umas folhas em cima de algumas mesas.'},
     {who:asked,t:'Então procure nessas salas. Responda tudo e traga para nós até 11h30. Amanhã tem prova!'}];
 }
-const aldair=add({id:'aldair',name:'Prof. Aldair Neto',talk:0,cx:150,top:78,base:104,solid:{x:145,y:100,w:10,h:4},
+const aldair=add({id:'aldair',name:'Prof. Neto',talk:0,cx:150,top:78,base:104,solid:{x:145,y:100,w:10,h:4},
   speed:19,
-  // Aldair Neto: Júlia → Bia → Ana (left wall aisle) → front → Davi (far right) → front
+  // Neto: Júlia → Bia → Ana (left wall aisle) → front → Davi (far right) → front
   route:[{x:150,y:104,face:'down',wait:2.5},{x:140,y:104},{x:140,y:152,face:'left',wait:5},{x:140,y:104},{x:30,y:104},
          {x:30,y:124,face:'right',wait:3.5},{x:30,y:184,face:'right',wait:4.5},{x:30,y:104},{x:150,y:104,face:'down',wait:2},
          {x:350,y:104},{x:350,y:184,face:'left',wait:4},{x:350,y:104},{x:150,y:104}],
   sprite(t){const c=personSprite('aldair','coat',this.dir,Math.floor(this.anim),blinkAt(t,.9));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
-  fx(){if(this.dir==='down')glassesFx(Math.round(this.x),Math.round(this.y));
-       else if(this.dir!=='up'){const sx=Math.round(this.x)+(this.dir==='left'?-5:2),t=Math.round(this.y)-23;r(sx,t+6,4,1,'#1d1612');r(sx,t+9,4,1,'#1d1612');r(sx,t+6,1,4,'#1d1612');r(sx+3,t+6,1,4,'#1d1612');}},
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
-    const L=[[{who:'PROF. ALDAIR NETO',t:'Bom dia, '+nome1()+'! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
-       ...(flags.profs?[]:sheetsTalk('PROF. ALDAIR NETO'))],
-      [{who:'PROF. ALDAIR NETO',t:'Sabe por que a hexocinase gasta ATP logo na primeira reação?'},
-       {who:'PROF. ALDAIR NETO',t:'A glicose-6-fosfato não sai da célula pelos transportadores de glicose. A fosforilação "prende" a glicose lá dentro.'}],
-      [{who:'PROF. ALDAIR NETO',t:'E a hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Guarde isso para a prova!'}]];
+    const L=[[{who:'PROF. NETO',t:'Bom dia, '+nome1()+'! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
+       ...(flags.profs?[]:sheetsTalk('PROF. NETO'))],
+      [{who:'PROF. NETO',t:'Sabe por que a hexocinase gasta ATP logo na primeira reação?'},
+       {who:'PROF. NETO',t:'A glicose-6-fosfato não sai da célula pelos transportadores de glicose. A fosforilação "prende" a glicose lá dentro.'}],
+      [{who:'PROF. NETO',t:'E a hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Guarde isso para a prova!'}]];
     const first=this.talk%L.length===0; // the first talk says where the sheets may be: the search begins
     profSay(this,L[this.talk%L.length],first?()=>{flags.profs=true;updateObjective();}:undefined);this.talk++;
   }});
@@ -2119,14 +2568,13 @@ const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104
   route:[{x:214,y:104,face:'down',wait:4},{x:274,y:104},{x:274,y:124,face:'right',wait:3},{x:274,y:154,face:'left',wait:5.5},
          {x:274,y:184,face:'right',wait:2.5},{x:274,y:104},{x:86,y:104},{x:86,y:154,face:'right',wait:3},
          {x:86,y:124,face:'left',wait:4},{x:86,y:104},{x:214,y:104}],
-  sprite(t){const f=Math.floor(this.anim),b=blinkAt(t,2.4),key='hel:'+this.dir+':'+(f%4)+':'+(b?1:0);
-    const c=gridSprite(key,heloisaRows(this.dir,f,b),CHAR_PAL.heloisa,this.dir==='left');return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
+  sprite(t){const c=personSprite('heloisa','coat',this.dir,Math.floor(this.anim),blinkAt(t,2.4));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
     const L=[[{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! Que bom te ver aqui na 101 hoje.'},
        ...(flags.profs?[]:sheetsTalk('PROFA. ROSA')),
-       {who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Aldair Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
+       {who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
       [{who:'PROFA. ROSA',t:'Já viu os cartazes das reações 1 e 2 na parede, ao lado do quadro? Eles resumem o começo da glicólise.'}],
       [{who:'PROFA. ROSA',t:'A reação 2 é reversível: a fosfo-hexose-isomerase converte glicose-6-fosfato em frutose-6-fosfato, que tem um anel de cinco lados.'}]];
     const first=this.talk%L.length===0; // that talk says where the sheets are: the search begins
@@ -2148,7 +2596,7 @@ GL['Δ']=['010','101','101','101','111'];
 add({id:'mesaProf',name:'Mesa do professor',cx:192,top:62,base:92,solid:{x:160,y:76,w:64,h:16},
   key:()=>(flags.seated?1:0)+':'+(flags.graded?1:0),
   draw:()=>flags.seated?drawTeacherDesk(flags.graded?'sheets':false,false):drawTeacherDesk(),
-  act:()=>flags.seated?deliver():say([{t:'A mesa do professor: lista de chamada, giz colorido, uma maçã e uma pilha de livros de Bioquímica.'},{t:'Na lista de chamada, assinada pelos professores Rosa e Aldair Neto, seu nome é o terceiro.'}])});
+  act:()=>flags.seated?deliver():say([{t:'A mesa do professor: lista de chamada, giz colorido, uma maçã e uma pilha de livros de Bioquímica.'},{t:'Na lista de chamada, assinada pelos professores Rosa e Neto, seu nome é o terceiro.'}])});
 add({id:'armario101',name:'Armário',cx:344,top:12,base:72,solid:{x:320,y:64,w:46,h:8},zone:{x:316,y:64,w:56,h:24},draw:drawClassCabinet,
   act:()=>say([{t:'O armário da sala está trancado. Pelo vidro, você vê modelos moleculares, rolos de cartazes e caixas de giz.'}])});
 const DESK_LINES=['Uma carteira de madeira com o tampo riscado.','Alguém gravou no tampo: "Embden esteve aqui".','Uma carteira com um livro esquecido embaixo.',
@@ -2393,7 +2841,7 @@ function bystander(sceneName,id,name,x,y,sprite,lines){
     act(){say([{who,t:lines[this.talk++%lines.length]}]);}});
 }
 // long-haired figure (Rosa's sprite rows) recoloured through its palette
-const longHair=(who,seed)=>t=>{const b=blinkAt(t,seed);return gridSprite(who+(b?':b':''),b?blinkRows(HELOISA_ROWS,7,8):HELOISA_ROWS,CHAR_PAL[who]);};
+const longHair=(who,seed)=>t=>personSprite(who,'coat','down',0,blinkAt(t,seed)); // long hair comes from HAIR_STYLE
 HEAD.tiago=HEAD.pedro;HEAD.gabriel=HEAD.player;
 CHAR_PAL.camila={i:'#3a2414',S:'#8a5a3c',s:'#5a3a28',H:'#2e1d12',h:'#1d1612',d:'#0e1417',m:'#7a2e3e',A:'#3fa682',C:'#f4f6f4',c:'#1f4a33',P:'#2b4a6f',p:'#1f2f4f',B:'#2c3236'};
 CHAR_PAL.tiago=Object.assign({},CHAR_PAL.pedro,{S:'#d9a37c',s:'#a87445',m:'#7a2e3e',T:'#e8853a',t:'#c96a22',u:'#8a4a18',A:'#f4f6f4',P:'#2b4a6f',p:'#1f2f4f',B:'#2c3236',R:'#5d646a',r:'#3a4740'});
@@ -2464,8 +2912,7 @@ function updateWanderers(dt){
   }
 }
 const walkLook=(who,outfit,seed)=>(o,t)=>personSprite(who,outfit,o.dir,Math.floor(o.anim),blinkAt(t,seed));
-const coatLook=(who,seed)=>(o,t)=>{const f=Math.floor(o.anim),b=blinkAt(t,seed);
-  return gridSprite(who+':'+o.dir+':'+(f%4)+':'+(b?1:0),heloisaRows(o.dir,f,b),CHAR_PAL[who],o.dir==='left');};
+const coatLook=(who,seed)=>(o,t)=>personSprite(who,'coat',o.dir,Math.floor(o.anim),blinkAt(t,seed));
 HEAD.larissa=HEAD.player;HEAD.bruno=HEAD.pedro;HEAD.bruna=HEAD.player;HEAD.felipe=HEAD.player;
 CHAR_PAL.larissa={i:'#3f8a4c',S:'#e8b48c',s:'#c98b62',H:'#5a2d1a',h:'#3a2414',d:'#2a1a10',m:'#a12a22',A:'#d0352b',C:'#f4f6f4',c:'#1f4a33',P:'#1f2f4f',p:'#0e1417',B:'#7a2e3e'};
 CHAR_PAL.bruno=Object.assign({},CHAR_PAL.pedro,{S:'#c98b62',s:'#8a5a3c',T:'#e8bf3f',t:'#a8862a',u:'#7a5a1a',R:'#2b4a6f',r:'#1f2f4f',P:'#3a4740',p:'#2c3631'});
@@ -2572,6 +3019,12 @@ const zelObj={id:'zelador',name:'Seu Antônio (zelador)',
   },
   act(){
     const W_='SEU ANTÔNIO (ZELADOR)';
+    if(flags.tiagoQ===3){ // side quest: he picked up Tiago's notebook yesterday
+      jan.wait=4;flags.tiagoQ=4;
+      return say([{who:me(),t:'Seu Antônio, o senhor recolheu um caderno laranja ontem, no 2º andar?'},
+        {who:W_,t:'Um cheio de adesivos? Recolhi, sim, '+gen('doutor','doutora')+'! Levei para a caixa de achados e perdidos da secretaria.'},
+        {who:W_,t:'Pede para a Dona Tati, lá no térreo. Ela guarda tudo direitinho.'}]);
+    }
     if(!janCleaning()){jan.wait=3;return say([{who:W_,t:'Com licença, '+gen('doutor','doutora')+'! Agora vou limpar '+JAN_SPOTS[jan.to].name+'.'}]);}
     const l=this.talk%2===0
       ?[{who:W_,t:'Cuidado, '+gen('doutor','doutora')+'! Acabei de passar o pano, está escorregadio.'}]
@@ -2746,7 +3199,7 @@ function advance(){
   sfx.blip();startLine();
 }
 function giveItem(k){
-  flags[k]=true;
+  flags[k]=true;setMood('player','happy',2.5);
   const s=$('slot-'+k);s.classList.add('got','pop');setTimeout(()=>s.classList.remove('pop'),600);
   updateObjective();
 }
@@ -2764,9 +3217,11 @@ const SECONDS_PER_GAME_MINUTE=30; // outside the sheets: 07h30 -> 7h50 takes 10 
 const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet (the 10 sheets or the bonus): real time, 1 minute = 60 s
 // advances the clock (called every frame; it stands still in the pause menu, before the start and after the end)
 function tickClock(dt){
-  if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause')return;
+  if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause'||state==='duelo')return; // the lightning duel has its own timer
   const reading=state==='quiz'&&quiz&&!provas[quiz.n]&&!flags.review;
-  gameMin+=dt/(reading?SECONDS_PER_READING_MINUTE:SECONDS_PER_GAME_MINUTE);
+  const d=dt/(reading?SECONDS_PER_READING_MINUTE:SECONDS_PER_GAME_MINUTE);
+  if(flags.energia>0){const u=Math.min(flags.energia,d);flags.energia-=u;gameMin+=d-u;} // Tiago's cereal bar: the clock stands still
+  else gameMin+=d;
 }
 const answered=()=>Object.keys(provas).filter(k=>k!=='b').length; // regular sheets (the bonus is counted apart)
 const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+'h'+String(m%60).padStart(2,'0');
@@ -2793,6 +3248,7 @@ function updateObjective(){
   el.innerHTML='<b>OBJETIVO</b><span></span>';el.lastChild.textContent=t;
 }
 function needsMarker(o){
+  if(sideMarker(o))return true; // optional side quest (Tiago's notebook), shown even after grading
   if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca; // optional extra, shown even after grading
   if(flags.graded)return false;
   if(o.id==='locker42')return !!flags.wantJaleco&&!flags.jaleco;
@@ -2820,7 +3276,7 @@ function bell(){[784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05
 function classStarts(){
   flags.bell8=true;bell();
   say([{t:'TRIIIM! São 7h50: a aula de Bioquímica começou na Sala 101.'},
-       {t:'Os professores Aldair Neto e Rosa vão tirar dúvidas até 11h30. Entregue as folhas antes do fim da aula.'}]);
+       {t:'Os professores Neto e Rosa vão tirar dúvidas até 11h30. Entregue as folhas antes do fim da aula.'}]);
 }
 function lastCall(){
   flags.warn11=true;tone(660,.2,'triangle',.05);tone(523,.3,'triangle',.05,.22);
@@ -2836,18 +3292,18 @@ function timeUp(){
       {t:'Não dá mais tempo de responder. Leve as folhas que você tem aos professores, na Sala 101, antes que eles saiam.'}],seatProfs);
 }
 // handing in: if the bonus sheet is missing the professors ask about it first; then Rosa grades
-// reactions 1-5, Aldair Neto 6-10 (and the bonus), and they offer to comment any question before the result
+// reactions 1-5, Neto 6-10 (and the bonus), and they offer to comment any question before the result
 function deliver(){
-  if(flags.graded)return say([{who:'PROF. ALDAIR NETO',t:'Sua lição já está corrigida: '+finalScore()+' de '+QUIZ_N+'. Bons estudos para a prova de amanhã!'}]);
+  if(flags.graded)return say([{who:'PROF. NETO',t:'Sua lição já está corrigida: '+finalScore()+' de '+QUIZ_N+'. Bons estudos para a prova de amanhã!'}]);
   if(!provas.b&&!flags.bonusSkip){
     flags.bonusAsked=true;updateObjective();
     const intro=[
       {who:'PROFA. ROSA',t:'Espere... está faltando uma folha. Cadê a questão bônus?'},
-      {who:'PROF. ALDAIR NETO',t:'Entregamos a questão bônus ontem à tarde, na aula prática do laboratório. Você deve ter esquecido em cima de uma das bancadas.'},
+      {who:'PROF. NETO',t:'Entregamos a questão bônus ontem à tarde, na aula prática do laboratório. Você deve ter esquecido em cima de uma das bancadas.'},
       {who:'PROFA. ROSA',t:'Ela vale um ponto extra na atividade. Pode ajudar, caso você precise de nota.'}];
-    if(flags.timeUp)return say(intro.concat([{who:'PROF. ALDAIR NETO',t:'Mas a aula já acabou, não dá mais tempo de buscar. Vamos corrigir o que você trouxe.'}]),
+    if(flags.timeUp)return say(intro.concat([{who:'PROF. NETO',t:'Mas a aula já acabou, não dá mais tempo de buscar. Vamos corrigir o que você trouxe.'}]),
       ()=>{flags.bonusSkip=true;grade();});
-    return say(intro.concat([{who:'PROF. ALDAIR NETO',t:'Quer ir buscar no laboratório, no térreo, antes de entregar? Ainda dá tempo até 11h30.',choices:[
+    return say(intro.concat([{who:'PROF. NETO',t:'Quer ir buscar no laboratório, no térreo, antes de entregar? Ainda dá tempo até 11h30.',choices:[
       {t:'Vou buscar a questão bônus no laboratório',fn:()=>say([{who:'PROFA. ROSA',t:'Estamos esperando aqui. Não se atrase: o prazo é 11h30.'}])},
       {t:'Entregar sem a questão bônus',fn:()=>{flags.bonusSkip=true;grade();}}]}]));
   }
@@ -2857,16 +3313,16 @@ function grade(){
   const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=score()-a,base=a+b,bon=provas.b;
   const total=finalScore(),pass=total>=PASS;
   say([
-    {who:'PROF. ALDAIR NETO',t:blank?'A aula acabou. Deixe aqui na mesa as folhas que você tem.':'Achou e respondeu as '+QUIZ_N+' folhas da lição? Ótimo, pode deixar aqui na mesa.'},
+    {who:'PROF. NETO',t:blank?'A aula acabou. Deixe aqui na mesa as folhas que você tem.':'Achou e respondeu as '+QUIZ_N+' folhas da lição? Ótimo, pode deixar aqui na mesa.'},
     {run:handSheets,t:(blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.')+(bon?' E a questão bônus também.':'')},
     {who:'PROFA. ROSA',t:'Eu corrijo as reações 1 a 5, da fase preparatória.'},
-    {who:'PROF. ALDAIR NETO',t:'E eu fico com as reações 6 a 10, da fase de pagamento'+(bon?', e com a questão bônus.':'.')},
+    {who:'PROF. NETO',t:'E eu fico com as reações 6 a 10, da fase de pagamento'+(bon?', e com a questão bônus.':'.')},
     {t:'Os dois corrigem em silêncio. Só se ouve a caneta riscando o papel...'},
     {who:'PROFA. ROSA',t:'Fase preparatória: '+a+' de 5.'},
-    {who:'PROF. ALDAIR NETO',t:'Fase de pagamento: '+b+' de 5.'},
-    bon?{who:'PROF. ALDAIR NETO',t:'Questão bônus: '+(!bon.ok?'errada, não valeu o ponto extra.':base>=QUIZ_N?'certa, mas você já tinha a nota máxima.':base>=PASS?'certa! Você nem precisava, mas o ponto extra entra na nota.':'certa! O ponto extra entra na sua nota.')}
+    {who:'PROF. NETO',t:'Fase de pagamento: '+b+' de 5.'},
+    bon?{who:'PROF. NETO',t:'Questão bônus: '+(!bon.ok?'errada, não valeu o ponto extra.':base>=QUIZ_N?'certa, mas você já tinha a nota máxima.':base>=PASS?'certa! Você nem precisava, mas o ponto extra entra na nota.':'certa! O ponto extra entra na sua nota.')}
        :{who:'PROFA. ROSA',t:'Sem a questão bônus, ficamos só com as '+QUIZ_N+' folhas.'},
-    {who:'PROF. ALDAIR NETO',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está '+gen('pronto','pronta')+' para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
+    {who:'PROF. NETO',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está '+gen('pronto','pronta')+' para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
     {who:'PROFA. ROSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
       {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
       {t:gen('Não, obrigado','Não, obrigada'),fn:()=>finish(pass)}]}
@@ -2988,10 +3444,10 @@ const QUIZ={
 };
 const QUIZ_N=Object.keys(QUIZ).length,LETTERS='ABCD';
 // professor comments shown when the answer key is revealed (correction review, or reopening a graded sheet)
-const QUIZ_FB={"1": {"who": "PROFA. ROSA", "fb": "Na MODY2, a glicocinase mutante tem menor afinidade pela glicose (Km mais alto). Como ela funciona como o sensor de glicose da célula beta, é preciso uma glicemia mais alta para gerar ATP suficiente e liberar insulina. Por isso a hiperglicemia é leve e estável. A glicocinase não é inibida pela glicose-6-fosfato e não fosforila frutose no músculo."}, "2": {"who": "PROFA. ROSA", "fb": "A fosfo-hexose-isomerase transforma uma aldose (glicose-6-fosfato) em uma cetose (frutose-6-fosfato), preparando a molécula para a PFK-1. Sem essa etapa, a hemácia, que não tem mitocôndrias e depende só da glicólise, produz pouco ATP e não mantém as bombas iônicas da membrana. A célula perde a forma e é destruída."}, "3": {"who": "PROFA. ROSA", "fb": "A PFK-1 é a principal etapa regulatória e comprometida da glicólise. Na doença de Tarui falta a isoenzima muscular: no exercício, o músculo não consegue levar a glicose do glicogênio até piruvato e fica sem ATP, mesmo com o AMP alto, que normalmente ativaria a enzima. Citrato e ATP inibem a PFK-1, não ativam."}, "4": {"who": "PROFA. ROSA", "fb": "A aldolase quebra a frutose-1,6-bisfosfato, de seis carbonos, em duas trioses-fosfato: DHAP e gliceraldeído-3-fosfato. Sem essa clivagem, a via para no fim da fase preparatória e não chega à fase de pagamento, onde o ATP é produzido. Músculo e hemácias, que usam a aldolase A, são os mais afetados."}, "5": {"who": "PROFA. ROSA", "fb": "A TPI converte a DHAP em gliceraldeído-3-fosfato. Sem ela, só um dos dois gliceraldeídos-3-fosfato formados pela aldolase segue na via, e a fase de pagamento rende a metade: 2 ATP em vez de 4, o que zera o saldo líquido por glicose. A DHAP acumulada também é tóxica e contribui para o quadro neurológico."}, "6": {"who": "PROF. ALDAIR NETO", "fb": "O arsenato ocupa o lugar do fosfato e forma 1-arseno-3-fosfoglicerato, que é instável e se hidrolisa sozinho em 3-fosfoglicerato. A via continua, mas pula a reação 7, que geraria ATP. Resultado: a glicólise segue sem saldo líquido de ATP. O NADH continua sendo formado, então o arsenato não bloqueia a enzima."}, "7": {"who": "PROF. ALDAIR NETO", "fb": "A fosfoglicerato-cinase faz a primeira fosforilação no nível do substrato: passa o fosfato de alta energia do 1,3-bisfosfoglicerato para o ADP e gera os 2 ATP que repõem os 2 gastos na fase preparatória. Sem ela, a hemácia, que depende só da glicólise, fica sem ATP para manter a membrana e é destruída."}, "8": {"who": "PROF. ALDAIR NETO", "fb": "A fosfoglicerato-mutase muda o grupo fosfato do carbono 3 para o carbono 2. Sem esse rearranjo, a enolase não recebe substrato e a via para antes das últimas reações. O músculo em esforço intenso, que depende muito da glicólise, fica sem ATP, o que causa as cãibras e a lesão muscular com mioglobinúria."}, "9": {"who": "PROF. ALDAIR NETO", "fb": "O fluoreto se liga ao magnésio e ao fosfato e forma um complexo que inativa a enolase. Com a glicólise bloqueada, as células do sangue param de consumir glicose dentro do tubo, e a glicemia medida no laboratório fica mais próxima do valor real do paciente."}, "10": {"who": "PROF. ALDAIR NETO", "fb": "A piruvato-cinase faz a segunda fosforilação no nível do substrato, que garante o saldo líquido de ATP da glicólise. Sem mitocôndrias, a hemácia depende desse ATP para manter as bombas de sódio e potássio e a forma da membrana. Sem ele, a célula se deforma e é retirada da circulação pelo baço, o que explica a anemia e a esplenomegalia."}};
+const QUIZ_FB={"1": {"who": "PROFA. ROSA", "fb": "Na MODY2, a glicocinase mutante tem menor afinidade pela glicose (Km mais alto). Como ela funciona como o sensor de glicose da célula beta, é preciso uma glicemia mais alta para gerar ATP suficiente e liberar insulina. Por isso a hiperglicemia é leve e estável. A glicocinase não é inibida pela glicose-6-fosfato e não fosforila frutose no músculo."}, "2": {"who": "PROFA. ROSA", "fb": "A fosfo-hexose-isomerase transforma uma aldose (glicose-6-fosfato) em uma cetose (frutose-6-fosfato), preparando a molécula para a PFK-1. Sem essa etapa, a hemácia, que não tem mitocôndrias e depende só da glicólise, produz pouco ATP e não mantém as bombas iônicas da membrana. A célula perde a forma e é destruída."}, "3": {"who": "PROFA. ROSA", "fb": "A PFK-1 é a principal etapa regulatória e comprometida da glicólise. Na doença de Tarui falta a isoenzima muscular: no exercício, o músculo não consegue levar a glicose do glicogênio até piruvato e fica sem ATP, mesmo com o AMP alto, que normalmente ativaria a enzima. Citrato e ATP inibem a PFK-1, não ativam."}, "4": {"who": "PROFA. ROSA", "fb": "A aldolase quebra a frutose-1,6-bisfosfato, de seis carbonos, em duas trioses-fosfato: DHAP e gliceraldeído-3-fosfato. Sem essa clivagem, a via para no fim da fase preparatória e não chega à fase de pagamento, onde o ATP é produzido. Músculo e hemácias, que usam a aldolase A, são os mais afetados."}, "5": {"who": "PROFA. ROSA", "fb": "A TPI converte a DHAP em gliceraldeído-3-fosfato. Sem ela, só um dos dois gliceraldeídos-3-fosfato formados pela aldolase segue na via, e a fase de pagamento rende a metade: 2 ATP em vez de 4, o que zera o saldo líquido por glicose. A DHAP acumulada também é tóxica e contribui para o quadro neurológico."}, "6": {"who": "PROF. NETO", "fb": "O arsenato ocupa o lugar do fosfato e forma 1-arseno-3-fosfoglicerato, que é instável e se hidrolisa sozinho em 3-fosfoglicerato. A via continua, mas pula a reação 7, que geraria ATP. Resultado: a glicólise segue sem saldo líquido de ATP. O NADH continua sendo formado, então o arsenato não bloqueia a enzima."}, "7": {"who": "PROF. NETO", "fb": "A fosfoglicerato-cinase faz a primeira fosforilação no nível do substrato: passa o fosfato de alta energia do 1,3-bisfosfoglicerato para o ADP e gera os 2 ATP que repõem os 2 gastos na fase preparatória. Sem ela, a hemácia, que depende só da glicólise, fica sem ATP para manter a membrana e é destruída."}, "8": {"who": "PROF. NETO", "fb": "A fosfoglicerato-mutase muda o grupo fosfato do carbono 3 para o carbono 2. Sem esse rearranjo, a enolase não recebe substrato e a via para antes das últimas reações. O músculo em esforço intenso, que depende muito da glicólise, fica sem ATP, o que causa as cãibras e a lesão muscular com mioglobinúria."}, "9": {"who": "PROF. NETO", "fb": "O fluoreto se liga ao magnésio e ao fosfato e forma um complexo que inativa a enolase. Com a glicólise bloqueada, as células do sangue param de consumir glicose dentro do tubo, e a glicemia medida no laboratório fica mais próxima do valor real do paciente."}, "10": {"who": "PROF. NETO", "fb": "A piruvato-cinase faz a segunda fosforilação no nível do substrato, que garante o saldo líquido de ATP da glicólise. Sem mitocôndrias, a hemácia depende desse ATP para manter as bombas de sódio e potássio e a forma da membrana. Sem ele, a célula se deforma e é retirada da circulação pelo baço, o que explica a anemia e a esplenomegalia."}};
 for(const k in QUIZ_FB)Object.assign(QUIZ[k],QUIZ_FB[k]);
 // extra sheet: left on a lab bench after yesterday afternoon's practical class; a right answer adds one point (grade capped at 10)
-QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, são produzidas quatro moléculas de ATP; na fase de pagamento, são consumidas duas.", "Na fase de investimento, a glicose é convertida em piruvato sem consumo de ATP.", "Na fase de investimento, são consumidas duas moléculas de ATP; na fase de pagamento, são produzidas quatro moléculas de ATP e dois NADH.", "Na fase de pagamento, são consumidas duas moléculas de ATP para formar glicose-6-fosfato e frutose-6-fosfato."], "c": 2, "who": "PROF. ALDAIR NETO", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
+QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, são produzidas quatro moléculas de ATP; na fase de pagamento, são consumidas duas.", "Na fase de investimento, a glicose é convertida em piruvato sem consumo de ATP.", "Na fase de investimento, são consumidas duas moléculas de ATP; na fase de pagamento, são produzidas quatro moléculas de ATP e dois NADH.", "Na fase de pagamento, são consumidas duas moléculas de ATP para formar glicose-6-fosfato e frutose-6-fosfato."], "c": 2, "who": "PROF. NETO", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
 const isBonus=n=>n==='b';
 const bonusOk=()=>!!(provas.b&&provas.b.ok);
 function finalScore(){return Math.min(QUIZ_N,score()+(bonusOk()?1:0));}
@@ -3083,11 +3539,11 @@ function closeQuiz(){
     const room={sala101:'Sala 101',sala103:'Sala 103',sala201:'Sala 201'}[scene]||'sala';
     const got=collectPile(pile,room);
     if(answered()===QUIZ_N&&!flags.seated)
-      return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}]),seatProfs);
+      return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}]),seatProfs);
     return say(got);
   }
   if(answered()===QUIZ_N&&!flags.seated){
-    say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Aldair Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
+    say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
   }
 }
 $('quiz-ok').addEventListener('click',quizEnter);
@@ -3236,8 +3692,187 @@ $('caca-close').addEventListener('click',closeCaca);
   };
 }
 function updatePauseExtra(){
-  const box=$('pz-extra-box');box.hidden=!flags.cacaDica;
-  $('pz-extra').textContent=flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')';
+  const L=[],q=flags.tiagoQ||0;
+  if(flags.cacaDica)L.push(flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
+  if(q)L.push('Caderno do Tiago: '+['',
+    'pergunte ao Gabriel (3º ano), no 2º andar',
+    'fale com a Dona Lúcia, a bibliotecária, no 2º andar',
+    'procure o Seu Antônio, o zelador (ele muda de lugar)',
+    'peça à Dona Tati, nos achados e perdidos da secretaria',
+    'devolva o caderno ao Tiago, no 1º andar',
+    'devolvido! O Tiago agora é seu amigo'][q]);
+  if(flags.duelTold)L.push(flags.duelWin?'Duelo Relâmpago: você venceu o Gabriel!':'Duelo Relâmpago: vença o Gabriel (3º ano), no 2º andar, acertando '+DUEL_WIN+' de '+DUEL_N);
+  $('pz-extra-box').hidden=!L.length;$('pz-extra').textContent=L.join('\n');
+}
+
+/* ---------- side quest: Tiago's lost notebook ----------
+   Tiago (1st year, 1st floor) lost his orange notebook. The trail: Gabriel (2nd floor) saw it at the library,
+   Dona Lúcia says the janitor collected it, Seu Antônio (who moves around) took it to the lost-and-found box,
+   Dona Tati hands it over. flags.tiagoQ: 0 not asked, 1 Gabriel, 2 Lúcia, 3 janitor, 4 Tati, 5 holding it, 6 returned.
+   Reward: his cereal bar (eaten from the pause menu, it holds the clock for 2 game minutes), and from then
+   on Tiago calls the player "amigo/amiga" and now and then says they are "gente boa". */
+const QUEST_NEXT={1:'gabriel',2:'lucia',3:'zelador',4:'secretaria',5:'tiago'};
+const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
+{
+  const tia=SCENES.andar1.find(o=>o.id==='tiago'),TW='TIAGO (1º ANO)';
+  const TIPS=['Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
+    'A aldolase quebra a frutose-1,6-bisfosfato em duas trioses: DHAP e gliceraldeído-3-fosfato.'];
+  const BOA=['Você é gente boa, sabia?','Valeu de novo pelo caderno. Você é gente boa demais!','Gente boa assim está difícil de achar!'];
+  tia.rem=0;
+  tia.act=function(){
+    stopChat(this);this.wait=4;this.dir=faceTo(this,player);
+    const q=flags.tiagoQ||0,amigo=gen('amigo','amiga'),k=this.talk++;
+    const help=[{t:'Claro! Vou ficar de olho.',fn:()=>{flags.tiagoQ=1;updatePauseExtra();
+        say([{who:TW,t:'Valeu demais! Alguém do 2º andar deve ter visto. O Gabriel, do 3º ano, vive por lá.'}]);}},
+      {t:'Agora não dá, desculpa.',fn:()=>{flags.tiagoNo=true;say([{who:TW,t:'Tudo bem... Se mudar de ideia, estou por aqui.'}]);}}];
+    if(q===0&&!flags.tiagoNo)return say([{who:TW,t:'Ei! Desculpa te parar... Você não viu um caderno de capa laranja, cheio de adesivos?'},
+      {who:TW,t:'É o meu caderno de Bioquímica, com todos os resumos da glicólise! Ontem estudei no 2º andar e acho que esqueci lá.'},
+      {who:TW,t:'Sem ele eu estou perdido para a prova de amanhã. Você me ajuda a procurar?',choices:help}]);
+    if(q===0&&this.rem++%2===0)return say([{who:TW,t:'Ainda nada do meu caderno laranja... Será que você pode me ajudar a procurar?',choices:help}]);
+    if(q>=1&&q<=4&&this.rem++%2===0)return say([{who:TW,t:q===1?'Alguma notícia do meu caderno? O Gabriel, do 3º ano, fica no 2º andar. Talvez ele tenha visto.'
+      :'Alguma notícia do meu caderno laranja? Estou ficando nervoso com a prova de amanhã...'}]);
+    if(q===5)return say([{who:me(),t:'Tiago, olha o que eu achei!'},
+      {who:TW,t:'MEU CADERNO!!! Onde ele estava?',run:()=>{$('slot-caderno').classList.remove('got');flags.caderno=false;}},
+      {who:me(),t:'O Seu Antônio recolheu e levou para os achados e perdidos. A Dona Tati guardou para você.'},
+      {who:TW,t:'Você salvou a minha prova! Toma, é a minha barrinha de cereal. Glicose para a sua glicólise trabalhar!'},
+      {t:'Você ganhou: BARRINHA DE CEREAL',item:'barra',run:()=>{flags.tiagoQ=6;updatePauseExtra();}},
+      {t:'Comer a barrinha dá energia: o relógio fica parado por 2 minutos. Para comer, abra o menu de pausa.'},
+      {who:TW,t:'Valeu mesmo, '+amigo+'! Você é gente boa.'}]);
+    if(q===6)return say([{who:TW,t:'E aí, '+amigo+'! '+TIPS[k%TIPS.length]}]
+      .concat(k%3===1?[{who:TW,t:BOA[Math.floor(k/3)%BOA.length]}]:[]));
+    say([{who:TW,t:TIPS[k%TIPS.length]}]);
+  };
+  const luc=SCENES.andar2.find(o=>o.id==='lucia'),act0=luc.act,LW='DONA LÚCIA (BIBLIOTECÁRIA)';
+  luc.act=function(){
+    if(flags.tiagoQ!==2)return act0.call(this);
+    flags.tiagoQ=3;
+    say([{who:me(),t:'Dona Lúcia, a senhora viu um caderno laranja, cheio de adesivos? É do Tiago, do 1º ano.'},
+      {who:LW,t:'Aquele que ficou no balcão da biblioteca ontem? No fim do dia, o Seu Antônio, o zelador, recolheu tudo o que ficou esquecido.'},
+      {who:LW,t:'Ele vive limpando algum canto do prédio. Procure o carrinho de limpeza dele.'}]);
+  };
+}
+function eatBar(){
+  if(!flags.barra||flags.barraUsed)return;
+  flags.barraUsed=true;flags.energia=2;$('slot-barra').classList.remove('got');sfx.item();
+  say([{t:'Nhac! Você comeu a barrinha de cereal do Tiago. Glicose chegando...'},
+    {t:gen('Cheio','Cheia')+' de energia! O relógio fica parado por 2 minutos do jogo (ele fica verde enquanto isso).'}]);
+}
+
+/* ---------- side quest: Gabriel's lightning duel ----------
+   Gabriel (3rd year, 2nd floor) dares the player: 5 random questions on the glycolysis balance, one shared
+   20-second bar (the game clock stops meanwhile). DUEL_WIN right answers win: a paper trophy, and from then on
+   Gabriel calls the player "doutor/doutora NAME". It can be replayed; it is never graded. */
+const DUEL_Q=[ // question, right answer, then three wrong ones
+  ['Saldo líquido de ATP da glicólise, por glicose?','2','4','36','1'],
+  ['Quantos ATP a fase preparatória (de investimento) gasta?','2','1','4','0'],
+  ['Quantos ATP a fase de pagamento produz por glicose?','4','2','6','8'],
+  ['Quantos NADH a glicólise forma por glicose?','2','1','4','0'],
+  ['Quantas moléculas de piruvato saem de uma glicose?','2','1','3','4'],
+  ['Em que parte da célula acontece a glicólise?','Citosol','Matriz mitocondrial','Núcleo','Retículo endoplasmático'],
+  ['Qual enzima faz a reação 1 da glicólise no músculo?','Hexocinase','Aldolase','Enolase','Piruvato-cinase'],
+  ['Qual é o principal ponto de controle da glicólise?','PFK-1','Aldolase','Enolase','Fosfoglicerato-mutase'],
+  ['Qual enzima da glicólise forma NADH?','GAPDH','Hexocinase','Aldolase','Enolase'],
+  ['Sem oxigênio, no músculo, o piruvato vira...','Lactato','Etanol','Glicogênio','Citrato'],
+  ['Quantos carbonos tem o piruvato?','3','6','2','4'],
+  ['Qual enzima faz a reação 10?','Piruvato-cinase','Enolase','Hexocinase','PFK-1'],
+  ['Quais reações geram ATP no nível do substrato?','7 e 10','1 e 3','3 e 10','2 e 5'],
+  ['Quais são as reações irreversíveis?','1, 3 e 10','1, 2 e 3','7, 9 e 10','4, 5 e 6'],
+  ['A aldolase quebra a frutose-1,6-bisfosfato em...','DHAP e gliceraldeído-3-P','2 piruvatos','Glicose e frutose','2 lactatos'],
+  ['Que coenzima é reduzida a NADH na glicólise?','NAD+','FAD','NADP+','Coenzima A']];
+const DUEL_N=5,DUEL_T=20,DUEL_WIN=4,GW='GABRIEL (3º ANO)';
+const dueloEl=$('duelo');let duel=null;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function openDuel(){
+  const qs=shuffle(DUEL_Q.slice()).slice(0,DUEL_N).map(([q,...o])=>{const opts=shuffle(o.map((t,i)=>({t,ok:!i})));return {q,o:opts.map(x=>x.t),c:opts.findIndex(x=>x.ok)};});
+  duel={qs,i:0,sel:0,ok:0,t:DUEL_T,lock:0,ans:[],done:false};
+  $('duelo-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  keys.clear();state='duelo';dueloEl.hidden=false;renderDuel();duelBar();
+  [523,659,784].forEach((f,i)=>tone(f,.1,'square',.04,i*.1));
+}
+function renderDuel(){
+  const opts=$('duelo-opts'),msg=$('duelo-msg');opts.textContent='';msg.className='';msg.textContent='';
+  $('duelo-pts').textContent='ACERTOS '+duel.ok;
+  $('duelo-close').textContent=duel.done?'FECHAR':'DESISTIR';
+  if(duel.done){
+    $('duelo-n').textContent='FIM DO DUELO';
+    $('duelo-q').textContent=(duel.timeout?'Tempo esgotado! ':'')+'Você acertou '+duel.ok+' de '+DUEL_N+'. '+(duel.win?'Vitória sobre o Gabriel!':'Faltou pouco: para vencer são '+DUEL_WIN+' acertos.');
+    duel.qs.forEach((Q,i)=>{const a=duel.ans[i],b=document.createElement('div');
+      b.className='qopt '+(a&&a.ok?'right':'wrong');b.innerHTML='<b>'+(i+1)+'</b><span></span>';
+      b.lastChild.textContent=Q.q+' Resposta: '+Q.o[Q.c]+(a?'':' (sem tempo)');opts.appendChild(b);});
+    msg.textContent=duel.win?'Você venceu o Duelo Relâmpago!':'Fale com o Gabriel para pedir revanche.';msg.className=duel.win?'ok':'err';
+    return;
+  }
+  const Q=duel.qs[duel.i],a=duel.lock>0?duel.ans[duel.i]:null;
+  $('duelo-n').textContent='PERGUNTA '+(duel.i+1)+' DE '+DUEL_N;
+  $('duelo-q').textContent=Q.q;
+  Q.o.forEach((t,i)=>{
+    const b=document.createElement('button');b.type='button';b.className='qopt';
+    b.innerHTML='<b>'+LETTERS[i]+'</b><span></span>';b.lastChild.textContent=t;
+    if(a){b.disabled=true;if(i===Q.c)b.classList.add('right');else if(i===a.k)b.classList.add('wrong');else b.classList.add('off');}
+    else if(i===duel.sel)b.classList.add('sel');
+    b.addEventListener('click',e=>{e.stopPropagation();duelPick(i);});
+    opts.appendChild(b);
+  });
+  if(a){msg.textContent=a.ok?'Certo!':'Errado!';msg.className=a.ok?'ok':'err';}
+}
+function duelBar(){const f=Math.max(0,duel.t/DUEL_T);$('duelo-bar').style.width=(f*100)+'%';$('duelo-timer').classList.toggle('low',f<.3);}
+function duelMove(d){if(!duel||duel.done||duel.lock>0)return;duel.sel=(duel.sel+d+4)%4;sfx.blip();renderDuel();}
+function duelEnter(){if(!duel)return;if(duel.done)closeDuel();else duelPick(duel.sel);}
+function duelPick(k){
+  if(!duel||duel.done||duel.lock>0)return;
+  const ok=k===duel.qs[duel.i].c;duel.sel=k;duel.ans[duel.i]={k,ok};
+  if(ok){duel.ok++;tone(880,.08,'square',.04);tone(1175,.1,'square',.04,.08);}else sfx.bump();
+  duel.lock=.7;renderDuel(); // a short look at the right answer (the bar waits)
+}
+function duelTick(dt){
+  if(!duel||duel.done)return;
+  if(duel.lock>0){duel.lock-=dt;if(duel.lock<=0){duel.i++;duel.sel=0;if(duel.i>=DUEL_N)duelEnd(false);else renderDuel();}return;}
+  duel.t-=dt;duelBar();
+  if(duel.t<=0)duelEnd(true);
+}
+function duelEnd(timeout){
+  duel.done=true;duel.timeout=timeout;duel.win=duel.ok>=DUEL_WIN;duel.t=Math.max(0,duel.t);duelBar();
+  if(duel.win)sfx.open();else[392,330,262].forEach((f,i)=>tone(f,.2,'triangle',.05,i*.18));
+  renderDuel();
+}
+function closeDuel(){
+  if(state!=='duelo')return;
+  const d=duel;duel=null;dueloEl.hidden=true;state='play';keys.clear();
+  if(!d.done)return say([{who:GW,t:'Desistiu? Hahaha! Quando quiser a revanche, estou por aqui.'}]);
+  if(!d.win){setMood('gabriel','smug',8);setMood('player','worried',3);}
+  if(!d.win)return say([{who:GW,t:'Hahaha! '+d.ok+' de '+DUEL_N+'. Para me vencer, precisa de pelo menos '+DUEL_WIN+'.'},
+    {who:GW,t:'Revanche quando quiser, '+gen('calouro','caloura')+'!'}]);
+  const first=!flags.duelWin;flags.duelWin=true;updatePauseExtra();setMood('gabriel','surprised',8);setMood('player','happy',4);
+  say(first?[{who:GW,t:d.ok+' de '+DUEL_N+'?! Tá bom, tá bom... Você me venceu.'},
+    {who:GW,t:'Daqui para frente, para mim você é '+gen('o doutor','a doutora')+' '+nome1()+'. Toma, o troféu oficial do Duelo Relâmpago!'},
+    {t:'Você ganhou: TROFÉU DE PAPEL',item:'trofeu'},
+    {who:GW,t:'É de papel, mas vale muito. Quem tem um desses no 3º ano é respeitado!'}]
+   :[{who:GW,t:d.ok+' de '+DUEL_N+' de novo! Não tem jeito, '+gen('doutor','doutora')+' '+nome1()+'. Você é fera.'}]);
+}
+$('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();});
+{
+  const gab=SCENES.andar2.find(o=>o.id==='gabriel');
+  const TIPS=['A fase de pagamento rende 4 ATP e 2 NADH por glicose. Descontando os 2 ATP investidos, o saldo é de 2 ATP.',
+    'As reações 7 e 10 fazem fosforilação no nível do substrato: fosfoglicerato-cinase e piruvato-cinase.'];
+  const duelChoices=no=>[{t:'Topo! Pode mandar.',fn:openDuel},{t:'Agora não.',fn:()=>say([{who:GW,t:no}])}];
+  gab.rem=0;
+  gab.act=function(){
+    stopChat(this);this.wait=4;this.dir=faceTo(this,player);
+    const doc=()=>gen('doutor','doutora')+' '+nome1(),k=this.talk++;
+    if(flags.tiagoQ===1){flags.tiagoQ=2;updatePauseExtra();
+      return say([{who:me(),t:'Gabriel, você viu um caderno de capa laranja por aí? É do Tiago, do 1º ano.'},
+        {who:GW,t:'Laranja, cheio de adesivos? Vi ontem à tarde, em cima do balcão da biblioteca.'},
+        {who:GW,t:'Pergunta para a Dona Lúcia, a bibliotecária. Ela está aqui no corredor do 2º andar.'}]);}
+    if(!flags.duelTold){flags.duelTold=true;updatePauseExtra();
+      return say([{who:GW,t:'Ei, '+gen('calouro','caloura')+'! Já ouviu falar do Duelo Relâmpago do 3º ano?'},
+        {who:GW,t:'São '+DUEL_N+' perguntas de glicólise em '+DUEL_T+' segundos. No ano passado eu acertei 4. Para me vencer, você precisa de pelo menos '+DUEL_WIN+'.'},
+        {who:GW,t:'Não vale nota, é só pela glória. Topa?',choices:duelChoices('Ficou com medo, né? Quando quiser, é só chamar.')}]);}
+    if(!flags.duelWin&&this.rem++%2===0)
+      return say([{who:GW,t:'E aí, vai encarar o Duelo Relâmpago? '+DUEL_N+' perguntas, '+DUEL_T+' segundos.',choices:duelChoices('Tudo bem. O troféu continua comigo!')}]);
+    if(flags.duelWin&&this.rem++%3===0)
+      return say([{who:GW,t:'Respeito, '+doc()+'! Quer outra rodada do Duelo Relâmpago, só pela diversão?',choices:duelChoices('Beleza, '+doc()+'. Fica para a próxima!')}]);
+    say([{who:GW,t:(flags.duelWin?'Fala, '+doc()+'! ':'')+TIPS[k%TIPS.length]}]);
+  };
 }
 
 /* ---------- music ----------
@@ -3364,6 +3999,7 @@ function onEnter(){
   unlockAudio();
   if(state==='poster'){closePoster();return;}
   if(state==='quiz'){quizEnter();return;}
+  if(state==='duelo'){duelEnter();return;}
   if(state==='intro'){start();return;}
   if(state==='play'){interact();return;}
   if(state==='dialog'){advance();return;}
@@ -3405,6 +4041,16 @@ function onKey(e){
     else if(e.code==='KeyD'||e.code==='ArrowRight')cacaMove(0,1);
     return;
   }
+  if(state==='duelo'){
+    e.preventDefault&&e.preventDefault();
+    const k=e.key&&e.key.length===1?LETTERS.indexOf(e.key.toUpperCase()):-1;
+    if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)duelEnter();}
+    else if(e.code==='Escape'){if(!e.repeat)closeDuel();}
+    else if(e.code==='KeyW'||e.code==='ArrowUp')duelMove(-1);
+    else if(e.code==='KeyS'||e.code==='ArrowDown')duelMove(1);
+    else if(k>=0&&!e.repeat)duelPick(k);
+    return;
+  }
   if(state==='review'){
     if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)reviewOpen();}
     else if(e.code==='Escape'){e.preventDefault();reviewDone();}
@@ -3437,9 +4083,12 @@ document.querySelectorAll('.dpad button').forEach(b=>{
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{keys.delete(k);b.classList.remove('on');}));
 });
 $('abtn').addEventListener('click',onEnter);
-// clicking or tapping also works as ENTER: the dialog box advances, the game screen talks/inspects
-$('dialog').addEventListener('click',()=>{if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
-cv.addEventListener('click',()=>{unlockAudio();if(state==='play')interact();});
+// a mouse click also works as ENTER (the dialog box advances, the game screen talks/inspects; it helps the Xbox
+// cursor mode). A finger tap does not: on the phone only the on-screen ENTER button does that.
+let lastPtr='';addEventListener('pointerdown',e=>{lastPtr=e.pointerType;},true);
+const tapped=e=>(e.pointerType||lastPtr)==='touch';
+$('dialog').addEventListener('click',e=>{if(tapped(e))return;if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
+cv.addEventListener('click',e=>{if(tapped(e))return;unlockAudio();if(state==='play')interact();});
 
 /* ---------- game controller (Xbox and other standard-mapping pads, through the Gamepad API) ----------
    A = ENTER, X = ESC in sheets, review, word search, poster and pause (and space on the name keyboard),
@@ -3457,7 +4106,7 @@ function padKey(code,repeat){
     if((code==='Enter'||code==='Menu')&&$('telaTitulo').style.display!=='none')$('telaTitulo').click();
     return;
   }
-  if(code==='KeyX'&&['quiz','review','caca','poster','pause'].includes(state))code='Escape'; // X: leave the sheet, back, close
+  if(code==='KeyX'&&['quiz','review','caca','poster','pause','duelo'].includes(state))code='Escape'; // X: leave the sheet, back, close
   if(code==='Menu'){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
@@ -3520,6 +4169,7 @@ function pauseItems(){
   return [{id:'voltar',t:'Voltar ao jogo'},
     {id:'musica',t:'Música',v:Math.round(music.vol*100)},
     {id:'efeitos',t:'Efeitos sonoros',v:Math.round(fxVol*100)}]
+    .concat(flags.barra&&!flags.barraUsed&&pauseBack==='play'?[{id:'barra',t:'Comer a barrinha (relógio parado por 2 min)'}]:[])
     .concat(flags.poster&&pauseBack==='play'?[{id:'cartaz',t:'Ver o cartaz da glicólise'}]:[])
     .concat([{id:'controles',t:'Como jogar com o controle'}]);
 }
@@ -3559,6 +4209,7 @@ function pauseSelect(){
   if(it.id==='voltar')closePause();
   else if(it.id==='musica'||it.id==='efeitos')pauseAdjust(1);
   else if(it.id==='cartaz'){closePause();openPoster();}
+  else if(it.id==='barra'){closePause();eatBar();}
   else if(it.id==='controles'){pauseHelp=true;sfx.blip();renderPause();}
 }
 function pauseBackKey(){if(pauseHelp){pauseHelp=false;renderPause();}else closePause();}
@@ -3596,6 +4247,8 @@ function update(dt){
   updatePedro(dt);updateWanderers(dt);janUpdate(dt);
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
   if(state==='gather'&&gatherSt)updateGather(dt);
+  if(state==='duelo')duelTick(dt);
+  $('hud-clock').classList.toggle('energia',flags.energia>0);
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
   if(state==='play'&&!flags.graded){
@@ -3652,7 +4305,7 @@ function render(t){
   list.sort((a,b)=>a.y-b.y);
   for(const it of list){
     if(it.o){blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}}
-    else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));fctx.drawImage(c.c,px_-8,py_-23);}
+    else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
   }
   g=fctx;
   // quest markers
@@ -3694,7 +4347,7 @@ reset();state='boot';
 // thumbnail for the character screen (g: 'm' boy, 'f' girl), facing down in everyday clothes
 window.miniaturaPersonagem=(cv,gn,blink,sk)=>{
   const old=genero,oldP=pele;genero=gn;if(sk!=null)pele=sk;const s=personSprite('player','shirt','down',0,!!blink);genero=old;pele=oldP;
-  const c=cv.getContext('2d');cv.width=16;cv.height=s.h;c.clearRect(0,0,16,s.h);c.drawImage(s.c,0,0);
+  const c=cv.getContext('2d');cv.width=20;cv.height=30;c.clearRect(0,0,20,30);c.drawImage(s.c,0,0); // paper cut-out (2:3 like the card)
 };
 window.registrarPersonagem=(gn,sk)=>{genero=gn==='f'?'f':'m';if(sk!=null)pele=sk;};
 window.registrarJogador=n=>{
