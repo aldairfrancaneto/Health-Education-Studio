@@ -4160,15 +4160,43 @@ function lastFicha(){ // after the 10th card: put them in order now or later (lo
       {t:'Organizar as fichas agora',fn:()=>openSegredo('ordem')},
       {t:'Depois (no armário 42)',fn:()=>{}}]}]);
 }
+/* Larissa leaves the ground floor after the bump: she runs down to the corridor lane and west, towards the
+   lockers, and is gone (off screen, or at the lockers at the latest). She shows up again in the hidden room
+   and, once the quest is done, walks the 2nd-floor corridor in front of the library. */
+var larissa=SCENES.terreo.find(o=>o.id==='larissa'); // var: alostReset may run (through reset) before this line
+var laRun=null; // the points she still runs through, or null
+function larissaMove(sc,x0,x1,y){ // takes her out of whatever corridor she is in and puts her on another lane
+  for(const k in WANDER){const i=WANDER[k].indexOf(larissa);if(i>=0)WANDER[k].splice(i,1);}
+  for(const k of ['terreo','andar1','andar2']){const i=SCENES[k].indexOf(larissa);if(i>=0)SCENES[k].splice(i,1);}
+  if(larissa.seat){larissa.seat.by=null;larissa.seat=null;}
+  stopChat(larissa);Object.assign(larissa,{sitting:0,noShadow:false,queue:[],tx:null,wait:1,chat:0,x0,x1,y0:y,y,x:x0+Math.random()*(x1-x0),dir:'down'});
+  if(sc){syncW(larissa);SCENES[sc].push(larissa);WANDER[sc].push(larissa);}
+}
+function larissaRun(dt){
+  if(!laRun)return;
+  if(scene!=='terreo'){laRun=null;larissaMove(null,0,0,0);return;}
+  if(state!=='play')return;
+  const [tx,ty]=laRun[0],dx=tx-larissa.x,dy=ty-larissa.y,d=Math.hypot(dx,dy),st=Math.min(d,78*dt);
+  if(d>.5){larissa.x+=dx/d*st;larissa.y+=dy/d*st;larissa.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');}
+  larissa.moving=true;larissa.anim+=dt*12;syncW(larissa);
+  if(d<=.5)laRun.shift();
+  if(!laRun.length||larissa.x<camX-12){laRun=null;larissaMove(null,0,0,0);}
+}
 // Larissa bumps into the player at the lab door (the envelope appears in locker 42 right after)
 function alostStart(){
-  const la=SCENES.terreo.find(o=>o.id==='larissa');
-  if(la&&!(la.sitting>0)&&!la.seat){stopChat(la);la.x=Math.min(la.x1,player.x+16);la.y=player.y+8;la.tx=null;la.queue=[];la.wait=0;la.dir='left';syncW(la);}
+  const la=SCENES.terreo.includes(larissa)?larissa:null;
+  if(la){
+    {const i=WANDER.terreo.indexOf(la);if(i>=0)WANDER.terreo.splice(i,1);} // from now on only larissaRun moves her
+    if(la.seat){la.seat.by=null;la.seat=null;}
+    stopChat(la);Object.assign(la,{sitting:0,noShadow:false,tx:null,queue:[],wait:0,dir:'left',x:Math.min(la.x1,player.x+16),y:player.y+8});syncW(la);
+  }
   say([{t:'Na saída do laboratório, alguém de jaleco esbarra em você com pressa.'},
     {who:LW,t:'Ai! Desculpa, desculpa... Estou atrasada.'},
     {t:'Ela para por um instante, olha bem para você e baixa a voz:'},
     {who:LW,t:'Sabe... às vezes o que a gente nem sabia que procurava já está esperando no lugar de sempre. Aquele que tem o seu nome.'},
-    {t:'Antes que você pergunte qualquer coisa, ela some pelo corredor, na direção dos armários.'}],()=>{flags.alost=1;updatePauseExtra();});
+    {t:'Antes que você pergunte qualquer coisa, ela some pelo corredor, na direção dos armários.'}],()=>{
+      flags.alost=1;updatePauseExtra();
+      if(la)laRun=[[la.x,la.y0],[226,la.y0]];});
 }
 // called by updateFade when the scene changes
 function alostScene(from,to){
@@ -4182,6 +4210,7 @@ function alostScene(from,to){
   }
   if(from==='salaOculta'){
     flags.secretOpen=false;secretAnim=-1;wallPass={n:0,side:null};larissaOut();
+    if(flags.alost===6&&!SCENES.andar2.includes(larissa))larissaMove('andar2',334,470,96); // in front of the library from now on
     onArrive=()=>say([{t:'Atrás de você, os tijolos voltam ao lugar, um a um. A parede está lisa de novo.'}]);
   }
 }
@@ -4500,8 +4529,6 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
     return false;
   });
   wrap(find('larissa'),function(){
-    if(mid()&&!flags.hintLarissa){flags.hintLarissa=true;face(this);
-      return say([{who:LW,t:'Envelope? Que envelope? Não sei de nada, não.'},{who:LW,t:'Boa sorte na prova de amanhã.'},{t:'Ela sorri de um jeito estranho.'}]);}
     if(flags.alost===6&&this.talk%2===0){face(this);this.talk++;return say([{who:LW,t:'Shhh. O que acontece na sala fica na sala.'}]);}
     return false;
   });
@@ -4521,6 +4548,7 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
 }
 function alostReset(){
   wallPass={n:0,side:null};secretAnim=-1;onArrive=null;larissaOut();
+  laRun=null;if(larissa&&!SCENES.terreo.includes(larissa))larissaMove('terreo',392,676,134); // back to the ground floor for a new game
   if(sg){sg=null;sgEl.hidden=true;}
   $('enigma-cnt').textContent='';
 }
@@ -4919,7 +4947,7 @@ function update(dt){
   if(scene==='sala101'&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
   if(state==='gather'&&gatherSt)updateGather(dt);
   if(state==='duelo')duelTick(dt);
-  alostTick(dt);
+  alostTick(dt);larissaRun(dt);
   const cl=hhmm(gameMinutes());
   if(cl!==clockTxt){clockTxt=cl;$('hud-clock').textContent=cl;}
   if(state==='play'&&!flags.graded){
