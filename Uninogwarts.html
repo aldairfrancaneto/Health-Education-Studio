@@ -83,6 +83,9 @@ canvas{display:block;width:100%;height:100%;image-rendering:auto}
 .keys span{display:flex;align-items:center;gap:calc(var(--u)*2)}
 kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);background:var(--panel);border:calc(var(--u)*.6) solid var(--line);border-bottom-width:calc(var(--u)*1.4);padding:calc(var(--u)*1.2) calc(var(--u)*1.8)}
 .btn{font-family:var(--f-display);font-size:calc(var(--u)*3.6);background:var(--accent);color:#1a1606;border:none;padding:calc(var(--u)*3) calc(var(--u)*5);cursor:pointer;box-shadow:0 calc(var(--u)*1.2) 0 #a8862a}
+.end-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*3)}
+.btn.alt{background:var(--panel);color:var(--ink);box-shadow:0 calc(var(--u)*1.2) 0 #0d0806;outline:calc(var(--u)*.6) solid var(--line)}
+.end-btns.kb .btn.on{outline:calc(var(--u)*.8) solid var(--ink);outline-offset:calc(var(--u)*.8)}
 .btn:active{transform:translateY(calc(var(--u)*1));box-shadow:none}
 .stats{display:flex;gap:calc(var(--u)*8);font-size:calc(var(--u)*7);font-variant-numeric:tabular-nums}
 .stats div{display:flex;flex-direction:column;gap:calc(var(--u)*1)}
@@ -515,7 +518,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
           <div><b>NOTA</b><span id="st-obj">0/10</span></div>
           <div><b>ENTREGA</b><span id="st-time">07h30</span></div>
         </div>
-        <button class="btn" id="btn-again" type="button">ENTER · JOGAR DE NOVO</button>
+        <div class="end-btns"><button class="btn" id="btn-again" type="button">ENTER · JOGAR DE NOVO</button><button class="btn alt" id="btn-restart" type="button" hidden>REINICIAR O JOGO</button></div>
       </div>
     </div>
   </main>
@@ -3565,12 +3568,17 @@ function finish(pass){
     :'Você tirou '+n+' de '+QUIZ_N+' na lição de casa. Eram necessários '+PASS+' acertos. Revise a glicólise antes da prova de amanhã.';
   $('st-obj').textContent=n+'/'+QUIZ_N;$('st-time').textContent=hhmm(gameMinutes());
   $('btn-again').innerHTML=keyLabel()+(pass?' · CONTINUAR NO CENÁRIO':' · JOGAR DE NOVO');
+  $('btn-restart').hidden=!pass;endSel=0;syncEndBtns();
   if(pass)sfx.open();else{music.stop();[392,330,262,196].forEach((f,i)=>tone(f,.3,'triangle',.06,i*.22));}
   setTimeout(()=>{$('end').hidden=false;$('btn-again').focus({preventScroll:true});},500);
 }
 // end screen button: after a win the player keeps exploring; after a game over the game starts again
+// passing: two buttons, keep exploring (default) or restart from scratch; arrows / W-S-A-D switch between them
+let endSel=0;
+function syncEndBtns(){$('btn-again').classList.toggle('on',endSel===0);$('btn-restart').classList.toggle('on',endSel===1);$('btn-again').closest('.end-btns').classList.toggle('kb',!!flags.pass);}
+function endMove(){if(!flags.pass||$('end').hidden)return;endSel=1-endSel;sfx.blip();syncEndBtns();}
 function endAction(){
-  if(flags.pass){$('end').hidden=true;state='play';keys.clear();}
+  if(flags.pass&&endSel===0){$('end').hidden=true;state='play';keys.clear();}
   else again();
 }
 function interact(){
@@ -4013,7 +4021,7 @@ const DUEL_Q=[ // question, right answer, then three wrong ones
   ['Quais são as reações irreversíveis?','1, 3 e 10','1, 2 e 3','7, 9 e 10','4, 5 e 6'],
   ['A aldolase quebra a frutose-1,6-bisfosfato em...','DHAP e gliceraldeído-3-P','2 piruvatos','Glicose e frutose','2 lactatos'],
   ['Que coenzima é reduzida a NADH na glicólise?','NAD+','FAD','NADP+','Coenzima A']];
-const DUEL_N=5,DUEL_T=20,DUEL_WIN=4,GW='GABRIEL (3º ANO)';
+const DUEL_N=5,DUEL_T=25,DUEL_WIN=4,GW='GABRIEL (3º ANO)';
 const dueloEl=$('duelo');let duel=null;
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 function openDuel(){
@@ -4158,7 +4166,9 @@ function alostStart(){
   if(la&&!(la.sitting>0)&&!la.seat){stopChat(la);la.x=Math.min(la.x1,player.x+16);la.y=player.y+8;la.tx=null;la.queue=[];la.wait=0;la.dir='left';syncW(la);}
   say([{t:'Na saída do laboratório, alguém de jaleco esbarra em você com pressa.'},
     {who:LW,t:'Ai! Desculpa, desculpa... Estou atrasada.'},
-    {t:'Ela segue apressada pelo corredor, sem olhar para trás.'}],()=>{flags.alost=1;updatePauseExtra();});
+    {t:'Ela para por um instante, olha bem para você e baixa a voz:'},
+    {who:LW,t:'Sabe... às vezes o que a gente nem sabia que procurava já está esperando no lugar de sempre. Aquele que tem o seu nome.'},
+    {t:'Antes que você pergunte qualquer coisa, ela some pelo corredor, na direção dos armários.'}],()=>{flags.alost=1;updatePauseExtra();});
 }
 // called by updateFade when the scene changes
 function alostScene(from,to){
@@ -4690,6 +4700,7 @@ function onKey(e){
     else if(k>=0&&!e.repeat)duelPick(k);
     return;
   }
+  if(state==='end'&&['KeyW','KeyS','KeyA','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)){e.preventDefault&&e.preventDefault();endMove();return;}
   if(state==='segredo'){
     e.preventDefault&&e.preventDefault();
     if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)sgEnter();}
@@ -4873,7 +4884,8 @@ function pauseSelect(){
 }
 function pauseBackKey(){if(pauseHelp){pauseHelp=false;renderPause();}else closePause();}
 $('btn-start').addEventListener('click',e=>{e.stopPropagation();unlockAudio();start();});
-$('btn-again').addEventListener('click',e=>{e.stopPropagation();endAction();});
+$('btn-again').addEventListener('click',e=>{e.stopPropagation();endSel=0;endAction();});
+$('btn-restart').addEventListener('click',e=>{e.stopPropagation();endSel=1;endAction();});
 $('btn-start').addEventListener('keydown',e=>{if(e.code==='Enter')e.preventDefault();});
 $('btn-again').addEventListener('keydown',e=>{if(e.code==='Enter')e.preventDefault();});
 function start(){$('intro').hidden=true;state='play';startTime=performance.now();music.scene(scene);}
