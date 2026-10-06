@@ -58,10 +58,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
 canvas{display:block;width:100%;height:100%;image-rendering:auto}
 
 /* Dialog */
-#dialog{position:absolute;left:3%;right:3%;bottom:4%;min-height:26%;background:rgba(32,21,16,.96);border:calc(var(--u)*1) solid var(--ink);box-shadow:inset 0 0 0 calc(var(--u)*1) var(--line);padding:calc(var(--u)*4) calc(var(--u)*6) calc(var(--u)*4);box-sizing:border-box}
+#dialog{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:94%;min-width:calc(var(--u)*110);bottom:4%;background:rgba(32,21,16,.96);border:calc(var(--u)*1) solid var(--ink);box-shadow:inset 0 0 0 calc(var(--u)*1) var(--line);padding:calc(var(--u)*4) calc(var(--u)*6) calc(var(--u)*4);box-sizing:border-box}
 #dlg-who{position:absolute;top:calc(var(--u)*-5);left:calc(var(--u)*5);font-family:var(--f-display);font-size:calc(var(--u)*3.4);background:var(--accent);color:#1a1606;padding:calc(var(--u)*1.4) calc(var(--u)*2.4)}
 #dlg-who:empty{display:none}
-#dlg-text{font-size:calc(var(--u)*8.2);line-height:1.05;max-width:62ch;min-height:2.1em}
+#dlg-text{font-size:calc(var(--u)*8.2);line-height:1.05;max-width:52ch;min-height:2.1em;display:grid}
+/* the whole line sits invisible under the typed part, so the balloon takes the size of the line from the start */
+#dlg-text>span{grid-area:1/1}#dlg-text>.dg{visibility:hidden}
 #dialog.item #dlg-text{color:var(--accent)}
 #dlg-next{position:absolute;right:calc(var(--u)*4);bottom:calc(var(--u)*2.5);font-family:var(--f-display);font-size:calc(var(--u)*3);color:var(--accent);animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:0}}
@@ -281,6 +283,7 @@ body.gp .tela-enredo .ctl-help{display:flex}
 #dlg-choices button::before{content:'  ';white-space:pre;font-family:var(--f-display);font-size:.5em}
 #dlg-choices button.on{color:var(--accent);border-color:var(--line);background:rgba(217,164,65,.08)}
 #dlg-choices button.on::before{content:'▶ ';color:var(--accent)}
+#dlg-choices button.volta{margin-top:calc(var(--u)*1.5);color:#a9c7d2;font-size:calc(var(--u)*6)}#dlg-choices button.volta.on{color:var(--accent)}
 .rev-intro{text-align:justify}
 .rev-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:6px 0 4px}
 .rev-item{font:inherit;color:inherit;text-align:left;cursor:pointer;background:#fbf6e6;border:2px solid #b3a38a;padding:6px 10px;display:flex;flex-direction:column;gap:2px}
@@ -358,6 +361,13 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 #sg-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
 #sg-msg.ok{color:#1f7a43}#sg-msg.err{color:#b3261e}
 #sg-ok.kb{outline:3px solid #2a1c16;outline-offset:2px}
+#dz-txt{margin:10px 0 8px}#dz-txt b{display:block;font-family:var(--f-display);font-weight:400;font-size:10px;letter-spacing:.06em;color:#7a2e3e;margin:8px 0 3px}
+#dz-list .sg-row>span{flex:1 1 100%}
+#dz-list .ctx{display:block;font-size:.8em;color:#7a522f}
+.sg-row button.m.on{background:#2a1c16;color:#f3ead2;border-color:#2a1c16}
+.sg-row button.cur{outline:2px solid #2d6fb5;outline-offset:1px}
+#dz-ok.kb{outline:3px solid #2a1c16;outline-offset:2px}
+#dz-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}#dz-msg.err{color:#b3261e}
 #duelo-msg.ok{color:#1f7a43}#duelo-msg.err{color:#b3261e}
 /* Page footer (same information as the other games); it takes its own row below the game, so the game area shrinks instead of the page scrolling */
 .site-footer{flex:none;padding:7px 14px;border-top:1px solid rgba(255,255,255,.15);background:#0d0806;color:rgba(255,255,255,.55);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:12.5px;letter-spacing:.02em;text-align:left;line-height:1.5}
@@ -501,6 +511,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="slot opt" id="slot-trofeu" title="Troféu de papel do Duelo Relâmpago"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="6" height="4" fill="#f4f6f4"/><rect x="2" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="9" y="2" width="1" height="2" fill="#f4f6f4"/><rect x="5" y="2" width="2" height="1" fill="#d9a441"/><rect x="5" y="5" width="2" height="3" fill="#d8dee2"/><rect x="3" y="8" width="6" height="2" fill="#f4f6f4"/><rect x="3" y="10" width="6" height="1" fill="#9aa2a9"/></svg></div></div>
       <div class="slot opt" id="slot-enigma" title="Fichas do bilhete anônimo"><div class="box"><svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="9" fill="#e8d9a8"/><rect x="3" y="1" width="8" height="9" fill="#f3e6bd"/><rect x="4" y="3" width="5" height="1" fill="#a8862a"/><rect x="4" y="5" width="4" height="1" fill="#a8862a"/><rect x="7" y="7" width="3" height="2" fill="#a12a22"/><rect x="8" y="6" width="1" height="1" fill="#a12a22"/></svg><b class="cnt" id="enigma-cnt"></b></div></div>
       <div class="slot opt" id="slot-convite" title="Carta-convite da Liga de Metabolismo"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="3" width="10" height="7" fill="#efe3c8"/><rect x="1" y="3" width="10" height="1" fill="#d8c79a"/><rect x="2" y="4" width="2" height="1" fill="#b3a38a"/><rect x="4" y="5" width="4" height="1" fill="#b3a38a"/><rect x="8" y="4" width="2" height="1" fill="#b3a38a"/><rect x="5" y="6" width="2" height="2" fill="#a12a22"/><rect x="4" y="6" width="1" height="1" fill="#7a2e3e"/></svg></div></div>
+      <div class="slot opt" id="slot-distintivo" title="Distintivo de Monitor do Simulador"><div class="box"><svg viewBox="0 0 12 12"><rect x="4" y="0" width="4" height="3" fill="#2d6fb5"/><rect x="3" y="3" width="6" height="1" fill="#a8862a"/><rect x="2" y="4" width="8" height="6" fill="#c99a3c"/><rect x="3" y="10" width="6" height="1" fill="#a8862a"/><rect x="4" y="5" width="4" height="4" fill="#1f4a33"/><rect x="5" y="6" width="2" height="2" fill="#5aa865"/></svg></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
       </div>
@@ -538,7 +549,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.6.1 &middot; Última atualização: 6 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.9.8 &middot; Última atualização: 6 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -624,6 +635,24 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </div>
 </div>
 
+<div class="modal" id="dz" hidden role="dialog" aria-label="Desafio da Liga">
+  <div class="modal-bar">
+    <span class="mt">DESAFIO DA LIGA · BANCADA DE EFETORES</span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd><kbd>A</kbd><kbd>D</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> colocar ou tirar"><kbd>ENTER</kbd> colocar ou tirar</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> sair"><kbd>ESC</kbd> sair</span></span>
+  </div>
+  <div class="quiz-body" id="dz-body">
+    <div class="sheet sg-sheet">
+      <div class="sh-head"><span id="dz-head"></span><span id="dz-aluno"></span></div>
+      <div id="dz-txt"></div>
+      <div id="dz-list"></div>
+      <div class="sh-foot">
+        <span id="dz-msg" aria-live="polite"></span>
+        <span class="sh-btns"><button class="mbtn" id="dz-close" type="button">SAIR</button><button class="mbtn primary" id="dz-ok" type="button">LANÇAR A GLICOSE</button></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="duelo" hidden role="dialog" aria-label="Duelo Relâmpago">
   <div class="modal-bar">
     <span class="mt">DUELO RELÂMPAGO · GABRIEL (3º ANO)</span>
@@ -666,7 +695,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 
 <script>
 (()=>{
-const W=384,H=224,SW1=704; // screen size; the 1st floor is wider and scrolls
+const W=384,H=224,SW1=704,FW=1440; // screen size; the 1st floor is wider and scrolls; FW: widest scene (the simulator ride)
 const $=id=>document.getElementById(id);
 const cv=$('game');
 const ctx=cv.getContext('2d');
@@ -675,7 +704,7 @@ const ctx=cv.getContext('2d');
    Everything is drawn at native 384x224 on offscreen canvases, then copied to the
    screen with a whole-number zoom, so every pixel of the art has the same size. */
 function mk(w,h,read){const c=document.createElement('canvas');c.width=w;c.height=h;return [c,c.getContext('2d',read?{willReadFrequently:true}:undefined)];}
-const [frame,fctx]=mk(SW1,H);
+const [frame,fctx]=mk(FW,H);
 const [bg,bgctx]=mk(SW1,H);
 const [bg1,bg1ctx]=mk(SW1,H);
 const [bg2,bg2ctx]=mk(SW1,H);
@@ -683,7 +712,8 @@ const [bgS,bgSctx]=mk(W,H);
 const [bgS3,bgS3ctx]=mk(W,H);
 const [bgS201,bgS201ctx]=mk(W,H);
 const [bgLab,bgLabctx]=mk(W,H);
-const [scr,sctx]=mk(SW1,H,true);
+const [bgSim,bgSimctx]=mk(W,H);
+const [scr,sctx]=mk(FW,H,true);
 let g=fctx;
 function r(x,y,w,h,c){g.fillStyle=c;g.fillRect(x,y,w,h);}
 function px(x,y,c){g.fillStyle=c;g.fillRect(x,y,1,1);}
@@ -742,10 +772,10 @@ const qcache=new Map();
 function qi(R,G,B){const k=(R<<16)|(G<<8)|B;let v=qcache.get(k);if(v===undefined){v=nearestIdx([R,G,B]);qcache.set(k,v);}return v;}
 
 function bake(drawFn,hint,ink){
-  sctx.clearRect(0,0,SW1,H);
+  sctx.clearRect(0,0,FW,H);
   const prev=g;g=sctx;drawFn();g=prev;
   const hx=hint?Math.max(0,Math.floor(hint.x)):0,hy=hint?Math.max(0,Math.floor(hint.y)):0;
-  const hw=hint?Math.min(SW1-hx,Math.ceil(hint.w)):SW1,hh=hint?Math.min(H-hy,Math.ceil(hint.h)):H;
+  const hw=hint?Math.min(FW-hx,Math.ceil(hint.w)):FW,hh=hint?Math.min(H-hy,Math.ceil(hint.h)):H;
   if(hw<=0||hh<=0)return null;
   const d=sctx.getImageData(hx,hy,hw,hh).data;
   let x0=hw,y0=hh,x1=-1,y1=-1;
@@ -793,8 +823,8 @@ Y:['101','101','010','010','010'],Z:['111','001','010','100','111'],
 '.':['0','0','0','0','1'],',':['0','0','0','1','1'],':':['0','1','0','1','0'],'·':['0','0','1','0','0'],'-':['000','000','111','000','000'],
 '!':['1','1','1','0','1'],'?':['110','001','010','000','010'],'º':['010','101','010','000','000'],'↑':['00100','01110','10101','00100','00100'],
 '/':['001','001','010','100','100'],'(':['01','10','10','10','01'],')':['10','01','01','01','10'],'"':['101','101','000','000','000'],"'":['1','1','0','0','0']};
-const ACC={'Á':['A','a'],'É':['E','a'],'Í':['I','a'],'Ó':['O','a'],'Ú':['U','a'],'Ã':['A','t'],'Õ':['O','t'],'Â':['A','c'],'Ê':['E','c'],'Ô':['O','c'],'Ç':['C','d']};
-const ACCPX={a:[[2,-2],[1,-1]],t:[[1,-2],[2,-2],[0,-1],[1,-1]],c:[[1,-2],[0,-1],[2,-1]],d:[[1,5],[0,6]]};
+const ACC={'Á':['A','a'],'É':['E','a'],'Í':['I','a'],'Ó':['O','a'],'Ú':['U','a'],'Ã':['A','t'],'Õ':['O','t'],'Â':['A','c'],'Ê':['E','c'],'Ô':['O','c'],'Ç':['C','d'],'À':['A','g'],'È':['E','g'],'Ò':['O','g']};
+const ACCPX={a:[[2,-2],[1,-1]],g:[[0,-2],[1,-1]],t:[[1,-2],[2,-2],[0,-1],[1,-1]],c:[[1,-2],[0,-1],[2,-1]],d:[[1,5],[0,6]]};
 function glyph(ch){if(GL[ch])return {g:GL[ch]};const a=ACC[ch];if(a)return {g:GL[a[0]],acc:a[1]};return null;}
 function pxW(s){s=s.toUpperCase();let w=0;for(const ch of s){const gl=glyph(ch);w+=(gl?gl.g[0].length:2)+1;}return Math.max(0,w-1);}
 function pxText(s,x,y,c,align){
@@ -855,8 +885,8 @@ function reset(){
   inspected=new Set();provas={};if(typeof caca!=='undefined')caca=null; // provas: answered exam sheets, {reaction:{sel,ok}}
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
-  dialog=null;labOpen=false;startTime=0;endTime=0;gameMin=0;
-  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','enigma','convite'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
+  dialog=null;labOpen=false;startTime=0;rideSt=null;simPage='main';dz=null;if($('dz'))$('dz').hidden=true;endTime=0;gameMin=0;
+  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','enigma','convite','distintivo'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
   alostReset();
@@ -2400,6 +2430,7 @@ objects=SCENES.terreo;
    ====================================================================== */
 GL['→']=['00100','00010','11111','00010','00100'];
 GL['+']=['000','010','111','010','000'];
+GL['%']=['101','001','010','100','101'];
 GL['=']=['000','111','000','111','000'];
 objects=[];SCENES.sala101=objects;
 const WIN101=[[16,42],[262,42]];
@@ -2971,6 +3002,25 @@ function drawCacaTable(){
 }
 add({id:'mesaCaca',name:'Caça-palavras',cx:80,top:180,base:208,solid:{x:54,y:196,w:52,h:12},zone:{x:44,y:182,w:72,h:30},
   key:()=>flags&&flags.caca?1:0,draw:drawCacaTable,act:()=>openCaca()});
+// simulator console (bottom right): works like a door to the computer-screen room
+function drawSimConsole(){
+  // seen from behind: the screen faces the spectrophotometer bench (with the bonus sheet), so the keyboard
+  // sits on the far edge of the desk and we see the back of the monitor
+  const x=300;
+  r(x,186,40,10,'#9aa2a9');r(x,186,40,1,'#b9c2c8');
+  r(x,196,40,12,'#4a5055');r(x,196,40,1,'#2c3236');r(x+2,198,16,8,'#2c3236');r(x+22,198,16,8,'#2c3236');
+  r(x+3,208,3,2,'#1d2226');r(x+34,208,3,2,'#1d2226');
+  r(x+2,186,36,4,'#d8dee2');r(x+2,186,36,1,'#efe3c8');for(let k=4;k<36;k+=3)px(x+k,188,'#9aa2a9');
+  r(x+15,190,10,4,'#3a4045');r(x+18,186,4,4,'#4a5055');
+  r(x+6,168,28,20,'#2c3236');r(x+7,169,26,18,'#5d646a');r(x+7,169,26,1,'#7b8186');
+  for(let k=0;k<4;k++)r(x+10,172+k*3,20,1,'#4a5055');
+  r(x+15,183,10,3,'#efe3c8');pxText('SIM',x+20,184,'#1f4a33','center');
+  pxLine(x+20,194,x+24,207,'#1d2226');
+}
+add({id:'simulador',name:'Simulador',cx:320,top:166,base:210,solid:{x:300,y:198,w:40,h:12},zone:{x:274,y:164,w:78,h:48},
+  draw:drawSimConsole,
+  fx:t=>{const on=Math.floor(t*2)%2;px(331,185,on?'#5aa865':'#1f4a33');if(on){px(312,167,'#86aebb');px(318,167,'#86aebb');px(325,167,'#86aebb');}},
+  act:()=>{tone(880,.06,'square',.04);tone(1320,.08,'square',.04,.07);simSel=0;goScene('salaSim',192,182,'up','SIMULADOR');}});
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
 // benches that sit right next to a study table are taken out (too crowded)
@@ -3054,6 +3104,12 @@ function sitDown(o){ // picks a free seat near the lane and walks there
   const st=free[(Math.random()*free.length)|0];st.by=o;o.seat=st;o.queue=st.go(o.y0);
   [o.tx,o.ty]=o.queue.shift();return true;
 }
+// is the player standing where the NPC gets up (or right beside the seat)?
+function nearSeat(o){
+  const st=o.seat;
+  if(Math.abs(player.x-o.x)<18&&Math.abs(player.y-o.y)<14)return true;
+  return Math.abs(player.x-st.cx)<16&&player.y>st.top&&player.y<st.base+14;
+}
 function standUp(o){ // walks back the same way and frees the seat
   const st=o.seat;o.sitting=0;o.noShadow=false;o.sitCool=35+Math.random()*50;
   o.queue=st.go(o.y0).reverse().slice(1);o.seat=null;st.by=null;
@@ -3064,7 +3120,12 @@ function updateWanderers(dt){
   const L=WANDER[scene];if(!L)return;
   for(const o of L){
     o.moving=false;
-    if(o.sitting>0){o.sitting-=dt;if(o.wait>0)o.wait-=dt;else if(o.sitting<=0)standUp(o);continue;}
+    if(o.sitting>0){
+      if(o.wait>0){o.wait-=dt;continue;} // talking to the player: the sitting time does not run
+      o.sitting-=dt;
+      if(o.sitting<=0){if(nearSeat(o))o.sitting=.5;else standUp(o);} // waits for the player to step away
+      continue;
+    }
     if(o.chat>0){o.chat-=dt;if(o.chat<=0)stopChat(o);continue;}
     o.cool-=dt;o.sitCool-=dt;
     if(o.wait>0){o.wait-=dt;continue;}
@@ -3086,7 +3147,7 @@ function updateWanderers(dt){
       if(o.queue.length){[o.tx,o.ty]=o.queue.shift();continue;}
       if(o.seat){ // on the seat: faces the corridor and stays a while
         const st=o.seat;o.tx=null;o.dir='down';o.sitting=10+Math.random()*14;o.noShadow=true;
-        Object.assign(o,{cx:st.cx,base:st.base,top:st.top,solid:{x:st.cx-5,y:st.base-5,w:10,h:4}});o.zone=expand({x:st.cx-6,y:st.top+4,w:12,h:st.crop?18:24},6);
+        Object.assign(o,{cx:st.cx,base:st.base,top:st.top,solid:{x:st.cx-5,y:st.base-5,w:10,h:4}});o.zone={x:st.cx-16,y:st.top-8,w:32,h:st.base+16-(st.top-8)}; // reachable from in front of the bench or across the table
         continue;
       }
       if(o.meet){
@@ -3372,12 +3433,15 @@ function startLine(){
 }
 function renderDialog(){
   const L=dialog.lines[dialog.i],done=dialog.shown>=L.t.length,box=$('dlg-choices');
-  $('dlg-text').textContent=L.t.slice(0,Math.floor(dialog.shown));
+  const tx=$('dlg-text');
+  if(tx.dataset.full!==L.t||tx.children.length!==2){tx.dataset.full=L.t;tx.textContent='';
+    const a=document.createElement('span'),b=document.createElement('span');a.className='dg';a.textContent=L.t;tx.append(a,b);}
+  tx.lastChild.textContent=L.t.slice(0,Math.floor(dialog.shown));
   $('dlg-next').style.visibility=done&&!L.choices?'visible':'hidden';
   box.textContent='';
   if(L.choices&&done){
     L.choices.forEach((c,i)=>{
-      const b=document.createElement('button');b.type='button';b.textContent=c.t;b.className=i===dialog.ch?'on':'';
+      const b=document.createElement('button');b.type='button';b.textContent=c.t;b.className=(i===dialog.ch?'on':'')+(c.cls?' '+c.cls:'');
       b.addEventListener('click',()=>{dialog.ch=i;pickChoice();});
       box.appendChild(b);
     });
@@ -3582,6 +3646,8 @@ function endAction(){
   else again();
 }
 function interact(){
+  if(scene==='salaSim'){simSelect();return;}
+  if(scene==='simGlic'&&rideSt&&rideSt.mode==='desafio')return;
   const o=nearest();
   if(!o)return;
   inspected.add(o.id);sfx.blip();o.act();
@@ -3625,7 +3691,8 @@ function fitPosterImg(){
 }
 $('poster-img').addEventListener('load',fitPosterImg);
 addEventListener('resize',fitPosterImg);
-function closePoster(){posterEl.hidden=true;state='play';keys.clear();}
+function closePoster(){posterEl.hidden=true;state='play';keys.clear();
+  if(scene==='simGlic'&&rideSt&&rideSt.pend){const n=rideSt.pend;rideSt.pend=0;rideSt.toast=null;if(!glicVisto(n))glicPergunta(n);}}
 function togglePosterZoom(){
   const z=posterEl.classList.toggle('zoom');
   $('poster-zoom').textContent=z?'AJUSTAR':'AMPLIAR';
@@ -3913,6 +3980,8 @@ function sideNeeds(o){
     if(o.id==='paredeSecreta')return (flags.alost===4||flags.alost===5)&&!flags.secretOpen;
     if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1;
   }
+  if(o.id==='bruno')return flags.alost===6&&(!flags.dzOn||(!!flags.dzDone&&!flags.dzReward));
+  if(o.id==='simulador')return !!flags.dzOn&&!flags.dzDone;
   if(sideMarker(o))return true; // next step of Tiago's notebook
   if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca;
   if(o.id==='tiago')return !flags.tiagoQ; // he still has a request (also after a "not now")
@@ -3937,6 +4006,8 @@ function sideActive(){ // accepted and not finished yet
   if(a===3)L.push('Bilhete anônimo: ponha as 10 fichas em ordem (armário 42)');
   if(a===4)L.push('Bilhete anônimo: caminhe três vezes diante da parede sem porta');
   if(a===5)L.push('Sala oculta: abra as três portas de ferro ('+(flags.portas||0)+' de 3)');
+  if(flags.dzOn&&!flags.dzDone)L.push('Desafio da Liga: vença a fase '+flags.dzFase+' de 3 no simulador do laboratório');
+  if(flags.dzDone&&!flags.dzReward)L.push('Desafio da Liga: conte ao Bruno que você venceu');
   if(flags.duelOn&&!flags.duelWin)L.push('Duelo Relâmpago: acerte '+DUEL_WIN+' de '+DUEL_N+' contra o Gabriel, no 2º andar');
   return L;
 }
@@ -3950,6 +4021,7 @@ function updatePauseExtra(){
   if(flags.cacaDica)L.push(flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
   if(q)L.push('Caderno do Tiago: '+TIAGO_STEP[q]);
   if(flags.alost>=2)L.push(flags.alost===6?'A sala que não está lá: convite da Liga de Metabolismo recebido':'A sala que não está lá: '+sideActive().find(t=>/^(Bilhete|Sala oculta)/.test(t)));
+  if(flags.dzOn)L.push(flags.dzReward?'Desafio da Liga: concluído, distintivo recebido':flags.dzDone?'Desafio da Liga: conte ao Bruno que você venceu':'Desafio da Liga: fase '+flags.dzFase+' de 3, no simulador do laboratório');
   if(flags.duelTold)L.push(flags.duelWin?'Duelo Relâmpago: você venceu o Gabriel!':'Duelo Relâmpago: vença o Gabriel (3º ano), no 2º andar, acertando '+DUEL_WIN+' de '+DUEL_N);
   $('pz-extra-box').hidden=!L.length;$('pz-extra').textContent=L.join('\n');
 }
@@ -4097,6 +4169,8 @@ function closeDuel(){
     {who:GW,t:'É de papel, mas vale muito. Quem tem um desses no 3º ano é respeitado!'}]
    :[{who:GW,t:d.ok+' de '+DUEL_N+' de novo! Não tem jeito, '+gen('doutor','doutora')+' '+nome1()+'. Você é fera.'}]);
 }
+$('dz-close').addEventListener('click',e=>{e.stopPropagation();closeDz();});
+$('dz-ok').addEventListener('click',e=>{e.stopPropagation();if(dz){dz.row=3;dzLaunch();}});
 $('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();});
 {
   const gab=SCENES.andar2.find(o=>o.id==='gabriel');
@@ -4206,7 +4280,7 @@ function alostStart(){
 }
 // called by updateFade when the scene changes
 function alostScene(from,to){
-  if(from==='salaLab'&&to!=='salaLab'&&!flags.alost&&startTime)onArrive=alostStart;
+  if(from==='salaLab'&&to==='terreo'&&!flags.alost&&startTime)onArrive=alostStart;
   if(to==='salaOculta'){
     if(flags.alost===4){flags.alost=5;updatePauseExtra();}
     if(!flags.ocVisto){flags.ocVisto=true;onArrive=()=>say([
@@ -4356,6 +4430,491 @@ add({id:'estanteVelha',name:'Estante antiga',cx:332,top:110,base:178,solid:{x:29
     {t:'Na contracapa de vários deles, as mesmas iniciais: "Prof. E. M.".'}])});
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
+/* ---------- SCENE: Simulador (the lab computer's screen, seen as a room) ---------- */
+SCENES.salaSim=[];SCENE_W.salaSim=W;TORCHES.salaSim=[];
+STAIRS.salaSim=[];
+function buildBgSim(){
+  g=bgSimctx;
+  r(0,0,W,H,'#2b4a6f');
+  // system bar
+  r(0,0,W,10,'#1d2226');r(0,10,W,1,'#5b8dba');
+  pxText('UNINOG-OS · LABORATÓRIO MULTIDISCIPLINAR',6,3,'#efe3c8');
+  r(W-30,2,26,7,'#1f4a33');pxText('ON',W-17,3,'#5aa865','center');
+  // header (wall area)
+  r(0,11,W,53,'#1f2f4f');
+  for(let x=0;x<W;x+=8)for(let y=13;y<62;y+=8)px(x+4,y,'#2b4a6f');
+  pxText('SIMULADOR VIRTUAL DE METABOLISMO',W/2,22,'#a9c7d2','center');
+  pxText('MÓDULO 1 · GLICÓLISE',W/2,32,'#f2c94c','center');
+  // hexagon logo
+  const hx=W/2-4,hy=42,HEX=['..###..','.#...#.','#.....#','#.....#','.#...#.','..###..'];
+  HEX.forEach((row,yy)=>{for(let xx=0;xx<row.length;xx++)if(row[xx]==='#')px(hx+xx,hy+yy,'#5aa865');});
+  r(0,62,W,2,'#5b8dba');r(0,64,W,1,'#1d2226');
+  // desktop with a dotted grid
+  for(let x=4;x<W;x+=8)for(let y=70;y<210;y+=8)px(x,y,'#46576b');
+  // taskbar with the exit button
+  r(0,212,W,12,'#1d2226');r(0,212,W,1,'#5b8dba');
+  r(170,198,44,14,'#1d1612');r(171,199,42,12,'#a12a22');r(171,199,42,1,'#d0352b');
+  pxText('SAIR',192,202,'#ffffff','center');
+  // CRT look: scanlines and darker corners
+  const id=bgSimctx.getImageData(0,0,W,H),d=id.data;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const k=(y*W+x)*4,dc=Math.hypot((x-W/2)/(W/2),(y-H/2)/(H/2));
+    let f=(y&1)?.88:1;if(dc>.95)f*=.8;
+    d[k]*=f;d[k+1]*=f;d[k+2]*=f;
+  }
+  bgSimctx.putImageData(id,0,0);
+  g=fctx;
+}
+/* ---------- MODULE 1: the glycolysis ride ----------
+   The player sits in a roller-coaster car that runs along a rail (left/right only). The back wall shows the
+   10 reaction posters (the same ones from Salas 101, 103 and 201); ENTER in front of one opens it. At the far
+   end the ride ends and the player is back at the computer screen. */
+const RIDE_Y=172,GLIC_W=1440,RIDE_END=GLIC_W-32,POSTER_DY=106; // posters drawn 106 px lower: at the player's height
+const [bgGlic,bgGlicctx]=mk(GLIC_W,H);
+const glicX=n=>80+(n-1)*128; // left edge of the poster of reaction n (128 px apart)
+const GLIC_ENZ=['','Hexocinase','Fosfo-hexose-isomerase','Fosfofrutocinase-1','Aldolase','Triose-fosfato-isomerase',
+  'Gliceraldeído-3-fosfato-desidrogenase','Fosfoglicerato-cinase','Fosfoglicerato-mutase','Enolase','Piruvato-cinase'];
+const GLIC_MOL=['GLICOSE','GLICOSE-6-FOSFATO','FRUTOSE-6-FOSFATO','FRUTOSE-1,6-BIFOSFATO','DI-HIDROXIACETONA-FOSFATO\n+ GLICERALDEÍDO-3-FOSFATO',
+  '2 GLICERALDEÍDO-3-FOSFATO','2 (1,3-BIFOSFOGLICERATO)','2 (3-FOSFOGLICERATO)','2 (2-FOSFOGLICERATO)','2 FOSFOENOLPIRUVATO','2 PIRUVATO'];
+// label box of a molecule: one or two lines, its bottom edge at y 92
+function molBox(m){const L=m.split('\n'),w=Math.max(...L.map(pxW))+6,h=L.length*8+2;return {L,w,h,y:92-h};}
+let rideDone=false;
+SCENES.simGlic=[];SCENE_W.simGlic=GLIC_W;TORCHES.simGlic=[];STAIRS.simGlic=[];
+function buildBgGlic(){
+  g=bgGlicctx;const R=rng(307);
+  // the cytosol, in black and white so it does not compete with the posters: a dark watery matrix with
+  // cytoskeleton filaments, endoplasmic reticulum, mitochondria, vesicles and ribosomes
+  r(0,0,GLIC_W,212,'#161616');
+  for(let i=0;i<GLIC_W*6;i++)px((R()*GLIC_W)|0,(R()*212)|0,R()<.5?'#1b1b1b':'#121212');
+  for(let i=0;i<GLIC_W/40;i++){let x=R()*GLIC_W,y=R()*212,a=R()*Math.PI*2;const n=20+R()*40;
+    for(let k=0;k<n;k++){const nx=x+Math.cos(a)*4,ny=y+Math.sin(a)*4;pxLine(x,y,nx,ny,'#262626');x=nx;y=ny;a+=(R()-.5)*.6;}}
+  for(let i=0;i<GLIC_W/200;i++){const x0=R()*GLIC_W,y0=10+R()*180,len=40+R()*60;
+    for(let d=0;d<2;d++)for(let x=0;x<len;x++)px(Math.round(x0+x),Math.round(y0+d*4+Math.sin(x/6)*2),'#2e2e2e');
+    for(let x=0;x<len;x+=5)px(Math.round(x0+x),Math.round(y0-2+Math.sin(x/6)*2),'#3a3a3a');}
+  for(let i=0;i<GLIC_W/240;i++){const cx=Math.round(30+R()*(GLIC_W-60)),cy=Math.round(20+R()*170),rx=10+((R()*6)|0),ry=5+((R()*2)|0);
+    pxEllipse(cx,cy,rx,ry,'#2c2c2c');pxEllipse(cx,cy,rx-1,ry-1,'#1e1e1e');
+    for(let k=-rx+4;k<rx-2;k+=4)pxLine(cx+k,cy-ry+2,cx+k+1,cy+ry-2,'#2c2c2c');}
+  for(let i=0;i<GLIC_W/30;i++){const cx=Math.round(R()*GLIC_W),cy=Math.round(R()*212),rr=2+((R()*3)|0);
+    pxEllipse(cx,cy,rr,rr,'#2a2a2a');pxEllipse(cx,cy,rr-1,rr-1,'#181818');}
+  for(let i=0;i<GLIC_W*.6;i++){const x=(R()*GLIC_W)|0,y=(R()*212)|0;px(x,y,'#3c3c3c');if(R()<.3)px(x+1,y,'#3c3c3c');}
+  for(let x=60;x<GLIC_W;x+=300)pxText('CITOSOL',x,8,'#3a3a3a');
+  // phase banners
+  const b1=glicX(1)-30,e1=glicX(5)+58,b2=glicX(6)-30,e2=glicX(10)+58;
+  r(b1,20,e1-b1,22,'#5a2230');r(b1,20,e1-b1,1,'#a12a22');r(b1,41,e1-b1,1,'#3a1820');
+  for(let n=1;n<=5;n++){pxText('FASE PREPARATÓRIA',glicX(n)+14,25,'#f2c94c','center');pxText('GASTA 2 ATP',glicX(n)+14,33,'#efe3c8','center');}
+  r(b2,20,e2-b2,22,'#1f4a33');r(b2,20,e2-b2,1,'#3f8a4c');r(b2,41,e2-b2,1,'#123020');
+  for(let n=6;n<=10;n++){pxText('FASE DE PAGAMENTO',glicX(n)+14,25,'#f2c94c','center');pxText('FORMA 4 ATP E 2 NADH',glicX(n)+14,33,'#efe3c8','center');}
+  // the molecule on the line between reactions (glucose first, pyruvate last)
+  // between the posters, at the same height, the molecule of that stretch (glucose first, pyruvate last)
+  GLIC_MOL.forEach((m,i)=>{
+    const cx=i?glicX(i)+14+64:40,{L,w,h,y}=molBox(m),last=i===10;
+    r(cx,92,1,RIDE_Y+3-92,'#4a5055');
+    r(Math.round(cx-w/2),y,w,h,last?'#1f4a33':i?'#2b4a6f':'#5a2230');r(Math.round(cx-w/2),y,w,1,last?'#5aa865':i?'#5fb4f0':'#ef6a5c');
+    L.forEach((l,k)=>pxText(l,cx,y+3+k*8,'#ffffff','center'));
+    if(i<10)pxText('→',cx,145,'#5fb4f0','center');
+  });
+  for(let n=1;n<=10;n++)pxText('REAÇÃO '+n,glicX(n)+14,POSTER_DY+3,'#a9c7d2','center');
+  // the rail: two rails, sleepers and supports down to the floor
+  const ry=RIDE_Y+3;
+  for(let x=0;x<GLIC_W;x+=48){r(x+20,ry+5,3,212-ry-5,'#2c3236');pxLine(x+21,ry+8,x+45,210,'#2c3236');pxLine(x+21,210,x+45,ry+8,'#2c3236');}
+  for(let x=0;x<GLIC_W;x+=8)r(x,ry+2,6,2,'#3a3a3a');
+  r(0,ry,GLIC_W,2,'#b9c2c8');r(0,ry+1,GLIC_W,1,'#7b8186');r(0,ry+4,GLIC_W,1,'#5d646a');
+  // start platform and finish gate
+  r(0,ry-1,30,3,'#c99a3c');pxText('INÍCIO',16,ry+8,'#f2c94c','center');
+  r(GLIC_W-14,ry-46,3,46,'#c99a3c');r(GLIC_W-34,ry-46,3,46,'#c99a3c');
+  for(let i=0;i<5;i++)for(let k=0;k<2;k++)r(GLIC_W-31+i*4,ry-46+k*4,4,4,(i+k)%2?'#1d1612':'#ffffff');
+  pxText('FIM',GLIC_W-22,ry-34,'#f2c94c','center');
+  r(0,212,GLIC_W,12,'#0e0e0e');r(0,212,GLIC_W,1,'#3a3a3a');
+  g=fctx;
+}
+objects=SCENES.simGlic;
+for(let n=1;n<=10;n++){const x=glicX(n);
+  add({id:'glic'+n,name:'Reação '+n+': '+GLIC_ENZ[n],wall:true,cx:x+14,top:12+POSTER_DY,
+    zone:{x:x-2,y:RIDE_Y-20,w:32,h:30},draw:()=>{g.save();g.translate(0,POSTER_DY);drawReactionPoster(x,n);g.restore();},act:()=>{glicVer(n);openPoster(n);}});}
+objects=SCENES.terreo;
+function drawRide(t){
+  g=fctx;
+  const X=Math.round(player.x),Y=Math.round(player.y),mv=player.moving,bob=mv&&Math.floor(t*12)%2?1:0;
+  const face=player.dir==='left'?'left':'right',d=face==='right'?1:-1;
+  const c=personSprite('player',flags.jaleco?'coat':'shirt',face,0,blinkAt(t,0),17);
+  // inside a low (inhibited) tunnel, the rider ducks: hide whatever would poke out above the enzyme's roof
+  let hole=null;if(rideSt)for(const n of [1,3,10]){const G_=tunGeo(n,rideSt.tun[n].open);if(X+8>G_.x0&&X-8<G_.x1&&G_.top>Y-28)hole=G_;}
+  if(hole){g.save();g.beginPath();g.rect(X-40,0,80,H);g.rect(hole.x0,0,hole.w,hole.top);g.clip('evenodd');}
+  blit({c:c.c,x:X-8,y:Y-27-bob});
+  if(hole)g.restore();
+  // the car
+  const top=Y-12-bob;
+  r(X-15,top,30,10,'#1d1612');r(X-14,top+1,28,8,'#a12a22');r(X-14,top+1,28,2,'#ef6a5c');r(X-14,top+7,28,2,'#5a2230');
+  r(X-12,top+4,24,1,'#f2c94c');
+  r(d>0?X+14:X-18,top+2,4,7,'#1d1612');r(d>0?X+14:X-17,top+3,3,5,'#d0352b'); // nose
+  r(X-7,top-3,14,1,'#c99a3c');r(X-7,top-3,1,3,'#c99a3c');r(X+6,top-3,1,3,'#c99a3c'); // safety bar
+  // wheels on the rail, spokes turn as the car moves
+  const sp=Math.floor(player.x/3)%2;
+  r(X-11,top+9,22,2,'#2c3236'); // axle beam
+  for(const wx of [X-8,X+8]){pxEllipse(wx,Y,3,3,'#b9c2c8');pxEllipse(wx,Y,2,2,'#2c3236');px(wx,Y,'#e9ece6');
+    if(sp){px(wx-1,Y,'#9aa2a9');px(wx+1,Y,'#9aa2a9');}else{px(wx,Y-1,'#9aa2a9');px(wx,Y+1,'#9aa2a9');}}
+}
+/* ---------- the cell states (free ride) and the Liga challenge ----------
+   Reactions 1, 3 and 10 are drawn as tunnels: the car runs through the enzyme. Activated enzyme: wide tunnel,
+   the car goes fast; inhibited: narrow tunnel, the car crawls. The molecules stuck on top of the tunnel sit on the
+   allosteric site. The flux of the whole pathway is the activity of the slowest of the three enzymes. */
+var rideSt=null,simPage='main',dz=null;
+const ENZ_NAME={hk:'HEXOCINASE',gk:'GLICOCINASE',pfk:'FOSFOFRUTOCINASE-1',pk:'PIRUVATO-CINASE'};
+const ENZ_TXT={hk:'hexocinase',gk:'glicocinase',pfk:'fosfofrutocinase-1',pk:'piruvato-cinase'};
+const MOL_CHIP={ATP:'ATP',AMP:'AMP',CITRATO:'CITRATO',G6P:'GLICOSE-\n6-FOSFATO',F26BP:'FRUTOSE-\n2,6-BISFOSFATO',F16BP:'FRUTOSE-\n1,6-BISFOSFATO',ALANINA:'ALANINA',FOSFATO:'FOSFATO',GKRP:'PROTEÍNA\nREGULADORA'};
+const MOL_TXT={ATP:'ATP',AMP:'AMP',CITRATO:'citrato',G6P:'glicose-6-fosfato',F26BP:'frutose-2,6-bisfosfato',F16BP:'frutose-1,6-bisfosfato',ALANINA:'alanina',FOSFATO:'fosfato'};
+const MOL_BTN={ATP:'ATP',AMP:'AMP',CITRATO:'CITRATO',G6P:'GLICOSE-6-FOSFATO',F26BP:'FRUTOSE-2,6-BISFOSFATO',F16BP:'FRUTOSE-1,6-BISFOSFATO',ALANINA:'ALANINA'};
+const SIM_SC=[
+  {k:'rep',nome:'MÚSCULO EM REPOUSO',low:'músculo em repouso',musc:1,d1:'ATP E CITRATO ALTOS',d2:'AMP BAIXO',
+   tun:{1:['hk',.35,[['G6P','-']],'A glicose-6-fosfato acumulada inibe a hexocinase.'],
+        3:['pfk',.3,[['ATP','-'],['CITRATO','-']],'ATP e citrato sobrando inibem a fosfofrutocinase-1.'],
+        10:['pk',.4,[['ATP','-']],'O ATP sobrando também inibe a piruvato-cinase.']},
+   fim:'Com energia sobrando, a célula freia a glicólise nas reações que não têm volta.'},
+  {k:'cor',nome:'MÚSCULO NA CORRIDA',low:'músculo na corrida',musc:1,d1:'ATP CAINDO',d2:'AMP SUBINDO',
+   tun:{1:['hk',1.3,[],'A glicose-6-fosfato é consumida logo: nada inibe a hexocinase.'],
+        3:['pfk',1.6,[['AMP','+']],'O AMP alto desfaz a inibição pelo ATP e acelera a fosfofrutocinase-1.'],
+        10:['pk',1.5,[['F16BP','+']],'A frutose-1,6-bisfosfato da reação 3 ativa a piruvato-cinase por antecipação.']},
+   fim:'Com a energia caindo, a célula acelera a glicólise nos três pontos de controle.'},
+  {k:'alm',nome:'FÍGADO APÓS ALMOÇO',low:'fígado após o almoço',d1:'INSULINA ALTA',d2:'FRUTOSE-2,6-BISFOSFATO ALTA',
+   tun:{1:['gk',1.4,[],'No fígado, a reação 1 é da glicocinase: muita glicose chegando, e a glicose-6-fosfato não a inibe.'],
+        3:['pfk',1.8,[['F26BP','+']],'A insulina eleva a frutose-2,6-bisfosfato, o ativador mais potente da fosfofrutocinase-1.'],
+        10:['pk',1.5,[['F16BP','+']],'A frutose-1,6-bisfosfato ativa a piruvato-cinase.']},
+   fim:'Depois da refeição, o fígado acelera a glicólise mesmo com energia sobrando: o excesso de glicose vira reserva.'},
+  {k:'jej',nome:'FÍGADO EM JEJUM',low:'fígado em jejum',d1:'GLUCAGON ALTO',d2:'FRUTOSE-2,6-BISFOSFATO BAIXA',
+   tun:{1:['gk',.45,[['GKRP','0']],'A proteína reguladora prende a glicocinase no núcleo. Ficha cinza: não é regulação alostérica.'],
+        3:['pfk',.3,[['ATP','-']],'Sem frutose-2,6-bisfosfato, o ATP mantém a fosfofrutocinase-1 inibida.'],
+        10:['pk',.25,[['ALANINA','-'],['FOSFATO','0']],'A alanina inibe a piruvato-cinase. O fosfato, posto pelo glucagon, é regulação covalente.']},
+   fim:'Em jejum, o fígado freia a glicólise para que a glicose vá para o sangue e chegue ao cérebro.'}];
+function scTun(sc){const T={};for(const n of [1,3,10]){const [key,open,mols,note]=sc.tun[n];T[n]={key,name:ENZ_NAME[key],open,mols,note};}return T;}
+const pct=o=>Math.round(o*100);
+const rideFlux=()=>Math.min(rideSt.tun[1].open,rideSt.tun[3].open,rideSt.tun[10].open);
+function startRide(sc){
+  rideSt={mode:'livre',sc,tun:scTun(sc),inT:0,toast:null};
+  const first=!flags.rideTut;flags.rideTut=true;
+  const go=()=>{rideDone=false;goScene('simGlic',24,RIDE_Y,'right',sc.nome);};
+  if(!first)return go();
+  say([{who:'SIMULADOR',t:'Nas reações 1, 3 e 10 a glicose passa por dentro da enzima. Túnel grande: enzima estimulada, o carrinho acelera. Túnel pequeno: enzima inibida, o carrinho se arrasta.'},
+    {who:'SIMULADOR',t:'As fichas em cima do túnel são as moléculas ligadas ao sítio alostérico: verde ativa, vermelha inibe. Ficha cinza é regulação que não é alostérica.'},
+    {who:'SIMULADOR',t:'Depois de cada reação falta um pedaço do trilho. Abra o cartaz da reação e responda à pergunta do simulador para completar o caminho.'}],go);
+}
+function rideFactor(x){
+  if(!rideSt)return 1;
+  for(const n of [1,3,10]){const x0=glicX(n)+30;if(x>=x0-6&&x<=x0+46)return Math.max(.15,rideSt.tun[n].open);}
+  return 1;
+}
+// tunnel size follows the enzyme activity: 1 = basal, >1 stimulated (taller), <1 inhibited (lower and narrower)
+function tunGeo(n,o){const sh=Math.round(Math.max(0,1-o)*8),x0=glicX(n)+30+sh,x1=glicX(n)+74-sh,top=179-Math.round(18+22*o);return {x0,x1,w:x1-x0,top,ti:top+4};}
+// the gap after reaction n closes only when the player opens that poster and answers its quick question
+const glicVisto=n=>!rideSt||rideSt.mode==='desafio'||!!(flags.glicOk&&flags.glicOk[n]);
+const glicAberto=n=>!!(flags.glicVistos&&flags.glicVistos[n]);
+function glicVer(n){
+  if(!rideSt||glicVisto(n))return;
+  (flags.glicVistos||(flags.glicVistos={}))[n]=true;rideSt.pend=n;
+}
+// one question per reaction; the first option is the right one, shown shuffled
+const GLIC_Q={
+  1:['Além da glicose, o que a hexocinase consome?',['Um ATP, com Mg²⁺','Um ADP, com Mg²⁺','Um NAD⁺, com K⁺','Um GTP, com K⁺']],
+  2:['O que a fosfo-hexose-isomerase forma a partir da glicose-6-fosfato?',['Frutose-6-fosfato','Glicose-1-fosfato','Frutose-1,6-bifosfato','Frutose-1-fosfato']],
+  3:['Qual é o ΔG\'° da reação 3, segundo o cartaz?',['−14,2 kJ/mol','+14,2 kJ/mol','−31,4 kJ/mol','+1,7 kJ/mol']],
+  4:['Quantos carbonos tem cada produto da aldolase?',['Três carbonos cada um','Seis carbonos cada um','Dois e quatro carbonos','Um e cinco carbonos']],
+  5:['Que molécula a triose-fosfato-isomerase converte em gliceraldeído-3-fosfato?',['Di-hidroxiacetona-fosfato','Frutose-1,6-bifosfato','1,3-bifosfoglicerato','Fosfoenolpiruvato']],
+  6:['Qual coenzima é reduzida na reação 6?',['NAD⁺, que vira NADH + H⁺','FAD, que vira FADH₂','NADP⁺, que vira NADPH','ADP, que vira ATP']],
+  7:['O que a fosfoglicerato-cinase forma além do 3-fosfoglicerato?',['Um ATP, a partir de ADP','Um NADH, a partir de NAD⁺','Um ADP, a partir de ATP','Um GTP, a partir de GDP']],
+  8:['O que a fosfoglicerato-mutase faz?',['Leva o fosfato do carbono 3 ao 2','Leva o fosfato do carbono 2 ao 3','Retira o fosfato e forma ATP','Retira uma molécula de água']],
+  9:['O que a enolase retira do 2-fosfoglicerato?',['Uma molécula de água','Um grupo fosfato','Um par de hidrogênios','Uma molécula de CO₂']],
+  10:['Qual é o ΔG\'° da reação 10, segundo o cartaz?',['−31,4 kJ/mol','+31,4 kJ/mol','−18,5 kJ/mol','+7,5 kJ/mol']]};
+function glicPergunta(n){
+  keys.clear();rideSt.blk=n;
+  const [q,ops]=GLIC_Q[n];
+  const mix=ops.map((t,i)=>({t,ok:!i})).sort(()=>Math.random()-.5);
+  say([{who:'SIMULADOR',t:'Reação '+n+'. '+q,choices:mix.map(o=>({t:o.t,fn:()=>{
+    const now=performance.now()/1000;
+    if(o.ok){
+      (flags.glicOk||(flags.glicOk={}))[n]=true;rideSt.rev={n,t:now};rideSt.blk=0;
+      rideSt.toast={t:'Correto! O trilho se completou: '+GLIC_MOL[n].replace('\n',' ')+'.',until:now+4};
+      tone(523,.07,'square',.04);setTimeout(()=>tone(784,.09,'square',.04),90);
+    }else{
+      player.x=glicX(n)-24;keys.clear();rideSt.blk=0;flags.glicVistos[n]=false;tone(196,.15,'square',.05);
+      rideSt.toast={t:'Resposta errada: o carrinho voltou. Pare de novo no cartaz da reação '+n+', releia e responda outra vez.',until:now+6};
+    }}})).concat([{t:'↩ Voltar ao cartaz',cls:'volta',fn:()=>{rideSt.pend=n;rideSt.blk=n;openPoster(n);}}])}]);
+}
+// how far right the car can go: up to the first gap not yet filled
+function glicLim(){for(let n=1;n<=10;n++)if(!glicVisto(n))return glicX(n)+14;return 1e9;}
+function drawGlicGaps(){
+  if(!rideSt||rideSt.mode==='desafio')return;g=fctx;
+  const now=performance.now()/1000,ry=RIDE_Y+3;let next=0;
+  for(let n=1;n<=10;n++){
+    const rv=rideSt.rev&&rideSt.rev.n===n?rideSt.rev:null,seen=glicVisto(n);
+    const p=!seen?0:rv?(rv.t==null?0:Math.min(1,(now-rv.t)/.6)):1;
+    if(p>=1)continue;
+    if(!seen&&!next)next=n;
+    const cx=glicX(n)+78,gx=cx+4,gw=18,left=Math.round(gw*p);
+    // the missing piece of rail
+    r(gx+left,ry-1,gw-left,8,'#161616');
+    if(left>0){r(gx,ry,left,2,'#f2c94c');r(gx,ry+1,left,1,'#c99a3c');}
+    r(gx+left,ry+2,1,1,'#7b8186');r(gx+gw-1,ry+2,1,1,'#7b8186');
+    if(n===next&&Math.floor(now*3)%2)for(let x=gx+left+1;x<gx+gw-1;x+=3)px(x,ry,'#f2c94c');
+    // the product, still unknown
+    if(p<.5){
+      const {w,h,y}=molBox(GLIC_MOL[n]),bx=Math.round(cx-w/2),hot=n===next;
+      r(bx-1,y-1,w+2,h+2,'#161616');r(bx,y,w,h,'#2b2b2b');r(bx,y,w,1,hot&&Math.floor(now*3)%2?'#f2c94c':'#5a5a5a');
+      pxText('???',cx,y+h/2-2,hot?'#f2c94c':'#9a9a9a','center');
+    }
+  }
+}
+function rideTick(){
+  if(scene!=='simGlic'||!rideSt)return;
+  let k=0;for(const n of [1,3,10]){const x0=glicX(n)+30;if(player.x>=x0-6&&player.x<=x0+46)k=n;}
+  if(k&&k!==rideSt.inT)rideSt.toast={t:rideSt.tun[k].note,until:performance.now()/1000+7};
+  rideSt.inT=k;
+}
+function tunCols(o){return o>1.05?['#1f4a33','#3f8a4c','#5aa865']:o>=.9?['#1d3550','#3a6690','#5fb4f0']:o<=.4?['#5a2230','#a12a22','#ef6a5c']:['#7a5a1a','#c99a3c','#f2c94c'];}
+function drawTunnels(front){
+  if(!rideSt)return;g=fctx;const t=performance.now()/1000;
+  for(const n of [1,3,10]){
+    const T=rideSt.tun[n],{x0,x1,w,top,ti}=tunGeo(n,T.open),[dk,md,lt]=tunCols(T.open);
+    if(!front){ // the cavity (and the rail inside it), behind the car
+      r(x0+3,ti,w-6,172-ti,'#0b0806');for(let y=ti+2;y<172;y+=4)r(x0+3,y,w-6,1,'#161010');
+      r(x0+3,172,w-6,2,'#b9c2c8');r(x0+3,173,w-6,1,'#7b8186');
+      // speed streaks behind the car in a stimulated enzyme
+      const X=player.x;if(T.open>1.05&&X>=x0-6&&X<=x1+2)for(let k=0;k<3;k++){const len=6+((t*40+k*7)%10)|0;r(Math.round(X-18-len-k*3),RIDE_Y-22+k*7,len,1,lt);}
+      continue;
+    }
+    r(x0,top,w,ti-top,md);r(x0,ti,3,179-ti,md);r(x1-3,ti,3,179-ti,md);
+    const h=179-top;
+    for(let i=0;i<w*3;i++){const xx=x0+((i*37)%w),yy=top+((i*53)%h);if(yy<ti-1||xx<x0+2||xx>=x1-2)px(xx,yy,i%2?lt:dk);}
+    r(x0+1,top-1,w-2,1,dk);r(x0+1,top,w-2,1,lt);r(x0,top,1,h,dk);r(x1-1,top,1,h,dk);
+    r(x0+3,ti-1,w-6,1,dk);r(x0+2,ti,1,172-ti,dk);r(x1-3,ti,1,172-ti,dk);
+    // the molecules bound to the allosteric site, named, stacked on top of the enzyme
+    const cx=Math.round((x0+x1)/2);let cy=top-2;
+    T.mols.filter(m=>m[1]!=='x').slice(0,3).forEach(m=>{
+      const c=m[1]==='+'?'#3f8a4c':m[1]==='-'?'#a12a22':'#4a5055',L=MOL_CHIP[m[0]].split('\n');
+      if(m[1]==='+'||m[1]==='-')L[L.length-1]+=' '+m[1];
+      const ww=Math.max(...L.map(pxW))+6,hh=L.length*7,xx=Math.max(glicX(n)+30,Math.round(cx-ww/2)),yy=cy-hh;
+      r(xx-1,yy-1,ww+2,hh+2,'#0b0806');r(xx,yy,ww,hh,c);L.forEach((l,k)=>pxText(l,xx+3,yy+1+k*7,'#ffffff'));cy=yy-2;});
+  }
+}
+function pxWrap(s_,max){const out=[];let cur='';for(const w of s_.split(' ')){const t=cur?cur+' '+w:w;if(pxW(t)>max&&cur){out.push(cur);cur=w;}else cur=t;}if(cur)out.push(cur);return out;}
+function hudRow(s_,y,bg,line,col){const w=pxW(s_)+10,x=camX+Math.round((W-w)/2);r(x,y,w,10,bg);r(x,y,w,1,line);pxText(s_,x+5,y+3,col);}
+function drawRideHud(){
+  g=fctx;if(!rideSt)return;
+  const flux=pct(rideFlux());
+  if(rideSt.mode==='desafio'){
+    const F=DZ_FASES[rideSt.fase];
+    hudRow('FASE '+(rideSt.fase+1)+': '+F.tit,1,'#2a1018','#ef6a5c','#efe3c8');
+    hudRow('META: '+F.metaHud+' · FLUXO DA VIA '+flux+'%',12,'#0b1220','#5fb4f0','#efe3c8');
+  }else{
+    hudRow(rideSt.sc.nome+' · FLUXO DA VIA '+flux+'%',1,'#0b1220','#5fb4f0','#efe3c8');
+  }
+  const ts=rideSt.toast;
+  if(ts&&ts.until>performance.now()/1000){
+    const L=pxWrap(ts.t.toUpperCase(),W-24).slice(0,3),w=Math.max(...L.map(pxW))+10,x=camX+Math.round((W-w)/2),y=180;
+    r(x,y,w,L.length*8+3,'#0b0806');r(x,y,w,1,'#f2c94c');L.forEach((l,i)=>pxText(l,x+5,y+3+i*8,'#efe3c8'));
+  }
+  const s2=rideSt.mode==='desafio'?(padOn?'A GLICOSE CORRE SOZINHA · X DESISTIR':'A GLICOSE CORRE SOZINHA · ESC DESISTIR')
+    :(padOn?'← → MOVER · X SAIR':'← → MOVER · ESC SAIR');
+  pxText(s2,camX+W/2,215,'#5fb4f0','center');
+}
+function rideEnd(){
+  rideDone=true;keys.clear();sfx.open();
+  if(rideSt&&rideSt.mode==='desafio')return dzResult();
+  const sc=rideSt.sc,flux=pct(rideFlux()),T=rideSt.tun;
+  (flags.simFlux||(flags.simFlux={}))[sc.k]=flux;
+  let slow=1;for(const n of [3,10])if(T[n].open<T[slow].open)slow=n;
+  const outros=SIM_SC.filter(x=>x!==sc&&flags.simFlux[x.k]!=null).map(x=>x.low+' '+flags.simFlux[x.k]+'%');
+  say([{who:'SIMULADOR',t:'Fluxo da via: '+flux+'%. A via anda no ritmo da enzima mais lenta; aqui, a '+ENZ_TXT[T[slow].key]+'. '+sc.fim}]
+       .concat(outros.length?[{who:'SIMULADOR',t:'Para comparar: '+outros.join(' · ')+'.'}]:[]),
+      ()=>{simPage='estado';simSel=SIM_SC.indexOf(sc);goScene('salaSim',192,182,'up','SIMULADOR');});
+}
+/* the simulator room is a screen, not a place to walk: no avatar, just a menu.
+   Arrows / W-A-S-D / d-pad move the selection, ENTER (A) confirms, ESC (X) leaves or goes back; mouse and touch work too. */
+let simSel=0;
+const inSim=()=>scene==='salaSim'&&state==='play';
+function simItems(){
+  const exit={id:'sair',name:'Sair',rc:{x:168,y:196,w:48,h:18}};
+  if(simPage==='estado')return SIM_SC.map((sc,i)=>({id:'sc',sc,rc:{x:76+(i%2)*118,y:92+((i/2)|0)*46,w:114,h:42}})).concat([exit]);
+  const L=[{id:'iniciar',rc:{x:119,y:119,w:146,h:19}}];
+  if(flags.dzOn)L.push({id:'desafio',rc:{x:119,y:154,w:146,h:16}});
+  return L.concat([exit]);
+}
+function simMove(d){const n=simItems().length;simSel=(simSel+d+n)%n;sfx.blip();}
+function simExit(){
+  if(simPage!=='main'){simPage='main';simSel=0;sfx.blip();return;}
+  tone(660,.06,'square',.04);goScene('salaLab',284,204,'left','LABORATÓRIO');
+}
+function simSelect(){
+  const it=simItems()[simSel];if(!it)return;sfx.blip();
+  if(it.id==='iniciar'){simPage='estado';simSel=0;}
+  else if(it.id==='sc')startRide(it.sc);
+  else if(it.id==='desafio')openDz();
+  else simExit();
+}
+function simBack(){keys.clear();if(rideSt&&rideSt.mode==='desafio'){simPage='main';simSel=1;}else{simPage='estado';simSel=rideSt?SIM_SC.indexOf(rideSt.sc):0;}goScene('salaSim',192,182,'up','SIMULADOR');}
+function simHit(e){ // screen position -> menu item (or -1)
+  const b=cv.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*W,y=(e.clientY-b.top)/b.height*H;
+  return simItems().findIndex(it=>x>=it.rc.x&&x<=it.rc.x+it.rc.w&&y>=it.rc.y&&y<=it.rc.y+it.rc.h);
+}
+function simWindow(x,y,w,h,title){
+  r(x+3,y+3,w,h,'#1f2f4f');
+  r(x,y,w,h,'#1d1612');r(x+1,y+1,w-2,10,'#2d6fb5');pxText(title,x+5,y+4,'#ffffff');
+  r(x+w-9,y+3,6,6,'#d0352b');r(x+w-17,y+3,6,6,'#e8bf3f');
+  r(x+1,y+11,w-2,h-12,'#efe3c8');
+}
+function drawSimMenu(t){
+  g=fctx;
+  const its=simItems();if(simSel>=its.length)simSel=0;
+  if(simPage==='estado'){
+    const x=70,y=66,w=244,h=126;simWindow(x,y,w,h,'ESTADO DA CÉLULA');
+    pxText('COMO A CÉLULA ESTÁ AGORA?',x+w/2,y+15,'#7a2e3e','center');
+    its.forEach(it=>{if(it.id!=='sc')return;const rc=it.rc,sc=it.sc;
+      r(rc.x,rc.y,rc.w,rc.h,'#1d1612');r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,sc.musc?'#2b4a6f':'#5a2230');r(rc.x+1,rc.y+1,rc.w-2,1,sc.musc?'#5b8dba':'#a12a22');
+      pxText(sc.nome,rc.x+rc.w/2,rc.y+4,'#f2c94c','center');
+      pxText(sc.d1,rc.x+rc.w/2,rc.y+14,'#efe3c8','center');pxText(sc.d2,rc.x+rc.w/2,rc.y+22,'#efe3c8','center');
+      const fv=flags.simFlux&&flags.simFlux[sc.k];
+      pxText(fv!=null?'FLUXO VISTO: '+fv+'%':'AINDA NÃO TESTADO',rc.x+rc.w/2,rc.y+32,fv!=null?'#5aa865':'#9aa2a9','center');});
+    pxText(padOn?'✚ ESCOLHER · A COMEÇAR · X VOLTAR':'SETAS ESCOLHER · ENTER COMEÇAR · ESC VOLTAR',x+w/2,y+h-8,'#2a1a10','center');
+  }else{
+    const x=112,y=76,w=160,h=72;simWindow(x,y,w,h,'SIMULADOR DE GLICÓLISE');
+    pxText('VIA DE EMBDEN-MEYERHOF',x+w/2,y+16,'#7a2e3e','center');
+    pxText('GLICOSE → 2 PIRUVATO',x+w/2,y+25,'#2a1a10','center');
+    pxText('10 REAÇÕES · 2 ATP · 2 NADH',x+w/2,y+33,'#2a1a10','center');
+    r(x+8,y+44,w-16,17,'#1f4a33');r(x+9,y+45,w-18,15,'#3f8a4c');r(x+9,y+45,w-18,1,'#5aa865');
+    for(let i=0;i<5;i++)r(x+13,y+48+i,i<3?i+1:5-i,1,'#ffffff');
+    pxText('INICIAR SIMULAÇÃO DA GLICÓLISE',x+w/2+4,y+50,'#ffffff','center');
+    if(flags.dzOn){r(119,154,146,16,'#1d1612');r(120,155,144,14,'#7a2e3e');r(120,155,144,1,'#ef6a5c');
+      pxText(flags.dzDone?'DESAFIO DA LIGA · CONCLUÍDO':'DESAFIO DA LIGA · FASE '+flags.dzFase+' DE 3',192,160,'#ffffff','center');}
+    pxText(padOn?'↑ ↓ ESCOLHER · A CONFIRMAR · X SAIR':'↑ ↓ ESCOLHER · ENTER CONFIRMAR · ESC SAIR',W/2,flags.dzOn?178:170,'#a9c7d2','center');
+  }
+  // selection: blinking frame and a mouse pointer
+  const rc=its[simSel].rc,c=Math.floor(t*3)%2?'#f2c94c':'#fff27a';
+  r(rc.x-2,rc.y-2,rc.w+4,1,c);r(rc.x-2,rc.y+rc.h+1,rc.w+4,1,c);r(rc.x-2,rc.y-2,1,rc.h+4,c);r(rc.x+rc.w+1,rc.y-2,1,rc.h+4,c);
+  const ax=rc.x+rc.w-4,ay=rc.y+rc.h-5,ARW=['#','##','#.#','#..#','#...#','#..##','##.#','#..#'];
+  ARW.forEach((row,yy)=>{for(let xx=0;xx<row.length;xx++)px(ax+xx,ay+yy,row[xx]==='#'?'#1d1612':'#ffffff');});
+}
+
+/* ---------- side quest: the Liga challenge (Bruno, after the Liga invitation) ----------
+   Three phases. The player places up to two molecules on the allosteric site of each control enzyme, then the
+   glucose runs alone through the pathway. flags.dzOn accepted, flags.dzFase next phase (1-3), flags.dzDone all
+   three won, flags.dzReward badge received from Bruno. */
+const DZ_MOLS=['ATP','AMP','CITRATO','G6P','F26BP','F16BP','ALANINA'];
+const DZ_EFF={hk:{G6P:-.6},gk:{},pfk:{ATP:-.35,CITRATO:-.35,AMP:.5,F26BP:.85},pk:{F16BP:.5,ATP:-.35,ALANINA:-.35}};
+const DZ_FASES=[
+  {tit:'OS 400 METROS',e1:'hk',base:{1:1,3:.5,10:.5},fixo:{},tray:DZ_MOLS,meta:'min',alvo:.9,metaHud:'FLUXO MÍNIMO 90%',
+   txt:'Um atleta acaba de largar nos 400 metros rasos. O músculo precisa de ATP rápido.',
+   mt:'Deixe o fluxo da via em pelo menos 90%: as três enzimas precisam terminar ativas.',
+   ctx:{1:'Músculo: a reação 1 é feita pela hexocinase.',3:'',10:''},
+   dica:'No sprint, o ATP do músculo cai e o AMP sobe. E a reação 3 manda um aviso para a reação 10.',
+   ok:'No sprint, o AMP alto ativa a fosfofrutocinase-1, e a frutose-1,6-bisfosfato formada na reação 3 ativa a piruvato-cinase por antecipação.'},
+  {tit:'DEPOIS DO ALMOÇO',e1:'gk',base:{1:1,3:.5,10:.5},fixo:{3:[['ATP','-']]},tray:DZ_MOLS.filter(m=>m!=='AMP'),meta:'min',alvo:.9,metaHud:'FLUXO MÍNIMO 90%',
+   txt:'Uma hora depois do almoço. A insulina está alta e o fígado tem energia de sobra: o ATP alto já está inibindo a fosfofrutocinase-1.',
+   mt:'Mesmo assim, leve o fluxo da via a pelo menos 90%. Depois da refeição o AMP está baixo, então não há ficha de AMP.',
+   ctx:{1:'Fígado: a reação 1 é feita pela glicocinase.',3:'Já na célula: ATP alto (inibe).',10:''},
+   dica:'Qual molécula aumenta com a insulina e é o ativador mais potente da fosfofrutocinase-1? Ela vence a inibição pelo ATP.',
+   ok:'A frutose-2,6-bisfosfato, que sobe com a insulina, ativa a fosfofrutocinase-1 mesmo com ATP alto. Assim o fígado transforma o excesso de glicose em reserva.'},
+  {tit:'PROTEJA O CÉREBRO',e1:'gk',base:{1:.45,3:.5,10:.5},fixo:{},tray:DZ_MOLS,meta:'max',alvo:.3,metaHud:'REAÇÕES 3 E 10 NO MÁXIMO 30%',
+   txt:'Jejum da noite inteira. O glucagon está alto, e o cérebro depende da glicose que o fígado manda para o sangue. Aqui, a glicólise do fígado precisa andar devagar.',
+   mt:'Freie a via: a fosfofrutocinase-1 e a piruvato-cinase precisam terminar em no máximo 30%.',
+   ctx:{1:'Glicocinase presa no núcleo pela sua proteína reguladora (não é regulação alostérica).',3:'',10:''},
+   dica:'Em jejum quase não há frutose-2,6-bisfosfato. Pense em qual molécula sinaliza energia sobrando para a fosfofrutocinase-1, e em qual aminoácido inibe a piruvato-cinase do fígado.',
+   ok:'ATP e citrato inibem a fosfofrutocinase-1; ATP e alanina inibem a piruvato-cinase hepática. No fígado real, o glucagon ainda fosforila a piruvato-cinase (regulação covalente). Com a glicólise freada, a glicose vai para o sangue e chega ao cérebro.'}];
+const dzEl=$('dz');
+function dzRows(F){return [[1,F.e1],[3,'pfk'],[10,'pk']];}
+function openDz(){
+  const f=Math.max(1,Math.min(3,flags.dzFase||1))-1;
+  dz={f,pick:{1:[],3:[],10:[]},row:0,col:0,msg:'',err:false};
+  $('dz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  keys.clear();state='dz';dzEl.hidden=false;renderDz();fitDz();tone(523,.08,'square',.04);
+}
+function renderDz(){
+  const F=DZ_FASES[dz.f];
+  $('dz-head').textContent='UNINOGWARTS · DESAFIO DA LIGA · FASE '+(dz.f+1)+' DE 3';
+  const tx=$('dz-txt');tx.textContent='';
+  const h=document.createElement('b');h.textContent=F.tit;tx.appendChild(h);
+  const p=document.createElement('span');p.textContent=F.txt;tx.appendChild(p);
+  const m=document.createElement('b');m.textContent='META';tx.appendChild(m);
+  const p2=document.createElement('span');p2.textContent=F.mt+' Cada sítio alostérico aceita até 2 moléculas.';tx.appendChild(p2);
+  const list=$('dz-list');list.textContent='';
+  dzRows(F).forEach(([n,key],ri)=>{
+    const d=document.createElement('div');d.className='sg-row'+(ri===dz.row?' sel':'');
+    const sp=document.createElement('span');sp.textContent='Reação '+n+': '+ENZ_NAME[key];
+    if(F.ctx[n]){const c=document.createElement('small');c.className='ctx';c.textContent=F.ctx[n];sp.appendChild(c);}
+    d.appendChild(sp);
+    F.tray.forEach((mol,ci)=>{const b=document.createElement('button');b.type='button';
+      b.className='m'+(dz.pick[n].includes(mol)?' on':'')+(ri===dz.row&&ci===dz.col?' cur':'');b.textContent=MOL_BTN[mol];
+      b.addEventListener('click',e=>{e.stopPropagation();dz.row=ri;dz.col=ci;dzToggle();});d.appendChild(b);});
+    list.appendChild(d);
+  });
+  const msg=$('dz-msg');msg.className=dz.err?'err':'';msg.textContent=dz.msg;
+  $('dz-ok').classList.toggle('kb',dz.row===3);
+}
+function fitDz(){
+  if(dzEl.hidden)return;
+  const sh=dzEl.querySelector('.sheet'),room=$('dz-body').clientHeight-10;
+  sh.style.fontSize='';let fs=parseFloat(getComputedStyle(sh).fontSize);
+  while(fs>12&&sh.offsetHeight>room){fs-=1;sh.style.fontSize=fs+'px';}
+}
+addEventListener('resize',fitDz);
+function dzToggle(){
+  const F=DZ_FASES[dz.f],n=dzRows(F)[dz.row][0],mol=F.tray[dz.col],L=dz.pick[n];
+  const i=L.indexOf(mol);dz.err=false;dz.msg='';
+  if(i>=0){L.splice(i,1);sfx.blip();}
+  else if(L.length>=2){dz.err=true;dz.msg='Cada sítio alostérico aceita no máximo 2 moléculas.';sfx.bump();}
+  else{L.push(mol);tone(660,.05,'square',.04);}
+  renderDz();
+}
+function dzMove(dr,dc){
+  if(dr){dz.row=(dz.row+dr+4)%4;}
+  if(dc&&dz.row<3){const n=DZ_FASES[dz.f].tray.length;dz.col=(dz.col+dc+n)%n;}
+  sfx.blip();renderDz();
+}
+function dzEnter(){if(dz.row===3)dzLaunch();else dzToggle();}
+function closeDz(){if(state!=='dz')return;dzEl.hidden=true;dz=null;state='play';keys.clear();}
+function dzCompute(F,pick){
+  const T={};
+  for(const [n,key] of dzRows(F)){
+    let o=F.base[n];const mols=[];
+    for(const [m,sg_] of (F.fixo[n]||[])){o+=DZ_EFF[key][m]||0;mols.push([m,sg_,1]);}
+    for(const m of pick[n]){const e=DZ_EFF[key][m]||0;o+=e;mols.push([m,e>0?'+':e<0?'-':'x']);}
+    o=Math.max(.15,Math.min(1.8,o));
+    const parts=mols.map(m=>MOL_TXT[m[0]]+(m[1]==='+'?' ativa':m[1]==='-'?' inibe':' não se liga a esta enzima'));
+    T[n]={key,name:ENZ_NAME[key],open:o,mols,
+      note:ENZ_NAME[key].charAt(0)+ENZ_TXT[key].slice(1)+': '+(parts.length?parts.join('; ')+'.':'nada no sítio alostérico.')+(F.ctx[n]&&n===1?' '+F.ctx[n]:'')};
+  }
+  return T;
+}
+function dzLaunch(){
+  const F=DZ_FASES[dz.f],f=dz.f,T=dzCompute(F,dz.pick);
+  dzEl.hidden=true;dz=null;state='play';keys.clear();
+  rideSt={mode:'desafio',fase:f,tun:T,inT:0,toast:null};
+  rideDone=false;goScene('simGlic',24,RIDE_Y,'right','DESAFIO · FASE '+(f+1));
+}
+function dzResult(){
+  const R=rideSt,F=DZ_FASES[R.fase],T=R.tun,o=n=>T[n].open,flux=pct(rideFlux());
+  const ok=F.meta==='min'?Math.min(o(1),o(3),o(10))>=F.alvo:(o(3)<=F.alvo&&o(10)<=F.alvo);
+  const L=[{who:'SIMULADOR',t:'Fim da corrida. Fluxo da via: '+flux+'%.'}];
+  const tries=flags.dzTries||(flags.dzTries=[0,0,0]);
+  if(ok){
+    L.push({who:'SIMULADOR',t:'Meta cumprida! '+F.ok});
+    if(R.fase<2){flags.dzFase=R.fase+2;if(!flags.dzDone)L.push({who:'SIMULADOR',t:'Fase '+(R.fase+2)+' liberada.'});}
+    else{flags.dzFase=1;if(!flags.dzDone){flags.dzDone=true;L.push({who:'SIMULADOR',t:'Você venceu as três fases do Desafio da Liga! Vá contar ao Bruno.'});}}
+    updatePauseExtra();
+  }else{
+    tries[R.fase]++;
+    const P=[];
+    for(const [n] of dzRows(F)){const t=T[n],en=ENZ_TXT[t.key];
+      for(const m of t.mols)if(m[1]==='x')P.push(MOL_TXT[m[0]].charAt(0).toUpperCase()+MOL_TXT[m[0]].slice(1)+' não regula a '+en+'.');
+      if(F.meta==='min'&&t.open<F.alvo){const inh=t.mols.filter(m=>m[1]==='-').map(m=>MOL_TXT[m[0]]);
+        P.push('A '+en+' ficou em '+pct(t.open)+'%'+(inh.length?': '+inh.join(' e ')+(inh.length>1?' inibem':' inibe')+' esta enzima.':', sem nenhum ativador.'));}
+      if(F.meta==='max'&&n!==1&&t.open>F.alvo){const act=t.mols.filter(m=>m[1]==='+').map(m=>MOL_TXT[m[0]]);
+        P.push('A '+en+' ainda está em '+pct(t.open)+'%'+(act.length?': '+act.join(' e ')+(act.length>1?' ativam':' ativa')+' esta enzima, o contrário do que o fígado precisa agora.':': falta um inibidor.'));}
+    }
+    L.push({who:'SIMULADOR',t:'Meta não cumprida. '+P.slice(0,3).join(' ')});
+    if(tries[R.fase]>=2)L.push({who:'SIMULADOR',t:'Dica: '+F.dica});
+    L.push({who:'SIMULADOR',t:'Monte a célula de novo e tente outra vez.'});
+  }
+  say(L,()=>{simPage='main';simSel=1;goScene('salaSim',192,182,'up','SIMULADOR');});
+}
+
 // Larissa waits in the room after the third door opens (until the player leaves)
 const larissaOc={id:'larissaOc',name:'Larissa (2º ano)',cx:312,top:70,base:96,solid:{x:307,y:92,w:10,h:4},zone:{x:296,y:72,w:32,h:36},
   sprite:t=>{const c=personSprite('larissa','coat','down',0,blinkAt(t,.8));return {c:c.c,x:304,y:73};},
@@ -4552,6 +5111,35 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
     return false;
   });
 }
+/* Bruno (1st year, lab wing) is also in the Liga: after the invitation he proposes the challenge */
+{
+  const bru=SCENES.terreo.find(o=>o.id==='bruno'),a0=bru.act,BW='BRUNO (1º ANO)';
+  const TIPS=['Lembra: quem decide a velocidade da glicólise são as reações 1, 3 e 10. As outras só acompanham.',
+    'A fosfofrutocinase-1 é o principal ponto de controle. É ali que a célula "decide" se a glicose segue na via.',
+    'Ativação por antecipação: a frutose-1,6-bisfosfato avisa a piruvato-cinase antes de o substrato chegar.'];
+  bru.rem=0;
+  bru.act=function(){
+    if(flags.alost!==6)return a0.call(this);
+    stopChat(this);this.wait=4;if(!(this.sitting>0))this.dir=faceTo(this,player);
+    const ask=[{t:'Topo! Pode deixar.',fn:()=>{flags.dzOn=true;flags.dzFase=1;updatePauseExtra();
+        say([{who:BW,t:'Boa! O desafio já aparece no menu do computador do laboratório, perto da bancada do espectrofotômetro. Boa sorte, colega!'}]);}},
+      {t:'Agora não.',fn:()=>say([{who:BW,t:'Tranquilo. Quando quiser, é só falar comigo.'}])}];
+    if(!flags.dzOn&&!flags.dzAsked){flags.dzAsked=true;
+      return say([{who:BW,t:'Psiu! A Larissa me contou que você abriu as três portas da sala. Eu também sou da Liga, desde o começo do ano.'},
+        {who:BW,t:'Todo membro novo passa por uma prova prática: o Desafio da Liga, no simulador do laboratório, aqui no térreo.'},
+        {who:BW,t:'São três fases. Em cada uma, você coloca moléculas no sítio alostérico da enzima da reação 1, da fosfofrutocinase-1 e da piruvato-cinase. Depois, a glicose corre sozinha pela via.'},
+        {who:BW,t:'Não vale nota, mas a Liga inteira fica sabendo. Topa?',choices:ask}]);}
+    if(!flags.dzOn)return say([{who:BW,t:'E aí, vai encarar o Desafio da Liga no simulador?',choices:ask}]);
+    if(!flags.dzDone)return say([{who:BW,t:'Como vai o desafio? Você está na fase '+flags.dzFase+' de 3. O computador fica no laboratório, virado para a bancada do espectrofotômetro.'}]);
+    if(!flags.dzReward){setMood('bruno','happy',6);
+      return say([{who:me(),t:'Bruno, venci as três fases do Desafio da Liga!'},
+        {who:BW,t:'As três?! Até a do jejum? Essa derruba muita gente, porque é a única em que você precisa frear a via.'},
+        {who:BW,t:'Toma: o distintivo de monitor do simulador. Quem tem um desses ajuda a montar o desafio dos calouros do ano que vem.'},
+        {t:'Você ganhou: DISTINTIVO DE MONITOR DO SIMULADOR',item:'distintivo',run:()=>{flags.dzReward=true;updatePauseExtra();}},
+        {who:BW,t:'Bem-vindo de verdade à Liga, colega.'.replace('Bem-vindo',gen('Bem-vindo','Bem-vinda'))}]);}
+    say([{who:BW,t:'E aí, colega de Liga! '+TIPS[this.rem++%TIPS.length]}]);
+  };
+}
 function alostReset(){
   wallPass={n:0,side:null};secretAnim=-1;onArrive=null;larissaOut();
   laRun=null;music.duck(1);if(larissa&&!SCENES.terreo.includes(larissa))larissaMove('terreo',392,676,134); // back to the ground floor for a new game
@@ -4568,7 +5156,7 @@ const MUSIC_DIRS=['Músicas dos jogos/',''];
 const TRACKS={lab:'Laboratory of the Archmage (MP3).mp3',cour:'Courtyard of Enchantment.mp3',
   alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3'};
 const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab']};
-const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',salaOculta:'andar2'};
+const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',salaOculta:'andar2',salaSim:'terreo',simGlic:'terreo'};
 const music=(()=>{
   const FADE=.8; // seconds for a full fade
   let els={},dir=0,cur=null,vol=.15,zone=null,duck=1,fast=0; // duck: multiplies the volume (dramatic moments)
@@ -4707,6 +5295,16 @@ function onKey(e){
     else if(e.code==='KeyD'||e.code==='ArrowRight')pauseAdjust(1);
     return;
   }
+  if(state==='dz'){
+    e.preventDefault&&e.preventDefault();
+    if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)dzEnter();}
+    else if(e.code==='Escape'){if(!e.repeat)closeDz();}
+    else if(e.code==='KeyW'||e.code==='ArrowUp')dzMove(-1,0);
+    else if(e.code==='KeyS'||e.code==='ArrowDown')dzMove(1,0);
+    else if(e.code==='KeyA'||e.code==='ArrowLeft')dzMove(0,-1);
+    else if(e.code==='KeyD'||e.code==='ArrowRight')dzMove(0,1);
+    return;
+  }
   if(state==='quiz'){
     const k=e.key.length===1?LETTERS.indexOf(e.key.toUpperCase()):-1;
     if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)quizEnter();}
@@ -4766,6 +5364,13 @@ function onKey(e){
     else if(e.code==='KeyZ'&&!posterEl.classList.contains('fixed')){togglePosterZoom();}
     return;
   }
+  if(scene==='simGlic'&&state==='play'&&e.code==='Escape'){e.preventDefault&&e.preventDefault();if(!e.repeat)simBack();return;}
+  if(inSim()&&(MOVE[e.code]||e.code==='Escape')){ // the simulator screen is a menu
+    e.preventDefault&&e.preventDefault();unlockAudio();
+    if(e.code==='Escape'){if(!e.repeat)simExit();}
+    else simMove(['KeyW','KeyA','ArrowUp','ArrowLeft'].includes(e.code)?-1:1);
+    return;
+  }
   if(MOVE[e.code]){keys.add(e.code);e.preventDefault();unlockAudio();}
   if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)onEnter();}
   if(e.code==='KeyM'){muted=!muted;music.vol=music.vol;syncVol();} // M silences effects and music
@@ -4779,7 +5384,7 @@ const DPAD_ARROW={KeyW:'ArrowUp',KeyS:'ArrowDown',KeyA:'ArrowLeft',KeyD:'ArrowRi
 document.querySelectorAll('.dpad button').forEach(b=>{
   const k=b.dataset.k;
   b.addEventListener('pointerdown',e=>{e.preventDefault();unlockAudio();b.classList.add('on');
-    if(state==='play'){keys.add(k);return;}
+    if(state==='play'&&scene!=='salaSim'){keys.add(k);return;}
     const a=DPAD_ARROW[k];onKey({code:a,key:a,repeat:false,target:b,preventDefault(){}});});
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{keys.delete(k);b.classList.remove('on');}));
 });
@@ -4789,7 +5394,8 @@ $('abtn').addEventListener('click',onEnter);
 let lastPtr='';addEventListener('pointerdown',e=>{lastPtr=e.pointerType;},true);
 const tapped=e=>(e.pointerType||lastPtr)==='touch';
 $('dialog').addEventListener('click',e=>{if(tapped(e))return;if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
-cv.addEventListener('click',e=>{if(tapped(e))return;unlockAudio();if(state==='play')interact();});
+cv.addEventListener('mousemove',e=>{if(!inSim())return;const i=simHit(e);if(i>=0&&i!==simSel)simSel=i;});
+cv.addEventListener('click',e=>{if(inSim()){const i=simHit(e);if(i>=0){simSel=i;unlockAudio();simSelect();}return;}if(tapped(e))return;unlockAudio();if(state==='play')interact();});
 
 /* ---------- game controller (Xbox and other standard-mapping pads, through the Gamepad API) ----------
    A = ENTER, X = ESC in sheets, review, word search, poster and pause (and space on the name keyboard),
@@ -4807,7 +5413,8 @@ function padKey(code,repeat){
     if((code==='Enter'||code==='Menu')&&$('telaTitulo').style.display!=='none')$('telaTitulo').click();
     return;
   }
-  if(code==='KeyX'&&['quiz','review','caca','poster','pause','duelo','segredo'].includes(state))code='Escape'; // X: leave the sheet, back, close
+  if(code==='KeyX'&&state==='play'&&(scene==='salaSim'||scene==='simGlic'))code='Escape';
+  if(code==='KeyX'&&['quiz','review','caca','poster','pause','duelo','segredo','dz'].includes(state))code='Escape'; // X: leave the sheet, back, close
   if(code==='Menu'){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
@@ -4971,14 +5578,26 @@ function update(dt){
   if(keys.has('KeyD')||keys.has('ArrowRight'))vx+=1;
   if(keys.has('KeyW')||keys.has('ArrowUp'))vy-=1;
   if(keys.has('KeyS')||keys.has('ArrowDown'))vy+=1;
+  if(scene==='simGlic'){vy=0;if(rideSt&&rideSt.mode==='desafio')vx=rideDone?0:1;}
+  const spd=scene==='simGlic'&&rideSt?(rideSt.mode==='desafio'?110:SPEED)*rideFactor(player.x):SPEED;
   if(vx||vy){
     const n=Math.hypot(vx,vy);vx/=n;vy/=n;
     if(Math.abs(vx)>Math.abs(vy))player.dir=vx<0?'left':'right';else player.dir=vy<0?'up':'down';
-    const nx=player.x+vx*SPEED*dt,ny=player.y+vy*SPEED*dt;
-    if(!blocked(nx,player.y))player.x=nx;
-    if(!blocked(player.x,ny))player.y=ny;
+    const nx=player.x+vx*spd*dt,ny=player.y+vy*spd*dt;
+    const stuck=blocked(player.x,player.y); // already overlapping something: let the player walk out
+    if(stuck||!blocked(nx,player.y))player.x=nx;
+    if(stuck||!blocked(player.x,ny))player.y=ny;
     player.moving=true;player.anim+=dt*10;
   }
+  if(scene==='simGlic'&&rideSt&&rideSt.mode!=='desafio'){
+    const lim=glicLim();
+    if(player.x>lim){player.x=lim;let n=1;while(glicVisto(n))n++;
+      if(glicAberto(n))glicPergunta(n);
+      else if(rideSt.blk!==n){rideSt.blk=n;tone(196,.12,'square',.04);
+        rideSt.toast={t:'O trilho à frente está incompleto. Abra o cartaz da reação '+n+' e responda à pergunta.',until:performance.now()/1000+6};}}
+  }
+  rideTick();
+  if(scene==='simGlic'&&!rideDone&&player.x>=RIDE_END)rideEnd();
   checkStairs();
 }
 
@@ -4998,7 +5617,7 @@ let camX=0;
 function render(t){
   g=fctx;
   camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(player.x-W/2)));
-  fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,salaLab:bgLab,salaOculta:bgOc}[scene],0,0);
+  fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,salaLab:bgLab,salaOculta:bgOc,salaSim:bgSim,simGlic:bgGlic}[scene],0,0);
   if(scene==='terreo')drawClock();
   drawJanitorFloor();
   drawTorches(t);
@@ -5006,15 +5625,18 @@ function render(t){
   const items=objects.filter(o=>!o.wall);
   const px_=Math.round(player.x),py_=Math.round(player.y);
   for(const o of items)if(!o.noShadow){const s=o.solid;shadow(s.x+s.w/2,o.base+1,o.id==='pedro'?10:s.w);}
-  shadow(px_,py_+1,10);
+  const sim=scene==='salaSim',ride=scene==='simGlic';
+  if(!sim&&!ride)shadow(px_,py_+1,10);
   const list=items.map(o=>({y:o.base,o}));
-  list.push({y:py_,o:null});
+  if(!sim&&!ride)list.push({y:py_,o:null});
   list.sort((a,b)=>a.y-b.y);
   for(const it of list){
     if(it.o){blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}}
     else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
   }
   g=fctx;
+  if(sim)drawSimMenu(t);
+  if(ride){drawGlicGaps();drawTunnels(false);drawRide(t);drawTunnels(true);drawRideHud();}
   // quest markers
   const bob=Math.round(Math.sin(t*5)*1.5);
   for(const o of objects){
@@ -5024,14 +5646,14 @@ function render(t){
     r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,main?'#d9a441':'#5fb4f0');r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
   }
   // interaction prompt
-  if(state==='play'){
+  if(state==='play'&&!(ride&&rideSt&&rideSt.mode==='desafio')){
     const o=nearest();
     if(o){
       const kl=padOn?'A':'ENTER',name=o.name.toUpperCase(),w=pxW(kl)+5+pxW(name)+6;
       let bx=Math.round(px_-w/2);bx=Math.max(camX+2,Math.min(camX+W-w-2,bx));
-      const by=py_-36;
+      const by=ride?py_+29:py_-36; // on the ride: below the rail, so the poster stays visible
       r(bx-1,by-1,w+2,11,'#1d1612');r(bx,by,w,9,'#3a2414');r(bx,by,w,1,'#d9a441');
-      r(px_-1,by+10,3,1,'#1d1612');px(px_,by+11,'#1d1612');
+      if(ride){r(px_-1,by-2,3,1,'#1d1612');px(px_,by-3,'#1d1612');}else{r(px_-1,by+10,3,1,'#1d1612');px(px_,by+11,'#1d1612');}
       if(padOn){r(bx+1,by+1,7,7,'#3c9a3c');pxText(kl,bx+3,by+2,'#ffffff');}else pxText(kl,bx+3,by+3,'#d9a441');
       pxText(name,bx+3+pxW(kl)+5,by+3,'#efe3c8');
     }
@@ -5050,7 +5672,7 @@ function loop(now){
   if(state==='intro')drawDiaryArt(now/1000);
   requestAnimationFrame(loop);
 }
-buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);buildBgSala(bgS201ctx,WIN201,91);buildBgLab();buildBgOculta();
+buildBg();buildBg1();buildBg2();buildBgSala();buildBgSala(bgS3ctx,WIN103,77);buildBgSala(bgS201ctx,WIN201,91);buildBgLab();buildBgOculta();buildBgSim();buildBgGlic();
 reset();state='boot';
 // called by the opening screens once the player has typed a name
 // thumbnail for the character screen (g: 'm' boy, 'f' girl), facing down in everyday clothes
