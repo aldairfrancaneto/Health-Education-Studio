@@ -514,17 +514,21 @@ body{
   .cl-copyright{ font-size:10.5px; }
 }
 </style>
+<style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
 <body>
+<style>#portaoClique{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:#0d0d0f;color:#f2f2f2;font:600 22px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:.03em;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;outline:none}#portaoClique span{padding:14px 28px;border:2px solid rgba(255,255,255,.5);border-radius:10px;animation:portaoPulsa 1.6s ease-in-out infinite}@keyframes portaoPulsa{50%{opacity:.55}}</style>
+<!-- antes do carregamento: o navegador só libera som depois de um clique/tecla; fonte do sistema (sem troca de fonte) -->
+<div id="portaoClique" role="button" tabindex="0" aria-label="Clique para começar"><span>▶ Clique para começar</span></div>
 
-<div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
+<div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar." style="display:none;">
   <div class="tt-ico" aria-hidden="true">🗺️</div>
   <div class="tt-caso">Atividade 02</div>
   <div class="tt-titulo">A Trilha das<br>Evidências</div>
   <div class="tt-start">▶ Press Start</div>
 </div>
 
-<div class="tela-carregando" id="telaCarregando" style="display:none;">
+<div class="tela-carregando aguarda-fontes" id="telaCarregando">
   <div class="tc-titulo">Carregando</div>
   <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
   <div class="tc-pct" id="tcPct">0%</div>
@@ -1230,11 +1234,17 @@ body{
     o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + 0.02);
   }
 
+  var pronto = false;
+  function mostrarTitulo(){ carregando.style.display = 'none'; titulo.style.display = ''; pronto = true; try{ titulo.focus(); }catch(e){} }
+  function entrar(){ if (!pronto) return; pronto = false; titulo.style.display = 'none'; (function(){
+          carregando.style.display = 'none';
+          conteudo.style.display = '';
+        })(); }
   function iniciar(){
     if (iniciado) return;
     iniciado = true;
-    titulo.style.display = 'none';
     carregando.style.display = '';
+    carregando.classList.remove('aguarda-fontes');
     var t0 = performance.now();
     var passos = 10, idxAtual = -1;
     function passo(){
@@ -1247,18 +1257,82 @@ body{
       if (p < 100){ requestAnimationFrame(passo); }
       else {
         bipLoad(880, 0, .12, 'triangle', .12); bipLoad(1175, .1, .18, 'triangle', .12);
-        setTimeout(function(){
-          carregando.style.display = 'none';
-          conteudo.style.display = '';
-        }, 420);
+        setTimeout(mostrarTitulo, 420);
       }
     }
     requestAnimationFrame(passo);
   }
-  titulo.addEventListener('click', iniciar);
+  titulo.addEventListener('click', entrar);
   titulo.addEventListener('keydown', function(e){
-    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); iniciar(); }
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); entrar(); }
   });
+  /* fontes primeiro: a tela fica escura (no máximo 1,2 s) até as fontes do Google chegarem; depois o
+     carregamento aparece já com a fonte certa e, no fim dele, a tela de título (que antes vinha primeiro) */
+  function esperarFontes(){
+    try{
+      var vistos = {}, ps = [];
+      document.fonts.forEach(function(f){
+        var fam = f.family.replace(/["']/g, ''), w = String(f.weight).split(' ')[0], k = fam + '|' + w + '|' + f.style;
+        if (vistos[k]) return; vistos[k] = 1;
+        ps.push(document.fonts.load(f.style + ' ' + w + ' 16px "' + fam + '"', 'AaÁãÇçÉéÕõ09'));
+      });
+      return Promise.all(ps);
+    }catch(e){ return Promise.resolve(); }
+  }
+  titulo.style.display = 'none';
+  // tela "Clique para começar": o carregamento (e seus bipes) só começa depois do primeiro clique ou tecla
+  function abrirPortao(seguir){
+    var p = document.getElementById('portaoClique');
+    if (!p){ seguir(); return; }
+    var feito = false, IGNORA = /^(Escape|Shift|Control|Alt|Meta|CapsLock|Tab|F\d+)$/;
+    function abrir(e){
+      if (feito) return;
+      if (e && e.type === 'keydown'){ if (IGNORA.test(e.key)) return; e.preventDefault(); e.stopImmediatePropagation(); }
+      if (e && e.type === 'click') e.stopPropagation();
+      feito = true;
+      window.removeEventListener('keydown', abrir, true);
+      if (p.parentNode) p.parentNode.removeChild(p);
+      seguir();
+    }
+    p.addEventListener('click', abrir);
+    window.addEventListener('keydown', abrir, true);
+    (function controle(){ // controle de videogame: segue em frente (o som pode continuar bloqueado pelo navegador)
+      if (feito) return;
+      var g = navigator.getGamepads ? navigator.getGamepads() : [];
+      for (var i = 0; i < g.length; i++) if (g[i] && g[i].buttons.some(function(b){ return b.pressed; })){ abrir(); return; }
+      requestAnimationFrame(controle);
+    })();
+    try { p.focus({ preventScroll: true }); } catch(_){}
+  }
+  abrirPortao(function(){
+    Promise.race([esperarFontes(), new Promise(function(r){ setTimeout(r, 1200); })]).then(iniciar, iniciar);
+  });
+})();
+</script>
+<script>
+/* ===== créditos do carregamento: a foto entra rolando da borda lateral oposta e chega ao
+   seu lugar 1 s antes do fim do carregamento (7 s) ===== */
+(function(){
+  "use strict";
+  var foto = document.querySelector('.creditos-loading .cl-foto');
+  if (!foto) return;
+  var DUR_LOAD = 7000, ANTES = 1000;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var iv = setInterval(function(){
+    if (!foto.getClientRects().length || foto.closest('.aguarda-fontes')) return;          /* tela de carregamento ainda escondida */
+    clearInterval(iv);
+    var r = foto.getBoundingClientRect();
+    var dist = Math.max(0, window.innerWidth - r.right - 12);  /* da borda direita até o lugar final */
+    var voltas = dist / (Math.PI * r.width);             /* gira como uma roda de verdade */
+    var giro = voltas * 360, t0 = performance.now(), dur = DUR_LOAD - ANTES;
+    /* movida pelo mesmo relógio da barra de carregamento (requestAnimationFrame) */
+    (function passo(){
+      var k = Math.min(1, (performance.now() - t0) / dur);
+      var resta = Math.pow(1 - k, 1.3);                  /* desacelera ao chegar */
+      foto.style.transform = k < 1 ? 'translateX(' + (dist * resta).toFixed(1) + 'px) rotate(' + (giro * resta).toFixed(1) + 'deg)' : '';
+      if (k < 1) requestAnimationFrame(passo);
+    })();
+  }, 40);
 })();
 </script>
 </body>

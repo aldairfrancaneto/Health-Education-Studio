@@ -58,7 +58,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 canvas{display:block;width:100%;height:100%;image-rendering:auto}
 
 /* Dialog */
-#dialog{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:94%;min-width:calc(var(--u)*110);bottom:4%;background:rgba(32,21,16,.96);border:calc(var(--u)*1) solid var(--ink);box-shadow:inset 0 0 0 calc(var(--u)*1) var(--line);padding:calc(var(--u)*4) calc(var(--u)*6) calc(var(--u)*4);box-sizing:border-box}
+/* bottom-left, lined up with the clock and just above the HUD strip (never over the clock) */
+#dialog{position:absolute;left:calc(var(--u)*12);width:max-content;max-width:calc(100% - var(--u)*24);min-width:calc(var(--u)*110);bottom:calc(var(--u)*14);background:rgba(32,21,16,.96);border:calc(var(--u)*1) solid var(--ink);box-shadow:inset 0 0 0 calc(var(--u)*1) var(--line);padding:calc(var(--u)*4) calc(var(--u)*6) calc(var(--u)*4);box-sizing:border-box}
 #dlg-who{position:absolute;top:calc(var(--u)*-5);left:calc(var(--u)*5);font-family:var(--f-display);font-size:calc(var(--u)*3.4);background:var(--accent);color:#1a1606;padding:calc(var(--u)*1.4) calc(var(--u)*2.4)}
 #dlg-who:empty{display:none}
 #dlg-text{font-size:calc(var(--u)*8.2);line-height:1.05;max-width:52ch;min-height:2.1em;display:grid}
@@ -401,6 +402,9 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
 <body>
+<style>#portaoClique{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;background:#0d0d0f;color:#f2f2f2;font:600 22px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:.03em;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;outline:none}#portaoClique span{padding:14px 28px;border:2px solid rgba(255,255,255,.5);border-radius:10px;animation:portaoPulsa 1.6s ease-in-out infinite}@keyframes portaoPulsa{50%{opacity:.55}}</style>
+<!-- antes do carregamento: o navegador só libera som depois de um clique/tecla; fonte do sistema (sem troca de fonte) -->
+<div id="portaoClique" role="button" tabindex="0" aria-label="Clique para começar"><span>▶ Clique para começar</span></div>
 <button id="btnTelaCheia" type="button" title="Tela cheia" aria-label="Entrar em tela cheia"><span class="btn-tc-ico" aria-hidden="true">&#9974;</span></button>
 <button id="btnPausa" type="button" title="Pausa" aria-label="Pausar o jogo" aria-pressed="false" hidden><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" rx=".6" fill="currentColor"/><rect x="7" y="1" width="3" height="10" rx=".6" fill="currentColor"/></svg></button>
 <button id="btnMusica" type="button" title="Volume da música e dos efeitos" aria-label="Volume da música e dos efeitos" aria-haspopup="true" aria-expanded="false">&#128266;</button>
@@ -3576,9 +3580,22 @@ function deliver(){
   }
   grade();
 }
+// after the grade: if the player rode the whole pathway in the lab simulator, the professors ask about it
+function simAsk(next,pass){
+  return {who:'PROF. NETO',t:'Uma curiosidade, '+nome1()+': você chegou a usar o simulador do laboratório para estudar?',choices:[
+    {t:'Sim! Percorri a via inteira, reação por reação',fn:()=>say([
+      {who:'PROF. NETO',t:(pass?'Eu sabia! Dá para ver nas suas respostas.':'Muito bom! A nota de hoje não saiu como você queria, mas esse é o caminho certo.')+' Fui eu que sugeri essa atividade para os alunos do 1º ano.'},
+      {who:'PROFA. ROSA',t:'Que iniciativa bonita! Estudar além do que pedimos é coisa de quem vai longe. Parabéns, '+nome1()+'!',run:()=>setMood('heloisa','happy',4)},
+      {who:'PROF. NETO',t:'Fazer as 10 reações uma a uma, sem pular nenhuma, é o melhor treino para a prova. Continue assim.'},next])},
+    {t:'Não, não cheguei a usar',fn:()=>say([
+      {who:'PROF. NETO',t:'Não? Pois vale a pena: fica no laboratório, no térreo. Escolha "Percorrer a via" e responda a pergunta de cada reação.'},next])}]};
+}
 function grade(){
   const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=score()-a,base=a+b,bon=provas.b;
   const total=finalScore(),pass=total>=PASS;
+  const duv={who:'PROFA. ROSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
+      {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
+      {t:gen('Não, obrigado','Não, obrigada'),fn:()=>finish(pass)}]};
   say([
     {who:'PROF. NETO',t:blank?'A aula acabou. Deixe aqui na mesa as folhas que você tem.':'Achou e respondeu as '+QUIZ_N+' folhas da lição? Ótimo, pode deixar aqui na mesa.'},
     {run:handSheets,t:(blank?'Você entrega as folhas. '+(blank===1?'Uma ficou':blank+' ficaram')+' em branco.':'Você entrega as '+QUIZ_N+' folhas da atividade.')+(bon?' E a questão bônus também.':'')},
@@ -3590,9 +3607,7 @@ function grade(){
     bon?{who:'PROF. NETO',t:'Questão bônus: '+(!bon.ok?'errada, não valeu o ponto extra.':base>=QUIZ_N?'certa, mas você já tinha a nota máxima.':base>=PASS?'certa! Você nem precisava, mas o ponto extra entra na nota.':'certa! O ponto extra entra na sua nota.')}
        :{who:'PROFA. ROSA',t:'Sem a questão bônus, ficamos só com as '+QUIZ_N+' folhas.'},
     {who:'PROF. NETO',t:'Sua nota na lição: '+total+' de '+QUIZ_N+'. '+(pass?'Muito bem! Você está '+gen('pronto','pronta')+' para a prova de amanhã.':'Eram necessários '+PASS+' acertos. Revise a glicólise com calma antes da prova.')},
-    {who:'PROFA. ROSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
-      {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
-      {t:gen('Não, obrigado','Não, obrigada'),fn:()=>finish(pass)}]}
+    flags.viaOk?simAsk(duv,pass):duv
   ]);
 }
 /* ---------- commented correction ----------
@@ -3981,7 +3996,7 @@ function sideNeeds(o){
     if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1;
   }
   if(o.id==='bruno')return flags.alost===6&&(!flags.dzOn||(!!flags.dzDone&&!flags.dzReward));
-  if(o.id==='simulador')return !!flags.dzOn&&!flags.dzDone;
+  if(o.id==='simulador')return (!!flags.dzOn&&!flags.dzDone)||(!!flags.viaTip&&!flags.viaOk);
   if(sideMarker(o))return true; // next step of Tiago's notebook
   if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca;
   if(o.id==='tiago')return !flags.tiagoQ; // he still has a request (also after a "not now")
@@ -3999,6 +4014,7 @@ const TIAGO_STEP=['',
 function sideActive(){ // accepted and not finished yet
   const L=[],q=flags.tiagoQ||0;
   if(q>=1&&q<=5)L.push('Caderno do Tiago: '+TIAGO_STEP[q]);
+  if(flags.viaTip&&!flags.viaOk)L.push('Simulador do laboratório (térreo): escolha "Percorrer a via" e complete as 10 reações');
   if(flags.cacaDica&&!flags.caca)L.push('Caça-palavras na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
   if(flags.caca&&flags.cacaTold&&!flags.cacaThanks)L.push('Conte à Camila, no 1º andar, que achou todas as palavras');
   const a=flags.alost;
@@ -4020,6 +4036,7 @@ function updatePauseExtra(){
   const L=[],q=flags.tiagoQ||0;
   if(flags.cacaDica)L.push(flags.caca?'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras':'Caça-palavras da glicólise, na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
   if(q)L.push('Caderno do Tiago: '+TIAGO_STEP[q]);
+  if(flags.viaTip)L.push(flags.viaOk?'Simulador do laboratório: via da glicólise percorrida (dica do Tiago)':'Simulador do laboratório: percorra a via da glicólise (dica do Tiago)');
   if(flags.alost>=2)L.push(flags.alost===6?'A sala que não está lá: convite da Liga de Metabolismo recebido':'A sala que não está lá: '+sideActive().find(t=>/^(Bilhete|Sala oculta)/.test(t)));
   if(flags.dzOn)L.push(flags.dzReward?'Desafio da Liga: concluído, distintivo recebido':flags.dzDone?'Desafio da Liga: conte ao Bruno que você venceu':'Desafio da Liga: fase '+flags.dzFase+' de 3, no simulador do laboratório');
   if(flags.duelTold)L.push(flags.duelWin?'Duelo Relâmpago: você venceu o Gabriel!':'Duelo Relâmpago: vença o Gabriel (3º ano), no 2º andar, acertando '+DUEL_WIN+' de '+DUEL_N);
@@ -4033,6 +4050,18 @@ function updatePauseExtra(){
    He cannot go himself: he is waiting at the Sala 102 door to be called for his seminar. Reward (symbolic): his
    "Glicose de Ouro" sticker, stuck on the badge; from then
    on Tiago calls the player "amigo/amiga" and now and then says they are "gente boa". */
+// Tiago's study tip (after the notebook comes back): the "Percorrer a via" activity in the lab simulator.
+// flags.viaTip: tip heard (side quest on until flags.viaOk, the whole pathway ridden)
+function viaTipLines(TW){
+  const run=()=>{flags.viaTip=true;updatePauseExtra();};
+  if(flags.viaOk)return [{who:TW,t:'Ah, e uma dica de amigo: você conhece o simulador do laboratório, lá no térreo? A atividade "Percorrer a via"?'},
+    {who:me(),t:'Conheço! Já percorri a via inteira, respondendo a pergunta de cada reação.',run},
+    {who:TW,t:'Sério? Foi assim que eu estudei as 10 reações! Quem me recomendou foi o professor Neto. Ele vai gostar de saber.'}];
+  return [{who:TW,t:'Ah, e uma dica de amigo: sabe o simulador do laboratório, lá no térreo? Tem uma atividade nele chamada "Percorrer a via".'},
+    {who:TW,t:'O trilho do carrinho está quebrado depois de cada reação da glicólise. Ele só se completa quando você acerta a pergunta do cartaz daquela reação.'},
+    {who:TW,t:'Foi assim que eu estudei as 10 reações! Quem me recomendou foi o professor Neto: ele disse que é o melhor jeito de revisar a via antes da prova.'},
+    {who:TW,t:'Só não esquece o jaleco: sem ele, não deixam entrar no laboratório.',run}];
+}
 const QUEST_NEXT={1:'gabriel',2:'lucia',3:'zelador',4:'secretaria',5:'tiago'};
 const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
 {
@@ -4062,7 +4091,8 @@ const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
       {who:TW,t:'É o adesivo mais especial da minha coleção: a Glicose de Ouro. Eu só dou para quem é amigo de verdade.'},
       {t:'Você ganhou: ADESIVO GLICOSE DE OURO',item:'adesivo',run:()=>{flags.tiagoQ=6;updatePauseExtra();}},
       {t:'Você cola o adesivo no seu crachá. Ele brilha um pouquinho com a luz do corredor.'},
-      {who:TW,t:'Pronto: agora é oficial. Valeu mesmo, '+amigo+'! Você é gente boa.'}]);
+      {who:TW,t:'Pronto: agora é oficial. Valeu mesmo, '+amigo+'! Você é gente boa.'}].concat(viaTipLines(TW)));
+    if(q===6&&flags.viaTip&&!flags.viaOk&&k%2===0)return say([{who:TW,t:'E aí, '+amigo+'! Já foi ao simulador do laboratório? Escolha "Percorrer a via": foi assim que eu aprendi as 10 reações.'}]);
     if(q===6)return say([{who:TW,t:'E aí, '+amigo+'! '+TIPS[k%TIPS.length]}]
       .concat(k%3===1?[{who:TW,t:BOA[Math.floor(k/3)%BOA.length]}]:[]));
     say([{who:TW,t:TIPS[k%TIPS.length]}]);
@@ -4474,10 +4504,13 @@ const [bgGlic,bgGlicctx]=mk(GLIC_W,H);
 const glicX=n=>80+(n-1)*128; // left edge of the poster of reaction n (128 px apart)
 const GLIC_ENZ=['','Hexocinase','Fosfo-hexose-isomerase','Fosfofrutocinase-1','Aldolase','Triose-fosfato-isomerase',
   'Gliceraldeído-3-fosfato-desidrogenase','Fosfoglicerato-cinase','Fosfoglicerato-mutase','Enolase','Piruvato-cinase'];
-const GLIC_MOL=['GLICOSE','GLICOSE-6-FOSFATO','FRUTOSE-6-FOSFATO','FRUTOSE-1,6-BIFOSFATO','DI-HIDROXIACETONA-FOSFATO\n+ GLICERALDEÍDO-3-FOSFATO',
-  '2 GLICERALDEÍDO-3-FOSFATO','2 (1,3-BIFOSFOGLICERATO)','2 (3-FOSFOGLICERATO)','2 (2-FOSFOGLICERATO)','2 FOSFOENOLPIRUVATO','2 PIRUVATO'];
-// label box of a molecule: one or two lines, its bottom edge at y 92
-function molBox(m){const L=m.split('\n'),w=Math.max(...L.map(pxW))+6,h=L.length*8+2;return {L,w,h,y:92-h};}
+// molecule names broken into narrow lines: each label stays on its own line between two reactions and never
+// reaches into the enzyme's stretch (substrate | enzyme | product, 64 px from label to enzyme)
+const GLIC_MOL=['GLICOSE','GLICOSE-\n6-FOSFATO','FRUTOSE-\n6-FOSFATO','FRUTOSE-\n1,6-BIFOSFATO','DI-HIDROXI-\nACETONA-\nFOSFATO +\nGLICERAL-\nDEÍDO-3-\nFOSFATO',
+  '2 GLICERAL-\nDEÍDO-3-\nFOSFATO','2 (1,3-BIFOS-\nFOGLICERATO)','2 (3-FOSFO-\nGLICERATO)','2 (2-FOSFO-\nGLICERATO)','2 FOSFOENOL-\nPIRUVATO','2 PIRUVATO'];
+const molTxt=m=>m.replace(/-\n/g,'-').replace(/\n/g,' '); // the name in one line, for messages
+// label box of a molecule, its bottom edge at y 100
+function molBox(m){const L=m.split('\n'),w=Math.max(...L.map(pxW))+6,h=L.length*8+2;return {L,w,h,y:100-h};}
 let rideDone=false;
 SCENES.simGlic=[];SCENE_W.simGlic=GLIC_W;TORCHES.simGlic=[];STAIRS.simGlic=[];
 function buildBgGlic(){
@@ -4508,10 +4541,10 @@ function buildBgGlic(){
   // between the posters, at the same height, the molecule of that stretch (glucose first, pyruvate last)
   GLIC_MOL.forEach((m,i)=>{
     const cx=i?glicX(i)+14+64:40,{L,w,h,y}=molBox(m),last=i===10;
-    r(cx,92,1,RIDE_Y+3-92,'#4a5055');
+    r(cx,y+h,1,RIDE_Y+3-y-h,'#4a5055');
     r(Math.round(cx-w/2),y,w,h,last?'#1f4a33':i?'#2b4a6f':'#5a2230');r(Math.round(cx-w/2),y,w,1,last?'#5aa865':i?'#5fb4f0':'#ef6a5c');
     L.forEach((l,k)=>pxText(l,cx,y+3+k*8,'#ffffff','center'));
-    if(i<10)pxText('→',cx,145,'#5fb4f0','center');
+    if(i<10)pxText('→',cx,150,'#5fb4f0','center');
   });
   for(let n=1;n<=10;n++)pxText('REAÇÃO '+n,glicX(n)+14,POSTER_DY+3,'#a9c7d2','center');
   // the rail: two rails, sleepers and supports down to the floor
@@ -4528,20 +4561,27 @@ function buildBgGlic(){
   g=fctx;
 }
 objects=SCENES.simGlic;
+// the reaction posters exist only in "Percorrer a via" (the questions come from them); the regulation rides
+// show the enzymes instead (mountains for 1, 3 and 10, a name plate for the others)
+const GLIC_POSTERS=[];
+function glicPosters(on){const L=SCENES.simGlic;L.length=0;if(on)L.push(...GLIC_POSTERS);}
 for(let n=1;n<=10;n++){const x=glicX(n);
   add({id:'glic'+n,name:'Reação '+n+': '+GLIC_ENZ[n],wall:true,cx:x+14,top:12+POSTER_DY,
     zone:{x:x-2,y:RIDE_Y-20,w:32,h:30},draw:()=>{g.save();g.translate(0,POSTER_DY);drawReactionPoster(x,n);g.restore();},act:()=>{glicVer(n);openPoster(n);}});}
+GLIC_POSTERS.push(...SCENES.simGlic);
 objects=SCENES.terreo;
 function drawRide(t){
   g=fctx;
   const X=Math.round(player.x),Y=Math.round(player.y),mv=player.moving,bob=mv&&Math.floor(t*12)%2?1:0;
   const face=player.dir==='left'?'left':'right',d=face==='right'?1:-1;
   const c=personSprite('player',flags.jaleco?'coat':'shirt',face,0,blinkAt(t,0),17);
-  // inside a low (inhibited) tunnel, the rider ducks: hide whatever would poke out above the enzyme's roof
-  let hole=null;if(rideSt)for(const n of [1,3,10]){const G_=tunGeo(n,rideSt.tun[n].open);if(X+8>G_.x0&&X-8<G_.x1&&G_.top>Y-28)hole=G_;}
-  if(hole){g.save();g.beginPath();g.rect(X-40,0,80,H);g.rect(hole.x0,0,hole.w,hole.top);g.clip('evenodd');}
-  blit({c:c.c,x:X-8,y:Y-27-bob});
-  if(hole)g.restore();
+  // under a low (inhibited) tunnel ceiling the rider sinks into the car; the car body hides the rest
+  let need=0;if(rideSt&&rideSt.tun){const now=performance.now()/1000;for(const n of [1,3,10]){const G_=tunGeo(n,tunShown(n,now));
+    if(X+12>G_.x0&&X-12<G_.x1)need=Math.max(need,G_.ti+1-(Y-27-bob));}}
+  const du=rideSt?(rideSt.duck=(rideSt.duck||0)+(Math.min(12,need)-(rideSt.duck||0))*.25):0;
+  g.save();g.beginPath();g.rect(X-20,0,40,Y-4-bob);g.clip();
+  blit({c:c.c,x:X-8,y:Math.round(Y-27-bob+du)});
+  g.restore();
   // the car
   const top=Y-12-bob;
   r(X-15,top,30,10,'#1d1612');r(X-14,top+1,28,8,'#a12a22');r(X-14,top+1,28,2,'#ef6a5c');r(X-14,top+7,28,2,'#5a2230');
@@ -4588,24 +4628,51 @@ const SIM_SC=[
 function scTun(sc){const T={};for(const n of [1,3,10]){const [key,open,mols,note]=sc.tun[n];T[n]={key,name:ENZ_NAME[key],open,mols,note};}return T;}
 const pct=o=>Math.round(o*100);
 const rideFlux=()=>Math.min(rideSt.tun[1].open,rideSt.tun[3].open,rideSt.tun[10].open);
+/* the first scenario: the whole pathway with broken rail, no regulation. The 4 cell states (allosteric
+   regulation) stay locked until it is done (flags.viaOk). */
+const VIA_SC={nome:'PERCORRER A VIA'};
+const viaFeitas=()=>{let k=0;for(let n=1;n<=10;n++)if(flags.glicOk&&flags.glicOk[n])k++;return k;};
+function startVia(){
+  if(flags.viaOk){flags.glicOk={};flags.glicVistos={};} // replaying: the rail breaks again
+  rideSt={mode:'trilho',sc:VIA_SC,tun:null,inT:0,toast:null};glicPosters(true);
+  const first=!flags.viaTut;flags.viaTut=true;
+  const go=()=>{rideDone=false;goScene('simGlic',24,RIDE_Y,'right',VIA_SC.nome);};
+  if(!first)return go();
+  say([{who:'SIMULADOR',t:'Primeiro, conheça a via inteira: da glicose até o piruvato, são 10 reações.'},
+    {who:'SIMULADOR',t:'Depois de cada reação falta um pedaço do trilho. Abra o cartaz da reação e responda à pergunta do simulador para completar o caminho.'},
+    {who:'SIMULADOR',t:'Chegando ao fim, os quatro estados da célula ficam liberados para você ver como a via é regulada.'}],go);
+}
 function startRide(sc){
-  rideSt={mode:'livre',sc,tun:scTun(sc),inT:0,toast:null};
+  rideSt={mode:'livre',sc,tun:scTun(sc),inT:0,toast:null};glicPosters(false);
   const first=!flags.rideTut;flags.rideTut=true;
   const go=()=>{rideDone=false;goScene('simGlic',24,RIDE_Y,'right',sc.nome);};
   if(!first)return go();
-  say([{who:'SIMULADOR',t:'Nas reações 1, 3 e 10 a glicose passa por dentro da enzima. Túnel grande: enzima estimulada, o carrinho acelera. Túnel pequeno: enzima inibida, o carrinho se arrasta.'},
-    {who:'SIMULADOR',t:'As fichas em cima do túnel são as moléculas ligadas ao sítio alostérico: verde ativa, vermelha inibe. Ficha cinza é regulação que não é alostérica.'},
-    {who:'SIMULADOR',t:'Depois de cada reação falta um pedaço do trilho. Abra o cartaz da reação e responda à pergunta do simulador para completar o caminho.'}],go);
+  say([{who:'SIMULADOR',t:'Nas reações 1, 3 e 10 a glicose passa por dentro da enzima. Cada montanha é uma enzima. Túnel grande: enzima estimulada, o carrinho acelera. Túnel pequeno: enzima inibida, o carrinho se arrasta.'},
+    {who:'SIMULADOR',t:'As fichas no nicho da montanha são as moléculas ligadas ao sítio alostérico, longe do túnel: verde ativa, vermelha inibe. Ficha cinza é regulação que não é alostérica.'},
+    {who:'SIMULADOR',t:'O trilho já está inteiro: agora repare na velocidade do carrinho em cada túnel.'}],go);
 }
 function rideFactor(x){
-  if(!rideSt)return 1;
-  for(const n of [1,3,10]){const x0=glicX(n)+30;if(x>=x0-6&&x<=x0+46)return Math.max(.15,rideSt.tun[n].open);}
+  if(!rideSt||!rideSt.tun)return 1;
+  const now=performance.now()/1000;
+  for(const n of [1,3,10]){const G_=tunGeo(n,1);if(x>=G_.x0-6&&x<=G_.x1+2)return Math.max(.15,tunShown(n,now));}
   return 1;
 }
 // tunnel size follows the enzyme activity: 1 = basal, >1 stimulated (taller), <1 inhibited (lower and narrower)
-function tunGeo(n,o){const sh=Math.round(Math.max(0,1-o)*8),x0=glicX(n)+30+sh,x1=glicX(n)+74-sh,top=179-Math.round(18+22*o);return {x0,x1,w:x1-x0,top,ti:top+4};}
+// each control enzyme is a rock massif with a bore through it: the massif is fixed, the bore's height follows the
+// activity (top: bore ceiling, ti: lowest point of the lamps and beam, where the rider must fit under)
+const TUN_A=-23,TUN_B=51,MTN_Y=56; // relative to glicX(n): centred on the reaction, 64 px from each molecule
+function tunGeo(n,o){const x0=glicX(n)+TUN_A,x1=glicX(n)+TUN_B,top=179-Math.round(24+14*o);return {x0,x1,w:x1-x0,top,ti:top+2};}
+// the bore starts at the basal size; when the car comes close, the molecules in the allosteric niche light up and
+// the bore opens or closes to the enzyme's real activity (the mountain shakes meanwhile)
+const TUN_GLOW=.2,TUN_MOVE=.55;
+function tunVis(n){const V=rideSt.vis||(rideSt.vis={});return V[n]||(V[n]={t0:null});}
+function tunShown(n,now){
+  const T=rideSt.tun[n],v=tunVis(n);if(v.t0==null)return 1;
+  let k=Math.max(0,Math.min(1,(now-v.t0-TUN_GLOW)/TUN_MOVE));k=k*k*(3-2*k);
+  return 1+(T.open-1)*k;
+}
 // the gap after reaction n closes only when the player opens that poster and answers its quick question
-const glicVisto=n=>!rideSt||rideSt.mode==='desafio'||!!(flags.glicOk&&flags.glicOk[n]);
+const glicVisto=n=>!rideSt||rideSt.mode!=='trilho'||!!(flags.glicOk&&flags.glicOk[n]);
 const glicAberto=n=>!!(flags.glicVistos&&flags.glicVistos[n]);
 function glicVer(n){
   if(!rideSt||glicVisto(n))return;
@@ -4631,17 +4698,17 @@ function glicPergunta(n){
     const now=performance.now()/1000;
     if(o.ok){
       (flags.glicOk||(flags.glicOk={}))[n]=true;rideSt.rev={n,t:now};rideSt.blk=0;
-      rideSt.toast={t:'Correto! O trilho se completou: '+GLIC_MOL[n].replace('\n',' ')+'.',until:now+4};
+      rideSt.toast={t:'Correto! O trilho se completou: '+molTxt(GLIC_MOL[n])+'.',until:now+4};
       tone(523,.07,'square',.04);setTimeout(()=>tone(784,.09,'square',.04),90);
     }else{
-      player.x=glicX(n)-24;keys.clear();rideSt.blk=0;flags.glicVistos[n]=false;tone(196,.15,'square',.05);
-      rideSt.toast={t:'Resposta errada: o carrinho voltou. Pare de novo no cartaz da reação '+n+', releia e responda outra vez.',until:now+6};
+      player.x=24;player.dir='right';keys.clear();rideSt.blk=0;flags.glicVistos[n]=false;tone(196,.15,'square',.05);setTimeout(()=>tone(147,.25,'square',.05),160); // wrong answer: back to the very start of the ride
+      rideSt.toast={t:'Resposta errada: o carrinho voltou ao início do percurso. Os trechos já completos continuam no lugar; pare de novo no cartaz da reação '+n+', releia e responda outra vez.',until:now+8};
     }}})).concat([{t:'↩ Voltar ao cartaz',cls:'volta',fn:()=>{rideSt.pend=n;rideSt.blk=n;openPoster(n);}}])}]);
 }
 // how far right the car can go: up to the first gap not yet filled
 function glicLim(){for(let n=1;n<=10;n++)if(!glicVisto(n))return glicX(n)+14;return 1e9;}
 function drawGlicGaps(){
-  if(!rideSt||rideSt.mode==='desafio')return;g=fctx;
+  if(!rideSt||rideSt.mode!=='trilho')return;g=fctx;
   const now=performance.now()/1000,ry=RIDE_Y+3;let next=0;
   for(let n=1;n<=10;n++){
     const rv=rideSt.rev&&rideSt.rev.n===n?rideSt.rev:null,seen=glicVisto(n);
@@ -4663,48 +4730,119 @@ function drawGlicGaps(){
   }
 }
 function rideTick(){
-  if(scene!=='simGlic'||!rideSt)return;
-  let k=0;for(const n of [1,3,10]){const x0=glicX(n)+30;if(player.x>=x0-6&&player.x<=x0+46)k=n;}
+  if(scene!=='simGlic'||!rideSt||!rideSt.tun)return;
+  const now=performance.now()/1000;
+  let k=0;for(const n of [1,3,10]){const G_=tunGeo(n,1),v=tunVis(n);
+    if(v.t0==null&&player.x>=G_.x0-90){v.t0=now;tone(990,.06,'square',.03);tone(55,.6,'sawtooth',.04,TUN_GLOW);tone(82,.45,'triangle',.05,TUN_GLOW+.05);}
+    if(player.x>=G_.x0-6&&player.x<=G_.x1+2)k=n;}
   if(k&&k!==rideSt.inT)rideSt.toast={t:rideSt.tun[k].note,until:performance.now()/1000+7};
   rideSt.inT=k;
 }
-function tunCols(o){return o>1.05?['#1f4a33','#3f8a4c','#5aa865']:o>=.9?['#1d3550','#3a6690','#5fb4f0']:o<=.4?['#5a2230','#a12a22','#ef6a5c']:['#7a5a1a','#c99a3c','#f2c94c'];}
+function tunCol(o){return o>1.05?'#5aa865':o>=.9?'#f2c94c':'#ef6a5c';}
+const NICHE_TXT={F26BP:'FRUTOSE-2,6-\nBISFOSFATO',F16BP:'FRUTOSE-1,6-\nBISFOSFATO'}; // narrower chips: they must fit the niche
+const ENZ_SHORT={hk:'HEXOCINASE',gk:'GLICOCINASE',pfk:'PFK-1',pk:'PIRUVATO-CINASE'};
+// top edge of the massif at column x (u: 0..1 across it): a rounded dome with steep cliffs at both portals
+function mtnTop(u,x){const d=Math.min(1,Math.abs(2*u-1)),s_=Math.pow(1-Math.pow(d,2.4),1/2.4);return Math.round(179-115*s_+Math.sin(x*.7)*1.2+Math.sin(x*1.9+1)*.8);}
+const MTN={};
+function mtnSprite(n){
+  if(MTN[n])return MTN[n];
+  const w=TUN_B-TUN_A,h=212-MTN_Y,[c,cx_]=mk(w,h),R=rng(911+n*17),prev=g;g=cx_;
+  const SH=['#2f2721','#3e342c','#4d4137','#5d4f43','#6e5f51','#837364'];
+  const tops=[];for(let x=0;x<w;x++)tops.push(mtnTop(x/(w-1),x+n*40)-MTN_Y);
+  for(let x=0;x<w;x++){
+    const top=tops[x];
+    for(let y=top;y<h;y++){
+      let k=R()<.8?3:R()<.5?2:4;if(((x>>2)+(y>>3))%5===0&&R()<.6)k=2; // a few darker strata
+      if(y-top<2)k=5;else if(y-top<6)k=4;            // lit crest
+      if(x<3)k=Math.min(5,k+1);if(x>w-4)k=Math.max(1,k-1); // light comes from the left
+      if(y>h-40)k=Math.max(1,k-1);                      // darker at the foot
+      px(x,y,SH[k]);
+    }
+    px(x,top,'#1d1612');
+    for(const nb of [tops[x-1],tops[x+1]])if(nb!=null&&nb>top+1)r(x,top,1,nb-top,'#1d1612'); // outline down the steep flanks
+    else if(nb==null)r(x,top,1,h-top,'#1d1612');
+  }
+  for(let i=0;i<14;i++){let x=2+R()*(w-4),y=mtnTop(x/(w-1),x+n*40)-MTN_Y+6+R()*40; // cracks and boulders
+    if(R()<.5){for(let k=0;k<5;k++){px(Math.round(x),Math.round(y),SH[0]);x+=R()<.5?1:-1;y+=1;}}
+    else{pxEllipse(Math.round(x),Math.round(y),3,2,SH[1]);pxEllipse(Math.round(x),Math.round(y)-1,2,1,SH[4]);}}
+  g=prev;return MTN[n]=c;
+}
+// split a long enzyme name at its hyphens so it fits the plate
+function wrapHy(s_,max){const P=s_.split('-'),out=[];let cur='';P.forEach((p_,i)=>{const piece=p_+(i<P.length-1?'-':'');if(cur&&pxW(cur+piece)>max){out.push(cur);cur=piece;}else cur+=piece;});if(cur)out.push(cur);return out;}
+function drawEnzPlates(){
+  for(let n=1;n<=10;n++){if(n===1||n===3||n===10)continue;
+    const cx=glicX(n)+14,L=wrapHy(GLIC_ENZ[n].toUpperCase(),56),w=Math.max(...L.map(pxW))+8,h=L.length*7+5,x=cx-Math.round(w/2),y=120;
+    r(cx,y+h,1,175-y-h,'#4a5055');
+    r(x,y,w,h,'#1d1612');r(x+1,y+1,w-2,h-2,'#3a2414');r(x+1,y+1,w-2,1,'#d9a441');
+    L.forEach((l,k)=>pxText(l,cx,y+4+k*7,'#efe3c8','center'));}
+}
 function drawTunnels(front){
-  if(!rideSt)return;g=fctx;const t=performance.now()/1000;
+  if(!rideSt||!rideSt.tun)return;g=fctx;const t=performance.now()/1000;
+  if(!front)drawEnzPlates();
   for(const n of [1,3,10]){
-    const T=rideSt.tun[n],{x0,x1,w,top,ti}=tunGeo(n,T.open),[dk,md,lt]=tunCols(T.open);
-    if(!front){ // the cavity (and the rail inside it), behind the car
-      r(x0+3,ti,w-6,172-ti,'#0b0806');for(let y=ti+2;y<172;y+=4)r(x0+3,y,w-6,1,'#161010');
-      r(x0+3,172,w-6,2,'#b9c2c8');r(x0+3,173,w-6,1,'#7b8186');
-      // speed streaks behind the car in a stimulated enzyme
-      const X=player.x;if(T.open>1.05&&X>=x0-6&&X<=x1+2)for(let k=0;k<3;k++){const len=6+((t*40+k*7)%10)|0;r(Math.round(X-18-len-k*3),RIDE_Y-22+k*7,len,1,lt);}
+    const T=rideSt.tun[n],o=tunShown(n,t),v=tunVis(n),{x0,x1,w,top,ti}=tunGeo(n,o),lc=tunCol(o);
+    const since=v.t0==null?-1:t-v.t0,moving=since>=TUN_GLOW&&since<TUN_GLOW+TUN_MOVE;
+    const sx=moving?((Math.floor(t*30)%2)?1:-1):0; // the massif shakes while the bore changes
+    if(!front){ // foothills on both sides (behind the rail), then the inside of the bore
+      for(const [a_,b_,dir] of [[x0-16,x0,1],[x1,x1+16,-1]])for(let x=a_;x<b_;x++){
+        const u=dir>0?(x-a_)/(b_-a_):(b_-x)/(b_-a_),hh=26,fy=Math.round(176-hh*Math.sin(u*Math.PI/2)+Math.sin(x*1.3)*1.2);
+        r(x+sx,fy,1,175-fy,(x*5+fy)%7===0?'#3e342c':'#4d4137');for(let y=179;y<211;y+=4)r(x+sx,y,1,4,((x>>1)+(y>>2))%4?'#3e342c':'#2f2721');px(x+sx,fy,'#1d1612');px(x+sx,fy+1,'#5d4f43');if((x*7)%5===0)px(x+sx,fy+4,'#2f2721');}
+      r(x0,top,w,175-top,'#120d0a');for(let y=top+4;y<175;y+=5)for(let x=x0+((y*3)%7);x<x1;x+=9)r(x,y,3,1,'#1d1612');
+      for(let x=x0+8;x<x1-4;x+=18){r(x,top+1,2,174-top,'#4a2e18');r(x,top+1,1,174-top,'#6b4524');}
+      const nl=Math.floor((w-8)/9);
+      for(let i=0;i<nl;i++){const lx=x0+6+i*9;
+        let on=true;
+        if(o>1.05)on=(Math.floor(t*16)-i)%3!==0;      // fast chase: speed
+        else if(o<.9)on=Math.floor(t*1.5+i*.15)%2===0; // slow blink: brake
+        r(lx,ti,2,2,on?lc:'#3a3a3a');if(on){px(lx-1,ti+1,'#2a2a2a');px(lx+2,ti+1,'#2a2a2a');}}
+      const X=player.x;if(o>1.05&&X>=x0-6&&X<=x1+2)for(let k=0;k<3;k++){const len=6+((t*40+k*7)%10)|0;r(Math.round(X-18-len-k*3),RIDE_Y-20+k*6,len,1,'#5aa865');}
       continue;
     }
-    r(x0,top,w,ti-top,md);r(x0,ti,3,179-ti,md);r(x1-3,ti,3,179-ti,md);
-    const h=179-top;
-    for(let i=0;i<w*3;i++){const xx=x0+((i*37)%w),yy=top+((i*53)%h);if(yy<ti-1||xx<x0+2||xx>=x1-2)px(xx,yy,i%2?lt:dk);}
-    r(x0+1,top-1,w-2,1,dk);r(x0+1,top,w-2,1,lt);r(x0,top,1,h,dk);r(x1-1,top,1,h,dk);
-    r(x0+3,ti-1,w-6,1,dk);r(x0+2,ti,1,172-ti,dk);r(x1-3,ti,1,172-ti,dk);
-    // the molecules bound to the allosteric site, named, stacked on top of the enzyme
-    const cx=Math.round((x0+x1)/2);let cy=top-2;
-    T.mols.filter(m=>m[1]!=='x').slice(0,3).forEach(m=>{
-      const c=m[1]==='+'?'#3f8a4c':m[1]==='-'?'#a12a22':'#4a5055',L=MOL_CHIP[m[0]].split('\n');
-      if(m[1]==='+'||m[1]==='-')L[L.length-1]+=' '+m[1];
-      const ww=Math.max(...L.map(pxW))+6,hh=L.length*7,xx=Math.max(glicX(n)+30,Math.round(cx-ww/2)),yy=cy-hh;
-      r(xx-1,yy-1,ww+2,hh+2,'#0b0806');r(xx,yy,ww,hh,c);L.forEach((l,k)=>pxText(l,xx+3,yy+1+k*7,'#ffffff'));cy=yy-2;});
+    // the rock: above the bore and under the rail
+    const spr=mtnSprite(n),gx=x0+sx;
+    g.drawImage(spr,0,0,w,top-MTN_Y,gx,MTN_Y,w,top-MTN_Y);
+    g.drawImage(spr,0,178-MTN_Y,w,212-178,gx,178,w,212-178);
+    // the bore ceiling beam and the stone portals at both ends
+    r(x0,top-1,w,2,'#4a2e18');r(x0,top-1,w,1,'#7a522f');
+    for(const px_ of [x0,x1-4]){r(px_,top-3,4,178-top+3,'#5d646a');r(px_,top-3,4,1,'#9aa2a9');
+      for(let y=top+1;y<176;y+=5)r(px_,y,4,1,'#3a4045');r(px_+(px_===x0?0:3),top-3,1,178-top+3,'#1d1612');}
+    // falling dust while the bore moves
+    if(moving)for(let k=0;k<8;k++)px(x0+4+((k*23+Math.floor(t*60))%(w-8)),top+2+((k*7+Math.floor(t*90))%20),'#9a9a9a');
+    // the sign: enzyme name and an activity gauge (100% = basal)
+    const cx=Math.round((x0+x1)/2)+sx,nm=ENZ_SHORT[T.key],pw=Math.max(pxW(nm),52)+8,pxx=cx-Math.round(pw/2);
+    r(pxx,74,pw,16,'#1d1612');r(pxx+1,75,pw-2,14,'#3a2414');r(pxx+1,75,pw-2,1,'#d9a441');
+    pxText(nm,cx,77,'#efe3c8','center');
+    const bw=28,bx=pxx+5,fill=Math.round(bw*Math.min(1,o/1.8));
+    r(bx,84,bw,3,'#1d1612');r(bx,84,fill,3,lc);px(bx+Math.round(bw/1.8),83,'#efe3c8');
+    pxText(pct(o)+'%',pxx+pw-4,83,lc,'right');
+    // the allosteric niche: a recess in the rock with the bound molecules (green activates, red inhibits, grey: not allosteric)
+    const mols=T.mols.filter(m=>m[1]!=='x').slice(0,3);
+    const chips=mols.map(m=>{const L=(NICHE_TXT[m[0]]||MOL_CHIP[m[0]]).split('\n');if(m[1]==='+'||m[1]==='-')L[L.length-1]+=' '+m[1];
+      return {L,c:m[1]==='+'?'#3f8a4c':m[1]==='-'?'#a12a22':'#4a5055',w:Math.max(...L.map(pxW))+4,h:L.length*6+1};});
+    const nw=Math.max(30,...chips.map(c_=>c_.w))+6,nh=chips.length?chips.reduce((a_,c_)=>a_+c_.h+1,0)+5:11,nx=cx-Math.round(nw/2),ny=93;
+    const glow=since>=0&&since<1.4&&Math.floor(since*8)%2===0;
+    r(nx-1,ny-1,nw+2,nh+2,glow?'#fff27a':'#1d1612');r(nx,ny,nw,nh,'#0b0806');r(nx,ny,nw,1,'#2c3236');r(nx,ny,1,nh,'#2c3236');
+    let cy=ny+3;
+    if(!chips.length)pxText('VAZIO',cx,ny+3,'#5d646a','center');
+    for(const c_ of chips){const xx=cx-Math.round(c_.w/2);r(xx,cy,c_.w,c_.h,c_.c);r(xx,cy,c_.w,1,'#ffffff33');
+      c_.L.forEach((l,k)=>pxText(l,xx+2,cy+1+k*6,'#ffffff'));cy+=c_.h+1;}
+    // brake sparks at the wheels in an inhibited enzyme
+    const X=Math.round(player.x);
+    if(o<.9&&player.moving&&X>=x0&&X<=x1)for(let k=0;k<4;k++){const wx=X-8+(k%2)*16;
+      px(wx-2-((Math.random()*5)|0),RIDE_Y+((Math.random()*3)|0)-1,Math.random()<.5?'#f2c94c':'#ef6a5c');}
   }
 }
 function pxWrap(s_,max){const out=[];let cur='';for(const w of s_.split(' ')){const t=cur?cur+' '+w:w;if(pxW(t)>max&&cur){out.push(cur);cur=w;}else cur=t;}if(cur)out.push(cur);return out;}
 function hudRow(s_,y,bg,line,col){const w=pxW(s_)+10,x=camX+Math.round((W-w)/2);r(x,y,w,10,bg);r(x,y,w,1,line);pxText(s_,x+5,y+3,col);}
 function drawRideHud(){
   g=fctx;if(!rideSt)return;
-  const flux=pct(rideFlux());
-  if(rideSt.mode==='desafio'){
+  if(rideSt.mode==='trilho')hudRow('PERCORRER A VIA · REAÇÕES COMPLETAS: '+viaFeitas()+' DE 10',1,'#0b1220','#5fb4f0','#efe3c8');
+  else if(rideSt.mode==='desafio'){const flux=pct(rideFlux());
     const F=DZ_FASES[rideSt.fase];
     hudRow('FASE '+(rideSt.fase+1)+': '+F.tit,1,'#2a1018','#ef6a5c','#efe3c8');
     hudRow('META: '+F.metaHud+' · FLUXO DA VIA '+flux+'%',12,'#0b1220','#5fb4f0','#efe3c8');
   }else{
-    hudRow(rideSt.sc.nome+' · FLUXO DA VIA '+flux+'%',1,'#0b1220','#5fb4f0','#efe3c8');
+    hudRow(rideSt.sc.nome+' · FLUXO DA VIA '+pct(rideFlux())+'%',1,'#0b1220','#5fb4f0','#efe3c8');
   }
   const ts=rideSt.toast;
   if(ts&&ts.until>performance.now()/1000){
@@ -4718,13 +4856,17 @@ function drawRideHud(){
 function rideEnd(){
   rideDone=true;keys.clear();sfx.open();
   if(rideSt&&rideSt.mode==='desafio')return dzResult();
+  if(rideSt&&rideSt.mode==='trilho'){const first=!flags.viaOk;flags.viaOk=true;updatePauseExtra();
+    return say([{who:'SIMULADOR',t:'Via completa! A glicose virou 2 piruvatos: a fase preparatória gastou 2 ATP e a de pagamento formou 4 ATP e 2 NADH. Saldo: 2 ATP e 2 NADH.'}]
+      .concat(first?[{who:'SIMULADOR',t:'Os quatro estados da célula estão liberados. Neles, as reações 1, 3 e 10 viram túneis: veja como a célula acelera ou freia a via.'}]:[]),
+      ()=>{simPage='estado';simSel=first?1:0;goScene('salaSim',192,182,'up','SIMULADOR');});}
   const sc=rideSt.sc,flux=pct(rideFlux()),T=rideSt.tun;
   (flags.simFlux||(flags.simFlux={}))[sc.k]=flux;
   let slow=1;for(const n of [3,10])if(T[n].open<T[slow].open)slow=n;
   const outros=SIM_SC.filter(x=>x!==sc&&flags.simFlux[x.k]!=null).map(x=>x.low+' '+flags.simFlux[x.k]+'%');
   say([{who:'SIMULADOR',t:'Fluxo da via: '+flux+'%. A via anda no ritmo da enzima mais lenta; aqui, a '+ENZ_TXT[T[slow].key]+'. '+sc.fim}]
        .concat(outros.length?[{who:'SIMULADOR',t:'Para comparar: '+outros.join(' · ')+'.'}]:[]),
-      ()=>{simPage='estado';simSel=SIM_SC.indexOf(sc);goScene('salaSim',192,182,'up','SIMULADOR');});
+      ()=>{simPage='estado';simSel=1+SIM_SC.indexOf(sc);goScene('salaSim',192,182,'up','SIMULADOR');});
 }
 /* the simulator room is a screen, not a place to walk: no avatar, just a menu.
    Arrows / W-A-S-D / d-pad move the selection, ENTER (A) confirms, ESC (X) leaves or goes back; mouse and touch work too. */
@@ -4732,7 +4874,8 @@ let simSel=0;
 const inSim=()=>scene==='salaSim'&&state==='play';
 function simItems(){
   const exit={id:'sair',name:'Sair',rc:{x:168,y:196,w:48,h:18}};
-  if(simPage==='estado')return SIM_SC.map((sc,i)=>({id:'sc',sc,rc:{x:76+(i%2)*118,y:92+((i/2)|0)*46,w:114,h:42}})).concat([exit]);
+  if(simPage==='estado')return [{id:'via',rc:{x:16,y:90,w:110,h:86}}]
+    .concat(SIM_SC.map((sc,i)=>({id:'sc',sc,rc:{x:130+(i%2)*122,y:90+((i/2)|0)*44,w:118,h:42}})),[exit]);
   const L=[{id:'iniciar',rc:{x:119,y:119,w:146,h:19}}];
   if(flags.dzOn)L.push({id:'desafio',rc:{x:119,y:154,w:146,h:16}});
   return L.concat([exit]);
@@ -4745,11 +4888,13 @@ function simExit(){
 function simSelect(){
   const it=simItems()[simSel];if(!it)return;sfx.blip();
   if(it.id==='iniciar'){simPage='estado';simSel=0;}
-  else if(it.id==='sc')startRide(it.sc);
+  else if(it.id==='via')startVia();
+  else if(it.id==='sc'){if(flags.viaOk)startRide(it.sc);
+    else{sfx.bump();say([{who:'SIMULADOR',t:'Bloqueado. Primeiro escolha PERCORRER A VIA e complete as 10 reações; depois os estados da célula ficam liberados.'}]);}}
   else if(it.id==='desafio')openDz();
   else simExit();
 }
-function simBack(){keys.clear();if(rideSt&&rideSt.mode==='desafio'){simPage='main';simSel=1;}else{simPage='estado';simSel=rideSt?SIM_SC.indexOf(rideSt.sc):0;}goScene('salaSim',192,182,'up','SIMULADOR');}
+function simBack(){keys.clear();if(rideSt&&rideSt.mode==='desafio'){simPage='main';simSel=1;}else{simPage='estado';simSel=rideSt&&rideSt.mode==='livre'?1+SIM_SC.indexOf(rideSt.sc):0;}goScene('salaSim',192,182,'up','SIMULADOR');}
 function simHit(e){ // screen position -> menu item (or -1)
   const b=cv.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*W,y=(e.clientY-b.top)/b.height*H;
   return simItems().findIndex(it=>x>=it.rc.x&&x<=it.rc.x+it.rc.w&&y>=it.rc.y&&y<=it.rc.y+it.rc.h);
@@ -4764,14 +4909,26 @@ function drawSimMenu(t){
   g=fctx;
   const its=simItems();if(simSel>=its.length)simSel=0;
   if(simPage==='estado'){
-    const x=70,y=66,w=244,h=126;simWindow(x,y,w,h,'ESTADO DA CÉLULA');
-    pxText('COMO A CÉLULA ESTÁ AGORA?',x+w/2,y+15,'#7a2e3e','center');
-    its.forEach(it=>{if(it.id!=='sc')return;const rc=it.rc,sc=it.sc;
-      r(rc.x,rc.y,rc.w,rc.h,'#1d1612');r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,sc.musc?'#2b4a6f':'#5a2230');r(rc.x+1,rc.y+1,rc.w-2,1,sc.musc?'#5b8dba':'#a12a22');
-      pxText(sc.nome,rc.x+rc.w/2,rc.y+4,'#f2c94c','center');
-      pxText(sc.d1,rc.x+rc.w/2,rc.y+14,'#efe3c8','center');pxText(sc.d2,rc.x+rc.w/2,rc.y+22,'#efe3c8','center');
+    const x=8,y=66,w=368,h=126;simWindow(x,y,w,h,'ESTADO DA CÉLULA');
+    pxText('1º PERCORRA A VIA',71,y+15,'#7a2e3e','center');
+    pxText('2º COMO A CÉLULA ESTÁ AGORA?',252,y+15,'#7a2e3e','center');
+    const lock=!flags.viaOk;
+    its.forEach(it=>{const rc=it.rc,cx=rc.x+rc.w/2;
+      if(it.id==='via'){
+        r(rc.x,rc.y,rc.w,rc.h,'#1d1612');r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,'#1f4a33');r(rc.x+1,rc.y+1,rc.w-2,1,'#5aa865');
+        pxText('PERCORRER A VIA',cx,rc.y+5,'#f2c94c','center');
+        ['GLICOSE → 2 PIRUVATO','10 REAÇÕES','','RESPONDA À PERGUNTA','DE CADA CARTAZ PARA','COMPLETAR O TRILHO'].forEach((l,i)=>pxText(l,cx,rc.y+17+i*8,'#efe3c8','center'));
+        const k=viaFeitas();
+        pxText(flags.viaOk?'VIA COMPLETA':k?'REAÇÕES: '+k+' DE 10':'COMECE POR AQUI',cx,rc.y+74,flags.viaOk?'#5aa865':'#f2c94c','center');
+        return;}
+      if(it.id!=='sc')return;const sc=it.sc;
+      r(rc.x,rc.y,rc.w,rc.h,'#1d1612');
+      if(lock){r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,'#3a3f44');r(rc.x+1,rc.y+1,rc.w-2,1,'#5d646a');}
+      else{r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,sc.musc?'#2b4a6f':'#5a2230');r(rc.x+1,rc.y+1,rc.w-2,1,sc.musc?'#5b8dba':'#a12a22');}
+      pxText(sc.nome,cx,rc.y+4,lock?'#9aa2a9':'#f2c94c','center');
+      pxText(sc.d1,cx,rc.y+14,lock?'#7b8186':'#efe3c8','center');pxText(sc.d2,cx,rc.y+22,lock?'#7b8186':'#efe3c8','center');
       const fv=flags.simFlux&&flags.simFlux[sc.k];
-      pxText(fv!=null?'FLUXO VISTO: '+fv+'%':'AINDA NÃO TESTADO',rc.x+rc.w/2,rc.y+32,fv!=null?'#5aa865':'#9aa2a9','center');});
+      pxText(lock?'BLOQUEADO · PERCORRA A VIA':fv!=null?'FLUXO VISTO: '+fv+'%':'AINDA NÃO TESTADO',cx,rc.y+32,lock?'#ef6a5c':fv!=null?'#5aa865':'#9aa2a9','center');});
     pxText(padOn?'✚ ESCOLHER · A COMEÇAR · X VOLTAR':'SETAS ESCOLHER · ENTER COMEÇAR · ESC VOLTAR',x+w/2,y+h-8,'#2a1a10','center');
   }else{
     const x=112,y=76,w=160,h=72;simWindow(x,y,w,h,'SIMULADOR DE GLICÓLISE');
@@ -4885,7 +5042,7 @@ function dzCompute(F,pick){
 function dzLaunch(){
   const F=DZ_FASES[dz.f],f=dz.f,T=dzCompute(F,dz.pick);
   dzEl.hidden=true;dz=null;state='play';keys.clear();
-  rideSt={mode:'desafio',fase:f,tun:T,inT:0,toast:null};
+  rideSt={mode:'desafio',fase:f,tun:T,inT:0,toast:null};glicPosters(false);
   rideDone=false;goScene('simGlic',24,RIDE_Y,'right','DESAFIO · FASE '+(f+1));
 }
 function dzResult(){
@@ -5589,7 +5746,7 @@ function update(dt){
     if(stuck||!blocked(player.x,ny))player.y=ny;
     player.moving=true;player.anim+=dt*10;
   }
-  if(scene==='simGlic'&&rideSt&&rideSt.mode!=='desafio'){
+  if(scene==='simGlic'&&rideSt&&rideSt.mode==='trilho'){
     const lim=glicLim();
     if(player.x>lim){player.x=lim;let n=1;while(glicVisto(n))n++;
       if(glicAberto(n))glicPergunta(n);
@@ -5940,7 +6097,33 @@ requestAnimationFrame(loop);
     }catch(e){ return Promise.resolve(); }
   }
   titulo.style.display = 'none';
-  Promise.race([esperarFontes(), new Promise(function(r){ setTimeout(r, 1200); })]).then(iniciar, iniciar);
+  // tela "Clique para começar": o carregamento (e seus bipes) só começa depois do primeiro clique ou tecla
+  function abrirPortao(seguir){
+    var p = document.getElementById('portaoClique');
+    if (!p){ seguir(); return; }
+    var feito = false, IGNORA = /^(Escape|Shift|Control|Alt|Meta|CapsLock|Tab|F\d+)$/;
+    function abrir(e){
+      if (feito) return;
+      if (e && e.type === 'keydown'){ if (IGNORA.test(e.key)) return; e.preventDefault(); e.stopImmediatePropagation(); }
+      if (e && e.type === 'click') e.stopPropagation();
+      feito = true;
+      window.removeEventListener('keydown', abrir, true);
+      if (p.parentNode) p.parentNode.removeChild(p);
+      seguir();
+    }
+    p.addEventListener('click', abrir);
+    window.addEventListener('keydown', abrir, true);
+    (function controle(){ // controle de videogame: segue em frente (o som pode continuar bloqueado pelo navegador)
+      if (feito) return;
+      var g = navigator.getGamepads ? navigator.getGamepads() : [];
+      for (var i = 0; i < g.length; i++) if (g[i] && g[i].buttons.some(function(b){ return b.pressed; })){ abrir(); return; }
+      requestAnimationFrame(controle);
+    })();
+    try { p.focus({ preventScroll: true }); } catch(_){}
+  }
+  abrirPortao(function(){
+    Promise.race([esperarFontes(), new Promise(function(r){ setTimeout(r, 1200); })]).then(iniciar, iniciar);
+  });
 })();
 </script>
 <script>
