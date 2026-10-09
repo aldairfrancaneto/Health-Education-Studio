@@ -151,6 +151,7 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .pz-nota em{flex:none;align-self:center;font-style:normal;font-family:var(--f-display);font-size:8px;color:#1a1606;background:#f2c94c;padding:3px 5px}
 .pz-nota.extra{background:rgba(18,26,38,.94);color:#d7e8f7}
 .pz-nota.extra b{color:#08182a;background:#5fb4f0}
+.pz-progresso{margin:0;font-size:20px;color:#7a2e3e;border-top:2px dashed rgba(122,46,62,.3);padding-top:6px}
 .pz-nota.feito{background:#8a8178;color:#f4efe4;box-shadow:none}
 .pz-nota.feito b{color:#3a342e;background:#d8d0c2}
 .pz-nota.feito::before{background:rgba(242,201,76,.4)}
@@ -488,7 +489,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="te-missao">
         <span class="te-marca" aria-hidden="true">!</span>
         <canvas id="te-marina" width="20" height="30" aria-hidden="true"></canvas>
-        <div><span class="te-missao-t">Objetivo</span><b>Falar com a Marina.</b><small>Siga o <i>!</i> amarelo. Mochila brilhando? Abra o diário (livrinho no alto).</small></div>
+        <div><span class="te-missao-t">Missão principal</span><b>Falar com a Marina.</b><small>Siga o <i>!</i> amarelo. Mochila brilhando? Abra o diário (livrinho no alto).</small></div>
       </div>
     </div>
   </article>
@@ -582,7 +583,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.14.4 &middot; Última atualização: 8 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.15 &middot; Última atualização: 8 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -619,6 +620,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     <article class="pz-diario" aria-label="Diário">
       <p class="pz-cab"><span id="pz-dono">Meu diário</span><span id="pz-pontos">★ 0 pontos</span></p>
       <div class="pz-lista" id="pz-lista" aria-live="polite"></div>
+      <p class="pz-progresso" id="pz-progresso"></p>
       <p class="pz-misterio" id="pz-misterio"></p>
     </article>
     <div class="pz-menu" id="pz-menu"></div>
@@ -1413,7 +1415,7 @@ function girlRows(outfit,dir,f,blink,lab){
 const PAPER_INK='#1d1612',PW=21,PH=30,POX=2,POY=3;
 const HAIR_STYLE={marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
   lucas:'quiff',felipe:'fade',rafael:'curtains',tiago:'locs',bruno:'hawk',caio:'afro',julia:'afro',davi:'locs',gabriel:'shaggy',
-  ana:'buns',bia:'pixie',aldair:'neto',pedro:'curly',zelador:'short'};
+  ana:'buns',bia:'pixie',aldair:'neto',malvar:'malvar',pedro:'curly',zelador:'short'};
 const GLASSES={aldair:'#c9a85a',cida:'#a8862a',lucia:'#c99a3c'}; // frame colour round the eyes
 const OUTFIT_FIX={marina:'shirt',cida:'shirt',lucia:'shirt'}; // their LOOKS replace the coat/skirt
 const PAL_FIX={marina:{T:'#f4f6f4',t:'#d8dee2',u:'#b9c2c8',Q:'#7a2e3e',q:'#5a2230'},cida:{T:'#8e5aa8',t:'#6a3f80',u:'#6a3f80'}};
@@ -1491,6 +1493,12 @@ const HAIRCUTS={
     F:['....##.##.##....','..##+###+###+#..','.###-#+##-#+###.','.#+##-###+##-#+.','.##..........##.','.#............#.'],
     R:['....##.##.#.....','..#+###+###+....','.###-#+##-##+...','##+##-###+#.....','###+#...........','##-.............','#...............'],
     B:['....##.##.##....','..##+###+###+#..','.###-#+##-#+###.','.#+##-###+##-#+.','################','#+####-###+###-#','################','##-###+####-####','.##############.','..############..']},
+  malvar:{ // Prof. Malvar (Poções): straight black hair parted in the middle, falling like curtains to the shoulders
+    F:['....########....','..#####-######..','.######-#######.','#######..#######','####........####','###..........###','#-............-#','#-............-#','#-............-#','#-............-#','#-............-#','#-............-#','#-............-#'],
+    BF:['','','','','','','','','','','','','##............##','#-............-#','##............##','.#............#.'],
+    R:['....######......','..##########....','.#############..','##############..','#######.........','######..........','#-##-...........','#-##-...........','#-##-...........','#-##-...........','#-##-...........','#-##-...........'],
+    BR:['','','','','','','','','','','','','#####...........','#-##-...........','#####...........','.#.#............'],
+    B:['....########....','..######-#####..','.######-#######.','################','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','.#-##-####-##-#.','.##############.','..############..']},
   sidepart:{ // tidy side part
     F:['.....######.....','...##########...','..###-########..','.####-#########.','.##.......####..','.#............#.','.#............#.'],
     R:['....######......','..##########....','.#############..','###############.','#####.....###...','####............','###.............','##..............'],
@@ -1527,7 +1535,8 @@ const LOOKS={
   ana:{top:'overalls',c:'#ec9fa8',cd:'#c97a86',inner:'#f4f6f4',innerD:'#d8dee2',bottom:'jeans',b:'#ec9fa8',bd:'#c97a86'},
   davi:{top:'jacket',c:'#3a2414',cd:'#2a1a10',inner:'#d0352b',print:'#f4f6f4',bottom:'jeans',b:'#2c3236',bd:'#1d2226'}};
 // what shows under the lab coat
-const COAT_IN={aldair:{inner:'#b9d3ee',tie:'#22346e',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#3a2414'},
+const COAT_IN={malvar:{inner:'#2c2830',b:'#1d1a1f',bd:'#141414',shoes:'flat',sh:'#141414'},
+  aldair:{inner:'#b9d3ee',tie:'#22346e',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#3a2414'},
   heloisa:{inner:'#ef6a5c',necklace:'#e8bf3f',b:'#2b4a6f',bd:'#1f2f4f',shoes:'flat',sh:'#7a2e3e'},
   kido:{inner:'#f4f6f4',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#1d1612'},
   larissa:{inner:'#d0352b',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#d0352b'},
@@ -1549,6 +1558,7 @@ function paperSpec(who,outfit,crop){
   const out=OUTFIT_FIX[who]||outfit,badge=!me_||!!flags.cracha;
   return {pal,hair,outfit:out,crop,badge,tr:me_?(avatar==='r'||avatar==='g'?{freckles:1}:{}):TRAITS[who]||{},look:lookOf(who,out,girl,pal),
     pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
+    diary:me_&&out==='coat', // no backpack with the lab coat: the player carries the diary in hand
     scarf:false,harry:me_&&avatar==='m',
     phones:false,bow:false,scrunchie:me_&&avatar==='f'&&lab,glasses:me_&&avatar==='m'?'#8a6a3a':GLASSES[who]||null,
     key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||''].join(':')};
@@ -1691,6 +1701,14 @@ function paperGrid(sp,view,f,blink,mood,talk){
       if(k==='k'){if(G[y][x])put(x,y,INK);continue;}
       put(x,y,k==='s'?sl(x,y):k==='c'?cuff:S);}});
   }
+  // the living-ink diary held in hand (with the lab coat): brown cover, page edge, a green glint of ink
+  if(sp.diary){
+    const sw=side?(f%4===1?-1:f%4===3?1:0):0;
+    const [bx,by]=side?(sw===0?[6,19]:sw>0?[11,18]:[1,18]):back?[0,18]:[13,18],h_=side?3:4;
+    rect(bx,by,bx+2,by+h_,'#9a6438');rect(bx,by,bx,by+h_,'#5a3a22');rect(bx+1,by+h_,bx+2,by+h_,'#efe3c8');put(bx+(side?2:1),by+2,'#9fe070');
+    if(side){const hx=sw===0?7:sw>0?12:2,hy=sw===0?19:17;put(hx,hy,S);put(hx+1,hy,S);} // fingers over the cover
+    else{const hx=back?0:14;put(hx,19,S);put(hx+1,19,S);}
+  }
   // head: wide and round, straight on the body
   const inHead=(x,y)=>ell(x,y,8,7.5,7.7,6.3);
   const capFront=(x,y)=>y<=3||(y===4&&x%2===0)||((x<=1||x>=14)&&y<=6);
@@ -1823,6 +1841,7 @@ function moodOf(who){
   if(who==='gabriel')return flags.duelTold&&!flags.duelWin?'smug':'normal';
   if(who==='camila')return flags.caca?'happy':'normal';
   if(who==='kido')return 'happy';
+  if(who==='malvar')return flags.fundador?'normal':'smug'; // the sneer only softens a little once you are in the Liga
   if(who==='aldair'||who==='heloisa'||who==='player')return flags.graded?(flags.pass?'happy':'worried'):'normal';
   return 'normal';
 }
@@ -3092,7 +3111,7 @@ add({id:'mesaProf201',name:'Mesa do professor',cx:192,top:62,base:92,solid:{x:16
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
 
-/* ---------- SCENE 6b: Sala 204, the potions classroom (2nd floor; scenery only, nobody inside) ----------
+/* ---------- SCENE 6b: Sala 204, the potions classroom (2nd floor; Prof. Malvar stands by his cauldron) ----------
    Dark stone room lit by torches: shelves of potion bottles, a chalkboard with the potion of the day, the
    teacher's big cauldron in front and four student benches with small bubbling cauldrons. */
 objects=[];SCENES.sala204=objects;
@@ -3236,6 +3255,72 @@ add({id:'barrilPocoes',name:'Barril',cx:358,top:84,base:108,solid:{x:350,y:98,w:
 add({id:'livrosPocoes',name:'Pilha de livros',cx:26,top:88,base:108,solid:{x:16,y:100,w:20,h:8},
   draw:()=>{r(16,100,20,8,'#3a2414');r(18,94,16,6,'#7a2e3e');r(17,89,17,5,'#2d6fb5');r(19,85,14,4,'#1f4a33');r(19,94,16,1,'#a12a22');r(17,89,17,1,'#4d82c8');},
   act:()=>say([{t:'Uma pilha de livros antigos. O de cima se chama "Mil Ervas e Enzimas Mágicas".'}])});
+/* Prof. Edmundo Malvar (Poções): cold, sarcastic, slow to praise, secretly fair. He is the "Prof. E. M." of the
+   hidden room's books and of Lucas's black notebook: he founded the Liga de Metabolismo, tore out the pages of
+   reactions 1, 3 and 10 and locked them behind the iron doors. The player only finds out after joining the Liga
+   (flags.alost===6): then talking to him reveals it (flags.fundador, a side mission worth points).
+   flags.malvarQ: his first-visit question was asked. */
+HEAD.malvar=HEAD.player;
+CHAR_PAL.malvar=Object.assign({},CHAR_PAL.player,{i:'#1d1612',S:'#ecdcc6',s:'#c9b296',H:'#34323a',h:'#16151a',d:'#0b0a0d',m:'#7a5a5a',
+  W:'#1f1b22',w:'#2e2933',x:'#3b3540',P:'#1d1a1f',p:'#141414',B:'#141414',c:'#1f1b22'}); // black robe instead of the lab coat
+const MW='PROF. MALVAR (POÇÕES)';
+const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:100,solid:{x:257,y:96,w:10,h:4},zone:{x:248,y:78,w:28,h:34},
+  talk:0,
+  sprite:t=>{const c=personSprite('malvar','coat','down',0,blinkAt(t,1.7));return {c:c.c,x:254,y:77};},
+  act(){
+    if(flags.alost===6&&!flags.fundador)return malvarReveal();
+    if(!flags.malvarQ)return malvarFirst();
+    const k=this.talk++;
+    if(flags.fundador)return say([{who:MW,t:[
+      'Sexta-feira, depois da aula. Não me faça esperar.',
+      'O diário ainda brilha? ...Não me olhe assim. Eu não sei de nada.',
+      'Membro da Liga não fica parado na frente do meu caldeirão. Vá estudar.',
+      'Se alguém perguntar, eu nunca ouvi falar de Liga nenhuma. Nem de você.'][k%4]}]);
+    if(flags.alost>=1&&flags.alost<=5&&!flags.malvarLenda){flags.malvarLenda=true;setMood('malvar','angry',4);
+      return say([{who:MW,t:'Uma sala que não está lá? ...Lendas são para quem não estuda.'},
+        {who:MW,t:'E, se por acaso encontrar alguma coisa, não toque em nada. Coisas antigas têm dono.'}]);}
+    say([{who:MW,t:[
+      'Ainda aqui? A porta continua exatamente onde você a deixou.',
+      'Não toque em nada. Especialmente no pote de ATP. Especialmente você.',
+      'A Profa. Rosa diz que você tem potencial. A Profa. Rosa é uma otimista.',
+      'Glicólise não é poesia para decorar. São dez reações e três portas que não voltam. Quem entende isso não precisa decorar.',
+      'Dez reações. Duas fases. E, todo ano, uma turma inteira que esquece de onde vem o NAD+.'][k%5]}]);
+  }});
+function malvarFirst(){
+  const Q=gen('Senhor ','Senhorita ')+nome1();
+  setMood('malvar','angry',3);
+  say([{who:MW,t:'Silêncio.'},
+    {who:MW,t:gen('Um calouro','Uma caloura')+'. Na minha sala. Sem ser '+gen('convidado','convidada')+'.'},
+    {who:MW,t:'Já que veio... '+Q+', vejamos se o seu crachá vale alguma coisa.'},
+    {who:MW,t:'Se eu trocar o fosfato do Elixir de Piruvato por arsenato, o que acontece com o ATP da reação 7?',choices:[
+      {t:'A GAPDH usa o arsenato no lugar do fosfato, e o ATP da reação 7 deixa de ser formado.',fn:()=>{flags.malvarQ=1;sfx.item();
+        say([{who:MW,t:'Hm. ...Correto.'},{who:MW,t:'Não se acostume. Acertar uma vez é sorte. Acertar sempre é estudo.'}]);}},
+      {t:'O arsenato acelera a fosfoglicerato-cinase, e a reação 7 passa a gerar o dobro de ATP.',fn:()=>malvarWrong()},
+      {t:'O arsenato bloqueia a hexocinase logo no início, e a via para antes de chegar à reação 7.',fn:()=>malvarWrong()}]}]);
+}
+function malvarWrong(){
+  flags.malvarQ=1;sfx.bump();setMood('malvar','angry',4);
+  say([{who:MW,t:'Patético.'},
+    {who:MW,t:'A GAPDH aceita o arsenato no lugar do fosfato. O produto se desfaz sozinho, e o ATP da reação 7 nunca chega a nascer.'},
+    {who:MW,t:'Leia antes de entrar na minha sala.'}]);
+}
+function malvarReveal(){
+  setMood('malvar','normal',30);
+  say([{who:MW,t:'Pare aí.'},
+    {who:MW,t:flags.jaleco?'...O que é isso saindo do bolso do seu jaleco?':'...O que é isso aparecendo na sua mochila?'},
+    {who:me(),t:'É... uma carta-convite. Da Liga de Metabolismo.'},
+    {who:MW,t:'Eu sei o que é. Reconheço essa letra em qualquer lugar. Fui eu que escrevi o primeiro desses convites, há vinte e dois anos.'},
+    {who:MW,t:'Edmundo Malvar. Professor de Poções... e fundador da Liga de Metabolismo.',run:()=>setMood('player','surprised',5)},
+    {who:me(),t:'E. M.! As iniciais nos livros da sala oculta... e no caderno de capa preta do Lucas!'},
+    {who:MW,t:'Obviamente. Fui eu que arranquei as páginas das reações 1, 3 e 10 e as tranquei atrás daquelas portas.'},
+    {who:MW,t:'Quem decora a via não merece a Liga. Quem entende onde ela se decide... talvez.'},
+    {who:MW,t:'O caderno no sebo também fui eu que deixei. Alguém sempre o compra. Alguém sempre vai atrás das páginas. Quase todos desistem.'},
+    {t:flags.jaleco?'O professor olha para o diário na sua mão. Por um instante, a tinta brilha mais forte.':'O professor olha para a sua mochila, onde está o diário. Por um instante, a tinta brilha através do tecido.'},
+    {who:MW,t:'...E esse diário. Fazia muitos anos que eu não o via. Ele escolhe o dono. Não me pergunte como.'},
+    {who:MW,t:'A Larissa acha que eu nem sei que a sala existe. Prefiro assim. Nem uma palavra, '+nome1()+'.'},
+    {who:MW,t:'Sexta-feira, depois da aula. Não se atrase. Detesto atrasos quase tanto quanto detesto quem decora sem entender.',
+      run:()=>{flags.fundador=true;updatePauseExtra();}}]);
+}
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
 
@@ -3887,7 +3972,10 @@ const deskProf=SCENES.sala101.find(o=>o.id==='mesaProf');
 let clockTxt='';
 function noBadge(){
   sfx.bump();
-  say([{t:'A porta tem um leitor de crachá, e você ainda não tem o seu.'},{t:'A Dona Tati, da secretaria, no térreo, está entregando os crachás.'}]);
+  // only Marina tells where the badges are: before talking to her the door just stays shut
+  say(flags.marina
+    ?[{t:'A porta tem um leitor de crachá, e você ainda não tem o seu.'},{t:'A Marina disse que a Dona Tati, da secretaria, está entregando os crachás.'}]
+    :[{t:'A porta tem um leitor de crachá. Você empurra a maçaneta... trancada.'}]);
 }
 // every door with a badge reader stays shut until the player has the badge
 ['sala101','sala102','sala103','sala104','professores'].map(id=>SCENES.andar1.find(o=>o.id===id))
@@ -4384,6 +4472,7 @@ function sideNeeds(o){
     if(o.id==='paredeSecreta')return (flags.alost===4||flags.alost===5)&&!flags.secretOpen;
     if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1;
   }
+  if(o.id==='malvar')return flags.alost===6&&!flags.fundador;
   if(o.id==='bruno')return flags.alost===6&&(!flags.dzOn||(!!flags.dzDone&&!flags.dzReward));
   if(o.id==='simulador')return (!!flags.dzOn&&!flags.dzDone)||(!!flags.viaTip&&!flags.viaOk);
   if(sideMarker(o))return true; // next step of Tiago's notebook
@@ -4419,6 +4508,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(a===5)add_('alost5','Sala oculta: abra as três portas de ferro ('+(flags.portas||0)+' de 3)');
   if(flags.dzOn&&!flags.dzDone)add_('dz'+flags.dzFase,'Desafio da Liga: vença a fase '+flags.dzFase+' de 3 no simulador do laboratório');
   if(flags.dzDone&&!flags.dzReward)add_('dzBruno','Desafio da Liga: conte ao Bruno que você venceu');
+  if(a===6&&!flags.fundador)add_('fundador','O fundador da Liga: descubra quem é o "Prof. E. M." (dizem que dá aula no lugar mais escuro do prédio)');
   const bq=flags.bolsaQ||0;
   if(bq>=1&&bq<=6)add_('bolsa'+bq,'Bolsas de sangue: '+['','busque as bolsas na geladeira do laboratório (térreo), de jaleco',
     'leve o laudo à Profa. Rosa, na Sala 101'+(flags.profsIn?'':' (ela chega às 7h47)'),
@@ -4435,6 +4525,7 @@ function sideDone(){ // finished side quests, greyed out at the end of the diary
   if(flags.viaTip&&flags.viaOk)L.push({k:'via',t:'Simulador do laboratório: via da glicólise percorrida (dica do Tiago)'});
   if(flags.caca)L.push({k:'caca',t:'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras'+(flags.cacaThanks?' (e a Camila ficou sabendo)':'')});
   if(flags.alost===6)L.push({k:'alost',t:'A sala que não está lá: convite da Liga de Metabolismo recebido'});
+  if(flags.fundador)L.push({k:'fundador',t:'O fundador da Liga: o "Prof. E. M." é o Prof. Edmundo Malvar, de Poções'});
   if(flags.dzReward)L.push({k:'liga',t:'Desafio da Liga: concluído, distintivo recebido'});
   if(flags.bolsaQ===7)L.push({k:'bolsa',t:'Bolsas de sangue: o Prof. Kiko já tem a explicação para a aula prática'});
   if(flags.duelWin)L.push({k:'duelo',t:'Duelo Relâmpago: você venceu o Gabriel!'});
@@ -4483,11 +4574,15 @@ function renderDiary(){
     if(k&&diaryNew.has(k)){d.classList.add('fresca');const i=document.createElement('i');i.textContent='TINTA FRESCA';d.appendChild(i);}
     box.appendChild(d);
   };
-  note('','OBJETIVO',curObj,'main:'+curObj);
-  sideActive().forEach(e=>note(' extra','EXTRA',e.t,'x:'+e.k));
+  note('','MISSÃO PRINCIPAL',curObj,'main:'+curObj);
+  sideActive().forEach(e=>note(' extra','MISSÃO SECUNDÁRIA',e.t,'x:'+e.k));
   const ptsOf=k=>SCORE_RULES.filter(r_=>r_.k===k||(k==='caca'&&r_.k==='camila')).reduce((a,r_)=>a+(scoreGot.has(r_.k)?r_.pts:0),0);
-  sideDone().forEach(e=>{note(' feito','FEITO',e.t);const n=ptsOf(e.k);if(n){const i=document.createElement('em');i.textContent='+'+n;box.lastChild.appendChild(i);}});
+  sideDone().forEach(e=>{note(' feito','CONCLUÍDA',e.t);const n=ptsOf(e.k);if(n){const i=document.createElement('em');i.textContent='+'+n;box.lastChild.appendChild(i);}});
   $('pz-pontos').textContent='★ '+score+' pontos';
+  // share of ALL missions (main + secondary) done, without telling how many there are: a nudge to go exploring
+  const pct=Math.floor(100*SCORE_RULES.filter(r_=>scoreGot.has(r_.k)).length/SCORE_RULES.length);
+  $('pz-progresso').textContent=pct>=100?'Você concluiu 100% das missões do jogo. Não sobrou nenhum segredo... ou sobrou?'
+    :'Você já concluiu '+pct+'% das missões do jogo.'+(pct>=50?' Ainda há segredos pela faculdade.':' Será que só existe a missão principal?');
   $('pz-dono').textContent=jogador?'Diário de '+jogador.split(/\s+/)[0]:'Meu diário';
   $('pz-misterio').textContent=diaryWhisper();
 }
@@ -4501,7 +4596,8 @@ const DIARY_WHISPERS=['A tinta só brilha quando há energia. De onde ela tira o
   'Vaga-lumes brilham com luciferina e ATP. Este caderno brilha com o quê?'];
 var diaryOpens=0;
 function diaryWhisper(){
-  if(flags.alost===6)return 'Agora sei de quem eram as iniciais na última página. Mas o diário continua escrevendo sozinho.';
+  if(flags.fundador)return 'E. M.: Edmundo Malvar. O diário foi dele um dia. Mas continua escrevendo sozinho.';
+  if(flags.alost===6)return 'Os livros da sala oculta têm as mesmas iniciais da minha última página: E. M. Quem é ele?';
   return DIARY_WHISPERS[(diaryOpens-1+DIARY_WHISPERS.length)%DIARY_WHISPERS.length];
 }
 /* ---------- points ----------
@@ -4524,6 +4620,7 @@ const SCORE_RULES=[
   {k:'via',pts:40,side:1,ok:()=>flags.viaTip&&flags.viaOk},
   {k:'alost',pts:60,side:1,ok:()=>flags.alost===6},
   {k:'liga',pts:50,side:1,ok:()=>flags.dzReward},
+  {k:'fundador',pts:40,side:1,ok:()=>!!flags.fundador},
   {k:'duelo',pts:30,side:1,ok:()=>flags.duelWin},
   {k:'bolsa',pts:50,side:1,ok:()=>flags.bolsaQ===7}];
 const SCORE_MAX=SCORE_RULES.reduce((a,r_)=>a+r_.pts,0);
@@ -4557,7 +4654,7 @@ function diaryTick(dt){
   if(diaryNote.t<DIARY_T)return;
   diaryNote=null;
   if(!diaryHinted){diaryHinted=true;
-    say([{who:me(),t:'Ué... minha mochila está brilhando. É o diário de novo. A tinta acendeu sozinha, como vaga-lume.'},
+    say([{who:me(),t:(flags.jaleco?'Ué... o diário está brilhando na minha mão.':'Ué... minha mochila está brilhando. É o diário de novo.')+' A tinta acendeu sozinha, como vaga-lume.'},
       {who:me(),t:'Toda vez que isso acontece, aparece uma frase nova que eu não escrevi. Melhor dar uma olhada.'},
       {t:padOn?'(Para abrir o diário, aperte o botão ≡ do controle.)':'(Para abrir o diário, clique no livrinho brilhando no alto da tela.)'}]);}
 }
@@ -4567,7 +4664,9 @@ function drawDiaryNote(px_,py_){
   const k=diaryNote.t,f_=Math.min(1,k/.3,(DIARY_T-k)/.6);
   if(f_<=0)return;
   const c1=diaryNote.blue?'#7fd4ff':'#d8f060',c2=diaryNote.blue?'#e6f8ff':'#fff7a8';
-  const bx=px_+(player.dir==='left'?4:player.dir==='right'?-4:0),by=py_-11; // the satchel
+  const d_=player.dir,inHand=flags.jaleco; // with the lab coat the diary is in hand (no backpack)
+  const bx=inHand?px_+(d_==='left'?1:d_==='right'?-1:d_==='up'?-7:6):px_+(d_==='left'?4:d_==='right'?-4:0),
+        by=inHand?py_-3:py_-11; // the hand or the satchel
   fctx.globalAlpha=f_*(.2+.12*Math.sin(k*8));pxEllipse(bx,by+2,8,5,c1);fctx.globalAlpha=f_*(.4+.2*Math.sin(k*8));pxEllipse(bx,by+2,4,2,c2);
   for(let i=0;i<14;i++){const ph=(k*.7+i/14)%1,x=Math.round(bx+Math.sin(i*2.3+k*2.6)*(3+ph*9)),y=Math.round(by-2-ph*30);
     fctx.globalAlpha=f_*Math.min(1,(1-ph)*1.4);
@@ -4653,33 +4752,33 @@ const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
 const KW='PROF. KIKO (HISTOLOGIA)',RW='PROFA. ROSA';
 const BOLSA_Q=[
   {q:'Olhe a bolsa B, de 40 dias: a glicose caiu e o lactato subiu muito. O que aconteceu lá dentro?',
-   o:['A hemácia continua fazendo glicólise dentro da bolsa e, sem mitocôndria, transforma o piruvato em lactato para regenerar o NAD+.',
-      'A glicose vaza para fora da bolsa, e o lactato vem pronto na solução conservante.',
-      'A hemácia queima a glicose na mitocôndria e solta o lactato como resto da respiração.'],c:0,
+   o:['A hemácia segue fazendo glicólise na bolsa e, sem mitocôndria, converte piruvato em lactato para refazer o NAD+.',
+     'A glicose atravessa o plástico e sai da bolsa, enquanto o lactato já vem dissolvido na solução conservante usada.',
+     'A hemácia oxida a glicose nas suas mitocôndrias e libera o lactato como resíduo final da respiração celular.'],c:0,
    ok:'Isso! A hemácia não para de trabalhar só porque está numa bolsa. Sem mitocôndria, o lactato é o jeito de devolver o NAD+ para a reação 6.',
    hint:'Pense assim: a hemácia ainda está viva na bolsa. Ela tem mitocôndria? Então, o que ela faz com o piruvato?'},
   {q:'E o potássio do plasma: 8 na bolsa A, 25 na bolsa B. De onde veio tanto potássio?',
-   o:['A solução conservante é rica em potássio e vai liberando aos poucos.',
-      'Com pouco ATP e no frio, a bomba de sódio e potássio trabalha menos, e o potássio escapa da hemácia para o plasma.',
-      'A glicólise fabrica potássio como subproduto da reação 10.'],c:1,
+   o:['A solução conservante é rica em potássio e vai soltando esse íon no plasma, pouco a pouco, semana após semana.',
+     'Com pouco ATP e no frio, a bomba de sódio e potássio trabalha menos, e o potássio escapa da hemácia para o plasma.',
+     'A glicólise da hemácia produz potássio como subproduto da reação 10, e ele vai se acumulando no plasma.'],c:1,
    ok:'Exato. Sem ATP, a bomba de sódio e potássio para. Por isso o banco de sangue se preocupa com bolsas velhas em bebês e em transfusões grandes.',
    hint:'Lembre do que gasta ATP na membrana da hemácia, empurrando sódio para fora e potássio para dentro.'},
   {q:'A etiqueta diz CPDA-1: citrato, fosfato, dextrose e adenina. Para que serve a adenina numa bolsa de sangue?',
-   o:['Ela ajuda a hemácia a refazer o ATP, porque a adenina é uma peça da própria molécula de ATP.',
-      'Ela substitui a glicose como combustível quando a glicose acaba.',
-      'Ela impede a coagulação do sangue dentro da bolsa.'],c:0,
+   o:['A adenina ajuda a hemácia a refazer o ATP, porque ela é uma das peças da própria molécula de ATP.',
+     'A adenina serve de combustível de reserva, usada no lugar da glicose quando a dextrose da bolsa acaba.',
+     'A adenina se liga ao cálcio do plasma e impede que o sangue coagule dentro da bolsa durante o armazenamento.'],c:0,
    ok:'Muito bem! Com a adenina, a hemácia recupera o ATP que vai perdendo e dura mais tempo na bolsa. Quem segura a coagulação é o citrato.',
    hint:'Pense no nome: ATP é adenosina trifosfato. A adenina é parte de quê?'},
   {q:'Por fim, o 2,3-BPG da bolsa B quase sumiu. O que isso muda para o paciente que recebe essa bolsa?',
-   o:['Nada: o 2,3-BPG só dá a cor vermelha ao sangue.',
-      'A hemoglobina solta todo o oxigênio de uma vez, ainda dentro da bolsa.',
-      'A hemoglobina segura mais o oxigênio e entrega menos oxigênio aos tecidos nas primeiras horas depois da transfusão.'],c:2,
+   o:['Nada importante: o 2,3-BPG serve só para dar ao sangue a cor vermelha mais escura que se vê na bolsa.',
+     'A hemoglobina perde o controle e solta todo o oxigênio de uma vez, ainda dentro da própria bolsa.',
+     'A hemoglobina segura mais o oxigênio e entrega menos aos tecidos nas primeiras horas da transfusão.'],c:2,
    ok:'Perfeito! O 2,3-BPG sai de um desvio da glicólise, entre as reações 6 e 7, e ajuda a hemoglobina a soltar o oxigênio. Sem ele, ela "segura" demais.',
    hint:'O 2,3-BPG se encaixa na hemoglobina e a ajuda a soltar o oxigênio. Se ele falta, a hemoglobina solta mais ou menos?'}];
 const BOLSA_C={q:'A bolsa C tem só 5 dias, mas passou a noite fora da geladeira. Por que gastou tanta glicose e fez tanto lactato?',
-  o:['O calor destrói a glicose sozinho, sem precisar de enzimas.',
-     'No frio, as enzimas da glicólise trabalham bem devagar. Em temperatura ambiente, a via acelera e consome a glicose muito mais rápido.',
-     'Fora da geladeira, a hemácia ganha mitocôndrias e passa a respirar.'],c:1,
+  o:['O calor quebra a glicose diretamente, sem precisar de enzimas, e o lactato aparece como resto dessa quebra.',
+     'No frio, as enzimas da glicólise ficam lentas; no ambiente, a via acelera e gasta a glicose bem mais rápido.',
+     'Fora da geladeira, a hemácia passa a formar mitocôndrias novas e começa a respirar e a consumir glicose.'],c:1,
   ok:'É isso! A geladeira não mata a hemácia: ela só deixa a glicólise lenta, e a bolsa dura mais. Uma noite no calor foi como vários dias de geladeira.',
   hint:'Lembre do tubo de fluoreto: no sangue fora do corpo, a glicólise continua. O que a temperatura faz com a velocidade das enzimas?'};
 function bolsaUpd(q){flags.bolsaQ=q;$('slot-bolsas').classList.toggle('got',q>=2&&q<=6);updatePauseExtra();}
@@ -5796,6 +5895,7 @@ function portaFinal(n){
     {who:LW,t:'A Liga não procura quem decora as dez reações. Procura quem entende onde a via se decide: nas três que não têm volta.'},
     {who:LW,t:gen('Bem-vindo','Bem-vinda')+', '+nome1()+'. Isto é seu.',run:()=>setMood('player','happy',4)},
     {t:'Você recebeu: CARTA-CONVITE DA LIGA DE METABOLISMO',item:'convite',run:()=>{flags.alost=6;updatePauseExtra();}},
+    {who:LW,t:'Quem fundou a Liga? Ninguém sabe. Só as iniciais dos livros da estante: E. M. Dizem que ele ainda dá aula neste prédio, no lugar mais escuro dele.'},
     {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'}]);
 }
 
@@ -6308,7 +6408,7 @@ const CTL_HELP='<svg viewBox="0 0 120 80" aria-hidden="true">'
   +'<li><span class="gpb a">A</span>Falar, examinar, confirmar</li>'
   +'<li><span class="gpb x">X</span>Sair da folha, voltar, fechar</li>'
   +'<li><span class="gpb y">Y</span>Ampliar o cartaz</li>'
-  +'<li><span class="gpb m"><i>≡</i></span>Pausa: diário de objetivos e cartaz</li></ul>';
+  +'<li><span class="gpb m"><i>≡</i></span>Pausa: diário de missões e cartaz</li></ul>';
 $('intro-ctl').innerHTML=CTL_HELP;$('pz-ajuda').innerHTML=CTL_HELP;
 
 /* ---------- pause menu ----------
