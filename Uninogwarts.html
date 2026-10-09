@@ -638,7 +638,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.19.1 &middot; Última atualização: 9 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.19.3 &middot; Última atualização: 9 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -4510,7 +4510,7 @@ function simAsk(next,pass){
       {who:'PROF. NETO',t:'Não? Pois vale a pena: fica no laboratório, no térreo. Escolha "Percorrer a via" e responda a pergunta de cada reação.'},next])}]};
 }
 function grade(){
-  const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=score()-a,base=a+b,bon=provas.b;
+  const blank=QUIZ_N-answered(),a=[1,2,3,4,5].filter(n=>provas[n]&&provas[n].ok).length,b=sheetsRight()-a,base=a+b,bon=provas.b;
   const total=finalScore(),pass=total>=PASS;
   const duv={who:'PROFA. ROSA',t:'Ficou com dúvida em alguma questão? Podemos mostrar a resposta certa e comentar qualquer uma delas.',choices:[
       {t:'Sim, quero tirar dúvidas',fn:()=>openReview(pass)},
@@ -4667,10 +4667,10 @@ for(const k in QUIZ_FB)Object.assign(QUIZ[k],QUIZ_FB[k]);
 QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, são produzidas quatro moléculas de ATP; na fase de pagamento, são consumidas duas.", "Na fase de investimento, a glicose é convertida em piruvato sem consumo de ATP.", "Na fase de investimento, são consumidas duas moléculas de ATP; na fase de pagamento, são produzidas quatro moléculas de ATP e dois NADH.", "Na fase de pagamento, são consumidas duas moléculas de ATP para formar glicose-6-fosfato e frutose-6-fosfato."], "c": 2, "who": "PROF. NETO", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
 const isBonus=n=>n==='b';
 const bonusOk=()=>!!(provas.b&&provas.b.ok);
-function finalScore(){return Math.min(QUIZ_N,score()+(bonusOk()?1:0));}
+function finalScore(){return Math.min(QUIZ_N,sheetsRight()+(bonusOk()?1:0));}
 const quizEl=$('quiz'),quizOpts=$('quiz-opts');
 let quiz=null; // sheet on screen: {n,sel}
-function score(){return Object.keys(provas).filter(k=>k!=='b'&&provas[k].ok).length;} // the 10 regular sheets only
+function sheetsRight(){return Object.keys(provas).filter(k=>k!=='b'&&provas[k].ok).length;} // the 10 regular sheets only
 function updateScore(){ // sheets answered so far; the grade only after the professors correct them
   $('pts-label').textContent=flags.graded?'NOTA':'FOLHAS';
   $('pts-k').textContent=(flags.graded?finalScore():answered())+'/'+QUIZ_N+(provas.b&&!flags.graded?' +B':'');
@@ -5317,7 +5317,18 @@ function bolsaRosa(o){
     return k0.call(this);
   };
   const h0=heloisa.act;
-  heloisa.act=function(){if(bolsaRosa(this))return;return h0.call(this);};
+  // both missions open with Rosa (the sheets to hand in, or the first talk about where they are, and the blood bags):
+  // she asks which one the player wants to talk about. Neto always goes straight to the sheets.
+  heloisa.act=function(){
+    const q=flags.bolsaQ||0,main=!flags.graded&&(flags.seated||!flags.profs);
+    if(main&&(q===2||q===5)){
+      if(!flags.seated){this.wait=Math.max(this.wait,6);this.dir=faceTo(this,player);}
+      return say([{who:RW,t:'Oi, '+nome1()+'! Quer conversar sobre o quê?',choices:[
+        {t:flags.seated?'Sobre a atividade (entregar as folhas)':'Sobre a atividade de glicólise',fn:()=>h0.call(this)},
+        {t:'Sobre as bolsas de sangue do Prof. Kiko',fn:()=>bolsaRosa(this)}]}]);
+    }
+    if(bolsaRosa(this))return;return h0.call(this);
+  };
   const z0=zelObj.act;
   zelObj.act=function(){
     if(flags.bolsaQ===4&&flags.tiagoQ!==3){
