@@ -582,7 +582,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.14.3 &middot; Última atualização: 8 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.14.4 &middot; Última atualização: 8 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -4444,19 +4444,34 @@ function sideDone(){ // finished side quests, greyed out at the end of the diary
    The objectives live only in the pause menu now. A new entry (main objective or side quest step) gets a "NOVO"
    tag, a dot on the pause button until the menu is opened, and a notebook with "!" over the player's head
    (gold main story, blue side quest) with a pencil sound; the first time, the player says where to read it. */
-var curObj,diaryKnown,diaryNew,diaryNote,diaryHinted; // set in reset(); diaryHinted: once per page load
-function diaryReset(){scoreReset();curObj='';diaryKnown=new Set();diaryNew=new Set();diaryNote=null;}
+var curObj,diaryKnown,diaryNew,diaryNote,diaryHinted,diaryLoud,diaryFam; // set in reset(); diaryHinted: once per page load
+function diaryReset(){scoreReset();curObj='';diaryKnown=new Set();diaryNew=new Set();diaryLoud=new Set();diaryFam=new Set();diaryNote=null;}
+/* Only a NEW mission makes the satchel glow (and the diary button pulse): the three chapters of the main story
+   (talk to Marina, search for the sheets, hand them in) plus the bonus sheet, and each side quest when it is
+   accepted. The smaller steps are written in the diary quietly ("TINTA FRESCA" when it is opened). */
+function mainChapter(){
+  if(!flags.marina)return 'marina';
+  if(flags.graded)return '';
+  if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp)return 'bonus';
+  if(flags.seated)return 'entrega';
+  if(flags.profs||answered())return 'busca';
+  return '';
+}
+const sideFamily=k=>({camila:'caca',dzBruno:'dz'})[k]||k.replace(/\d+$/,'');
 function diaryCheck(){
-  const L=[{k:'main:'+curObj,blue:false}].concat(sideActive().map(e=>({k:'x:'+e.k,blue:true})));
+  const L=[{k:'main:'+curObj,blue:false,fam:'main:'+mainChapter()}].concat(sideActive().map(e=>({k:'x:'+e.k,blue:true,fam:'x:'+sideFamily(e.k)})));
   let fresh=null;
-  for(const e of L)if(!diaryKnown.has(e.k)){diaryKnown.add(e.k);diaryNew.add(e.k);if(!fresh||!e.blue)fresh=e;}
+  for(const e of L)if(!diaryKnown.has(e.k)){
+    diaryKnown.add(e.k);diaryNew.add(e.k);
+    if(e.fam!=='main:'&&!diaryFam.has(e.fam)){diaryFam.add(e.fam);diaryLoud.add(e.k);if(!fresh||!e.blue)fresh=e;} // a new mission
+  }
   for(const k of diaryNew)if(!L.some(e=>e.k===k))diaryNew.delete(k); // finished before being read
   if(fresh)diaryNote={blue:fresh.blue&&!(diaryNote&&!diaryNote.blue),t:0};
   syncDiaryDot();
   if(state==='pause')renderDiary();
 }
-function syncDiaryDot(){
-  const L=state==='pause'?[]:[...diaryNew];
+function syncDiaryDot(){ // the button pulses only for new missions not read yet
+  const L=state==='pause'?[]:[...diaryNew].filter(k=>diaryLoud.has(k));
   pauseBtnEl().dataset.novo=L.some(k=>k.startsWith('main:'))?'gold':L.length?'blue':'';
 }
 const pauseBtnEl=()=>document.getElementById('btnPausa');
@@ -6323,7 +6338,7 @@ function openPause(){
 function closePause(){
   if(state!=='pause')return;
   if(!endTime)startTime+=performance.now()-pauseAt; // the paused time does not count on the clock
-  pauseAt=0;pauseEl.hidden=true;state=pauseBack;keys.clear();diaryNew.clear();syncDiaryDot();pauseBtn.setAttribute('aria-pressed','false');
+  pauseAt=0;pauseEl.hidden=true;state=pauseBack;keys.clear();diaryNew.clear();diaryLoud.clear();syncDiaryDot();pauseBtn.setAttribute('aria-pressed','false');
 }
 // the pause button sits next to volume and full screen; it only shows once the game has started
 const pauseBtn=$('btnPausa');
