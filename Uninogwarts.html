@@ -6,7 +6,7 @@
 <title>Uninogwarts: Desafio bioquímico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Cinzel+Decorative:wght@700&display=swap">
 <style>
 /* Layout: a single fixed-ratio game screen scaled to fit the viewport; objective and inventory sit inside it. One-look dark design (hospital teal + caution yellow of the tactile floor strip). */
 :root{
@@ -301,8 +301,26 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .tc-btns .tn-btn.on{outline:3px solid #fff;outline-offset:3px}
 .tc-aviso{position:relative;z-index:1;margin:-6px 0 0;font-size:16px;color:var(--muted)}
 /* 100% of the game: the author's thank-you, his photo rolling in */
-#agradecimento{z-index:40;gap:calc(var(--u)*4)}
-#agradecimento p{font-size:calc(var(--u)*6.6);max-width:58ch;line-height:1.12}
+#agradecimento{z-index:40;gap:calc(var(--u)*2.4);padding:calc(var(--u)*5) calc(var(--u)*8)}
+#agradecimento h2{font-size:calc(var(--u)*6.4)}
+#agradecimento p{font-size:calc(var(--u)*5.6);max-width:70ch;line-height:1.1}
+#ag-duelo{display:block;width:calc(var(--u)*330);height:calc(var(--u)*86);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
+/* the theatre curtain that ends the game */
+#cortina{position:absolute;inset:0;z-index:45;overflow:hidden;pointer-events:none}
+#cortina.texto,#cortina:has(.btn){pointer-events:auto}
+#cortina .ct-l,#cortina .ct-r{position:absolute;top:0;bottom:0;width:0;transition:width 2.8s cubic-bezier(.6,.05,.3,1);
+  background:repeating-linear-gradient(90deg,#5a0a14 0,#9e1a2c 3.5%,#c42a3c 5%,#8a1424 7%,#5a0a14 9%);box-shadow:0 0 calc(var(--u)*8) rgba(0,0,0,.7)}
+#cortina .ct-l{left:0}#cortina .ct-r{right:0}
+#cortina.fecha .ct-l,#cortina.fecha .ct-r{width:51%}
+#cortina .ct-sanefa{position:absolute;left:0;right:0;top:0;height:calc(var(--u)*16);background:repeating-linear-gradient(90deg,#7a0f1e 0,#a81e30 6%,#7a0f1e 12%);
+  border-bottom:calc(var(--u)*2) solid #d9a441;box-shadow:0 calc(var(--u)*2) calc(var(--u)*4) rgba(0,0,0,.6)}
+#cortina .ct-sanefa::after{content:"";position:absolute;left:0;right:0;bottom:calc(var(--u)*-5);height:calc(var(--u)*4);
+  background:repeating-linear-gradient(90deg,#d9a441 0,#d9a441 calc(var(--u)*1.2),transparent calc(var(--u)*1.2),transparent calc(var(--u)*2.4))}
+#cortina .ct-txt{position:absolute;left:0;right:0;top:44%;transform:translateY(-50%) scale(.9);margin:0;text-align:center;opacity:0;transition:opacity 1.6s ease,transform 2.4s ease;
+  font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*13);line-height:1.15;padding:0 calc(var(--u)*14);
+  color:#f2cf5a;text-shadow:0 calc(var(--u)*.8) 0 #7a4a10,0 0 calc(var(--u)*6) rgba(255,214,90,.75),0 0 calc(var(--u)*16) rgba(255,180,60,.45)}
+#cortina.texto .ct-txt{opacity:1;transform:translateY(-50%) scale(1)}
+#cortina .btn{position:absolute;left:50%;bottom:calc(var(--u)*14);transform:translateX(-50%);font-size:calc(var(--u)*3)}
 .ag-assin{display:flex;align-items:center;gap:calc(var(--u)*4);text-align:left}
 .ag-foto{width:calc(var(--u)*24);height:calc(var(--u)*24);border-radius:50%;object-fit:cover;display:block;border:calc(var(--u)*.8) solid #F1DDA9;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.5)}
 .ag-nome{display:flex;flex-direction:column;gap:calc(var(--u)*1.2);font-size:calc(var(--u)*6.4);line-height:1.05;color:var(--muted)}
@@ -607,8 +625,11 @@ body:not(.kb) .caca-grid div.cur{outline:none}
         <p id="ag-p1"></p>
         <p id="ag-p2"></p>
         <div class="ag-assin"><img class="ag-foto" id="ag-foto" alt="Foto do Prof. Dr. Aldair de França Neto"><div class="ag-nome">Com carinho,<b>Prof. Dr. Aldair de França Neto</b></div></div>
-        <button class="btn" id="btn-ag" type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · JOGAR DE NOVO">ENTER · JOGAR DE NOVO</button>
+        <canvas id="ag-duelo" width="384" height="100" aria-label="Duelo de varinhas: professores Neto e Rosa contra os professores Kiko e Malvar"></canvas>
+        <button class="btn" id="btn-ag" hidden type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · JOGAR DE NOVO">ENTER · JOGAR DE NOVO</button>
       </div>
+      <div id="cortina" hidden aria-live="polite"><div class="ct-l"></div><div class="ct-r"></div><div class="ct-sanefa"></div>
+        <p class="ct-txt">Continua na próxima temporada...</p></div>
       <div class="overlay" id="end" hidden>
         <span class="tag" id="end-tag">ATIVIDADE CONCLUÍDA</span>
         <h2 id="end-title">Parabéns!</h2>
@@ -638,7 +659,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.19.3 &middot; Última atualização: 9 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.21.1 &middot; Última atualização: 9 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -3049,7 +3070,17 @@ for(const y of [104,139,169,199])for(const x of [26,62,112,150,180,210,250,300,3
 for(const y of [122,152,184])for(const x of [150,180,210])RECESS_SPOTS.push([x,y]);
 const ARRIVE={davi:1,ana:5,bia:8,rafael:12,caio:12,julia:16}; // game minutes after 7h30
 const ARRIVE_LAG={caio:.7}; // seconds behind the friend he arrives with
-const ARRIVE_ROUTE={terreo:[[18,140],[352,140]],andar1:[[352,120],[352,104],[52,104],[52,72]]},ARRIVE_SPEED=26;
+const ARRIVE_ROUTE={terreo:[[18,140],[352,140],[352,46]],andar1:[[352,216],[352,120],[352,104],[52,104],[52,72]]},ARRIVE_SPEED=26; // the whole flights of stairs: up from the ground floor, and up the last steps into the 1st floor
+/* the flights of stairs that people really walk: [x0,x1, y at the corridor, y at the far end] per corridor. Over the
+   last 20 px of a flight (where it leaves the screen) they fade out, or fade in when they arrive that way. */
+const STAIR_FLIGHTS={terreo:[[336,368,140,46]],andar1:[[336,368,120,216],[556,588,98,44]],andar2:[[346,380,122,216]]};
+function stairFade(sc,x,y){
+  for(const [x0,x1,a,b] of STAIR_FLIGHTS[sc]||[]){
+    if(x<x0||x>x1||y<Math.min(a,b)-2||y>Math.max(a,b)+2)continue;
+    return Math.max(0,Math.min(1,Math.abs(y-b)/20));
+  }
+  return 1;
+}
 const ARRIVE_LINES={
   davi:'Bom dia! Vou subir logo para garantir a carteira do fundo da 101.',
   ana:'Bom dia! Passei na cantina para pegar um café. Sem cafeína não tem glicólise que entre.',
@@ -3877,6 +3908,7 @@ const JAN_SPOTS=[
 const JAN_LANE={terreo:138,andar1:108,andar2:108},JAN_EVERY=180; // REAL seconds between two spots (3 minutes, whatever the game clock speed)
 // stairs between two corridors: JAN_STAIRS[corridor][other floor] = where he leaves / arrives
 const JAN_STAIRS={terreo:{andar1:[352,140],andar2:[352,140]},andar1:{terreo:[352,120],andar2:[572,98]},andar2:{terreo:[363,122],andar1:[363,122]}};
+const JAN_STAIR_END={terreo:{andar1:[352,46],andar2:[352,46]},andar1:{terreo:[352,216],andar2:[572,44]},andar2:{terreo:[363,216],andar1:[363,216]}}; // the far end of each flight
 const jan={spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,talk:0}; // last: game minute of the last move
 const janBaked={};
 const janSpr=(k,fn)=>janBaked[k]||(janBaked[k]=bake(fn));
@@ -3935,13 +3967,13 @@ function janArrive(){const s_=JAN_SPOTS[jan.to];Object.assign(jan,{spot:jan.to,t
 const janRoute=(x0,x1,y1)=>[[x0,JAN_LANE[jan.sc]],[x1,JAN_LANE[jan.sc]],[x1,y1]];
 function janSwitch(){ // takes the stairs: appears on the other floor (walking from its stairs if the player is there)
   const from=jan.sc,s_=JAN_SPOTS[jan.to];jan.sc=s_.sc;jan.leaving=false;
-  if(scene===jan.sc&&state!=='intro'){const e=JAN_STAIRS[jan.sc][from];jan.x=e[0];jan.y=e[1];jan.path=janRoute(e[0],s_.x,s_.y);janPlace();}
+  if(scene===jan.sc&&state!=='intro'){const e=JAN_STAIRS[jan.sc][from],f=JAN_STAIR_END[jan.sc][from];jan.x=f[0];jan.y=f[1];jan.path=[e].concat(janRoute(e[0],s_.x,s_.y));janPlace();} // up/down the whole flight first
   else janArrive();
 }
 function janGo(i){
   jan.to=i;const s_=JAN_SPOTS[i],seen=scene===jan.sc;
   if(s_.sc===jan.sc){if(seen){jan.path=janRoute(jan.x,s_.x,s_.y);janPlace();}else janArrive();return;}
-  if(seen){const e=JAN_STAIRS[jan.sc][s_.sc];jan.path=janRoute(jan.x,e[0],e[1]);jan.leaving=true;janPlace();}
+  if(seen){const e=JAN_STAIRS[jan.sc][s_.sc];jan.path=janRoute(jan.x,e[0],e[1]).concat([JAN_STAIR_END[jan.sc][s_.sc]]);jan.leaving=true;janPlace();} // and on up/down the steps
   else janSwitch();
 }
 function janUpdate(dt){
@@ -4610,12 +4642,23 @@ const REACTION_IMG={
 let postersPre=false;
 function preloadPosters(){if(postersPre)return;postersPre=true;setTimeout(()=>Object.values(REACTION_IMG).forEach(d=>{const i=new Image();i.src=d.src;}),3000);}
 // the folder was not uploaded with the game: say so on the poster instead of showing a broken image
-$('poster-img').addEventListener('error',()=>{$('poster-title').textContent='CARTAZ NÃO ENCONTRADO · ENVIE OS ARQUIVOS uninogwarts-*.jpg JUNTO COM O JOGO';});
+$('poster-img').addEventListener('error',()=>{$('poster-img').style.visibility='';$('poster-title').textContent='CARTAZ NÃO ENCONTRADO · ENVIE OS ARQUIVOS uninogwarts-*.jpg JUNTO COM O JOGO';});
 function openPoster(which){
   const img=$('poster-img');
   if(!POSTER_MAIN.src){POSTER_MAIN.src=img.src;POSTER_MAIN.alt=img.alt;}
   const d=which?REACTION_IMG[which]:POSTER_MAIN;
-  img.src=d.src;img.alt=d.alt;$('poster-title').textContent=d.title;
+  // the previous figure must never show while the new one loads: the image stays hidden until it is decoded
+  img.decoding='sync'; // the new figure is decoded before it is painted, so the old one never shows in between
+  const tok=img.dataset.tok=String(+(img.dataset.tok||0)+1),
+    reveal=()=>{if(img.dataset.tok!==tok)return;img.style.visibility='';fitPosterImg();},
+    show=()=>{if(img.dataset.tok!==tok)return;fitPosterImg();setTimeout(reveal,40);}; // ~2 frames: laid out and painted while still hidden first
+  if(img.getAttribute('src')!==d.src&&img.src!==d.src){
+    img.style.visibility='hidden';
+    img.src=d.src;
+    if(img.complete&&img.naturalWidth)show();else{img.addEventListener('load',show,{once:true});img.addEventListener('error',show,{once:true});}
+    setTimeout(reveal,1500); // never stay blank
+  }
+  img.alt=d.alt;$('poster-title').textContent=d.title;
   posterEl.classList.toggle('fixed',!!which);
   $('poster-zoom').hidden=!!which;$('poster-zhint').hidden=!!which;
   if(!which)flags.poster=true;
@@ -4960,7 +5003,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(a===2)add_('alost2','Bilhete anônimo: ache as fichas com o selo dos três cadeados ('+fichaCount()+' de 10)');
   if(a===3)add_('alost3','Bilhete anônimo: ponha as 10 fichas em ordem (armário 42)');
   if(a===4)add_('alost4','Bilhete anônimo: caminhe três vezes diante da parede sem porta');
-  if(a===5)add_('alost5',corOpen()>=10?'Laboratório antigo: veja as folhas sobre a mesa':'Corredor das velas: atravesse as dez portas até o fim ('+corOpen()+' de 10)');
+  if(a===5)add_('alost5',corOpen()>=10?'Laboratório antigo: veja as folhas sobre a mesa':'Corredor das velas: atravesse as portas até o fim');
   if(flags.dzOn&&!flags.dzDone)add_('dz'+flags.dzFase,'Desafio da Liga: vença a fase '+flags.dzFase+' de 3 no simulador do laboratório');
   if(flags.dzDone&&!flags.dzReward)add_('dzBruno','Desafio da Liga: conte ao Bruno que você venceu');
   if(a===6&&!flags.fundador)add_('fundador','O fundador da Liga: descubra quem é o "Prof. E. M." (dizem que dá aula no lugar mais escuro do prédio)');
@@ -5561,8 +5604,8 @@ function alostScene(from,to){
   if(isCor(to))music.duck(.12); // suspense: the music drops in the candle corridors...
   if(to==='salaOculta'||from==='salaCorredor'&&to==='andar2')music.duck(1); // ...and comes back in the old lab (or out on the 2nd floor)
   if(to==='salaCorredor2'&&!flags.ocVisto2){flags.ocVisto2=true;onArrive=()=>say([
-    {t:'Passada a quinta porta, a passagem desce três degraus e o corredor continua, ainda mais estreito e escuro.'},
-    {who:me(),t:'Mais cinco portas. As reações da fase de pagamento...'}]);}
+    {t:'A passagem desce três degraus e o corredor continua, ainda mais estreito e escuro.'},
+    {who:me(),t:'Mais portas... Até onde vai este corredor?'}]);}
   if(isCor(to)){ // doors already opened stand open, their stretches lit (no animation)
     for(let n=1;n<=10;n++)corSwing[n]=9;const k=corOpen();for(let i=0;i<=10;i++)corLit[i]=k>=i?1:0;corPop=null;
   }
@@ -6813,9 +6856,9 @@ function portaFinal(n){
     {t:'Adiante, as velas do trecho seguinte se acendem sozinhas, uma a uma. O corredor continua.'}]);
   if(n===2)return say([{t:'O cadeado da PFK-1 cai com um estalo. A porta mais pesada do corredor se abre.'},
     {t:'Na placa, alguém escreveu a lápis: "Depois da aldolase, tudo em dobro: são duas trioses."'}]);
-  say([{t:'A última porta de ferro se abre com um rangido longo.'},
+  say([{t:'A porta de ferro se abre com um rangido longo.'},
     {t:'Na conta das placas: 1 ATP gasto na porta 1, mais 1 na porta 3; 2 ganhos na porta 7 e mais 2 na porta 10. Saldo: +2 ATP por glicose.'},
-    {t:'No fim do corredor, uma porta dupla de carvalho, entreaberta. Lá dentro, mais velas.'}]);
+    {t:'Adiante, uma porta dupla de carvalho, entreaberta. Lá dentro, mais velas.'}]);
 }
 // the first time past the tenth door: the lab, the missing pages and Larissa
 // the first time past the tenth door: the old lab; the loose sheets on the table wait to be looked at (ocPages)
@@ -7167,7 +7210,7 @@ function onEnter(){
 }
 function onKey(e){
   if(state==='boot')return;
-  if(state==='finale'){if((e.code==='Enter'||e.code==='NumpadEnter')&&!e.repeat){e.preventDefault&&e.preventDefault();$('btn-ag').click();}return;} // opening screens own the keyboard (the name field needs W/A/S/D/M)
+  if(state==='finale'){if((e.code==='Enter'||e.code==='NumpadEnter')&&!e.repeat&&!$('btn-ag').hidden){e.preventDefault&&e.preventDefault();$('btn-ag').click();}return;} // opening screens own the keyboard (the name field needs W/A/S/D/M)
   if(e.code==='Escape'&&volPanel.classList.contains('on')){closeVol();return;}
   if(e.target.closest&&e.target.closest('#painelVolume'))return; // the volume sliders use the arrow keys
   if(state==='pause'){
@@ -7504,7 +7547,8 @@ function render(t){
   for(const o of objects)if(o.wall){blit(spriteOf(o,t));if(o.fx){g=fctx;o.fx(t);}}
   const items=objects.filter(o=>!o.wall);
   const px_=Math.round(player.x),py_=Math.round(player.y);
-  for(const o of items)if(!o.noShadow){const s=o.solid;shadow(s.x+s.w/2,o.base+1,o.id==='pedro'?10:s.w);}
+  for(const o of items)if(!o.noShadow){const s=o.solid,jo=o===zelObj||o===cartObj||o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):o.sprite&&o.x!=null?stairFade(scene,o.x,o.y):1;
+    if(fa<=0)continue;if(fa<1)fctx.globalAlpha=fa;shadow(s.x+s.w/2,o.base+1,o.id==='pedro'?10:s.w);fctx.globalAlpha=1;}
   const sim=scene==='salaSim',ride=scene==='simGlic';
   const topV=isCor();
   if(!sim&&!ride&&!topV)shadow(px_,py_+1,10);
@@ -7513,7 +7557,12 @@ function render(t){
   list.sort((a,b)=>a.y-b.y);
   for(const it of list){
     if(it.o===cat){catHere=true;fctx=topctx;g=fctx;topctx.clearRect(camX,0,W,H);continue;} // from here on: the layer above him
-    if(it.o){blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}}
+    if(it.o){
+      const jo=it.o===zelObj||it.o===cartObj||it.o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):it.o.sprite&&it.o.x!=null?stairFade(scene,it.o.x,it.o.y):1; // fading on the last steps of a flight
+      if(fa<1)fctx.globalAlpha=fa;
+      blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}
+      fctx.globalAlpha=1;
+    }
     else if(topV)drawTopPlayer(px_,py_,player.dir,player.anim,player.moving);
     else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
   }
@@ -7625,7 +7674,7 @@ function finale(){
   $('ag-p1').textContent='Você terminou a missão principal e desvendou todos os segredos da Uninogwarts. Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
   $('ag-p2').textContent='Cada sala, cada enigma e cada porta foram pensados para alunos como você. Continue '+gen('curioso','curiosa')+': a Bioquímica ainda tem muitos caminhos esperando por você.';
   const foto=$('ag-foto'),src=document.querySelector('.creditos-loading .cl-foto');if(src&&!foto.src)foto.src=src.src;
-  $('agradecimento').hidden=false;$('btn-ag').focus({preventScroll:true});
+  $('agradecimento').hidden=false;wdStart();
   // the photo rolls in from the right edge, like on the loading screen
   if(matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const fr=$('frame').getBoundingClientRect(),rc=foto.getBoundingClientRect(),dist=Math.max(0,fr.right-rc.right-8),giro=dist/(Math.PI*rc.width)*360,t0=performance.now(),dur=3200;
@@ -7635,7 +7684,126 @@ function finale(){
     if(k<1)requestAnimationFrame(passo);
   })();
 }
-$('btn-ag').addEventListener('click',e=>{e.stopPropagation();location.reload();});
+/* ---------- the grand finale: a wizards' wd on the thank-you screen ----------
+   Prof. Neto and Profa. Rosa (left) against Prof. Kiko and Prof. Malvar (right), drawn with the game's own paper
+   sprites on a small stage under the thank-you text. One minute of colourful spells with biochemistry "incantations",
+   shields, mid-air clashes, two beam locks and a big final clash; then a theatre curtain closes over the screen
+   with "Continua na próxima temporada...". WD_LEN in seconds. */
+const WD_LEN=60,DW=384,DH=100,DFLOOR=90;
+const WD_SPELLS=['GLICOLISUS!','PIRUVATUM!','ALOSTERICUS!','FOSFORILATUS!','ATPUS MAXIMUS!','ENOLASIUS!','LACTATUM!','EXPELLIGLICOSE!','HEXOCINASIUM!','PROTEGO ATP!'];
+const WD_COLS=['#ff4d6d','#4dd2ff','#7dff6a','#ffd23f','#c77dff','#ff8c1a','#ffffff','#2effc0'];
+let wd=null;
+function wdStart(){
+  const cv_=$('ag-duelo');if(!cv_)return;
+  const x=cv_.getContext('2d');x.imageSmoothingEnabled=false;
+  const W_=[{who:'aldair',name:'NETO',x:44,team:0,col:'#ffd23f'},{who:'heloisa',name:'ROSA',x:92,team:0,col:'#ff7ab0'},
+            {who:'kido',name:'KIKO',x:292,team:1,col:'#7dff6a'},{who:'malvar',name:'MALVAR',x:340,team:1,col:'#c77dff'}];
+  W_.forEach((w,i)=>Object.assign(w,{y:i===0||i===3?DFLOOR-7:DFLOOR,cd:.6+i*.45,hit:0,cast:0,bob:i*1.3,say:null,shield:0}));
+  wd={x,cv:cv_,t:0,last:performance.now(),W:W_,bolts:[],parts:[],beams:null,stars:Array.from({length:40},(_,i)=>[(i*97)%DW,(i*53)%60,i%3]),done:false,lock:[18,40],lockOn:-1};
+  requestAnimationFrame(wdFrame);
+}
+const tipOf=w=>{const i=wd.W.indexOf(w),up=wd.beams&&(i===0||i===3)&&wd.beams.pairs.some(p=>p.includes(i))?22:0; // in a beam lock the outer ones raise their wands over the others' heads
+  return [w.x+(w.team?-12:12)+(w.hit>0?(w.team?3:-3):0),w.y-30-up+Math.round(Math.sin(wd.t*3+w.bob))];};
+function wdBurst(x,y,col,n,sp){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(sp||40)*(.3+Math.random());wd.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-10,life:.5+Math.random()*.7,col:Math.random()<.3?'#ffffff':col});}}
+function wdCast(w){
+  const foes=wd.W.filter(o=>o.team!==w.team),f=foes[(Math.random()*foes.length)|0],[sx,sy]=tipOf(w),[tx,ty]=[f.x,f.y-24];
+  const col=WD_COLS[(Math.random()*WD_COLS.length)|0],d=Math.hypot(tx-sx,ty-sy),sp=150+Math.random()*90,arc=(Math.random()-.5)*60;
+  wd.bolts.push({x:sx,y:sy,sx,sy,tx,ty,k:0,len:d,sp,arc,col,team:w.team,target:f,trail:[]});
+  w.cast=.35;if(Math.random()<.35)w.say={t:WD_SPELLS[(Math.random()*WD_SPELLS.length)|0],life:1.4};
+  tone(500+Math.random()*700,.09,'triangle',.018);
+}
+function wdUpdate(dt){
+  const D=wd;D.t+=dt;const t=D.t;
+  const lockI=D.lock.findIndex(s=>t>=s&&t<s+6),finalClash=t>=WD_LEN-6;
+  // beam locks: Neto against Malvar, then Rosa against Kiko; the golden knot of light swings to and fro
+  if(lockI>=0||finalClash){
+    if(!D.beams){const pairs=finalClash?[[0,3],[1,2]]:lockI===0?[[0,3]]:[[1,2]];D.beams={pairs,start:t,cols:pairs.map(()=>[WD_COLS[(Math.random()*8)|0],WD_COLS[(Math.random()*8)|0]])};}
+    for(const [a,b] of D.beams.pairs){D.W[a].cast=.2;D.W[b].cast=.2;}
+    if(Math.random()<dt*30){const [a,b]=D.beams.pairs[0],m=wdKnot(a,b);wdBurst(m[0],m[1],'#ffe680',2,30);}
+    if(Math.random()<dt*3)tone(180+Math.random()*60,.15,'sawtooth',.01);
+  }else if(D.beams){ // the lock breaks with a bang
+    for(const [a,b] of D.beams.pairs){const m=wdKnot(a,b);wdBurst(m[0],m[1],'#ffe680',60,90);}
+    [196,262,330].forEach((f,i)=>tone(f,.3,'square',.03,i*.05));D.beams=null;
+  }
+  for(const w of D.W){
+    w.hit=Math.max(0,w.hit-dt);w.cast=Math.max(0,w.cast-dt);w.shield=Math.max(0,w.shield-dt);
+    if(w.say&&(w.say.life-=dt)<=0)w.say=null;
+    if(!D.beams||!D.beams.pairs.some(p=>p.includes(D.W.indexOf(w)))){
+      w.cd-=dt*(t>WD_LEN-14?2.2:1);if(w.cd<=0){wdCast(w);w.cd=.7+Math.random()*1.3;}
+    }
+    w.x+=Math.sin(t*1.7+w.bob)*dt*6; // they sidestep
+  }
+  // bolts: curved flight, mid-air clashes, shields and hits
+  for(const b of D.bolts){
+    b.k+=b.sp*dt/b.len;const k=Math.min(1,b.k);
+    b.x=b.sx+(b.tx-b.sx)*k;b.y=b.sy+(b.ty-b.sy)*k-Math.sin(k*Math.PI)*b.arc;
+    b.trail.push([b.x,b.y]);if(b.trail.length>9)b.trail.shift();
+    if(Math.random()<.5)D.parts.push({x:b.x,y:b.y,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,life:.3,col:b.col});
+  }
+  for(const a of D.bolts)for(const c of D.bolts)if(!a.dead&&!c.dead&&a.team!==c.team&&Math.abs(a.x-c.x)<6&&Math.abs(a.y-c.y)<6){
+    a.dead=c.dead=true;wdBurst(a.x,a.y,a.col,22,70);wdBurst(a.x,a.y,c.col,22,70);tone(880,.12,'square',.025);}
+  for(const b of D.bolts){if(b.dead||b.k<1)continue;b.dead=true;const f=b.target;
+    if(Math.random()<.45){f.shield=.5;wdBurst(b.x,b.y,'#9fe8ff',14,50);tone(1200,.06,'sine',.02);}
+    else{f.hit=.4;wdBurst(b.x,b.y,b.col,26,80);tone(150,.12,'triangle',.03);}}
+  D.bolts=D.bolts.filter(b=>!b.dead);
+  for(const p of D.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=60*dt;p.life-=dt;}
+  D.parts=D.parts.filter(p=>p.life>0&&p.y<DH);
+  if(t>=WD_LEN-.2&&!D.boom){D.boom=true;for(let i=0;i<6;i++)wdBurst(DW/2+(Math.random()-.5)*80,40+(Math.random()-.5)*30,WD_COLS[i],50,120);[262,330,392,523,659,784].forEach((f,i)=>tone(f,.4,'triangle',.04,i*.08));}
+}
+function wdKnot(a,b){const [ax,ay]=tipOf(wd.W[a]),[bx,by]=tipOf(wd.W[b]),s=.5+Math.sin((wd.t-wd.beams.start)*2.3)*.18;return [ax+(bx-ax)*s,ay+(by-ay)*s];}
+function wdDraw(){
+  const D=wd,x=D.x,t=D.t,R=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),w,h);};
+  // night stage: sky, stars, a stone floor and two banners
+  const gr=x.createLinearGradient(0,0,0,DH);gr.addColorStop(0,'#120a24');gr.addColorStop(1,'#2a1430');x.fillStyle=gr;x.fillRect(0,0,DW,DH);
+  for(const [sx,sy,k] of D.stars)if((Math.floor(t*3+k*7+sx)%5))R(sx,sy,1,1,k?'#d8d0ff':'#fff6c8');
+  R(0,DFLOOR,DW,DH-DFLOOR,'#3a2e28');for(let i=0;i<DW;i+=16)R(i+(Math.floor(i/16)%2)*8,DFLOOR+4,1,6,'#2a2420');R(0,DFLOOR,DW,1,'#5e564c');
+  // the two raised steps of the outer duellists, and a pennant over each side
+  for(const sx of [24,DW-64]){R(sx,DFLOOR-7,40,7,'#4a4239');R(sx,DFLOOR-7,40,1,'#776f63');R(sx,DFLOOR-1,40,1,'#2a2420');}
+  for(const [px0,c1,c2] of [[8,'#7a2e3e','#e0b22e'],[DW-30,'#2b4a6f','#9aa2a9']]){R(px0-2,6,26,2,'#5a3d24');
+    for(let yy=8;yy<44;yy++){const cut=yy>34?Math.abs(11-(yy-34)*1.1):99,w2=22;for(let xx=0;xx<w2;xx++)if(yy<=34||Math.abs(xx-11)>=11-(yy-34)*1.1)R(px0+xx,yy,1,1,xx<2||xx>19?c2:c1);}}
+  // beams under the duellists' hands
+  if(D.beams)D.beams.pairs.forEach(([a,b],i)=>{
+    const A=tipOf(D.W[a]),B=tipOf(D.W[b]),m=wdKnot(a,b),[c1,c2]=D.beams.cols[i];
+    for(const [P,c] of [[A,c1],[B,c2]]){x.strokeStyle=c;x.globalAlpha=.35;x.lineWidth=5;x.beginPath();x.moveTo(P[0],P[1]);x.lineTo(m[0],m[1]);x.stroke();
+      x.globalAlpha=1;x.lineWidth=2;x.beginPath();x.moveTo(P[0],P[1]);
+      for(let k=1;k<=8;k++){const q=k/8;x.lineTo(P[0]+(m[0]-P[0])*q+(Math.random()-.5)*2,P[1]+(m[1]-P[1])*q+(Math.random()-.5)*2);}x.stroke();}
+    const r=5+Math.sin(t*20)*1.5;x.fillStyle='#fff6c8';x.globalAlpha=.5;x.beginPath();x.arc(m[0],m[1],r+4,0,7);x.fill();x.globalAlpha=1;x.fillStyle='#ffe680';x.beginPath();x.arc(m[0],m[1],r,0,7);x.fill();
+  });
+  // the four professors (paper sprites, doubled), wands, shields, incantations
+  for(const w of D.W){
+    const f=w.cast>0?1:0,s=personSprite(w.who,'coat',w.team?'left':'right',f,false),c=s.c,sc=2;
+    const X=Math.round(w.x-8*sc+(w.hit>0?(w.team?4:-4):0)),Y=Math.round(w.y-24*sc+Math.sin(t*3+w.bob));
+    x.globalAlpha=.35;x.fillStyle='#000';x.beginPath();x.ellipse(w.x,w.y,12,3,0,0,7);x.fill();x.globalAlpha=1;
+    if(w.hit>0&&Math.floor(t*20)%2)x.globalAlpha=.5;
+    x.drawImage(c,0,0,c.width,c.height,X-(c._ox||0)*sc,Y-(c._oy||0)*sc,c.width*sc,c.height*sc);x.globalAlpha=1;
+    const [tx,ty]=tipOf(w),hx=w.x+(w.team?-6:6);x.strokeStyle='#5a3d24';x.lineWidth=2;x.beginPath();x.moveTo(hx,ty+8);x.lineTo(tx,ty);x.stroke();
+    R(tx-1,ty-1,2,2,w.cast>0?'#ffffff':w.col);
+    if(w.shield>0){x.strokeStyle='#9fe8ff';x.globalAlpha=w.shield*2;x.lineWidth=2;x.beginPath();x.arc(w.x+(w.team?-14:14),w.y-22,16,0,7);x.stroke();x.globalAlpha=1;}
+    g=x;pxText(w.name,w.x,DFLOOR+3,'#efe3c8','center');
+    if(w.say){const tw=pxW(w.say.t)+6,bx=Math.max(1,Math.min(DW-tw-1,Math.round(w.x-tw/2))),by=Y-12;
+      R(bx,by,tw,9,'#1d1612');R(bx+1,by+1,tw-2,7,'#efe3c8');pxText(w.say.t,bx+3,by+2,w.col==='#ffd23f'?'#a8862a':w.col,);}
+    g=fctx;
+  }
+  // bolts with glowing trails, sparks
+  for(const b of D.bolts){b.trail.forEach(([px_,py_],i)=>{x.globalAlpha=(i+1)/b.trail.length*.7;R(px_-1,py_-1,3,3,b.col);});x.globalAlpha=1;R(b.x-2,b.y-2,4,4,'#ffffff');R(b.x-1,b.y-1,2,2,b.col);}
+  for(const p of D.parts){x.globalAlpha=Math.min(1,p.life*2);R(p.x,p.y,p.life>.4?2:1,p.life>.4?2:1,p.col);}x.globalAlpha=1;
+  // a countdown of the wd, tiny, in the corner
+}
+function wdFrame(now){
+  const D=wd;if(!D||D.done)return;
+  const dt=Math.min(.05,(now-D.last)/1000);D.last=now;
+  wdUpdate(dt);wdDraw();
+  if(D.t>=WD_LEN){D.done=true;curtainClose();return;}
+  requestAnimationFrame(wdFrame);
+}
+// the theatre curtain closes, then the stylised "to be continued" and, quietly, the way back to the title
+function curtainClose(){
+  const c=$('cortina');c.hidden=false;void c.offsetWidth;c.classList.add('fecha');
+  [392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
+  setTimeout(()=>{c.classList.add('texto');},2900);
+  setTimeout(()=>{const b=$('btn-ag');b.hidden=false;c.appendChild(b);b.focus({preventScroll:true});},6500);
+}
+$('btn-ag').addEventListener('click',e=>{e.stopPropagation();if(!$('btn-ag').hidden)location.reload();});
 // for the opening screens (saved game screen)
 window.jogoSalvo=()=>{const d=saveRead();if(!d)return null;
   const dt=new Date(d.at),p2=n=>String(n).padStart(2,'0');
