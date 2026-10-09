@@ -767,7 +767,7 @@ const ctx=cv.getContext('2d');
    Everything is drawn at native 384x224 on offscreen canvases, then copied to the
    screen with a whole-number zoom, so every pixel of the art has the same size. */
 function mk(w,h,read){const c=document.createElement('canvas');c.width=w;c.height=h;return [c,c.getContext('2d',read?{willReadFrequently:true}:undefined)];}
-const [frame,fctx]=mk(FW,H);
+const [frame,fctx0]=mk(FW,H);let fctx=fctx0; // fctx: the `top` layer while render() draws what stands in front of the cat
 const [bg,bgctx]=mk(SW1,H);
 const [bg1,bg1ctx]=mk(SW1,H);
 const [bg2,bg2ctx]=mk(SW1,H);
@@ -3941,37 +3941,139 @@ const CAT_EVERY=300;
 const CAT_ROOMS={terreo:{salaLab:[522,72]},andar1:{sala101:[52,72],sala103:[518,72]},andar2:{sala201:[58,72],sala204:[648,72]}};
 const CAT_FLOOR={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',sala204:'andar2'};
 const CAT_EXIT=[192,200]; // the door in the bottom wall of every room
-const catBaked={};
-function drawCat(pose,face,tail){
-  const X=100,Y=100,B='#221e28',L='#3c3548',D='#121016',E=pose==='stare'?'#ffe45a':'#d6bf38',N='#c86a74',T='#d9a441';
-  const p=(dx,dy,w,h,c)=>r(face>0?X+dx:X-dx-w+1,Y+dy,w,h,c);
-  if(pose==='walk0'||pose==='walk1'){
-    p(-6,-8,11,5,B);p(-4,-8,6,1,L);
-    const legs=pose==='walk0'?[[-5,3],[-2,2],[1,3],[4,2]]:[[-6,2],[-3,3],[2,2],[3,3]];
-    for(const [lx,lh] of legs)p(lx,-3,1,lh,B);
-    p(3,-12,6,5,B);p(3,-14,2,2,B);p(7,-14,2,2,B);p(4,-12,3,1,L);
-    p(7,-11,1,1,E);p(8,-9,1,1,N);p(3,-7,1,1,T);
-    p(-8,-9,2,1,B);p(-9,-12,1,3,B);
-    if(tail)p(-10,-14,1,2,B);else p(-8,-14,1,2,B);
-  }else{ // sitting, front view (the tail curled on one side)
-    p(-4,-3,9,3,B);p(-3,-4,7,1,B);p(-2,-7,5,3,B);p(-1,-6,3,2,D);p(-3,-11,7,4,B);p(-2,-12,5,1,B);
-    p(-3,-13,2,2,B);p(-3,-14,1,1,B);p(2,-13,2,2,B);p(3,-14,1,1,B);p(-1,-12,3,1,L);p(-4,-1,2,1,L);p(3,-1,2,1,L);
-    if(pose==='stare'){p(-2,-10,2,1,E);p(1,-10,2,1,E);p(-1,-10,1,1,D);p(2,-10,1,1,D);}
-    else{p(-2,-10,1,1,E);p(2,-10,1,1,E);}
-    p(0,-9,1,1,N);p(0,-7,1,1,T);
-    p(5,-1,2,1,B);p(6,-3,1,2,B);if(tail)p(7,-5,1,2,B);else p(6,-5,1,2,B);
+/* He is the only one NOT made of pixels: a manga drawing (solid black ink body, hard blue gloss streaks like the
+   shine on black manga hair, big gold eyes with two white highlights, an "ω" mouth, a screentone shadow, tension
+   marks when he stares and speed lines when he walks) painted with paths at the screen's real resolution.
+   render() draws the scene up to him on the frame, the rest of it (whoever stands in front of him, markers, fade)
+   on the `top` layer, and paints him in between. Units: 1 = 1 game pixel, feet at (0,0), facing right. */
+const [topL,topctx]=mk(FW,H);
+const catTone={}; // screentone patterns, by dot spacing (device pixels)
+function catPaint(c,sx,sy,s,o){ // o: {face,pose:'sit'|'stare'|'walk',ph,t,alpha}
+  const INK='#07060b',BODY='#16141f',GLOSS='#7d93d1',GL2='#c9d6ff',st=o.pose==='stare',walk=o.pose==='walk',T=o.t;
+  c.save();c.globalAlpha=o.alpha;c.translate(sx,sy);
+  // screentone shadow (dots, not mirrored)
+  const sp=Math.max(3,Math.round(s*.8));
+  if(!catTone[sp]){const [pc,pg]=mk(sp,sp);pg.fillStyle='rgba(20,12,8,.75)';pg.beginPath();pg.arc(sp/2,sp/2,sp*.28,0,7);pg.fill();catTone[sp]=c.createPattern(pc,'repeat');}
+  c.fillStyle=catTone[sp];c.beginPath();c.ellipse(walk?0:o.face*.6*s,.4*s,(walk?8.5:6.6)*s,1.8*s,0,0,7);c.fill();
+  c.scale(s*o.face,s);c.lineJoin='round';c.lineCap='round';
+  const ink=w=>{c.lineWidth=w||.7;c.strokeStyle=INK;c.stroke();};
+  const part=(path)=>{c.beginPath();path();c.fillStyle=BODY;c.fill();ink();};
+  const gloss=(pts,w)=>{ // a hard, tapering shine streak: a thin crescent between two curves
+    c.beginPath();c.moveTo(pts[0],pts[1]);c.quadraticCurveTo(pts[2],pts[3]-w,pts[4],pts[5]);c.quadraticCurveTo(pts[2],pts[3]+w*.2,pts[0],pts[1]);
+    c.fillStyle=GLOSS;c.fill();};
+  const tail=(p)=>{c.beginPath();c.moveTo(p[0],p[1]);c.bezierCurveTo(p[2],p[3],p[4],p[5],p[6],p[7]);
+    c.strokeStyle=INK;c.lineWidth=2.6;c.stroke();c.strokeStyle=BODY;c.lineWidth=1.6;c.stroke();
+    c.beginPath();c.moveTo(p[2]*.6+p[0]*.4,p[3]*.6+p[1]*.4-.3);c.quadraticCurveTo(p[4]-.3,p[5],p[6]*.8+p[4]*.2,p[7]*.8+p[5]*.2);
+    c.strokeStyle=GLOSS;c.lineWidth=.4;c.stroke();};
+  const ear=(a,b,d)=>{c.beginPath();c.moveTo(...a);c.lineTo(...b);c.lineTo(...d);c.closePath();c.fillStyle=BODY;c.fill();ink(.65);
+    c.beginPath();c.moveTo(a[0]*.7+d[0]*.3,a[1]*.7+d[1]*.3);c.lineTo(b[0]*.75+(a[0]+d[0])*.125,b[1]*.75+(a[1]+d[1])*.125+.4);
+    c.lineTo(a[0]*.3+d[0]*.7,a[1]*.3+d[1]*.7);c.closePath();c.fillStyle='#3b2f4a';c.fill();};
+  const eye=(x,y,rx,ry)=>{
+    if(!st&&(T*1.7+3.1)%4.6<.13){ // blink: a closed "^" lid
+      c.beginPath();c.moveTo(x-rx,y+.1);c.quadraticCurveTo(x,y-ry*1.1,x+rx,y+.1);c.strokeStyle=GL2;c.lineWidth=.45;c.stroke();return;}
+    const shape=()=>{c.beginPath();c.moveTo(x-rx,y+ry*.15);c.quadraticCurveTo(x-rx*.2,y-ry*1.9,x+rx,y-ry*.35);c.quadraticCurveTo(x+rx*.2,y+ry*1.9,x-rx,y+ry*.15);c.closePath();};
+    shape();c.fillStyle='#ffd83a';c.fill();
+    c.save();c.clip();c.fillStyle='#e8961c';c.fillRect(x-rx-1,y+ry*.25,rx*2+2,ry*2); // cel shade: the lower half of the iris
+    c.fillStyle='#fff3a6';c.fillRect(x-rx-1,y-ry*2,rx*2+2,ry*.9);
+    c.beginPath();c.ellipse(x+rx*.1,y,st?.22:.42,ry*1.15,0,0,7);c.fillStyle=INK;c.fill(); // slit pupil (a thin needle when he stares)
+    c.restore();
+    shape();c.lineWidth=.28;c.strokeStyle=INK;c.stroke();
+    c.beginPath();c.moveTo(x-rx-.1,y+ry*.1);c.quadraticCurveTo(x-rx*.2,y-ry*2.05,x+rx+.5,y-ry*.55); // heavy upper lash line with a wing
+    c.lineWidth=.55;c.stroke();
+    c.beginPath();c.arc(x-rx*.25,y-ry*.35,st?.26:.36,0,7);c.fillStyle='#ffffff';c.fill(); // two highlights
+    c.beginPath();c.arc(x+rx*.4,y+ry*.45,.14,0,7);c.fill();};
+  const face=(hx,hy,eyes)=>{
+    for(const [x,y] of eyes)eye(x,y,st?1.7:1.5,st?.9:.8);
+    const nx=hx+3.6,ny=hy+1.2;
+    c.beginPath();c.moveTo(nx-.5,ny-.28);c.lineTo(nx+.3,ny-.28);c.lineTo(nx-.08,ny+.22);c.closePath();c.fillStyle='#e58a9a';c.fill();
+    c.beginPath();c.moveTo(nx-.95,ny+.55);c.quadraticCurveTo(nx-.55,ny+1.1,nx-.08,ny+.45);c.quadraticCurveTo(nx+.3,ny+1.1,nx+.7,ny+.5); // "ω"
+    c.strokeStyle=GL2;c.lineWidth=.22;c.stroke();
+    c.beginPath();for(const [dx,dy] of [[4.4,-1],[4.6,.2],[4.1,1.3]]){c.moveTo(nx-.3,ny+.35);c.lineTo(nx+dx,ny+.35+dy);}
+    c.strokeStyle='rgba(240,244,255,.9)';c.lineWidth=.17;c.stroke();
+    c.beginPath();for(const k of [0,1,2])c.rect(nx-2.6+k*.45,ny+.1,.16,.55); // the manga blush hatch
+    c.fillStyle='rgba(232,120,150,.75)';c.fill();
+    if(st){ // tension marks over the head
+      c.beginPath();for(const [a,l] of [[-1.15,1.5],[-.8,1.8],[-.45,1.5]]){const r0=6.3;c.moveTo(hx+Math.cos(a)*r0,hy-1+Math.sin(a)*r0);c.lineTo(hx+Math.cos(a)*(r0+l),hy-1+Math.sin(a)*(r0+l));}
+      c.strokeStyle=INK;c.lineWidth=.45;c.stroke();}};
+  const collar=(x0,y0,x1,y1,bend)=>{c.beginPath();c.moveTo(x0,y0);c.quadraticCurveTo((x0+x1)/2,(y0+y1)/2+bend,x1,y1);
+    c.strokeStyle=INK;c.lineWidth=1.3;c.stroke();c.strokeStyle='#d2283a';c.lineWidth=.8;c.stroke();
+    const tx=(x0+x1)/2+.3,ty=(y0+y1)/2+bend*.5+1.05;
+    c.beginPath();c.arc(tx,ty,.78,0,7);c.fillStyle='#f2c230';c.fill();
+    c.save();c.clip();c.fillStyle='#b8801a';c.fillRect(tx-1,ty+.15,2,1);c.restore();c.lineWidth=.3;c.strokeStyle=INK;c.stroke();
+    c.beginPath();c.arc(tx-.25,ty-.28,.2,0,7);c.fillStyle='#ffffff';c.fill();};
+  // legs: segments that narrow towards the paw (thigh, shin, foot); ink first, then the fur, so the joints melt together
+  const jointed=(pts,ws,col)=>{
+    for(const pass of [0,1]){
+      for(let i=0;i<pts.length-1;i++){c.beginPath();c.moveTo(...pts[i]);c.lineTo(...pts[i+1]);c.lineWidth=ws[i]+(pass?0:.9);c.strokeStyle=pass?col:INK;c.stroke();}
+      if(!pass){const [x,y]=pts[pts.length-1];c.beginPath();c.ellipse(x+.3,y-.45,1.1,.6,0,0,7);c.fillStyle=col;c.fill();ink(.45);}
+    }
+    const [x,y]=pts[pts.length-1];c.beginPath();c.moveTo(x+.75,y-.8);c.lineTo(x+.8,y-.25);c.lineWidth=.16;c.strokeStyle=GLOSS;c.stroke(); // toes
+  };
+  const leg=(x,top,bot,wt,wb,col)=>{ // a sitting front leg: wide at the shoulder, slim at the wrist, a round paw
+    c.beginPath();c.moveTo(x-wt/2,top);c.quadraticCurveTo(x-wb/2-.35,(top+bot)/2,x-wb/2,bot-.7);
+    c.quadraticCurveTo(x-wb/2-.15,bot,x+.2,bot);c.quadraticCurveTo(x+wb/2+.85,bot,x+wb/2+.35,bot-.7);
+    c.quadraticCurveTo(x+wb/2+.1,(top+bot)/2,x+wt/2,top);c.closePath();c.fillStyle=col;c.fill();ink(.6);
+    c.beginPath();c.moveTo(x+.55,bot-.05);c.lineTo(x+.6,bot-.5);c.lineWidth=.2;c.strokeStyle=GLOSS;c.stroke();};
+  const line=(f,w)=>{c.beginPath();f();ink(w);};
+  if(walk){
+    const ph=o.ph,bob=Math.abs(Math.sin(ph))*.45,sw=Math.sin(T*2.2)*1.1,y0=-bob;
+    c.beginPath();for(const [y,l] of [[-9.5,3.4],[-7,4.6],[-4.6,2.8]]){c.moveTo(-13-l,y+y0);c.lineTo(-12.6,y+y0);} // speed lines
+    c.strokeStyle='rgba(20,16,30,.55)';c.lineWidth=.3;c.stroke();
+    const hind=(hx,off,col)=>{const a=Math.sin(ph+off)*.5,lift=Math.max(0,Math.cos(ph+off))*.9,fx=hx+Math.sin(a)*4.6-.4;
+      const hip=[hx,-7.4+y0],hock=[fx-1.1,-2.5-lift],knee=[(hx+hock[0])/2+1.5,(hip[1]+hock[1])/2+.3];
+      jointed([hip,knee,hock,[fx,-.15-lift]],[3,1.4,1.1],col);};
+    const fore=(sx,off,col)=>{const a=Math.sin(ph+off)*.5,lift=Math.max(0,Math.cos(ph+off))*.9,fx=sx+Math.sin(a)*4.6;
+      jointed([[sx,-7.2+y0],[(sx+fx)/2-.4,-3.9-lift*.5],[fx,-1.1-lift],[fx+.5,-.15-lift]],[2.3,1.35,1.1],col);};
+    const FAR='#0e0d15';
+    hind(-4.3,Math.PI,FAR);fore(4,0,FAR);
+    tail([-6.4,-8.4+y0,-10.2,-9,-11.5+sw*.4,-14.5,-9+sw,-16]);
+    hind(-4.7,0,BODY);fore(3.6,Math.PI,BODY);
+    part(()=>{ // one silhouette: round rump, a straight back, a deep chest, the belly tucked in
+      c.moveTo(-7.3,-5.2+y0);c.bezierCurveTo(-8.4,-7.8+y0,-7,-10.4+y0,-4.4,-10.5+y0);
+      c.bezierCurveTo(-1.5,-10.8+y0,1.5,-10.1+y0,4.2,-10.5+y0);c.bezierCurveTo(6.3,-10.7+y0,7.1,-8.2+y0,6.6,-6.2+y0);
+      c.bezierCurveTo(6.2,-4.2+y0,4.6,-3.7+y0,3.1,-4+y0);c.bezierCurveTo(1,-3.3+y0,-1.8,-3.2+y0,-3.8,-3.7+y0);
+      c.bezierCurveTo(-5.4,-3.9+y0,-6.8,-4+y0,-7.3,-5.2+y0);c.closePath();});
+    line(()=>{c.moveTo(-2.3,-4.4+y0);c.quadraticCurveTo(-2.3,-8.4+y0,-5.4,-9.1+y0);},.45); // the thigh
+    line(()=>{c.moveTo(3.2,-4.4+y0);c.quadraticCurveTo(2.3,-7.4+y0,4,-8.9+y0);},.4);    // the shoulder
+    gloss([-5.6,-9.7+y0,-1,-10.5+y0,3.4,-10+y0],.45);gloss([-6.8,-6.4+y0,-6.6,-8.7+y0,-5,-9.6+y0],.3);
+    collar(5.3,-11.2+y0,5.6,-7.4+y0,1.2);
+    ear([5.4,-12.4+y0],[5.4,-16.9+y0],[8,-13.5+y0]);
+    part(()=>{c.ellipse(7.5,-10.4+y0,4.3,3.6,0,0,7);});
+    gloss([4.6,-12.3+y0,7,-14.4+y0,9.6,-13+y0],.45);
+    ear([8.2,-13.6+y0],[11.3,-16.3+y0],[10.8,-11.8+y0]);
+    face(7.3,-10.5+y0,[[9.1,-10.9+y0]]);
+  }else{
+    const sw=Math.sin(T*(st?4.5:1.5))*(st?1.6:1.1);
+    tail([-5,-1,-9.8,-1.4,-9.2+sw*.3,-8.5,-6.8+sw,-11.4]);
+    part(()=>{ // one silhouette: the haunch rising into the back, the neck, a full chest
+      c.moveTo(-5.6,0);c.bezierCurveTo(-7.4,-.4,-7.8,-3.8,-6.3,-6);c.bezierCurveTo(-5,-8,-2.2,-9.3,.2,-9.8);
+      c.lineTo(3.8,-9.5);c.bezierCurveTo(5.4,-7.8,5.7,-5.2,5.1,-3.2);c.bezierCurveTo(4.6,-1.6,3.6,-.3,2.2,0);c.closePath();});
+    line(()=>{c.moveTo(.3,-.4);c.bezierCurveTo(.5,-3.6,-1.3,-6,-4,-6.4);},.5); // the haunch over the body
+    gloss([-6.7,-3.6,-5.6,-8.3,-1,-9.3],.5);gloss([4,-8.6,5.5,-6.4,4.8,-3.8],.35);
+    c.beginPath();c.moveTo(-1.4,0);c.bezierCurveTo(-1.5,-.9,-.4,-1.3,.8,-1.2);c.bezierCurveTo(2,-1.1,2.3,-.2,1.9,0);c.closePath(); // hind paw
+    c.fillStyle=BODY;c.fill();ink(.5);
+    leg(2.1,-6.2,0,2.1,1.2,'#0e0d15');leg(3.8,-6,0,2.2,1.25,BODY);
+    collar(.6,-8.7,4.4,-8.2,1.3);
+    ear([-.1,-13.9],[-.8,-18.4],[2.5,-14.9]);
+    part(()=>{c.ellipse(2.7,-11.4,4.8,4,0,0,7);}); // head
+    gloss([-.9,-12.6,1.8,-15.6,5.2,-14.4],.6);
+    ear([3.8,-15],[6.9,-18.1],[6.9,-13]);
+    face(3,-11.4,[[2.55,-11.8],[5.4,-11.7]]);
   }
+  c.restore();
+}
+const CAT_SIZE=.62; // a real cat beside the students: about half their height sitting
+function catDraw(c,k,t){ // called by render() on the screen canvas
+  const sl=cat.slide,u=sl?Math.min(1,sl.t/sl.dur):1,a=!sl?1:sl.kind==='in'?Math.min(1,u/.4):Math.min(1,(1-u)/.4);
+  if(a<=0)return;
+  c.imageSmoothingEnabled=true;
+  catPaint(c,(cat.x-camX)*k,cat.y*k,k*CAT_SIZE,{face:cat.face,pose:cat.moving?'walk':cat.mode==='stare'?'stare':'sit',ph:cat.anim*1.15,t,alpha:a});
+  c.imageSmoothingEnabled=false;
 }
 const cat={id:'gato',x:300,y:120,sc:'andar1',dir:'left',face:-1,anim:0,moving:false,path:[],goal:null,mode:'sit',modeT:3,target:null,
-  floorT:0,roomT:60,talk:0,named:false,solids:[],
+  floorT:0,roomT:60,talk:0,named:false,solids:[],noShadow:true,slide:null,retry:0,
   get name(){return this.named?'Arsenato (gato preto)':'Gato preto';},
-  sprite(t){
-    const pose=this.moving?'walk'+(Math.floor(this.anim)%2):this.mode==='stare'?'stare':'sit',tail=Math.floor(t*(this.mode==='stare'?3:1.2))%2;
-    const k=pose+this.face+tail,s_=catBaked[k]||(catBaked[k]=bake(()=>drawCat(pose,this.face,tail)));
-    return {c:s_.c,x:s_.x+Math.round(this.x)-100,y:s_.y+Math.round(this.y)-100};},
-  fx(t){ // a glint in the eyes while he stares
-    if(this.mode!=='stare'||this.moving||(t%2.4)>.18)return;
-    const X=Math.round(this.x),Y=Math.round(this.y);px(X-3,Y-11,'#fffbe0');px(X+3,Y-11,'#fffbe0');},
+  sprite(){return null;}, // painted by catDraw()
   act(){
     const k=this.talk++;this.named=true;
     tone(760,.1,'triangle',.03);tone(560,.2,'triangle',.03,.09);
@@ -3986,9 +4088,10 @@ const cat={id:'gato',x:300,y:120,sc:'andar1',dir:'left',face:-1,anim:0,moving:fa
       [{t:'Miau.'},{t:'Só isso. Mas você tem a nítida impressão de que ele sabe o seu nome.'}]];
     let lines=L[k%L.length];
     if(this.sc==='sala204'&&k%2)lines=[{t:'O Arsenato está enrolado no pé da bancada do Prof. Malvar, como quem está em casa. O professor finge que não vê.'}];
-    say(lines,()=>{if(Math.random()<.5)catWander(true);}); // suspicious: often walks off after being looked at
+    say(lines,()=>{if(cat.goal)catGoExit();else if(Math.random()<.5)catWander(true);}); // suspicious: often walks off after being looked at
   }};
-function catSync(){Object.assign(cat,{cx:cat.x,top:cat.y-16,base:cat.y,solid:{x:cat.x-4,y:cat.y-3,w:8,h:3}});cat.zone=expand(cat.solid,10);}
+function catSync(){Object.assign(cat,{cx:cat.x,top:cat.y-11,base:cat.y,solid:{x:cat.x-3,y:cat.y-2,w:6,h:2}});
+  cat.zone=cat.slide?{x:-99,y:-99,w:0,h:0}:expand(cat.solid,10);} // no talking to him while he slips through a door
 function catFree(sc,x,y){ // walkBlocked for any scene, without the player
   if(x-5<10||x+5>SCENE_W[sc]-10||y-4<66||y>210)return false;
   for(const o of SCENES[sc]){if(o===cat)continue;const list=o.solids||(o.solid?[o.solid]:[]);
@@ -4001,7 +4104,7 @@ function catPick(sc){
 }
 function catPlace(sc){for(const k in SCENES){const i=SCENES[k].indexOf(cat);if(i>=0)SCENES[k].splice(i,1);}cat.sc=sc;SCENES[sc].push(cat);catSync();}
 function catReset(){
-  Object.assign(cat,{path:[],goal:null,mode:'sit',modeT:3,target:null,floorT:0,roomT:50+Math.random()*40,talk:0,named:false,moving:false,face:-1});
+  Object.assign(cat,{path:[],goal:null,mode:'sit',modeT:3,target:null,floorT:0,roomT:50+Math.random()*40,talk:0,named:false,moving:false,face:-1,slide:null,retry:0});
   catPlace('andar1');[cat.x,cat.y]=catPick('andar1');catSync();
 }
 function catGo(x,y){const p_=findPath(cat,Math.round(x/4)*4,Math.round(y/4)*4);cat.path=p_||[];return !!p_;}
@@ -4014,15 +4117,36 @@ function catWander(away){ // a few steps to a free spot (away from the player wh
   }
   cat.mode='sit';cat.modeT=2;return false;
 }
+/* The way out of a scene, seen from the exit spot: through the door in the bottom wall of a room, through a door in
+   the back wall of a corridor, or up/down the stairs. The cat walks these last steps without collisions, fading, so
+   he really goes through (and comes in the same way): he never pops out of or into thin air. */
+function catOutside(sc,[x,y]){
+  if(sc!==CAT_FLOOR[sc])return [x,222];
+  if(y<=80)return [x,60];
+  for(const st of STAIRS[sc]||[])if(x>=st.x0&&x<=st.x1)return [x,st.up?st.edge-6:st.edge+10];
+  return [x,y];
+}
+function catSlide(tx,ty,kind,then){
+  const d=Math.hypot(tx-cat.x,ty-cat.y);cat.path=[];cat.mode='walk';
+  cat.slide={fx:cat.x,fy:cat.y,tx,ty,t:0,dur:Math.max(.6,d/24),kind,then};catSync();
+}
+function catGoExit(){ // a walkable way to the exit (or right next to it); false: try again in a moment
+  const [ex,ey]=cat.goal.exit;
+  for(const [dx,dy] of [[0,0],[0,-8],[0,8],[-8,0],[8,0],[0,-16],[0,16],[-12,8],[12,8]])
+    if(catGo(ex+dx,ey+dy)){cat.goal.near=[ex+dx,ey+dy];cat.mode='walk';cat.target=null;return true;}
+  cat.retry=1.5;cat.mode='sit';return false;
+}
 function catGoal(to,exit,arrive,floor){
-  cat.goal={to,arrive,floor};cat.mode='walk';
-  if(scene!==cat.sc||!catGo(exit[0],exit[1]))catSwitch();
+  cat.goal={to,exit,arrive,floor};cat.mode='walk';
+  if(scene!==cat.sc)catSwitch();else catGoExit();
 }
 function catSwitch(){ // through the door / up or down the stairs
-  const gl=cat.goal;cat.goal=null;cat.path=[];if(gl.floor)cat.floorT=0;
+  const gl=cat.goal;cat.goal=null;cat.path=[];cat.slide=null;if(gl.floor)cat.floorT=0;
   catPlace(gl.to);
-  if(scene===gl.to&&state!=='intro'){[cat.x,cat.y]=gl.arrive;catSync();catWander(false);}
-  else{[cat.x,cat.y]=catPick(gl.to);cat.mode='sit';cat.modeT=2+Math.random()*4;catSync();}
+  if(scene===gl.to&&state!=='intro'){ // the player is here: he comes in through the door / up the stairs
+    [cat.x,cat.y]=catOutside(gl.to,gl.arrive);cat.face=gl.arrive[0]<cat.x?-1:1;
+    catSlide(gl.arrive[0],gl.arrive[1],'in',()=>catWander(false));
+  }else{[cat.x,cat.y]=catPick(gl.to);cat.mode='sit';cat.modeT=2+Math.random()*4;catSync();}
 }
 function catDecide(){ // when idle, on the floor where he is
   const fl=CAT_FLOOR[cat.sc],inRoom=cat.sc!==fl;
@@ -4044,22 +4168,33 @@ function catUpdate(dt){
   const seen=scene===cat.sc;
   if(!seen){ // out of sight: no walking, only the switches
     cat.moving=false;
+    if(cat.slide){const s_=cat.slide;cat.slide=null;cat.x=s_.tx;cat.y=s_.ty;catSync();if(s_.kind==='out')return catSwitch();cat.mode='sit';cat.modeT=2;}
     if(cat.goal)catSwitch();else if(cat.floorT>=CAT_EVERY||cat.roomT<=0){catDecide();}
     return;
   }
   if(state!=='play'){cat.moving=false;return;}
+  if(cat.slide){ // the last steps through a door / on the stairs
+    const s_=cat.slide;s_.t+=dt;const u=Math.min(1,s_.t/s_.dur);
+    cat.x=s_.fx+(s_.tx-s_.fx)*u;cat.y=s_.fy+(s_.ty-s_.fy)*u;if(Math.abs(s_.tx-s_.fx)>2)cat.face=s_.tx<s_.fx?-1:1;
+    cat.moving=true;cat.anim+=dt*7;
+    if(u>=1){cat.slide=null;cat.moving=false;catSync();s_.then();}else catSync();
+    return;
+  }
   if(!cat.goal&&!cat.path.length&&(cat.floorT>=CAT_EVERY||cat.roomT<=0)){catDecide();if(scene!==cat.sc)return;}
   cat.moving=false;
   if(cat.path.length){
     const [tx,ty]=cat.path[0],ex=tx-cat.x,ey=ty-cat.y,e=Math.hypot(ex,ey);
     if(e<.6){cat.x=tx;cat.y=ty;cat.path.shift();catSync();
-      if(!cat.path.length){if(cat.goal)return catSwitch();
+      if(!cat.path.length){
+        if(cat.goal){const n=cat.goal.near||cat.goal.exit;
+          if(Math.hypot(cat.x-n[0],cat.y-n[1])<8)return catSlide(...catOutside(cat.sc,cat.goal.exit),'out',catSwitch);
+          catGoExit();return;}
         if(cat.mode==='watch'&&cat.target){cat.mode='stare';cat.modeT=4+Math.random()*5;}
         else{cat.mode='sit';cat.modeT=2+Math.random()*5;}}
       return;}
     const sp=cat.goal?34:cat.mode==='follow'?20:26,st=Math.min(e,sp*dt),nx=cat.x+ex/e*st,ny=cat.y+ey/e*st;
     if(playerAhead(cat.x,cat.y,ex/e,ey/e,9,6))return npcBackOff(cat,dt,catSync); // steps back until the player leaves the way
-    if(cat.backed){cat.backed=false;const L_=cat.path[cat.path.length-1];catGo(L_[0],L_[1]);return;}
+    if(cat.backed){cat.backed=false;if(cat.goal)catGoExit();else{const L_=cat.path[cat.path.length-1];catGo(L_[0],L_[1]);}return;}
     cat.blockT=0;if(Math.abs(ex)>.3)cat.face=ex<0?-1:1;
     cat.x=nx;cat.y=ny;cat.moving=true;cat.anim+=dt*7;catSync();
     if(cat.mode==='follow'){cat.modeT-=dt;cat.re=(cat.re||0)-dt;
@@ -4067,6 +4202,8 @@ function catUpdate(dt){
       else if(cat.re<=0){cat.re=.7;catGo(player.x+(cat.x<player.x?-24:24),player.y);}}
     return;
   }
+  if(cat.goal){ // on his way out but stopped (talked to, or the way was blocked): he tries again
+    cat.retry-=dt;if(cat.retry<=0)catGoExit();return;}
   // idle: sitting or staring
   cat.modeT-=dt;
   const who=cat.mode==='stare'?(cat.target||player):null;
@@ -6816,7 +6953,7 @@ function shadow(cx,base,w){
 }
 let camX=0;
 function render(t){
-  g=fctx;
+  fctx=fctx0;g=fctx;let catHere=false;
   camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(player.x-W/2)));
   fctx.drawImage({terreo:bg,andar1:bg1,andar2:bg2,sala101:bgS,sala103:bgS3,sala201:bgS201,sala204:bgS204,salaLab:bgLab,salaOculta:bgOc,salaSim:bgSim,simGlic:bgGlic}[scene],0,0);
   if(scene==='terreo')drawClock();
@@ -6832,6 +6969,7 @@ function render(t){
   if(!sim&&!ride)list.push({y:py_,o:null});
   list.sort((a,b)=>a.y-b.y);
   for(const it of list){
+    if(it.o===cat){catHere=true;fctx=topctx;g=fctx;topctx.clearRect(camX,0,W,H);continue;} // from here on: the layer above him
     if(it.o){blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}}
     else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
   }
@@ -6864,6 +7002,7 @@ function render(t){
   if(fade){const a=fade.phase==='out'?fade.t/fade.dur:1-fade.t/fade.dur;fctx.fillStyle='rgba(13,8,6,'+Math.max(0,Math.min(1,a))+')';fctx.fillRect(camX,0,W,H);}
   ctx.imageSmoothingEnabled=false;
   ctx.drawImage(frame,camX,0,W,H,0,0,cv.width,cv.height);
+  if(catHere){fctx=fctx0;g=fctx;catDraw(ctx,cv.width/W,t);ctx.drawImage(topL,camX,0,W,H,0,0,cv.width,cv.height);}
 }
 
 let last=performance.now(),frameRaw=0;
