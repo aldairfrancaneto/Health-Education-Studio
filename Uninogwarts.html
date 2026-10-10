@@ -262,9 +262,9 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .tn-ico{font-size:3.4rem;line-height:1}
 .tn-ico canvas{display:block;width:48px;height:72px;image-rendering:pixelated;margin:0 auto}
 /* Character screen: boy or girl (thumbnails drawn from the game's own sprites) */
-.tp-opcoes{position:relative;z-index:1;display:flex;gap:clamp(16px,5vw,48px);justify-content:center;flex-wrap:wrap}
-.tp-carta{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:16px;width:clamp(140px,21vw,190px);padding:22px 12px 18px;background:#0d0806;border:4px solid var(--line);box-shadow:0 6px 0 #0d0806;transition:transform .12s}
-.tp-carta canvas{display:block;width:96px;height:144px;image-rendering:pixelated}
+.tp-opcoes{position:relative;z-index:1;display:flex;gap:clamp(10px,2.4vw,28px);justify-content:center;flex-wrap:wrap}
+.tp-carta{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:16px;width:clamp(100px,13vw,170px);padding:22px 12px 18px;background:#0d0806;border:4px solid var(--line);box-shadow:0 6px 0 #0d0806;transition:transform .12s}
+.tp-carta canvas{display:block;width:min(96px,100%);height:auto;aspect-ratio:2/3;image-rendering:pixelated}
 .tp-nome{text-align:center;line-height:1.5;font-family:var(--f-display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 .tp-carta:hover{transform:translateY(-3px)}
 .tp-carta.on{border-color:var(--accent);background:#2a1a10;transform:translateY(-4px)}
@@ -592,6 +592,8 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="f" aria-label="Menina"><canvas aria-hidden="true"></canvas></button>
     <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="r" aria-label="Menino ruivo"><canvas aria-hidden="true"></canvas></button>
     <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="g" aria-label="Menina ruiva"><canvas aria-hidden="true"></canvas></button>
+    <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="d" aria-label="Menino loiro"><canvas aria-hidden="true"></canvas></button>
+    <button class="tp-carta" type="button" role="radio" aria-checked="false" data-gen="p" aria-label="Menina de franja"><canvas aria-hidden="true"></canvas></button>
   </div>
   <div class="tp-pele" role="radiogroup" aria-label="Cor da pele">
     <span class="tp-rot">Cor da pele</span>
@@ -706,7 +708,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.29 &middot; Última atualização: 10 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.31 &middot; Última atualização: 10 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1062,7 +1064,9 @@ let pele=1;const palCache={};
 // like Hermione (bushy brown hair); both in the grey jumper with the red tie, a leather satchel. Only the player:
 // other characters copy CHAR_PAL.player, so these colours live here.
 // avatar (character screen): 'm' Harry-like boy, 'f' Hermione-like girl, 'r' Ron-like boy (ginger, freckles, maroon
-// jumper with an "R"), 'g' Ginny-like girl (long ginger hair, freckles, Gryffindor-coloured jacket); genero follows it.
+// jumper with an "R"), 'g' Ginny-like girl (long ginger hair, freckles, Gryffindor-coloured jacket), 'd' Draco-like boy
+// (platinum hair slicked back, black blazer, Slytherin tie), 'p' Pansy-like girl (black bob with a blunt fringe, green
+// cardigan, Slytherin tie, grey skirt); genero follows it.
 const PLAYER_LOOK={
   m:{H:'#3a2e28',h:'#2a2420',d:'#1d1612',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#2c3236',p:'#1d2226',B:'#3a2e28',
      R:'#7a522f',r:'#5a3d24',J:'#a12a22',j:'#e8bf3f'},
@@ -1071,8 +1075,12 @@ const PLAYER_LOOK={
   r:{H:'#d8692e',h:'#b0501e',d:'#7a3414',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#2c3236',p:'#1d2226',B:'#3a2e28',
      R:'#7a522f',r:'#5a3d24',J:'#a12a22',j:'#e8bf3f'},
   g:{H:'#e0703a',h:'#b8542a',d:'#7a3414',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#3a4045',p:'#2c3236',B:'#3a2e28',
-     Q:'#4a5055',q:'#2c3236',R:'#7a522f',r:'#5a3d24',F:'#a12a22',f:'#7a2e3e'}};
-const AVATARS=['m','f','r','g'],avGirl=a=>a==='f'||a==='g';
+     Q:'#4a5055',q:'#2c3236',R:'#7a522f',r:'#5a3d24',F:'#a12a22',f:'#7a2e3e'},
+  d:{H:'#fbf3d2',h:'#e6d698',d:'#b9a35c',T:'#25292e',t:'#15181b',u:'#0e1012',A:'#1f6b3f',P:'#25292e',p:'#15181b',B:'#141414',
+     R:'#2c2830',r:'#1d1a1f',J:'#1f6b3f',j:'#b9c2c8'},
+  p:{H:'#3a3540',h:'#1d1a1f',d:'#0b0a0d',T:'#1f4a33',t:'#143323',u:'#0e2418',A:'#1f6b3f',P:'#4a5055',p:'#2c3236',B:'#141414',
+     Q:'#4a5055',q:'#2c3236',R:'#2c2830',r:'#1d1a1f',F:'#1f6b3f',f:'#143323'}};
+const AVATARS=['m','f','r','g','d','p'],avGirl=a=>a==='f'||a==='g'||a==='p';
 function playerPal(girl){const k=avatar+pele;
   return palCache[k]||(palCache[k]=Object.assign({},girl?CHAR_PAL.playerF:CHAR_PAL.player,PLAYER_LOOK[avatar],{S:SKINS[pele][0],s:SKINS[pele][1]}));}
 const nome1=()=>(jogador||'').trim().split(/\s+/)[0]||gen('aluno','aluna'); // first name, for people who know the player // gendered words for the chosen character (boy / girl)
@@ -1542,7 +1550,7 @@ function girlRows(outfit,dir,f,blink,lab){
 const PAPER_INK='#1d1612',PW=21,PH=30,POX=2,POY=3;
 const HAIR_STYLE={marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
   lucas:'quiff',felipe:'fade',rafael:'curtains',tiago:'locs',bruno:'hawk',caio:'afro',julia:'afro',davi:'locs',gabriel:'shaggy',
-  ana:'buns',bia:'pixie',aldair:'neto',malvar:'malvar',pedro:'curly',zelador:'short'};
+  ana:'buns',bia:'pixie',aldair:'neto',malvar:'malvar',pedro:'curly',zelador:'short',tadeo:'riddle'};
 const GLASSES={aldair:'#c9a85a',cida:'#a8862a',lucia:'#c99a3c'}; // frame colour round the eyes
 const OUTFIT_FIX={marina:'shirt',cida:'shirt',lucia:'shirt'}; // their LOOKS replace the coat/skirt
 const PAL_FIX={marina:{T:'#f4f6f4',t:'#d8dee2',u:'#b9c2c8',Q:'#7a2e3e',q:'#5a2230'},cida:{T:'#8e5aa8',t:'#6a3f80',u:'#6a3f80'}};
@@ -1556,7 +1564,8 @@ const TRAITS={
   heloisa:{earrings:'#e8bf3f'},
   pedro:{cap:'#d0352b',capD:'#a12a22',backwards:1},
   marina:{headband:'#ec9fa8'},
-  lucas:{stripes:1},bia:{stripes:1},rafael:{plaid:1},bruno:{stripes:1}};
+  lucas:{stripes:1},bia:{stripes:1},rafael:{plaid:1},bruno:{stripes:1},
+  tadeo:{pin:'#d8dee2',pinC:'#1f6b3f'}};
 // Harry's hair masks (rows from the top of the head; '#' = hair)
 const HARRY_HAIR={
   front:['..#.##..#.##.#..','.##############.','################','################','##.####.###.####','##..#..#.....###','##...........###','#.............##'],
@@ -1626,6 +1635,14 @@ const HAIRCUTS={
     R:['....######......','..##########....','.#############..','##############..','#######.........','######..........','#-##-...........','#-##-...........','#-##-...........','#-##-...........','#-##-...........','#-##-...........'],
     BR:['','','','','','','','','','','','','#####...........','#-##-...........','#####...........','.#.#............'],
     B:['....########....','..######-#####..','.######-#######.','################','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','#-##-##-##-##-##','################','.#-##-####-##-#.','.##############.','..############..']},
+  slick:{ // Draco: platinum hair combed straight back, smooth and shiny, the forehead showing
+    F:['.....######.....','...##+##+###....','..#+##+##+###...','.##+##+##+####..','.###........###.','.##..........##.','.#............#.'],
+    R:['....######......','..#+##+##+##....','.#+##+##+####...','###+##+##+###...','####+##+#.......','####+#..........','###.............','##..............'],
+    B:['.....######.....','...#+##+##+#....','..##+##+##+##...','.#+##+##+##+##..','.##+##+##+##+##.','################','#+##+##+##+##+##','################','.##############.','..############..']},
+  riddle:{ // Tadeo: dark hair with a neat side part and a soft wave falling over the brow
+    F:['.....######.....','...####-#####...','..###-#++#####..','.###-##++######.','.##-##+...####..','.#-...........#.','.#............#.'],
+    R:['....######......','..###-######....','.####-##++##....','####-###++###...','####-#..........','####............','###.............','##..............'],
+    B:['.....######.....','...####-####....','..####-#######..','.####-#########.','################','################','################','################','.##############.','..############..']},
   sidepart:{ // tidy side part
     F:['.....######.....','...##########...','..###-########..','.####-#########.','.##.......####..','.#............#.','.#............#.'],
     R:['....######......','..##########....','.#############..','###############.','#####.....###...','####............','###.............','##..............'],
@@ -1643,6 +1660,9 @@ const HAIRCUTS={
 const LOOKS={
   player_m:{top:'jacket',c:'#2f5a3a',cd:'#1f3f28',inner:'#f4f6f4',print:'#d9a441',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#2d6fb5'},
   player_r:{top:'sweater',c:'#7a2e3e',cd:'#5a2230',alt:'#7a2e3e',letter:'#e8bf3f',bottom:'pants',b:'#7a522f',bd:'#5a3d24',shoes:'sneaker',sh:'#3a2e28',sole:'#9aa2a9',lace:'#f4f6f4'},
+  player_d:{top:'jacket',c:'#25292e',cd:'#15181b',inner:'#f4f6f4',tie:'#1f6b3f',tieB:'#b9c2c8',bottom:'pants',b:'#25292e',bd:'#15181b',shoes:'flat',sh:'#141414'},
+  player_p:{top:'cardigan',c:'#1f4a33',cd:'#143323',inner:'#f4f6f4',tie:'#2f8a52',tieB:'#b9c2c8',bottom:'skirt',b:'#4a5055',bd:'#2c3236',legs:'#1d1a1f',shoes:'flat',sh:'#141414'},
+  tadeo:{top:'vest',c:'#4a5055',cd:'#2c3236',alt:'#1f4a33',inner:'#f4f6f4',innerD:'#d8dee2',tie:'#1f6b3f',tieB:'#b9c2c8',bottom:'pants',b:'#25292e',bd:'#15181b',shoes:'flat',sh:'#141414'},
   player_g:{top:'varsity',c:'#a12a22',cd:'#7a2018',alt:'#e8bf3f',altD:'#a8862a',print:'#e8bf3f',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#a12a22'},
   player_f:{top:'jacket',c:'#6f95c2',cd:'#4d75a8',inner:'#f4f6f4',stripe:'#d0352b',bottom:'skirt',b:'#3a3f5a',bd:'#2a2e44',legs:'#2c3236',shoes:'boot',sh:'#7a522f',sole:'#3a2414'},
   pedro:{top:'hoodie',c:'#3fa682',cd:'#2d8a6a',strings:'#f4f6f4',bottom:'joggers',b:'#5d646a',bd:'#3a4740',stripe:'#f4f6f4',shoes:'sneaker',sh:'#f4f6f4',sole:'#d0352b',lace:'#2c3236'},
@@ -1681,7 +1701,7 @@ function paperSpec(who,outfit,crop){
   const girl=who==='player'&&genero==='f',lab=who==='player'&&scene==='salaLab';
   let pal=who==='player'?playerPal(girl):CHAR_PAL[who];
   if(PAL_FIX[who])pal=palFixed[who]||(palFixed[who]=Object.assign({},pal,PAL_FIX[who]));
-  const me_=who==='player',hair=me_?{m:'messy',f:lab?'bun':'bushy',r:'curtains',g:lab?'pony':'wavy'}[avatar]:HAIR_STYLE[who]||(HEAD[who]===HEAD.pedro?'curly':'short');
+  const me_=who==='player',hair=me_?{m:'messy',f:lab?'bun':'bushy',r:'curtains',g:lab?'pony':'wavy',d:'slick',p:'bob'}[avatar]:HAIR_STYLE[who]||(HEAD[who]===HEAD.pedro?'curly':'short');
   const out=OUTFIT_FIX[who]||outfit,badge=!me_||!!flags.cracha;
   return {pal,hair,outfit:out,crop,badge,tr:me_?(avatar==='r'||avatar==='g'?{freckles:1}:{}):TRAITS[who]||{},look:lookOf(who,out,girl,pal),
     pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
@@ -1754,6 +1774,7 @@ function paperGrid(sp,view,f,blink,mood,talk){
     rect(a,18,b,18,cuff);rect(a,19,b,19,S);
   }
   const open=TOP==='jacket'||TOP==='flannel'||TOP==='cardigan';
+  const tie=()=>{put(7,14,L.tie);put(8,14,L.tie);put(7,15,L.tie);put(8,15,L.tieB);put(7,16,L.tieB);put(8,16,L.tie);put(7,17,L.tie);put(8,17,L.tieB);}; // striped school tie
   if(!back){
     if(coat){
       if(side){put(10,14,L.inner);put(10,15,L.inner);for(let y=16;y<=20;y++)put(10,y,P('x'));}
@@ -1770,6 +1791,7 @@ function paperGrid(sp,view,f,blink,mood,talk){
         if(L.print){put(7,16,L.print);put(8,16,L.print);}
         if(L.necklace){put(6,14,L.necklace);put(9,14,L.necklace);put(7,15,L.necklace);put(8,15,L.necklace);}
         if(TOP==='cardigan')for(const y of [15,17])put(5,y,L.inner); // buttons
+        if(L.tie)tie();
       }
     }else if(TOP==='tee'){
       rect(side?8:6,14,side?10:9,14,L.cd); // collar
@@ -1793,6 +1815,7 @@ function paperGrid(sp,view,f,blink,mood,talk){
       rect(side?8:6,14,side?10:9,14,L.inner); // shirt collar
       if(!side){put(7,15,L.inner);put(8,15,L.inner);}
       for(let y=16;y<=18;y++)for(let x=x0;x<=x1;x++)if((x+y)%4===0||(x-y+40)%4===0)put(x,y,L.alt); // argyle
+      if(L.tie&&!side){rect(6,14,9,14,L.inner);put(7,14,L.tie);put(8,14,L.tie);put(7,15,L.tie);put(8,15,L.tieB||L.tie);} // knot in the V of the vest
     }else if(TOP==='coverall'){
       for(let y=14;y<=19;y++)put(side?10:7,y,'#b9c2c8'); // zip
       if(!side){put(5,14,L.cd);put(6,14,L.cd);put(9,14,L.cd);put(10,14,L.cd);rect(9,15,10,15,L.alt);put(10,15,L.print);rect(4,16,5,17,L.cd);}
@@ -1801,6 +1824,7 @@ function paperGrid(sp,view,f,blink,mood,talk){
     }
     if(sp.pack&&!side){rect(4,14,4,17,P('R'));rect(11,14,11,17,P('R'));}
     if(sp.pack&&side)rect(5,14,5,17,P('R'));
+    if(tr.pin&&!side){put(10,15,tr.pin);put(11,15,tr.pinC);put(10,16,tr.pinC);put(11,16,tr.pin);} // prefect badge
     if(tr.bowtie){const bx=side?8:6;put(bx,14,tr.bowtie);put(bx+1,14,INK);put(bx+2,14,tr.bowtie);put(bx,15,tr.bowtie);put(bx+2,15,tr.bowtie);}
   }else{
     if(coat)rect(7,15,8,20,P('w'));
@@ -1973,7 +1997,8 @@ function moodOf(who){
   if(who==='gabriel')return flags.duelTold&&!flags.duelWin?'smug':'normal';
   if(who==='camila')return flags.caca?'happy':'normal';
   if(who==='kido')return 'happy';
-  if(who==='malvar')return flags.fundador?'normal':'smug'; // the sneer only softens a little once you are in the Liga
+  if(who==='malvar')return flags.fundador?'normal':'smug';
+  if(who==='tadeo')return 'smug'; // the polite half-smile that never reaches the eyes // the sneer only softens a little once you are in the Liga
   if(who==='aldair'||who==='heloisa'||who==='player')return flags.graded?(flags.pass?'happy':'worried'):'normal';
   return 'normal';
 }
@@ -3481,7 +3506,8 @@ add({id:'livrosPocoes',name:'Pilha de livros',cx:26,top:88,base:108,solid:{x:16,
 /* Prof. Edmundo Malvar (Poções): cold, sarcastic, slow to praise, secretly fair. He is the "Prof. E. M." of the
    hidden room's books and of Lucas's black notebook: he founded the Liga de Metabolismo, tore out the pages of
    reactions 1, 3 and 10 and locked them behind the iron doors. The player only finds out after joining the Liga
-   (flags.alost===6): then talking to him reveals it (flags.fundador, a side mission worth points).
+   (flags.alost===6) AND winning the Liga challenge in the simulator (flags.dzDone): then talking to him in Sala 204
+   reveals it (flags.fundador, a side mission worth points). Before the challenge he only notices the invitation.
    flags.malvarQ: his first-visit question was asked. */
 HEAD.malvar=HEAD.player;
 CHAR_PAL.malvar=Object.assign({},CHAR_PAL.player,{i:'#1d1612',S:'#ecdcc6',s:'#c9b296',H:'#34323a',h:'#16151a',d:'#0b0a0d',m:'#7a5a5a',
@@ -3491,7 +3517,13 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
   talk:0,
   sprite:t=>{const c=personSprite('malvar','coat','down',0,blinkAt(t,1.7));return {c:c.c,x:254,y:77};},
   act(){
-    if(flags.alost===6&&!flags.fundador)return malvarReveal();
+    if(flags.alost===6&&!flags.fundador){
+      if(flags.dzDone)return malvarReveal();
+      if(!flags.malvarConvite){flags.malvarConvite=true;setMood('malvar','smug',5);
+        return say([{who:MW,t:flags.jaleco?'...Esse selo no bolso do seu jaleco. Hm.':'...Esse selo aparecendo na sua mochila. Hm.'},
+          {who:MW,t:'Um convite não faz ninguém membro de coisa nenhuma. Quem passou pelas portas ainda precisa provar que sabe frear e acelerar a via.'},
+          {who:MW,t:'Volte quando tiver vencido o desafio do simulador. Aí, talvez, conversemos.'}]);}
+    }
     if(!flags.malvarQ)return malvarFirst();
     const k=this.talk++;
     if(flags.fundador)return say([{who:MW,t:[
@@ -3508,7 +3540,8 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
       'A Profa. Rosa diz que você tem potencial. A Profa. Rosa é uma otimista.',
       'Glicólise não é poesia para decorar. São dez reações e três portas que não voltam. Quem entende isso não precisa decorar.',
       'Dez reações. Duas fases. E, todo ano, uma turma inteira que esquece de onde vem o NAD+.',
-      'O gato? Não é meu. Ninguém é dono do Arsenato. Ele só... confere as coisas. E me conta.'][k%6]}]);
+      'O gato? Não é meu. Ninguém é dono do Arsenato. Ele só... confere as coisas. E me conta.',
+      'O Corniel, do 3º ano? Brilhante. Brilhante demais para o próprio bem. Fique longe dele.'][k%7]}]);
   }});
 function malvarFirst(){
   const Q=gen('Senhor ','Senhorita ')+nome1();
@@ -3547,12 +3580,12 @@ function malvarReveal(){
 }
 /* ---------- Prof. Malvar's rounds ----------
    Twice in the morning he leaves the Potions room and walks a corridor, with the cat Arsenato at his heels:
-   8h40 the 2nd floor (from Sala 204 west to the library, then east to the blank wall, where he stops and looks at
+   8h00 the 2nd floor (from Sala 204 west to the library, then east to the blank wall, where he stops and looks at
    it), 10h15 the 1st floor (down the stairs from the 2nd floor, along the corridor and back up). Meeting him the player
    gets a corridor question (once per round); near the secret wall he drops a cryptic line. Out of sight he is just
    "away" for a while (not in Sala 204). flags.mr1 / flags.mr2: round started (a saved game never resumes one). */
 const MR_ROUNDS=[
-  {min:7*60+30+70,sc:'andar2',path:[[648,70],[648,108],[190,108,4],[676,108,0,'wall'],[648,108],[648,70]]},
+  {min:7*60+30+30,sc:'andar2',path:[[648,70],[648,108],[190,108,4],[676,108,0,'wall'],[648,108],[648,70]]},
   {min:7*60+30+165,sc:'andar1',path:[[572,44],[572,98],[572,108],[110,108,4],[572,108],[572,98],[572,44]]}];
 const MR_Q=[
   {q:'Já que está parado no meu caminho: quantos NADH a glicólise forma por glicose?',o:['Dois','Quatro','Um'],c:0,
@@ -3564,7 +3597,6 @@ const malvarR={id:'malvarRonda',name:'Prof. Malvar (Poções)',x:0,y:0,dir:'down
   sprite(t){const c=personSprite('malvar','coat',this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
   act(){
     if(!mr)return;mr.wait=Math.max(mr.wait,4);this.moving=false;this.dir=faceTo(this,player);
-    if(flags.alost===6&&!flags.fundador)return malvarReveal();
     const k=mr.k;
     if(flags['mrq'+k])return say([{who:MW,t:['Não tenho o dia todo.','Circulando. O corredor não é sala de estar.','O gato também acha que você devia estar estudando.'][(this.talk=(this.talk||0)+1)%3]}]);
     const Q=MR_Q[k];setMood('malvar','smug',4);
@@ -3975,6 +4007,47 @@ wanderer('andar2','gabriel','Gabriel (3º ano)',398,688,104,walkLook('gabriel','
 wanderer('andar2','felipe','Felipe (2º ano)',398,688,114,walkLook('felipe','shirt',.5),[
   'Vim devolver o Lehninger na biblioteca antes da prova.',
   'O arsenato engana a GAPDH e a glicólise segue sem gerar o ATP da reação 7. Pegadinha clássica de prova!']);
+
+/* Tadeo Corniel (3º ano), a future villain (Tom Riddle-like: pale, dark hair with a neat side part, grey vest, green
+   tie, prefect badge). Polished, polite and cold; fascinated by inhibitors and poisons ("where to press so that
+   everything stops"), resentful that the Liga never invited him, and very interested in the player's living-ink diary.
+   His name is an anagram of LORDE CIANETO (cyanide: complex IV of the respiratory chain, a later season); only hinted
+   at, never said. He strolls the west end of the 2nd floor and never sits. flags.tadeo: first talk done;
+   flags.tadeoDiario: he asked about the diary; flags.tadeoLiga: he reacted to the Liga invitation. */
+HEAD.tadeo=HEAD.player;
+CHAR_PAL.tadeo=Object.assign({},CHAR_PAL.player,{i:'#1d1612',S:'#f0dfca',s:'#cdb39a',H:'#3a3038',h:'#1d1a1f',d:'#0b0a0d',m:'#7a5a5a',
+  T:'#4a5055',t:'#2c3236',u:'#1d2226',P:'#25292e',p:'#15181b',B:'#141414',R:'#4a5055',r:'#2c3236'}); // R = T: no backpack
+const tadeo=wanderer('andar2','tadeo','Tadeo (3º ano)',36,240,112,walkLook('tadeo','shirt',2.3),['']);
+tadeo.sitCool=Infinity; // he never sits: he watches
+{
+  const TW='TADEO (3º ANO)';
+  const LINES=[
+    'O arsenato engana a GAPDH, o fluoreto trava a enolase, o iodoacetato também cala a GAPDH. Cada veneno sabe exatamente qual porta trancar. Admiro isso.',
+    'O Prof. Malvar não gosta de mim. Diz que eu faço perguntas demais sobre inibidores. Eu digo que ele responde de menos.',
+    'O cianeto nem encosta na glicólise. Ele vai direto na cadeia respiratória, no complexo IV... Mas isso é assunto para outro dia.',
+    'Sabia que o meu nome tem exatamente as mesmas letras de outra coisa? Ninguém nunca percebeu. Você também não vai.',
+    ()=>'Estude, '+nome1()+'. Quem entende a via sabe onde ela é forte... e onde ela é frágil.'];
+  tadeo.act=function(){
+    stopChat(this);this.wait=5;this.dir=faceTo(this,player);setMood('tadeo','smug',6);
+    if(!flags.tadeo){flags.tadeo=true;
+      return say([{who:TW,t:gen('Um calouro','Uma caloura')+' de crachá novo. Tadeo Corniel, 3º ano. Monitor... quando me convém.'},
+        {who:TW,t:'Glicólise, imagino. Dez reações. A maioria decora. Eu prefiro saber onde apertar para que tudo pare.'},
+        {who:me(),t:'Parar? A ideia não é a via funcionar?'},
+        {who:TW,t:'Funcionar é fácil. Controlar é que é interessante. Quem controla a enzima certa controla a célula inteira.'},
+        {who:TW,t:'Não me olhe assim. Estou falando de Bioquímica, é claro.',run:()=>setMood('player','worried',3)}]);}
+    if(flags.alost===6&&!flags.tadeoLiga){flags.tadeoLiga=true;setMood('tadeo','angry',5);
+      return say([{who:TW,t:'Esse selo no seu bolso... Então a Liga de Metabolismo mandou um convite para '+gen('um calouro','uma caloura')+'.'},
+        {who:TW,t:'A mim, nunca mandaram. Três anos. Eu teria passado pelas dez portas de olhos fechados.'},
+        {who:TW,t:'...Parabéns, '+nome1()+'. De verdade. Aproveite enquanto eles ainda escolhem quem entra.',run:()=>setMood('tadeo','smug',6)}]);}
+    if(!flags.tadeoDiario){flags.tadeoDiario=true;
+      return say([{who:TW,t:'Esse livro que você carrega. Capa de couro, cantos dourados, nenhum título. Não é da biblioteca.'},
+        {who:TW,t:'Diários antigos costumam guardar segredos. Se um dia quiser se livrar dele, eu pago bem.',choices:[
+          {t:'Não está à venda.',fn:()=>say([{who:TW,t:'Tudo bem. Nada está à venda... até estar.'}])},
+          {t:'Por que o interesse?',fn:()=>say([{who:TW,t:'Curiosidade. Só curiosidade.'},
+            {t:'Por um instante, a tinta do diário fica fria. E escura.',run:()=>setMood('player','worried',3)}])}]}]);}
+    const l=LINES[this.talk++%LINES.length];say([{who:TW,t:typeof l==='function'?l():l}]);
+  };
+}
 
 // Prof. Kiko (Histologia) strolls in front of the teachers' room; every talk is a kind greeting and a joke
 HEAD.kido=HEAD.player;
@@ -4733,6 +4806,9 @@ function finish(pass){
     :'Você tirou '+n+' de '+QUIZ_N+' na lição de casa. Eram necessários '+PASS+' acertos. Revise a glicólise antes da prova de amanhã.';
   $('st-obj').textContent=n+'/'+QUIZ_N;$('st-time').textContent=hhmm(gameMinutes());
   scoreCheck();$('st-pts').textContent=score+' de '+SCORE_MAX;
+  // 100% at the hand-in: the thank-you comes right now, instead of ambushing the player after "continuar no cenário"
+  if(pass&&allDone()){setTimeout(finale,700);return;}
+  if(pass)$('end-text').textContent+=' Ainda faltam missões para os 100%: continue no cenário para concluí-las.';
   $('btn-again').innerHTML=keyLabel()+(pass?' · CONTINUAR NO CENÁRIO':' · JOGAR DE NOVO');
   $('btn-restart').hidden=!pass;endSel=0;syncEndBtns();
   if(pass)sfx.open();else{saveClear();music.stop();[392,330,262,196].forEach((f,i)=>tone(f,.3,'triangle',.06,i*.22));}
@@ -5122,7 +5198,7 @@ function sideNeeds(o){
     if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1&&corOpen()===o.num-1;
     if(o.id==='mesaPaginas')return flags.alost===5;
   }
-  if(o.id==='malvar'||o.id==='malvarRonda')return flags.alost===6&&!flags.fundador;
+  if(o.id==='malvar')return flags.alost===6&&!!flags.dzDone&&!flags.fundador; // the revelation: only in his room, after the Liga challenge
   if(o.id==='bruno')return flags.alost===6&&(!flags.dzOn||(!!flags.dzDone&&!flags.dzReward));
   if(o.id==='simulador')return (!!flags.dzOn&&!flags.dzDone)||(!!flags.viaTip&&!flags.viaOk);
   if(sideMarker(o))return true; // next step of Tiago's notebook
@@ -5158,7 +5234,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(a===5)add_('alost5',corOpen()>=10?'Laboratório antigo: veja as folhas sobre a mesa':'Corredor das velas: atravesse as portas até o fim');
   if(flags.dzOn&&!flags.dzDone)add_('dz'+flags.dzFase,'Desafio da Liga: vença a fase '+flags.dzFase+' de 3 no simulador do laboratório');
   if(flags.dzDone&&!flags.dzReward)add_('dzBruno','Desafio da Liga: conte ao Bruno que você venceu');
-  if(a===6&&!flags.fundador)add_('fundador','O fundador da Liga: descubra quem é o "Prof. E. M." (dizem que dá aula no lugar mais escuro do prédio)');
+  if(a===6&&flags.dzDone&&!flags.fundador)add_('fundador','O fundador da Liga: descubra quem é o "Prof. E. M." (dizem que dá aula no lugar mais escuro do prédio)');
   const bq=flags.bolsaQ||0;
   if(bq>=1&&bq<=6)add_('bolsa'+bq,'Bolsas de sangue: '+['','busque as bolsas na geladeira do laboratório (térreo), de jaleco',
     'leve o laudo à Profa. Rosa, na Sala 101'+(flags.profsIn?'':' (ela chega às 7h47)'),
@@ -5273,6 +5349,7 @@ const SCORE_RULES=[
   {k:'fundador',pts:40,side:1,ok:()=>!!flags.fundador},
   {k:'duelo',pts:30,side:1,ok:()=>flags.duelWin},
   {k:'bolsa',pts:50,side:1,ok:()=>flags.bolsaQ===7}];
+const allDone=()=>!!scoreGot&&SCORE_RULES.every(r_=>scoreGot.has(r_.k)); // 100% of the game
 const SCORE_MAX=SCORE_RULES.reduce((a,r_)=>a+r_.pts,0);
 var score,scoreGot,scorePops; // set in reset()
 function scoreReset(){score=0;scoreGot=new Set();scorePops=[];}
@@ -5919,6 +5996,17 @@ add({id:'mesaPaginas',get name(){return flags&&flags.alost>=6?'Mesa com páginas
     r(x+47,100,3,6,'#efe3c8');px(x+48,98,'#e8913a');},
   act:()=>flags.alost===5?ocPages():say([{t:'Páginas soltas, escritas à mão: as reações 1, 3 e 10, e como cada uma é regulada.'},
     {t:'A letra é a mesma das fichas e dos livros da estante. No pé da última página: "E. M.".'}])});
+// the candle Larissa lights to show herself: an iron candlestick by her spot, dark until then, lit from then on
+const ocVelaAcesa=()=>flags&&(flags.alost>=6||SCENES.salaOculta.some(o=>o.id==='larissaOc'));
+add({id:'velaLarissa',name:'Vela',cx:330,top:78,base:104,solid:{x:327,y:100,w:6,h:4},zone:{x:322,y:80,w:16,h:30},key:()=>ocVelaAcesa()?'1':'0',
+  draw:()=>{const x=330;r(x-1,86,2,15,'#5d646a');r(x-3,101,6,3,'#2c3236');r(x-3,85,6,1,'#5d646a');r(x-1,80,3,5,'#efe3c8');r(x-1,80,1,5,'#d8c79a');
+    if(ocVelaAcesa())px(x,79,'#3a2414');else{px(x,79,'#2a1a10');px(x+1,78,'#4a4239');}}, // wick (unlit: charred, a thread of old smoke)
+  fx(t){if(!ocVelaAcesa())return;const x=330,f=Math.floor(t*7+1.9)%3;
+    const gl=fctx.createRadialGradient(x+.5,77,1,x+.5,77,26);gl.addColorStop(0,'rgba(255,200,110,.30)');gl.addColorStop(1,'rgba(255,200,110,0)');
+    fctx.save();fctx.globalCompositeOperation='lighter';fctx.fillStyle=gl;fctx.fillRect(x-26,51,53,53);fctx.restore();
+    r(x,78-f%2,2,3,'#e8913a');px(x+(f===1?1:0),76,'#f2c94c');px(x,75+(f===2?1:0),'#fff27a');},
+  act:()=>say([ocVelaAcesa()?{t:'A vela que a Larissa acendeu. A chama não tremula nem com o vento do corredor.'}
+    :{t:'Uma vela num castiçal de ferro, apagada. O pavio ainda está quente.'}])});
 // a heavy wooden chair behind the table, centred on it: high carved back with a yellow cushion showing at the top
 add({id:'cadeiraLiga',name:'Cadeira',cx:258,top:80,base:105,solid:{x:248,y:99,w:20,h:6},
   draw:()=>{const x=258;
@@ -6185,6 +6273,11 @@ function topGrid(st){
   }else if(hair==='curtains'){ // Ron: parted in the middle, falling to both sides
     for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,11)||(y===12&&inH(x,y)&&(x<10||x>14)))put(x,y,(x+y)%6===0?HD:x%5===2?HL:h);
     for(let y=3;y<=11;y++)put(12,y,sk);
+  }else if(hair==='slick'){ // Draco: combed straight back, shiny streaks running front to back
+    for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,11))put(x,y,x%4===0?HL:x%4===2?HD:h);
+  }else if(hair==='bob'){ // Pansy: straight black bob, a blunt fringe at the front, cut level at the nape
+    for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,12)||(y===13&&inH(x,y)&&(x<7||x>16)))put(x,y,x%5===1?HL:x%5===3?HD:h);
+    for(let y=1;y<=4;y++)for(let x=6;x<=17;x++)if(!(y===1&&(x<8||x>15))){put(x,y,x%5===1?HL:h);HEAD[y][x]=true;}
   }else{ // Ginny (wavy / ponytail) and anyone else: hair over the top, long hair down the back
     for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,11)||(y===12&&inH(x,y)&&(x<9||x>15)))put(x,y,curl(x,y));
     if(hair==='pony'){for(let y=0;y<=3;y++)rect(10,y,13,y,curl(11,y));put(11,4,P('F'));put(12,4,P('F'));}
@@ -7021,9 +7114,10 @@ function ocReveal(){
 }
 // the player looks at the sheets: the missing pages of Lucas's notebook; a candle lights up by itself... Larissa
 function ocPages(){
+  music.duck(.12); // the music drops while Larissa shows herself (drama), back when the dialog ends
   say([{t:'Três folhas soltas, escritas à mão. Você reconhece o papel e a letra: são do mesmo caderno de capa preta do Lucas!'},
     {t:'São as páginas que faltavam no caderno: as reações 1, 3 e 10, e como cada uma é regulada.'},
-    {t:'Uma vela se acende sozinha... Não: alguém a acendeu.',run:()=>{larissaIn();setMood('larissa','smug',12);}},
+    {t:'Uma vela se acende sozinha... Não: alguém a acendeu.',run:()=>{larissaIn();setMood('larissa','smug',12);tone(880,.18,'triangle',.03);tone(1320,.25,'sine',.02,.08);}},
     {who:LW,t:'Achei que você chegaria até aqui.'},
     {who:me(),t:'Larissa?! Foi você que deixou o bilhete no meu armário?'},
     {who:LW,t:'Desculpe pelo esbarrão no laboratório. Eu precisava ver de perto quem ia receber um dos envelopes deste ano.'},
@@ -7037,7 +7131,7 @@ function ocPages(){
     {who:me(),t:'E...?'},
     {who:LW,t:'E não sou eu quem vai contar. Algumas respostas a Liga não entrega: a gente encontra.'},
     {who:LW,t:'Uma dica, só uma: ele nunca saiu deste prédio. Procure no lugar mais escuro dele.'},
-    {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'}]);
+    {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'}],()=>music.duck(1));
 }
 
 /* the modal: put the cards in order (mode 'ordem') or fill an iron door's slots (mode 'porta') */
@@ -7829,7 +7923,7 @@ function autoTick(dt){
   if(state!=='end')saveT+=dt;
   const calm=state==='play'&&!fade&&!dialog&&scene!=='salaSim'&&scene!=='simGlic';
   if(!calm)return;
-  if(flags.graded&&flags.pass&&!scorePops.length&&SCORE_RULES.every(r_=>scoreGot.has(r_.k)))return finale();
+  if(flags.graded&&flags.pass&&!scorePops.length&&allDone())return finale();
   if(saveT>=SAVE_EVERY){saveT=0;saveGame();}
 }
 function drawSaveFlash(){
@@ -8092,7 +8186,8 @@ function creditsBuild(){
     ['bruno','Bruno','1º ano · Liga de Metabolismo',crFind('bruno')],['tiago','Tiago','1º ano · o dono do caderno laranja',crFind('tiago')],
     ['camila','Camila','monitora de Bioquímica',crFind('camila')],['gabriel','Gabriel','3º ano · o rei do Duelo Relâmpago',crFind('gabriel')],
     ['lucas','Lucas','2º ano · o caderno de capa preta',crFind('lucas')],['pedro','Pedro','veterano · guardião das lendas',crFind('pedro')],
-    ['felipe','Felipe','2º ano · nunca viu parede nenhuma',crFind('felipe')],['bruna','Bruna','1º ano · a ficha que ela não usou',crFind('bruna')]]);
+    ['felipe','Felipe','2º ano · nunca viu parede nenhuma',crFind('felipe')],['bruna','Bruna','1º ano · a ficha que ela não usou',crFind('bruna')],
+    ['tadeo','Tadeo Corniel','3º ano · de olho no seu diário',crFind('tadeo')]]);
   {const t=el('div','cr-turma');RECESS.forEach(o=>t.appendChild(pessoa(crSprite(o.id,o),o.name,'')));R.appendChild(el('div','cr-sec mini','E A TURMA DA SALA 101'));R.appendChild(t);}
   sec('A FACULDADE');
   grade([['cida','Dona Tati','secretaria',null],['lucia','Dona Lúcia','bibliotecária',crFind('lucia')],
@@ -8221,7 +8316,7 @@ requestAnimationFrame(loop);
     o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + 0.02);
   }
 
-  /* character screen: four thumbnails (Harry-, Hermione-, Ron- and Ginny-like) drawn by the game's sprite code; they blink now and then */
+  /* character screen: six thumbnails (Harry-, Hermione-, Ron-, Ginny-, Draco- and Pansy-like) drawn by the game's sprite code; they blink now and then */
   var telaPersonagem = document.getElementById('telaPersonagem');
   var cartas = Array.prototype.slice.call(telaPersonagem.querySelectorAll('.tp-carta'));
   var escolha = 0, piscaIv = null, pele = 1, linha = 0; // linha: 0 = the two characters, 1 = the skin tones
