@@ -301,10 +301,25 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .tc-btns .tn-btn.on{outline:3px solid #fff;outline-offset:3px}
 .tc-aviso{position:relative;z-index:1;margin:-6px 0 0;font-size:16px;color:var(--muted)}
 /* 100% of the game: the author's thank-you, his photo rolling in */
-#agradecimento{z-index:40;gap:calc(var(--u)*2.4);padding:calc(var(--u)*5) calc(var(--u)*8)}
-#agradecimento h2{font-size:calc(var(--u)*6.4)}
-#agradecimento p{font-size:calc(var(--u)*5.6);max-width:70ch;line-height:1.1}
-#ag-duelo{display:block;width:calc(var(--u)*330);height:calc(var(--u)*86);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
+#agradecimento{z-index:40;background:#160e0b;justify-content:space-between;gap:calc(var(--u)*3);padding:calc(var(--u)*6) calc(var(--u)*8) calc(var(--u)*4)}
+#agradecimento h2{font-size:calc(var(--u)*7)}
+/* the letter: a dark card with a double gold frame and ornaments at the corners */
+.ag-carta{position:relative;box-sizing:border-box;width:calc(var(--u)*336);display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*2.2);
+  padding:calc(var(--u)*6) calc(var(--u)*16) calc(var(--u)*5);background:radial-gradient(ellipse at 50% 0%,#2e1a26 0%,#170d14 70%);
+  border:calc(var(--u)*.8) solid #d9a441;outline:calc(var(--u)*.5) solid #7a522f;outline-offset:calc(var(--u)*1.4);
+  box-shadow:inset 0 0 0 calc(var(--u)*1.6) #170d14,inset 0 0 0 calc(var(--u)*2.1) rgba(217,164,65,.55),0 0 calc(var(--u)*10) rgba(217,164,65,.22)}
+.ag-carta::before,.ag-carta::after{content:"";position:absolute;left:50%;width:calc(var(--u)*60);height:calc(var(--u)*.5);transform:translateX(-50%);background:linear-gradient(90deg,transparent,#d9a441,transparent)}
+.ag-carta::before{top:calc(var(--u)*3.4)}.ag-carta::after{bottom:calc(var(--u)*3.4)}
+.ag-canto{position:absolute;width:calc(var(--u)*7);height:calc(var(--u)*7);border:calc(var(--u)*.8) solid #f2cf5a}
+.ag-canto::after{content:"";position:absolute;width:calc(var(--u)*2.4);height:calc(var(--u)*2.4);background:#f2cf5a;transform:rotate(45deg)}
+.ag-canto.tl{left:calc(var(--u)*3);top:calc(var(--u)*3);border-right:0;border-bottom:0}.ag-canto.tl::after{left:calc(var(--u)*1.6);top:calc(var(--u)*1.6)}
+.ag-canto.tr{right:calc(var(--u)*3);top:calc(var(--u)*3);border-left:0;border-bottom:0}.ag-canto.tr::after{right:calc(var(--u)*1.6);top:calc(var(--u)*1.6)}
+.ag-canto.bl{left:calc(var(--u)*3);bottom:calc(var(--u)*3);border-right:0;border-top:0}.ag-canto.bl::after{left:calc(var(--u)*1.6);bottom:calc(var(--u)*1.6)}
+.ag-canto.br{right:calc(var(--u)*3);bottom:calc(var(--u)*3);border-left:0;border-top:0}.ag-canto.br::after{right:calc(var(--u)*1.6);bottom:calc(var(--u)*1.6)}
+.ag-texto{display:flex;flex-direction:column;gap:calc(var(--u)*1.6);width:100%}
+#agradecimento .ag-texto p{margin:0;max-width:none;font-size:calc(var(--u)*5.6);line-height:1.15;text-align:justify;text-indent:calc(var(--u)*10);hyphens:auto}
+#agradecimento .ag-assin{align-self:flex-end;margin-top:calc(var(--u)*1)}
+#ag-duelo{display:block;width:calc(var(--u)*360);height:calc(var(--u)*75);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
 /* the theatre curtain that ends the game */
 #cortina{position:absolute;inset:0;z-index:45;overflow:hidden;pointer-events:none}
 #cortina.texto,#cortina:has(.btn){pointer-events:auto}
@@ -320,9 +335,37 @@ body.gp .tela-enredo .ctl-help{display:flex}
   font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*13);line-height:1.15;padding:0 calc(var(--u)*14);
   color:#f2cf5a;text-shadow:0 calc(var(--u)*.8) 0 #7a4a10,0 0 calc(var(--u)*6) rgba(255,214,90,.75),0 0 calc(var(--u)*16) rgba(255,180,60,.45)}
 #cortina.texto .ct-txt{opacity:1;transform:translateY(-50%) scale(1)}
+/* film credits */
+#creditos{position:absolute;inset:0;z-index:44;overflow:hidden;background:radial-gradient(circle at 20% 30%,rgba(255,246,200,.5) 0 1px,transparent 1.5px),radial-gradient(circle at 70% 60%,rgba(216,208,255,.45) 0 1px,transparent 1.5px),radial-gradient(ellipse at 50% 40%,#2a1430 0%,#0b0611 78%);background-size:calc(var(--u)*37) calc(var(--u)*29),calc(var(--u)*53) calc(var(--u)*41),100% 100%}
+#creditos .cr-rolo{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*5);text-align:center;padding:0 calc(var(--u)*10);will-change:transform}
+.cr-tit{font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*15);color:#f2cf5a;text-shadow:0 0 calc(var(--u)*5) rgba(255,214,90,.6);line-height:1}
+.cr-sub{font-family:var(--f-display);font-size:calc(var(--u)*3.6);color:#c99a3c;letter-spacing:.14em;margin-top:calc(var(--u)*-3)}
+.cr-sec{font-family:var(--f-display);font-size:calc(var(--u)*3.6);color:#e0b22e;letter-spacing:.14em;margin-top:calc(var(--u)*10);padding-bottom:calc(var(--u)*1.5);border-bottom:calc(var(--u)*.5) solid rgba(224,178,46,.45)}
+.cr-sec.mini{font-size:calc(var(--u)*2.8);margin-top:calc(var(--u)*4)}
+.cr-pessoa{display:flex;align-items:center;gap:calc(var(--u)*3);text-align:left;min-width:0}
+.cr-pessoa canvas{width:calc(var(--u)*14);height:calc(var(--u)*20);image-rendering:pixelated;flex:none;object-fit:contain}
+.cr-pessoa canvas.gato{width:calc(var(--u)*22);height:calc(var(--u)*22);image-rendering:auto}
+.cr-pessoa.big canvas{width:calc(var(--u)*21);height:calc(var(--u)*30)}
+.cr-nome{font-family:var(--f-body);font-size:calc(var(--u)*8);line-height:1;color:#efe3c8}
+.cr-pessoa.big .cr-nome{font-size:calc(var(--u)*10)}
+.cr-nome small{display:block;font-size:.72em;color:#b9aed6;margin-top:calc(var(--u)*1)}
+.cr-elenco{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(var(--u)*5) calc(var(--u)*8);width:100%}
+.cr-elenco.quatro{grid-template-columns:repeat(4,minmax(0,1fr))}
+.cr-turma{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*3) calc(var(--u)*8)}
+.cr-turma .cr-pessoa canvas{width:calc(var(--u)*10);height:calc(var(--u)*14)}
+.cr-turma .cr-nome{font-size:calc(var(--u)*6.5)}
+.cr-ficha{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(var(--u)*2) calc(var(--u)*14);width:100%}
+.cr-dado{display:flex;justify-content:space-between;gap:calc(var(--u)*6);font-family:var(--f-body);font-size:calc(var(--u)*7.5);color:#efe3c8;border-bottom:calc(var(--u)*.4) dotted rgba(239,227,200,.25)}
+.cr-dado b{font-weight:400;color:#f2cf5a}
+.cr-lista{display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--u)*2) calc(var(--u)*10);font-family:var(--f-body);font-size:calc(var(--u)*7.5);color:#efe3c8;line-height:1.25;width:100%}
+.cr-lista div::before{content:"♪ ";color:#e0b22e}
+.cr-esp{font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*9);color:#ff9cc4;text-shadow:0 0 calc(var(--u)*5) rgba(255,140,190,.55);line-height:1.15}
+.cr-esp-txt{font-family:var(--f-body);font-size:calc(var(--u)*7.5);color:#efe3c8;max-width:80ch;line-height:1.1}
+.cr-foto{width:calc(var(--u)*26);height:calc(var(--u)*26);border-radius:50%;object-fit:cover;border:calc(var(--u)*.8) solid #F1DDA9;flex:none}
+.cr-fim{font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*11);color:#f2cf5a;margin:calc(var(--u)*14) 0 calc(var(--u)*30);text-shadow:0 0 calc(var(--u)*5) rgba(255,214,90,.6)}
 #cortina .btn{position:absolute;left:50%;bottom:calc(var(--u)*14);transform:translateX(-50%);font-size:calc(var(--u)*3)}
 .ag-assin{display:flex;align-items:center;gap:calc(var(--u)*4);text-align:left}
-.ag-foto{width:calc(var(--u)*24);height:calc(var(--u)*24);border-radius:50%;object-fit:cover;display:block;border:calc(var(--u)*.8) solid #F1DDA9;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.5)}
+.ag-foto{width:calc(var(--u)*19);height:calc(var(--u)*19);border-radius:50%;object-fit:cover;display:block;border:calc(var(--u)*.8) solid #F1DDA9;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.5)}
 .ag-nome{display:flex;flex-direction:column;gap:calc(var(--u)*1.2);font-size:calc(var(--u)*6.4);line-height:1.05;color:var(--muted)}
 .ag-nome b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*3.6);color:var(--accent);letter-spacing:.04em}
 @media (prefers-reduced-motion:reduce){.tt-start,.tc-titulo{animation:none}}
@@ -432,7 +475,8 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 #sg-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
 #sg-msg.ok{color:#1f7a43}#sg-msg.err{color:#b3261e}
 #caca-mh .caca-fim,#caca-mh.fim .caca-jogo{display:none}#caca-mh.fim .caca-fim{display:inline}
-#sg-ok.kb,#caca-close.kb{outline:3px solid #2a1c16;outline-offset:2px}
+#sg-ok.kb,#caca-close.kb,.mbtn.kb{outline:3px solid #2a1c16;outline-offset:2px}
+.mbtn.kb::before{content:"▶ "}
 #dz-txt{margin:10px 0 8px}#dz-txt b{display:block;font-family:var(--f-display);font-weight:400;font-size:10px;letter-spacing:.06em;color:#7a2e3e;margin:8px 0 3px}
 #dz-list .sg-row>span{flex:1 1 100%}
 #dz-list .ctx{display:block;font-size:.8em;color:#7a522f}
@@ -620,14 +664,17 @@ body:not(.kb) .caca-grid div.cur{outline:none}
         <div id="dlg-next" data-gp="▼ <span class=&quot;gpb a&quot;>A</span>">▼ ENTER</div>
       </div>
       <div class="overlay" id="agradecimento" hidden role="dialog" aria-label="Agradecimento">
-        <span class="tag">100% DO JOGO COMPLETO</span>
-        <h2 id="ag-titulo">Obrigado!</h2>
-        <p id="ag-p1"></p>
-        <p id="ag-p2"></p>
-        <div class="ag-assin"><img class="ag-foto" id="ag-foto" alt="Foto do Prof. Dr. Aldair de França Neto"><div class="ag-nome">Com carinho,<b>Prof. Dr. Aldair de França Neto</b></div></div>
-        <canvas id="ag-duelo" width="384" height="100" aria-label="Duelo de varinhas: professores Neto e Rosa contra os professores Kiko e Malvar"></canvas>
+        <div class="ag-carta" lang="pt-BR">
+          <i class="ag-canto tl"></i><i class="ag-canto tr"></i><i class="ag-canto bl"></i><i class="ag-canto br"></i>
+          <span class="tag">✦ 100% DO JOGO COMPLETO ✦</span>
+          <h2 id="ag-titulo">Obrigado!</h2>
+          <div class="ag-texto"><p id="ag-p1"></p><p id="ag-p2"></p></div>
+          <div class="ag-assin"><img class="ag-foto" id="ag-foto" alt="Foto do Prof. Dr. Aldair de França Neto"><div class="ag-nome">Com carinho,<b>Prof. Dr. Aldair de França Neto</b></div></div>
+        </div>
+        <canvas id="ag-duelo" width="384" height="80" aria-label="Duelo de varinhas: professores Neto e Rosa contra os professores Kiko e Malvar"></canvas>
         <button class="btn" id="btn-ag" hidden type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · JOGAR DE NOVO">ENTER · JOGAR DE NOVO</button>
       </div>
+      <div id="creditos" hidden aria-label="Créditos"><div class="cr-rolo" id="cr-rolo"></div></div>
       <div id="cortina" hidden aria-live="polite"><div class="ct-l"></div><div class="ct-r"></div><div class="ct-sanefa"></div>
         <p class="ct-txt">Continua na próxima temporada...</p></div>
       <div class="overlay" id="end" hidden>
@@ -659,7 +706,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.21.1 &middot; Última atualização: 9 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.28 &middot; Última atualização: 10 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -769,7 +816,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <div class="modal" id="duelo" hidden role="dialog" aria-label="Duelo Relâmpago">
   <div class="modal-bar">
     <span class="mt">DUELO RELÂMPAGO · GABRIEL (3º ANO)</span>
-    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> responder"><kbd>ENTER</kbd> responder</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> desistir"><kbd>ESC</kbd> desistir</span></span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>W</kbd><kbd>S</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> responder"><kbd>ENTER</kbd> responder</span></span>
   </div>
   <div class="quiz-body">
     <div class="sheet duelo-sheet">
@@ -780,7 +827,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div id="duelo-opts"></div>
       <div class="sh-foot">
         <span id="duelo-msg" aria-live="polite"></span>
-        <span class="sh-btns"><button class="mbtn primary" id="duelo-close" type="button">DESISTIR</button></span>
+        <span class="sh-btns"><button class="mbtn primary" id="duelo-close" type="button" hidden>FECHAR</button></span>
       </div>
     </div>
   </div>
@@ -1041,6 +1088,7 @@ function reset(){
   if(typeof jan!=='undefined')janReset();
   if(typeof cat!=='undefined')catReset();
   alostReset();
+  if(typeof malvarR!=='undefined'&&mr)mrEnd(); // a new game: Malvar back in his room
   if(typeof SEATS!=='undefined'){ // nobody stays seated from the last game
     for(const k in SEATS)SEATS[k].forEach(st=>st.by=null);
     for(const k in WANDER)WANDER[k].forEach(o=>{if(o.seat||o.sitting>0){o.sitting=0;o.seat=null;o.queue=[];o.tx=null;o.noShadow=false;o.x=Math.max(o.x0,Math.min(o.x1,o.x));o.y=o.y0;syncW(o);}});
@@ -1134,7 +1182,8 @@ function drawTorches(t){
 
 /* ---------- clock (drawn live) ---------- */
 function gameMinutes(){
-  return Math.min(END_MIN,START_MIN+Math.floor(gameMin)); // stops when the class ends
+  const m=START_MIN+Math.floor(gameMin);
+  return flags&&flags.graded&&flags.pass?m:Math.min(END_MIN,m); // stops when the class ends; after a passing grade it runs on, with no limit, while the player explores
 }
 function drawClock(){
   const cx=59,cy=9;
@@ -2002,7 +2051,7 @@ const lockerLines={
 add({id:'board',name:'Quadro de avisos',wall:true,cx:132,top:12,zone:wallZone(108,48),draw:drawBoard,
   act:()=>{say([
     {who:'QUADRO DE AVISOS',t:'BIOQUÍMICA: aula de dúvidas sobre glicólise hoje, das 7h50 às 11h30, Sala 101 (1º andar).'},
-    {who:'QUADRO DE AVISOS',t:'PROVA DE BIOQUÍMICA: amanhã. Conteúdo: as 10 reações da glicólise. A lição de casa deve ser entregue até o fim da aula de hoje, às 11h30.'},
+    {who:'QUADRO DE AVISOS',t:'PROVA DE BIOQUÍMICA: amanhã. Conteúdo: as 10 reações da glicólise. A lição de casa deve ser entregue aos professores das 9h30 até o fim da aula de hoje, às 11h30.'},
     {who:'QUADRO DE AVISOS',t:'O crachá libera a entrada nas salas. No laboratório, jaleco obrigatório. Sem exceções. (Coordenação do Curso)'},
     {who:'QUADRO DE AVISOS',t:'Dica: o cartaz com a glicólise completa está no laboratório multidisciplinar, no fim deste corredor.'},
     {who:'QUADRO DE AVISOS',t:'Também tem um panfleto: "Vende-se estetoscópio quase novo". Não é hora disso.'}
@@ -2037,7 +2086,8 @@ add({id:'almox',name:'Almoxarifado',wall:true,cx:305,top:12,zone:wallZone(288,42
     ?[{t:'Você aproxima seu crachá do leitor... BIP-BIP. Luz vermelha: ACESSO NEGADO.'},{t:'O almoxarifado só abre com o crachá dos funcionários da escola.'}]
     :[{t:this.sign},{t:'Só funcionários da escola entram aqui.'}]);}});
 add({id:'entrada',name:'Entrada da escola',wall:true,cx:5,oy:116,top:88,zone:{x:10,y:90,w:22,h:52},draw:()=>{},
-  act:()=>say([{t:'A porta de entrada da escola. Lá fora, o estacionamento já está lotando.'},{t:'Sair agora não dá: você precisa entregar a lição de casa até as 11h30.'}])});
+  act:()=>say(flags.graded?[{t:'A porta de entrada da escola. Lá fora, o pátio está cheio de gente conversando.'},{t:'A lição já foi entregue... mas ainda tem muita coisa para descobrir aqui dentro.'}]
+    :[{t:'A porta de entrada da escola. Lá fora, o estacionamento já está lotando.'},{t:'Sair agora não dá: você precisa entregar a lição de casa até as 11h30.'}])});
 
 [
   {x:68,y:86,extra:null,lines:['Um banco ao lado do mapa do térreo. Bom ponto de encontro com a turma.']},
@@ -2061,7 +2111,7 @@ const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noSha
     if(!flags.marina) return say([
       {who:me(),t:'Bom dia, Marina! Você viu as minhas folhas da atividade de glicólise? Ontem a gente estudou junto nas salas em que fomos tendo aula, e depois eu não vi mais.'},
       {who:'MARINA',t:'Bom dia! Não vi, não... Mas os professores Neto e Rosa passaram nas salas depois das aulas. Talvez eles tenham visto.'},
-      {who:'MARINA',t:'E não esquece: hoje a gente tem que entregar as folhas de glicólise para os professores, na Sala 101, até o fim da aula, às 11h30.'},
+      {who:'MARINA',t:'E não esquece: hoje a gente tem que entregar as folhas de glicólise para os professores, na Sala 101. Eles recebem a partir das 9h30, até o fim da aula, às 11h30.'},
       {who:'MARINA',t:'Ah! Chegaram os crachás. Sem ele, a porta das salas não abre. Antes de ir para a sala, pega o seu com a Dona Tati, na secretaria.'}
     ],()=>{flags.marina=true;updateObjective();});
     let l;
@@ -2069,7 +2119,7 @@ const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noSha
     else if(!flags.profs&&!answered()) l=[{who:'MARINA',t:flags.profsIn?'Os professores estão na Sala 101, no 1º andar. Pergunta para eles das suas folhas!'
       :'Os professores ainda estão tomando café na sala dos professores, no 1º andar. Eles vão para a Sala 101 pouco antes das 7h50. Pergunta para eles das suas folhas!'}];
     else if(answered()<QUIZ_N) l=[{who:'MARINA',t:'Achou as folhas? Então capricha nas respostas!'},{who:'MARINA',t:'Eu vou revisar as 10 reações da glicólise mais uma vez.'}];
-    else l=[{who:'MARINA',t:'Já respondeu tudo? Corre entregar para os professores na Sala 101!'}];
+    else l=[{who:'MARINA',t:canDeliver()?'Já respondeu tudo? Corre entregar para os professores na Sala 101!':'Já respondeu tudo? Os professores só recebem a partir das 9h30. Até lá, aproveita para explorar!'}];
     say(l);
   }});
 {const Z={x:404,y:66,w:104,h:80},OFF={x:-99,y:-99,w:0,h:0};Object.defineProperty(marinaT,'zone',{get:()=>flags&&flags.seated?OFF:Z});}
@@ -2805,7 +2855,7 @@ function drawReactionPoster(x,n){
 [[66,1],[100,2]].forEach(([x,n])=>add({id:'reacao'+n,name:'Cartaz da reação '+n,wall:true,cx:x+14,top:12,zone:{x:x-2,y:64,w:32,h:22},
   draw:()=>drawReactionPoster(x,n),act:()=>openPoster(n)}));
 add({id:'quadro',name:'Quadro',wall:true,cx:192,top:12,zone:{x:132,y:64,w:120,h:22},draw:drawBlackboard,
-  act:()=>say([{who:'QUADRO',t:'GLICÓLISE: glicose → 2 piruvato.'},{who:'QUADRO',t:'Saldo por glicose: 2 ATP e 2 NADH. Ainda não apagaram a aula de ontem, a mesma em que você esqueceu as folhas.'}])});
+  act:()=>say([{who:'QUADRO',t:'GLICÓLISE: glicose → 2 piruvato.'},{who:'QUADRO',t:'Saldo por glicose: 2 ATP e 2 NADH. Ainda não apagaram a aula de ontem.'}])});
 // --- Profa. Rosa, Prof. Neto and students with questions ---
 HEAD.aldair=HEAD.player;
 CHAR_PAL.aldair=Object.assign({},CHAR_PAL.player,{S:'#d4a07e',s:'#a8745a',H:'#a9b0b6',h:'#2e2a27',d:'#1d1612',i:'#3a2414',m:'#7a2e3e',
@@ -2939,7 +2989,7 @@ function sheetsTalk(asked){
     {who:asked,t:'Hum... não vi, não. Talvez você tenha esquecido nas salas em que teve aula ontem.'},
     {who:other,t:'Ontem vocês tiveram aula na 103 e na 201. Lembro de ter visto, de longe, umas folhas em cima de algumas carteiras.'},
     {who:other,t:'E, no fim da tarde, eu vi você estudando numa mesa do corredor do 2º andar, perto da biblioteca.'},
-    {who:asked,t:'Então procure nesses lugares. Responda tudo e traga para nós até 11h30. Amanhã tem prova!'}];
+    {who:asked,t:'Então procure nesses lugares. Responda tudo e traga para nós a partir das 9h30, até 11h30. Antes disso a manhã é para tirar dúvidas. Amanhã tem prova!'}];
 }
 const aldair=add({id:'aldair',name:'Prof. Neto',talk:0,cx:150,top:78,base:104,solid:{x:145,y:100,w:10,h:4},
   speed:19,
@@ -2951,8 +3001,13 @@ const aldair=add({id:'aldair',name:'Prof. Neto',talk:0,cx:150,top:78,base:104,so
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
+    if(answered()===QUIZ_N&&!flags.graded)return profSay(this,profsWaitLines('PROF. NETO'));
     const L=[[{who:'PROF. NETO',t:'Bom dia, '+nome1()+'! Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.'},
-       ...(flags.profs?[]:sheetsTalk('PROF. NETO'))],
+       ...(flags.profs?[]:sheetsTalk('PROF. NETO')),
+       ...(flags.viaTip?[]:[ // the lab simulator: an optional way to review the pathway, suggested right away
+         {who:'PROF. NETO',t:'Ah, e uma dica para a prova: no laboratório do térreo tem um simulador de metabolismo. Escolha a atividade "Percorrer a via".'},
+         {who:'PROF. NETO',t:'O trilho do carrinho só se completa quando você acerta a pergunta de cada reação. Não é obrigatório, mas é o melhor jeito de revisar as 10 reações. Vá de jaleco, senão não entra no laboratório!',
+          run:()=>{flags.viaTip=true;flags.viaNeto=true;updatePauseExtra();}}])],
       [{who:'PROF. NETO',t:'Sabe por que a hexocinase gasta ATP logo na primeira reação?'},
        {who:'PROF. NETO',t:'A glicose-6-fosfato não sai da célula pelos transportadores de glicose. A fosforilação "prende" a glicose lá dentro.'}],
       [{who:'PROF. NETO',t:'E a hexocinase é inibida pelo próprio produto, a glicose-6-fosfato. Guarde isso para a prova!'}]];
@@ -2969,9 +3024,10 @@ const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104
   act(){
     if(flags.seated)return deliver();
     this.wait=Math.max(this.wait,4);this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
+    if(answered()===QUIZ_N&&!flags.graded)return profSay(this,profsWaitLines('PROFA. ROSA'));
     const L=[[{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! Que bom te ver aqui na 101 hoje.'},
        ...(flags.profs?[]:sheetsTalk('PROFA. ROSA')),
-       {who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Neto corrigimos aqui na mesa. O prazo é o fim da aula, 11h30.'}],
+       {who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Neto corrigimos aqui na mesa, a partir das 9h30. O prazo é o fim da aula, 11h30.'}],
       [{who:'PROFA. ROSA',t:'Já viu os cartazes das reações 1 e 2 na parede, ao lado do quadro? Eles resumem o começo da glicólise.'}],
       [{who:'PROFA. ROSA',t:'A reação 2 é reversível: a fosfo-hexose-isomerase converte glicose-6-fosfato em frutose-6-fosfato, que tem um anel de cinco lados.'}]];
     const first=this.talk%L.length===0; // that talk says where the sheets are: the search begins
@@ -3477,7 +3533,7 @@ function malvarReveal(){
   say([{who:MW,t:'Pare aí.'},
     {who:MW,t:flags.jaleco?'...O que é isso saindo do bolso do seu jaleco?':'...O que é isso aparecendo na sua mochila?'},
     {who:me(),t:'É... uma carta-convite. Da Liga de Metabolismo.'},
-    {who:MW,t:'Eu sei o que é. Reconheço essa letra em qualquer lugar. Fui eu que escrevi o primeiro desses convites, há vinte e dois anos.'},
+    {who:MW,t:'Eu sei o que é. Reconheço este selo em qualquer lugar. Fui eu que escrevi o primeiro desses convites, há vinte e dois anos.'},
     {who:MW,t:'Edmundo Malvar. Professor de Poções... e fundador da Liga de Metabolismo.',run:()=>setMood('player','surprised',5)},
     {who:me(),t:'E. M.! As iniciais nos livros da sala oculta... e no caderno de capa preta do Lucas!'},
     {who:MW,t:'Obviamente. Fui eu que arranquei as páginas das reações 1, 3 e 10 e as tranquei atrás daquelas portas.'},
@@ -3485,9 +3541,81 @@ function malvarReveal(){
     {who:MW,t:'O caderno no sebo também fui eu que deixei. Alguém sempre o compra. Alguém sempre vai atrás das páginas. Quase todos desistem.'},
     {t:flags.jaleco?'O professor olha para o diário na sua mão. Por um instante, a tinta brilha mais forte.':'O professor olha para a sua mochila, onde está o diário. Por um instante, a tinta brilha através do tecido.'},
     {who:MW,t:'...E esse diário. Fazia muitos anos que eu não o via. Ele escolhe o dono. Não me pergunte como.'},
-    {who:MW,t:'A Larissa acha que eu nem sei que a sala existe. Prefiro assim. Nem uma palavra, '+nome1()+'.'},
+    {who:MW,t:'A Larissa sabe que as páginas são minhas e guarda o segredo. Ótima aluna. Melhor assim. Nem uma palavra, '+nome1()+'.'},
     {who:MW,t:'Sexta-feira, depois da aula. Não se atrase. Detesto atrasos quase tanto quanto detesto quem decora sem entender.',
       run:()=>{flags.fundador=true;updatePauseExtra();}}]);
+}
+/* ---------- Prof. Malvar's rounds ----------
+   Twice in the morning he leaves the Potions room and walks a corridor, with the cat Arsenato at his heels:
+   8h40 the 2nd floor (from Sala 204 west to the library, then east to the blank wall, where he stops and looks at
+   it), 10h15 the 1st floor (down the stairs from the 2nd floor, along the corridor and back up). Meeting him the player
+   gets a corridor question (once per round); near the secret wall he drops a cryptic line. Out of sight he is just
+   "away" for a while (not in Sala 204). flags.mr1 / flags.mr2: round started (a saved game never resumes one). */
+const MR_ROUNDS=[
+  {min:7*60+30+70,sc:'andar2',path:[[648,70],[648,108],[190,108,4],[676,108,0,'wall'],[648,108],[648,70]]},
+  {min:7*60+30+165,sc:'andar1',path:[[572,44],[572,98],[572,108],[110,108,4],[572,108],[572,98],[572,44]]}];
+const MR_Q=[
+  {q:'Já que está parado no meu caminho: quantos NADH a glicólise forma por glicose?',o:['Dois','Quatro','Um'],c:0,
+   ok:'Hm. O mínimo esperado.',bad:'Duas trioses, duas GAPDH, dois NADH. Escreva cem vezes.'},
+  {q:'Pergunta de corredor. Qual enzima dita o ritmo da glicólise?',o:['A fosfofrutocinase-1','A triose-fosfato-isomerase','A fosfoglicerato-mutase'],c:0,
+   ok:'Correto. Tente não se exibir.',bad:'A PFK-1. A porta mais pesada do caminho. Guarde isso.'}];
+let mr=null; // the round under way: {k,sc,path,i,wait,endMin,o}
+const malvarR={id:'malvarRonda',name:'Prof. Malvar (Poções)',x:0,y:0,dir:'down',anim:0,moving:false,
+  sprite(t){const c=personSprite('malvar','coat',this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
+  act(){
+    if(!mr)return;mr.wait=Math.max(mr.wait,4);this.moving=false;this.dir=faceTo(this,player);
+    if(flags.alost===6&&!flags.fundador)return malvarReveal();
+    const k=mr.k;
+    if(flags['mrq'+k])return say([{who:MW,t:['Não tenho o dia todo.','Circulando. O corredor não é sala de estar.','O gato também acha que você devia estar estudando.'][(this.talk=(this.talk||0)+1)%3]}]);
+    const Q=MR_Q[k];setMood('malvar','smug',4);
+    say([{who:MW,t:Q.q,choices:Q.o.map((t,i)=>({t,fn:()=>{flags['mrq'+k]=true;
+      if(i===Q.c){sfx.item();say([{who:MW,t:Q.ok}]);}else{sfx.bump();setMood('malvar','angry',4);say([{who:MW,t:Q.bad}]);}}}))}]);
+  }};
+syncW(malvarR);
+function mrPlace(on){ // Malvar either in his room or on his round
+  const L=SCENES.sala204,i=L.indexOf(malvar);
+  if(on&&i>=0)L.splice(i,1);
+  if(!on&&i<0)L.push(malvar);
+}
+function mrStart(k){
+  const R=MR_ROUNDS[k];flags['mr'+(k+1)]=true;
+  mr={k,sc:R.sc,path:R.path.map(p=>p.slice()),i:1,wait:0,endMin:R.min+14};
+  Object.assign(malvarR,{x:R.path[0][0],y:R.path[0][1],dir:'down',moving:false});syncW(malvarR);
+  mrPlace(true);SCENES[R.sc].push(malvarR);
+  if(scene!==cat.sc&&cat.sc!==R.sc){catPlace(R.sc);cat.x=R.path[0][0]+14;cat.y=Math.max(98,R.path[0][1]+30);cat.goal=null;cat.slide=null;cat.path=[];catSync();} // the cat comes along (if nobody sees him leave)
+}
+function mrEnd(){
+  const i=SCENES[mr.sc].indexOf(malvarR);if(i>=0)SCENES[mr.sc].splice(i,1);
+  mr=null;mrPlace(false);
+}
+function malvarRondaTick(dt){
+  if(!startTime||state==='boot'||state==='intro')return;
+  const gm=gameMinutes();
+  if(!mr){
+    for(let k=0;k<MR_ROUNDS.length;k++)if(!flags['mr'+(k+1)]&&gm>=MR_ROUNDS[k].min&&gm<MR_ROUNDS[k].min+14&&scene!=='sala204'){mrStart(k);break;}
+    return;
+  }
+  const o=malvarR;o.moving=false;
+  if(scene!==mr.sc){if(gm>=mr.endMin&&scene!=='sala204')mrEnd();return;} // away: back in his room after a while (never popping up in front of the player)
+  if(state!=='play')return;
+  if(mr.wait>0){mr.wait-=dt;return;}
+  const p=mr.path[mr.i];if(!p){if(scene!=='sala204')mrEnd();return;}
+  const dx=p[0]-o.x,dy=p[1]-o.y,d=Math.hypot(dx,dy);
+  if(d<.6){o.x=p[0];o.y=p[1];syncW(o);mr.i++;
+    if(p[2])mr.wait=p[2];
+    if(p[3]==='wall'){o.dir='right';mr.wait=3.5;
+      if(!flags.mrWall&&Math.hypot(player.x-o.x,player.y-o.y)<100){flags.mrWall=true;setMood('malvar','smug',6);
+        say([{t:'O Prof. Malvar para diante da parede lisa do fim do corredor. Fica um tempo olhando para ela.'},
+          {who:MW,t:'Paredes lisas não guardam nada...',run:()=>{o.dir=faceTo(o,player);}},
+          {who:MW,t:'...em geral.'}]);}}
+    if(mr.i>=mr.path.length&&scene!=='sala204')mrEnd();
+    return;}
+  if(playerAhead(o.x,o.y,dx/d,dy/d))return npcBackOff(o,dt);
+  const st=Math.min(d,22*dt);o.x+=dx/d*st;o.y+=dy/d*st;o.moving=true;o.anim+=dt*6;
+  o.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');syncW(o);
+  // Arsenato at his heels
+  if(cat.sc===mr.sc&&!cat.goal&&!cat.slide&&(mr.catT=(mr.catT||0)-dt)<=0){mr.catT=1;const bx=o.x-(dx>0?18:-18);
+    if(catFree(cat.sc,bx,o.y+6)&&catGo(bx,o.y+6)){cat.mode='walk';cat.target=null;}}
 }
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
@@ -3937,7 +4065,7 @@ const zelObj={id:'zelador',name:'Seu Antônio (zelador)',
     const l=[[{who:W_,t:'Cuidado, '+gen('doutor','doutora')+'! Acabei de passar o pano, está escorregadio.'}],
       [{who:W_,t:'Dizem que a glicose dá energia, né? Pois eu gasto um monte esfregando esse castelo inteiro!'}],
       [{who:W_,t:'Viu um gato preto por aí? É o Arsenato. Eu limpo este prédio há vinte anos, e ele já andava por aqui.'},
-       {who:W_,t:'Igualzinho, '+gen('doutor','doutora')+'. Não envelhece, não engorda, não deixa pegada no chão molhado. Eu é que não pergunto nada.'}]][this.talk%3];
+       {who:W_,t:'Igualzinho, '+gen('doutor','doutora')+'. Não envelhece, não engorda, não deixa pegada no chão molhado. Eu é que não pergunto nada.'}]][(this.talk||0)%3]; // (this.talk starts undefined: the very first talk used to open an empty dialog and freeze)
     this.talk=(this.talk||0)+1;say(l);
   }};
 const cartObj={id:'carrinho',name:'Carrinho de limpeza',
@@ -3979,7 +4107,7 @@ function janGo(i){
 function janUpdate(dt){
   const m=gameMinutes();if(jan.last==null)jan.last=0; // jan.last: real seconds spent cleaning the current spot
   if(janCleaning()&&startTime&&state!=='intro'&&state!=='boot')jan.last+=frameRaw; // real time, even when frames come slowly
-  if(janCleaning()&&m<END_MIN&&jan.last>=JAN_EVERY){
+  if(janCleaning()&&(m<END_MIN||flags.graded)&&jan.last>=JAN_EVERY){
     jan.last=0;const cur=JAN_SPOTS[jan.spot];
     const far=JAN_SPOTS.map((s_,i)=>i).filter(i=>i!==jan.spot&&(JAN_SPOTS[i].sc!==cur.sc||Math.abs(JAN_SPOTS[i].x-cur.x)>250));
     janGo(far[(Math.random()*far.length)|0]);
@@ -4434,17 +4562,19 @@ function giveItem(k){
    7h50: the class starts (just a bell). 11h00: 30-minute warning. 11h30: the class ends, unanswered
    sheets are locked and count as wrong. */
 const START_MIN=7*60+30,CLASS_MIN=7*60+50,WARN_MIN=11*60,END_MIN=11*60+30,PASS=7;
+const DELIVER_MIN=9*60+30; // the professors spend the morning answering questions: they only take the sheets from 9h30 on
+const canDeliver=()=>gameMinutes()>=DELIVER_MIN;
 const SECONDS_PER_GAME_MINUTE=15; // outside the sheets: 07h30 -> 7h50 takes 5 real minutes, 07h30 -> 11h30 takes 1 hour
 const SECONDS_PER_READING_MINUTE=60; // reading and thinking over an unanswered sheet (the 10 sheets or the bonus): real time, 1 minute = 60 s
 // advances the clock (called every frame; it stands still in the pause menu, before the start and after the end)
 function tickClock(dt){
-  if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause'||state==='duelo')return; // the lightning duel has its own timer
+  if(!startTime||endTime||state==='intro'||state==='boot'||state==='pause'||state==='duelo'||state==='end'||state==='finale')return; // the lightning duel has its own timer
   const reading=state==='quiz'&&quiz&&!provas[quiz.n]&&!flags.review;
   const d=dt/(reading?SECONDS_PER_READING_MINUTE:SECONDS_PER_GAME_MINUTE);
   gameMin+=d;
 }
 const answered=()=>Object.keys(provas).filter(k=>k!=='b').length; // regular sheets (the bonus is counted apart)
-const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+'h'+String(m%60).padStart(2,'0');
+const hhmm=m=>{m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+'h'+String(m%60).padStart(2,'0');}; // past midnight it starts over at 00h00
 const ROOM_SHEETS={};for(const rm in EXAM_DESKS)ROOM_SHEETS[rm]=Object.values(EXAM_DESKS[rm]).flat(); // room -> reactions on its desks
 const deskProf=SCENES.sala101.find(o=>o.id==='mesaProf');
 let clockTxt='';
@@ -4465,6 +4595,7 @@ function updateObjective(){
     :flags.graded?(flags.pass?'Atividade entregue. Explore a faculdade à vontade':'Atividade corrigida')
     :flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp?'Busque a questão bônus no laboratório (térreo) e entregue até 11h30'
     :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
+    :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, na Sala 101, até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, na Sala 101')
     :!flags.profs&&!answered()?(flags.profsIn?'Pergunte aos professores, na Sala 101, pelas suas folhas':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
     :'Ache e responda as 10 folhas esquecidas: salas 103 e 201 e uma mesa de estudo do 2º andar, até 11h30';
   curObj=t;diaryCheck();
@@ -4498,7 +4629,7 @@ function bell(){[784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05
 function classStarts(){
   flags.bell8=true;bell();recessEnd();
   say([{t:'TRIIIM! São 7h50: a aula de Bioquímica começou na Sala 101.'},
-       {t:'Os professores Neto e Rosa vão tirar dúvidas até 11h30. Entregue as folhas antes do fim da aula.'}]);
+       {t:'Os professores Neto e Rosa tiram dúvidas a manhã toda. As folhas da lição são recebidas a partir das 9h30, até o fim da aula, às 11h30.'}]);
 }
 function lastCall(){
   flags.warn11=true;tone(660,.2,'triangle',.05);tone(523,.3,'triangle',.05,.22);
@@ -4535,7 +4666,7 @@ function deliver(){
 function simAsk(next,pass){
   return {who:'PROF. NETO',t:'Uma curiosidade, '+nome1()+': você chegou a usar o simulador do laboratório para estudar?',choices:[
     {t:'Sim! Percorri a via inteira, reação por reação',fn:()=>say([
-      {who:'PROF. NETO',t:(pass?'Eu sabia! Dá para ver nas suas respostas.':'Muito bom! A nota de hoje não saiu como você queria, mas esse é o caminho certo.')+' Fui eu que sugeri essa atividade para os alunos do 1º ano.'},
+      {who:'PROF. NETO',t:(pass?'Eu sabia! Dá para ver nas suas respostas.':'Muito bom! A nota de hoje não saiu como você queria, mas esse é o caminho certo.')+(flags.viaNeto?' Você seguiu a minha dica!':' Fui eu que sugeri essa atividade para os alunos do 1º ano.')},
       {who:'PROFA. ROSA',t:'Que iniciativa bonita! Estudar além do que pedimos é coisa de quem vai longe. Parabéns, '+nome1()+'!',run:()=>setMood('heloisa','happy',4)},
       {who:'PROF. NETO',t:'Fazer as 10 reações uma a uma, sem pular nenhuma, é o melhor treino para a prova. Continue assim.'},next])},
     {t:'Não, não cheguei a usar',fn:()=>say([
@@ -4579,15 +4710,19 @@ function showReview(){
     b.addEventListener('click',()=>{reviewSel=i;reviewOpen();});
     list.appendChild(b);
   });
+  $('rev-done').classList.toggle('kb',reviewSel>=reviewIds().length);
   keys.clear();state='review';reviewEl.hidden=false;
 }
-function reviewMove(d){const n=reviewIds().length;reviewSel=(reviewSel+d+n)%n;sfx.blip();
-  [...$('rev-list').children].forEach((b,i)=>b.classList.toggle('on',i===reviewSel));$('rev-list').children[reviewSel].scrollIntoView({block:'nearest'});}
-function reviewOpen(){reviewEl.hidden=true;openQuiz(reviewIds()[reviewSel]);}
+function reviewMove(d){const n=reviewIds().length+1;reviewSel=(reviewSel+d+n)%n;sfx.blip(); // the sheets, then ENCERRAR CORREÇÃO
+  [...$('rev-list').children].forEach((b,i)=>b.classList.toggle('on',i===reviewSel));$('rev-done').classList.toggle('kb',reviewSel===n-1);
+  ($('rev-list').children[reviewSel]||$('rev-done')).scrollIntoView({block:'nearest'});}
+function reviewOpen(){if(reviewSel>=reviewIds().length)return reviewDone();reviewEl.hidden=true;openQuiz(reviewIds()[reviewSel]);}
 function reviewDone(){reviewEl.hidden=true;flags.review=false;state='play';finish(reviewPass);}
 $('rev-done').addEventListener('click',reviewDone);
 function finish(pass){
-  flags.graded=true;flags.pass=pass;state='end';endTime=performance.now();keys.clear();
+  flags.graded=true;flags.pass=pass;state='end';keys.clear();flags.entregaMin=gameMinutes();
+  if(pass)gameMin=Math.min(gameMin,END_MIN-START_MIN); // the clock goes on from the time shown at the hand-in (it never jumps)
+  else endTime=performance.now(); // game over: the clock stops
   updateObjective();updateScore();
   const n=finalScore();
   $('end').classList.toggle('lose',!pass);
@@ -4707,7 +4842,7 @@ const QUIZ_N=Object.keys(QUIZ).length,LETTERS='ABCD';
 const QUIZ_FB={"1": {"who": "PROFA. ROSA", "fb": "Na MODY2, a glicocinase mutante tem menor afinidade pela glicose (Km mais alto). Como ela funciona como o sensor de glicose da célula beta, é preciso uma glicemia mais alta para gerar ATP suficiente e liberar insulina. Por isso a hiperglicemia é leve e estável. A glicocinase não é inibida pela glicose-6-fosfato e não fosforila frutose no músculo."}, "2": {"who": "PROFA. ROSA", "fb": "A fosfo-hexose-isomerase transforma uma aldose (glicose-6-fosfato) em uma cetose (frutose-6-fosfato), preparando a molécula para a PFK-1. Sem essa etapa, a hemácia, que não tem mitocôndrias e depende só da glicólise, produz pouco ATP e não mantém as bombas iônicas da membrana. A célula perde a forma e é destruída."}, "3": {"who": "PROFA. ROSA", "fb": "A PFK-1 é a principal etapa regulatória e comprometida da glicólise. Na doença de Tarui falta a isoenzima muscular: no exercício, o músculo não consegue levar a glicose do glicogênio até piruvato e fica sem ATP, mesmo com o AMP alto, que normalmente ativaria a enzima. Citrato e ATP inibem a PFK-1, não ativam."}, "4": {"who": "PROFA. ROSA", "fb": "A aldolase quebra a frutose-1,6-bisfosfato, de seis carbonos, em duas trioses-fosfato: DHAP e gliceraldeído-3-fosfato. Sem essa clivagem, a via para no fim da fase preparatória e não chega à fase de pagamento, onde o ATP é produzido. Músculo e hemácias, que usam a aldolase A, são os mais afetados."}, "5": {"who": "PROFA. ROSA", "fb": "A TPI converte a DHAP em gliceraldeído-3-fosfato. Sem ela, só um dos dois gliceraldeídos-3-fosfato formados pela aldolase segue na via, e a fase de pagamento rende a metade: 2 ATP em vez de 4, o que zera o saldo líquido por glicose. A DHAP acumulada também é tóxica e contribui para o quadro neurológico."}, "6": {"who": "PROF. NETO", "fb": "O arsenato ocupa o lugar do fosfato e forma 1-arseno-3-fosfoglicerato, que é instável e se hidrolisa sozinho em 3-fosfoglicerato. A via continua, mas pula a reação 7, que geraria ATP. Resultado: a glicólise segue sem saldo líquido de ATP. O NADH continua sendo formado, então o arsenato não bloqueia a enzima."}, "7": {"who": "PROF. NETO", "fb": "A fosfoglicerato-cinase faz a primeira fosforilação no nível do substrato: passa o fosfato de alta energia do 1,3-bisfosfoglicerato para o ADP e gera os 2 ATP que repõem os 2 gastos na fase preparatória. Sem ela, a hemácia, que depende só da glicólise, fica sem ATP para manter a membrana e é destruída."}, "8": {"who": "PROF. NETO", "fb": "A fosfoglicerato-mutase muda o grupo fosfato do carbono 3 para o carbono 2. Sem esse rearranjo, a enolase não recebe substrato e a via para antes das últimas reações. O músculo em esforço intenso, que depende muito da glicólise, fica sem ATP, o que causa as cãibras e a lesão muscular com mioglobinúria."}, "9": {"who": "PROF. NETO", "fb": "O fluoreto se liga ao magnésio e ao fosfato e forma um complexo que inativa a enolase. Com a glicólise bloqueada, as células do sangue param de consumir glicose dentro do tubo, e a glicemia medida no laboratório fica mais próxima do valor real do paciente."}, "10": {"who": "PROF. NETO", "fb": "A piruvato-cinase faz a segunda fosforilação no nível do substrato, que garante o saldo líquido de ATP da glicólise. Sem mitocôndrias, a hemácia depende desse ATP para manter as bombas de sódio e potássio e a forma da membrana. Sem ele, a célula se deforma e é retirada da circulação pelo baço, o que explica a anemia e a esplenomegalia."}};
 for(const k in QUIZ_FB)Object.assign(QUIZ[k],QUIZ_FB[k]);
 // extra sheet: left on a lab bench after yesterday afternoon's practical class; a right answer adds one point (grade capped at 10)
-QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, são produzidas quatro moléculas de ATP; na fase de pagamento, são consumidas duas.", "Na fase de investimento, a glicose é convertida em piruvato sem consumo de ATP.", "Na fase de investimento, são consumidas duas moléculas de ATP; na fase de pagamento, são produzidas quatro moléculas de ATP e dois NADH.", "Na fase de pagamento, são consumidas duas moléculas de ATP para formar glicose-6-fosfato e frutose-6-fosfato."], "c": 2, "who": "PROF. NETO", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
+QUIZ.b={"enz": "Questão bônus — Fases da glicólise", "sub": "Fase de investimento e fase de pagamento", "q": "Durante uma aula, um estudante afirma que a glicólise apenas produz ATP. Considerando suas duas fases, qual alternativa está correta?", "o": ["Na fase de investimento, formam-se 4 ATP; na fase de pagamento, gastam-se 2 ATP e formam-se 2 NADH.", "Na fase de investimento, a glicose vira piruvato sem gastar ATP; na fase de pagamento, formam-se 2 ATP.", "Na fase de investimento, gastam-se 2 ATP; na fase de pagamento, formam-se 4 ATP e 2 NADH por glicose.", "Na fase de pagamento, gastam-se 2 ATP para formar glicose-6-fosfato e frutose-6-fosfato, sem gerar NADH."], "c": 2, "who": "PROF. NETO", "fb": "A fase de investimento utiliza duas moléculas de ATP para ativar a glicose. Na fase de pagamento, são produzidos quatro ATP e dois NADH. Portanto, o saldo final da glicólise é de dois ATP, além de dois NADH e dois piruvatos."};
 const isBonus=n=>n==='b';
 const bonusOk=()=>!!(provas.b&&provas.b.ok);
 function finalScore(){return Math.min(QUIZ_N,sheetsRight()+(bonusOk()?1:0));}
@@ -4754,6 +4889,7 @@ function renderQuiz(){
     :isBonus(quiz.n)?'Questão bônus: vale um ponto extra na atividade. Só pode ser respondida uma vez.'
     :'Atenção: esta folha só pode ser respondida uma vez.';
   $('quiz-fb').hidden=!shown;
+  $('quiz-back').classList.toggle('kb',quiz.sel===4&&!a&&!rev);
   if(shown){$('quiz-fb-who').textContent='COMENTÁRIO · '+q.who;$('quiz-fb-t').textContent=q.fb;}
   $('quiz-back').hidden=!!a||rev;
   $('quiz-ok').textContent=rev?'VOLTAR À LISTA':a?'FECHAR':'CONFIRMAR RESPOSTA';
@@ -4773,14 +4909,15 @@ addEventListener('resize',fitQuiz);
 function quizPick(i){
   if(!quiz||provas[quiz.n]||flags.review)return;
   quiz.sel=i;renderQuiz();sfx.blip();
-  quizOpts.children[i].scrollIntoView({block:'nearest'});
+  (i===4?$('quiz-back'):quizOpts.children[i]).scrollIntoView({block:'nearest'});
 }
-function quizMove(d){
+function quizMove(d){ // A, B, C, D and then the DEIXAR PARA DEPOIS button (a controller reaches it with the d-pad)
   if(!quiz||provas[quiz.n]||flags.review)return;
-  quizPick(quiz.sel<0?(d>0?0:3):(quiz.sel+d+4)%4);
+  quizPick(quiz.sel<0?(d>0?0:4):(quiz.sel+d+5)%5);
 }
 function quizEnter(){
   if(!quiz)return;
+  if(quiz.sel===4&&!provas[quiz.n]&&!flags.review){closeQuiz();return;}
   if(provas[quiz.n]||flags.review){closeQuiz();return;}
   if(quiz.sel<0){$('quiz-msg').textContent='Escolha uma alternativa antes de confirmar.';sfx.bump();return;}
   const ok=quiz.sel===QUIZ[quiz.n].c;
@@ -4791,7 +4928,7 @@ function quizEnter(){
 }
 function closeQuiz(){
   const pb=pileBack,pile=pb&&pb.list,justDone=quiz&&provas[quiz.n]&&quiz.fresh;pileBack=null;
-  quizEl.hidden=true;quiz=null;state='play';keys.clear();
+  quizEl.hidden=true;quiz=null;state='play';keys.clear();$('quiz-back').classList.remove('kb');
   if(flags.review){showReview();return;}
   // back to the pile while it still has blank sheets; a finished pile goes to the inventory
   if(pile&&justDone&&!flags.timeUp&&pile.some(n=>!provas[n])){sheetPile(pile,pb.surf);return;}
@@ -4799,12 +4936,23 @@ function closeQuiz(){
     const room={sala103:'Sala 103',sala201:'Sala 201',andar2:'mesa de estudo do 2º andar'}[scene]||'sala';
     const got=collectPile(pile,room,pb.surf);
     if(answered()===QUIZ_N&&!flags.seated)
-      return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}]),seatProfs);
+      return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'}].concat(sheetsReadyLines())),sheetsReadyEnd);
     return say(got);
   }
   if(answered()===QUIZ_N&&!flags.seated){
-    say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'},{t:'Leve as folhas aos professores Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}],seatProfs);
+    say([{t:'Você respondeu as '+QUIZ_N+' folhas da lição de casa.'}].concat(sheetsReadyLines()),sheetsReadyEnd);
   }
+}
+// the 10 sheets are ready: from 9h30 the professors wait at their desk; before that, the player has time to explore
+function sheetsReadyLines(){
+  return canDeliver()?[{t:'Leve as folhas aos professores Neto e Rosa, na Sala 101, antes das 11h30. Eles vão corrigir.'}]
+    :[{t:'Os professores Neto e Rosa passam a manhã tirando dúvidas da turma: eles só recebem as folhas a partir das 9h30, na Sala 101.'},
+      {t:'Até lá, dá tempo de explorar a faculdade.'}];
+}
+function sheetsReadyEnd(){if(canDeliver())seatProfs();else updateObjective();}
+function profsWaitLines(who){
+  return [{who,t:'Já está com as 10 folhas? Muito bem, '+nome1()+'!'},
+    {who,t:'Mas só vamos recolher a lição a partir das 9h30: agora a manhã é para tirar as dúvidas da turma. Volte aqui às 9h30.'}];
 }
 $('quiz-ok').addEventListener('click',quizEnter);
 $('quiz-back').addEventListener('click',closeQuiz);
@@ -4855,6 +5003,7 @@ function cacaLine(a,b){ // cells from a to b if they are in a straight line (8 d
 }
 function openCaca(){
   if(!caca){const gr=cacaMake();if(!gr)return;caca={grid:gr,found:{},cur:{r:0,c:0},anchor:null,drag:false};}
+  caca.out=false;
   if(!flags.cacaDica){flags.cacaDica=true;updatePauseExtra();}
   $('caca-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
   cacaGridEl.textContent='';
@@ -4877,14 +5026,14 @@ function renderCaca(){
   const pv={};if(caca.anchor){const L=cacaLine(caca.anchor,caca.cur);if(L)L.forEach(p=>{pv[p.r*CACA_N+p.c]=1;});}
   for(let i=0;i<cells.length;i++){
     const d=cells[i],r0=(i/CACA_N)|0,c0=i%CACA_N;
-    d.style.background=col[i]||'';d.className=(col[i]?'f':'')+(pv[i]?' pv':'')+(caca.anchor&&caca.anchor.r===r0&&caca.anchor.c===c0?' an':'')+(!flags.caca&&caca.cur.r===r0&&caca.cur.c===c0?' cur':'');
+    d.style.background=col[i]||'';d.className=(col[i]?'f':'')+(pv[i]?' pv':'')+(caca.anchor&&caca.anchor.r===r0&&caca.anchor.c===c0?' an':'')+(!flags.caca&&!caca.out&&caca.cur.r===r0&&caca.cur.c===c0?' cur':'');
   }
   const list=$('caca-list');list.textContent='';
   CACA_WORDS.forEach(([w,tip],i)=>{const li=document.createElement('li');li.className=caca.found[w]?'ok':'';
     if(caca.found[w])li.style.borderLeftColor=CACA_COLORS[i];
     li.innerHTML='<b></b><small></small>';li.firstChild.textContent=w;li.lastChild.textContent=tip;list.appendChild(li);});
   // every word found: no cursor on the letters any more, the selection goes to FECHAR (ENTER / A closes)
-  const cl=$('caca-close');if(flags.caca)cl.innerHTML=keyLabel()+' · FECHAR';else cl.textContent='DEIXAR PARA DEPOIS';cl.classList.toggle('kb',!!flags.caca);$('caca-mh').classList.toggle('fim',!!flags.caca);
+  const cl=$('caca-close');if(flags.caca)cl.innerHTML=keyLabel()+' · FECHAR';else cl.textContent='DEIXAR PARA DEPOIS';cl.classList.toggle('kb',!!flags.caca||!!caca.out);$('caca-mh').classList.toggle('fim',!!flags.caca);
 }
 const cacaCount=()=>caca?Object.keys(caca.found).length:0;
 function cacaTry(a,b){
@@ -4901,9 +5050,12 @@ function cacaTry(a,b){
   else{msg.textContent='"'+str+'" não está na lista. Tente de novo.';sfx.bump();}
   renderCaca();updatePauseExtra();
 }
-function cacaMove(dr,dc){if(flags.caca)return;caca.cur={r:(caca.cur.r+dr+CACA_N)%CACA_N,c:(caca.cur.c+dc+CACA_N)%CACA_N};document.body.classList.add('kb');renderCaca();}
+function cacaMove(dr,dc){if(flags.caca)return;
+  if(caca.out){if(dr<0){caca.out=false;renderCaca();sfx.blip();}return;} // on the button: up goes back to the grid
+  if(dr>0&&caca.cur.r===CACA_N-1&&!caca.anchor){caca.out=true;renderCaca();sfx.blip();return;} // down from the last row: the button
+  caca.cur={r:(caca.cur.r+dr+CACA_N)%CACA_N,c:(caca.cur.c+dc+CACA_N)%CACA_N};document.body.classList.add('kb');renderCaca();}
 function cacaEnter(){
-  if(flags.caca)return closeCaca();
+  if(flags.caca||caca.out)return closeCaca();
   document.body.classList.add('kb');
   if(!caca.anchor){caca.anchor={...caca.cur};sfx.blip();renderCaca();}
   else if(caca.anchor.r===caca.cur.r&&caca.anchor.c===caca.cur.c){caca.anchor=null;renderCaca();}
@@ -4970,7 +5122,7 @@ function sideNeeds(o){
     if(o.n&&/^portaFerro/.test(o.id))return flags.alost===5&&o.n===(flags.portas||0)+1&&corOpen()===o.num-1;
     if(o.id==='mesaPaginas')return flags.alost===5;
   }
-  if(o.id==='malvar')return flags.alost===6&&!flags.fundador;
+  if(o.id==='malvar'||o.id==='malvarRonda')return flags.alost===6&&!flags.fundador;
   if(o.id==='bruno')return flags.alost===6&&(!flags.dzOn||(!!flags.dzDone&&!flags.dzReward));
   if(o.id==='simulador')return (!!flags.dzOn&&!flags.dzDone)||(!!flags.viaTip&&!flags.viaOk);
   if(sideMarker(o))return true; // next step of Tiago's notebook
@@ -5020,7 +5172,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
 function sideDone(){ // finished side quests, greyed out at the end of the diary
   const L=[];
   if(flags.tiagoQ===6)L.push({k:'tiago',t:'Caderno do Tiago devolvido: o Tiago agora é seu '+gen('amigo','amiga')});
-  if(flags.viaTip&&flags.viaOk)L.push({k:'via',t:'Simulador do laboratório: via da glicólise percorrida (dica do Tiago)'});
+  if(flags.viaTip&&flags.viaOk)L.push({k:'via',t:'Simulador do laboratório: via da glicólise percorrida (dica do '+(flags.viaNeto?'Prof. Neto':'Tiago')+')'});
   if(flags.caca)L.push({k:'caca',t:'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras'+(flags.cacaThanks?' (e a Camila ficou sabendo)':'')});
   if(flags.alost===6)L.push({k:'alost',t:'A sala que não está lá: convite da Liga de Metabolismo recebido'});
   if(flags.fundador)L.push({k:'fundador',t:'O fundador da Liga: o "Prof. E. M." é o Prof. Edmundo Malvar, de Poções'});
@@ -5185,6 +5337,7 @@ function updatePauseExtra(){diaryCheck();}
 // flags.viaTip: tip heard (side quest on until flags.viaOk, the whole pathway ridden)
 function viaTipLines(TW){
   const run=()=>{flags.viaTip=true;updatePauseExtra();};
+  if(flags.viaTip&&!flags.viaOk)return [{who:TW,t:'Ah, e o professor Neto já te falou do simulador do laboratório, né? Do "Percorrer a via"? Foi assim que eu estudei as 10 reações. Recomendo muito!'}];
   if(flags.viaOk)return [{who:TW,t:'Ah, e uma dica de amigo: você conhece o simulador do laboratório, lá no térreo? A atividade "Percorrer a via"?'},
     {who:me(),t:'Conheço! Já percorri a via inteira, respondendo a pergunta de cada reação.',run},
     {who:TW,t:'Sério? Foi assim que eu estudei as 10 reações! Quem me recomendou foi o professor Neto. Ele vai gostar de saber.'}];
@@ -5298,7 +5451,8 @@ function bolsaKiko(o,jokeLines){
     {who:me(),t:'Sem ATP, o potássio escapa. E a bolsa C passou a noite fora da geladeira: no calor, a glicólise acelerou.'},
     {who:KW,t:'Sensacional! Agora eu entendo o que vejo no microscópio: na bolsa velha, as hemácias perdem a forma de disco e ficam arredondadas e cheias de espículas.'},
     {who:KW,t:'Sem ATP, a membrana não se mantém. É Histologia e Bioquímica juntas! Vou contar essa história na aula de hoje à tarde.'},
-    {who:KW,t:'Pode deixar as bolsas comigo. Muito obrigado, '+nome1()+'!',run:()=>{bolsaUpd(7);sfx.item();}}]);
+    {who:KW,t:'E a bolsa C... Ih, agora lembrei! Ontem eu separei a C na bancada para mostrar à turma da tarde e esqueci de guardar. A culpa foi minha, não do Seu Antônio.'},
+    {who:KW,t:'Ainda bem que ele guardou hoje cedo. Pode deixar as bolsas comigo. Muito obrigado, '+nome1()+'!',run:()=>{bolsaUpd(7);sfx.item();}}]);
   return null;
 }
 function bolsaFridge(){
@@ -5432,7 +5586,7 @@ function openDuel(){
 function renderDuel(){
   const opts=$('duelo-opts'),msg=$('duelo-msg');opts.textContent='';msg.className='';msg.textContent='';
   $('duelo-pts').textContent='ACERTOS '+duel.ok;
-  $('duelo-close').textContent=duel.done?'FECHAR':'DESISTIR';
+  $('duelo-close').hidden=!duel.done;$('duelo-close').classList.toggle('kb',duel.done); // FECHAR only once the duel is over
   if(duel.done){
     $('duelo-n').textContent='FIM DO DUELO';
     $('duelo-q').textContent=(duel.timeout?'Tempo esgotado! ':'')+'Você acertou '+duel.ok+' de '+DUEL_N+'. '+(duel.win?'Vitória sobre o Gabriel!':'Faltou pouco: para vencer são '+DUEL_WIN+' acertos.');
@@ -5456,7 +5610,7 @@ function renderDuel(){
   if(a){msg.textContent=a.ok?'Certo!':'Errado!';msg.className=a.ok?'ok':'err';}
 }
 function duelBar(){const f=Math.max(0,duel.t/DUEL_T);$('duelo-bar').style.width=(f*100)+'%';$('duelo-timer').classList.toggle('low',f<.3);}
-function duelMove(d){if(!duel||duel.done||duel.lock>0)return;duel.sel=(duel.sel+d+4)%4;sfx.blip();renderDuel();}
+function duelMove(d){if(!duel||duel.done||duel.lock>0)return;duel.sel=(duel.sel+d+4)%4;sfx.blip();renderDuel();} // only A-D: there is no giving up during the 25 s
 function duelEnter(){if(!duel)return;if(duel.done)closeDuel();else duelPick(duel.sel);}
 function duelPick(k){
   if(!duel||duel.done||duel.lock>0)return;
@@ -5476,9 +5630,8 @@ function duelEnd(timeout){
   renderDuel();
 }
 function closeDuel(){
-  if(state!=='duelo')return;
+  if(state!=='duelo'||!duel||!duel.done)return; // ESC / X / the button do nothing while the duel runs
   const d=duel;duel=null;dueloEl.hidden=true;state='play';keys.clear();
-  if(!d.done)return say([{who:GW,t:'Desistiu? Hahaha! Quando quiser a revanche, estou por aqui.'}]);
   if(!d.win){setMood('gabriel','smug',8);setMood('player','worried',3);}
   if(!d.win)return say([{who:GW,t:'Hahaha! '+d.ok+' de '+DUEL_N+'. Para me vencer, precisa de pelo menos '+DUEL_WIN+'.'},
     {who:GW,t:'Revanche quando quiser, '+gen('calouro','caloura')+'!'}]);
@@ -6751,7 +6904,7 @@ function renderDz(){
     list.appendChild(d);
   });
   const msg=$('dz-msg');msg.className=dz.err?'err':'';msg.textContent=dz.msg;
-  $('dz-ok').classList.toggle('kb',dz.row===3);
+  $('dz-ok').classList.toggle('kb',dz.row===3);$('dz-close').classList.toggle('kb',dz.row===4);
 }
 function fitDz(){
   if(dzEl.hidden)return;
@@ -6768,12 +6921,12 @@ function dzToggle(){
   else{L.push(mol);tone(660,.05,'square',.04);}
   renderDz();
 }
-function dzMove(dr,dc){
-  if(dr){dz.row=(dz.row+dr+4)%4;}
+function dzMove(dr,dc){ // three enzymes, LANÇAR A GLICOSE, then SAIR
+  if(dr){dz.row=(dz.row+dr+5)%5;}
   if(dc&&dz.row<3){const n=DZ_FASES[dz.f].tray.length;dz.col=(dz.col+dc+n)%n;}
   sfx.blip();renderDz();
 }
-function dzEnter(){if(dz.row===3)dzLaunch();else dzToggle();}
+function dzEnter(){if(dz.row===4)return closeDz();if(dz.row===3)dzLaunch();else dzToggle();}
 function closeDz(){if(state!=='dz')return;dzEl.hidden=true;dz=null;state='play';keys.clear();}
 function dzCompute(F,pick){
   const T={};
@@ -6910,7 +7063,7 @@ function renderSeg(){
     else sg.cards.forEach((n,i)=>{const b=document.createElement('button');b.type='button';b.className='qopt'+(i===sg.sel?' sel':'');
       b.innerHTML='<b></b><span></span>';b.firstChild.textContent=FICHAS[n][1];b.lastChild.textContent=FICHAS[n][0];
       b.addEventListener('click',e=>{e.stopPropagation();sg.sel=i;sgPick();});list.appendChild(b);});
-    $('sg-close').textContent=sg.ok?'FECHAR':'DEIXAR PARA DEPOIS';ok.hidden=!sg.ok;ok.textContent='CONTINUAR';ok.classList.toggle('kb',sg.ok);
+    $('sg-close').textContent=sg.ok?'FECHAR':'DEIXAR PARA DEPOIS';ok.hidden=!sg.ok;ok.textContent='CONTINUAR';ok.classList.toggle('kb',sg.ok);$('sg-close').classList.toggle('kb',!sg.ok&&sg.sel>=sg.cards.length);
     return;
   }
   const P=PORTAS[sg.n];
@@ -6927,7 +7080,7 @@ function renderSeg(){
       b.disabled=sg.ok;b.addEventListener('click',e=>{e.stopPropagation();sg.sel=i;rw.v=k;sfx.blip();renderSeg();});d.appendChild(b);}
     list.appendChild(d);
   });
-  $('sg-close').textContent='AFASTAR-SE';ok.hidden=false;ok.textContent=sg.ok?'ABRIR A PORTA':'TENTAR ABRIR';ok.classList.toggle('kb',sg.ok||sg.sel===sg.rows.length);
+  $('sg-close').textContent='AFASTAR-SE';ok.hidden=false;ok.textContent=sg.ok?'ABRIR A PORTA':'TENTAR ABRIR';ok.classList.toggle('kb',sg.ok||sg.sel===sg.rows.length);$('sg-close').classList.toggle('kb',!sg.ok&&sg.sel===sg.rows.length+1);
 }
 function fitSeg(){
   if(sgEl.hidden)return;
@@ -6964,15 +7117,16 @@ function closeSegredo(){
 }
 function sgEnter(){
   if(!sg)return;
-  if(sg.mode==='ordem')return sg.ok?closeSegredo():sgPick();
+  if(sg.mode==='ordem')return sg.ok||sg.sel>=sg.cards.length?closeSegredo():sgPick();
+  if(!sg.ok&&sg.sel===sg.rows.length+1)return closeSegredo();
   if(sg.ok||sg.sel>=sg.rows.length)return sgTry();
   const rw=sg.rows[sg.sel],i=rw.v?rw.o.indexOf(rw.v):-1;rw.v=rw.o[(i+1)%rw.o.length];sfx.blip();renderSeg();
 }
 function sgMove(d,side){
   if(!sg||sg.ok)return;
-  if(sg.mode==='ordem'){const n=sg.cards.length;if(n){sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg();}return;}
+  if(sg.mode==='ordem'){const n=sg.cards.length+1;sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg();return;} // the cards, then DEIXAR PARA DEPOIS
   if(side){const rw=sg.rows[sg.sel];if(!rw)return;const i=rw.v?rw.o.indexOf(rw.v):(d>0?-1:rw.o.length);rw.v=rw.o[Math.max(0,Math.min(rw.o.length-1,i+d))];sfx.blip();return renderSeg();}
-  const n=sg.rows.length+1;sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg();
+  const n=sg.rows.length+2;sg.sel=(sg.sel+d+n)%n;sfx.blip();renderSeg(); // the rows, TENTAR ABRIR, then AFASTAR-SE
 }
 $('sg-close').addEventListener('click',e=>{e.stopPropagation();closeSegredo();});
 $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.mode==='ordem')closeSegredo();else sgTry();});
@@ -7002,6 +7156,13 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
       {who:'PEDRO (VETERANO)',t:'E outra coisa: em dois anos aqui, nunca vi o Seu Antônio limpar aquela parede do fim do 2º andar. Ela nunca suja.'}]);
   });
   wrap(find('lucas'),function(){
+    if(flags.alost===6&&flags.hintLucas&&!flags.lucasCafe){flags.lucasCafe=true;face(this); // the pages were found: the Liga keeps its secrets
+      return say([{who:'LUCAS (2º ANO)',t:'E aí? Teve sorte com as páginas do meu caderno? As das reações 1, 3 e 10?'},
+        {t:'Você lembra da Larissa: "o que acontece na sala fica na sala".',choices:[
+          {t:'Guardar o segredo da Liga',fn:()=>say([{who:me(),t:'Ainda procurando...'},
+            {who:'LUCAS (2º ANO)',t:'Hmm... esse sorrisinho diz outra coisa. Tudo bem, o café continua prometido.'}])},
+          {t:'Dar só uma pista',fn:()=>say([{who:me(),t:'Digamos que elas estão num lugar onde as velas nunca se apagam.'},
+            {who:'LUCAS (2º ANO)',t:'Velas?! Agora fiquei curioso de verdade. O café é seu, sem perguntas.'}])}]}]);}
     if(!mid()||flags.hintLucas)return false;flags.hintLucas=true;face(this);
     say([{who:'LUCAS (2º ANO)',t:'Olha isto: comprei num sebo um caderno de capa preta, de um tal "Prof. E. M.". Glicólise inteira, escrita à mão.'},
       {who:'LUCAS (2º ANO)',t:'O estranho é que arrancaram justamente as páginas das reações 1, 3 e 10. As três irreversíveis.'},
@@ -7052,7 +7213,7 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
         say([{who:BW,t:'Boa! O desafio já aparece no menu do computador do laboratório, perto da bancada do espectrofotômetro. Boa sorte, colega!'}]);}},
       {t:'Agora não.',fn:()=>say([{who:BW,t:'Tranquilo. Quando quiser, é só falar comigo.'}])}];
     if(!flags.dzOn&&!flags.dzAsked){flags.dzAsked=true;
-      return say([{who:BW,t:'Psiu! A Larissa me contou que você abriu as três portas da sala. Eu também sou da Liga, desde o começo do ano.'},
+      return say([{who:BW,t:'Psiu! A Larissa me contou que você passou pelas dez portas do corredor das velas. Eu também sou da Liga, desde o começo do ano.'},
         {who:BW,t:'Todo membro novo passa por uma prova prática: o Desafio da Liga, no simulador do laboratório, aqui no térreo.'},
         {who:BW,t:'São três fases. Em cada uma, você coloca moléculas no sítio alostérico da enzima da reação 1, da fosfofrutocinase-1 e da piruvato-cinase. Depois, a glicose corre sozinha pela via.'},
         {who:BW,t:'Não vale nota, mas a Liga inteira fica sabendo. Topa?',choices:ask}]);}
@@ -7081,7 +7242,8 @@ function alostReset(){
    The MP3s live in the folder next to the game; without them the game simply runs silent. */
 const MUSIC_DIRS=['Músicas dos jogos/',''];
 const TRACKS={lab:'Laboratory of the Archmage (MP3).mp3',cour:'Courtyard of Enchantment.mp3',
-  alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3'};
+  alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3',
+  duel:'Duel of Arcana - V2.mp3'}; // the finale's wizards' duel (looped)
 const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab']};
 const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',sala204:'andar2',salaOculta:'andar2',salaCorredor:'andar2',salaCorredor2:'andar2',salaSim:'terreo',simGlic:'terreo'};
 const music=(()=>{
@@ -7117,6 +7279,7 @@ const music=(()=>{
   return {
     scene(name){zone=SCENE_ZONE[name];play(track(zone));preloadNext();},
     stop(){cur=null;},
+    special(k){zone=null;duck=1;fast=1.2;const a=el(k);a.loop=true;try{a.currentTime=0;}catch(e){}cur=null;play(k);}, // a track of its own, looping (not part of a floor playlist)
     duck(f){if(f!==duck){duck=f;fast=1.2;}}, // quick drop/return of the volume
     tick(dt){
       if(fast>0)fast-=dt;
@@ -7351,7 +7514,7 @@ function padKey(code,repeat){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
     else if(state==='intro'||state==='end')onEnter();
-    else if(state==='finale')$('btn-ag').click();
+    else if(state==='finale'){if(!$('btn-ag').hidden)$('btn-ag').click();}
     return;
   }
   onKey({code,key:code,repeat,target:document.body,preventDefault(){}});
@@ -7406,7 +7569,10 @@ $('intro-ctl').innerHTML=CTL_HELP;$('pz-ajuda').innerHTML=CTL_HELP;
    Freezes the clock and everything on screen; shows the diary (objectives) and the controller help. */
 const pauseEl=$('pausa');let pauseSel=0,pauseBack='play',pauseHelp=false;
 function pauseItems(){
-  return [{id:'voltar',t:'Voltar ao jogo'}];
+  const L=[{id:'voltar',t:'Voltar ao jogo'}];
+  if(scene==='simGlic')L.push({id:'sairSim',t:'Voltar ao menu do simulador'});
+  else if(scene==='salaSim')L.push({id:'sairSim',t:'Sair do simulador'});
+  return L;
 }
 function renderPause(){
   renderDiary();
@@ -7441,6 +7607,7 @@ function pauseSelect(){
   if(pauseHelp){pauseHelp=false;renderPause();return;}
   const it=pauseItems()[pauseSel];
   if(it.id==='voltar')closePause();
+  else if(it.id==='sairSim'){closePause();if(scene==='simGlic')simBack();else simExit();}
   else if(it.id==='controles'){pauseHelp=true;sfx.blip();renderPause();}
 }
 function pauseBackKey(){if(pauseHelp){pauseHelp=false;renderPause();}else closePause();}
@@ -7477,7 +7644,7 @@ function update(dt){
   }
   updateFade(dt);music.tick(dt);
   if(banner){banner.t-=dt;if(banner.t<=0)banner=null;}
-  updatePedro(dt);updateWanderers(dt);janUpdate(dt);catUpdate(dt);
+  updatePedro(dt);updateWanderers(dt);janUpdate(dt);catUpdate(dt);malvarRondaTick(dt);
   if(startTime&&!flags.profsIn&&gameMinutes()>=PROFS_MIN)profsArrive();
   profsCorrTick(dt);recessTick(dt);
   if(scene==='sala101'&&flags.profsIn&&!flags.seated){updateWalker(aldair,dt);updateWalker(heloisa,dt);}
@@ -7489,6 +7656,10 @@ function update(dt){
   if(state==='play'&&!flags.graded){
     const gm=gameMinutes();
     if(!flags.bell8&&gm>=CLASS_MIN)classStarts();
+    else if(!flags.call930&&gm>=DELIVER_MIN&&!flags.timeUp){flags.call930=true;tone(523,.2,'triangle',.05);tone(659,.3,'triangle',.05,.2);
+      say([{t:'São 9h30. Os professores Neto e Rosa começaram a receber as folhas da lição na Sala 101.'},
+        {t:answered()===QUIZ_N?'Você já está com as 10 folhas: é só levar até a mesa deles, antes das 11h30.':'Quando estiver com as 10 folhas, leve até a mesa deles, antes das 11h30.'}],
+        ()=>{if(answered()===QUIZ_N)seatProfs();else updateObjective();});}
     else if(!flags.warn11&&gm>=WARN_MIN&&!flags.timeUp)lastCall();
     else if(!flags.timeUp&&gm>=END_MIN)timeUp();
   }
@@ -7646,7 +7817,7 @@ function loadGame(d){
   scene=SCENES[d.scene]&&d.scene!=='salaSim'&&d.scene!=='simGlic'?d.scene:'terreo';objects=SCENES[scene];
   Object.assign(player,{x:d.player.x,y:d.player.y,dir:d.player.dir||'down',moving:false,anim:0});
   if(isCor()){const k=corOpen();for(let i=0;i<=10;i++){corLit[i]=k>=i?1:0;corSwing[i]=9;}music.duck(.12);}
-  endTime=d.ended?performance.now():0;saveT=0;
+  endTime=d.ended&&!(flags.graded&&flags.pass)?performance.now():0;saveT=0; // a game saved after a passing grade: the clock runs again
   $('intro').hidden=true;startTime=performance.now();state='play';music.scene(scene);preloadPosters();
   updateObjective();updateScore();diaryCheck();
   banner={text:'JOGO CARREGADO',t:2.6};
@@ -7674,140 +7845,296 @@ function finale(){
   $('ag-p1').textContent='Você terminou a missão principal e desvendou todos os segredos da Uninogwarts. Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
   $('ag-p2').textContent='Cada sala, cada enigma e cada porta foram pensados para alunos como você. Continue '+gen('curioso','curiosa')+': a Bioquímica ainda tem muitos caminhos esperando por você.';
   const foto=$('ag-foto'),src=document.querySelector('.creditos-loading .cl-foto');if(src&&!foto.src)foto.src=src.src;
-  $('agradecimento').hidden=false;wdStart();
-  // the photo rolls in from the right edge, like on the loading screen
-  if(matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const fr=$('frame').getBoundingClientRect(),rc=foto.getBoundingClientRect(),dist=Math.max(0,fr.right-rc.right-8),giro=dist/(Math.PI*rc.width)*360,t0=performance.now(),dur=3200;
-  (function passo(){
-    const k=Math.min(1,(performance.now()-t0)/dur),resta=Math.pow(1-k,1.3);
-    foto.style.transform=k<1?'translateX('+(dist*resta).toFixed(1)+'px) rotate('+(giro*resta).toFixed(1)+'deg)':'';
-    if(k<1)requestAnimationFrame(passo);
-  })();
+  $('agradecimento').hidden=false;wdStart();music.special('duel');
 }
-/* ---------- the grand finale: a wizards' wd on the thank-you screen ----------
-   Prof. Neto and Profa. Rosa (left) against Prof. Kiko and Prof. Malvar (right), drawn with the game's own paper
-   sprites on a small stage under the thank-you text. One minute of colourful spells with biochemistry "incantations",
-   shields, mid-air clashes, two beam locks and a big final clash; then a theatre curtain closes over the screen
-   with "Continua na próxima temporada...". WD_LEN in seconds. */
-const WD_LEN=60,DW=384,DH=100,DFLOOR=90;
+/* ---------- the grand finale: a wizards' duel on the thank-you screen ----------
+   Profa. Rosa and Prof. Malvar cast from two high balconies at the sides (they lock beams over the stage); Prof. Neto
+   and Prof. Kiko fight like knights of light: they leap with somersaults between two floating ledges, hang from the
+   chandelier and cast from there, dodge the spells with a flip (the spells fly past) and, three times, turn their
+   wands into blades of light and fence in the middle of the stage. Sprites at their in-game size. One minute
+   (WD_LEN), then a theatre curtain closes over the screen with "Continua na próxima temporada...". */
+const WD_LEN=60,WD_BOW=7,DW=384,DH=80,DFLOOR=72,WD_G=420; // WD_BOW: the curtain call, in seconds
 const WD_SPELLS=['GLICOLISUS!','PIRUVATUM!','ALOSTERICUS!','FOSFORILATUS!','ATPUS MAXIMUS!','ENOLASIUS!','LACTATUM!','EXPELLIGLICOSE!','HEXOCINASIUM!','PROTEGO ATP!'];
 const WD_COLS=['#ff4d6d','#4dd2ff','#7dff6a','#ffd23f','#c77dff','#ff8c1a','#ffffff','#2effc0'];
+const WD_LEDGES=[{x0:116,x1:166,y:46},{x0:218,x1:268,y:46}],WD_BAR={x0:150,x1:234,y:14},WD_BALC=[{x0:10,x1:52,y:38},{x0:332,x1:374,y:38}];
+const WD_SABER=[[9,15],[29,35],[53,59.6]],WD_LOCK=[[18,24],[40,46],[54,59.6]];
 let wd=null;
 function wdStart(){
   const cv_=$('ag-duelo');if(!cv_)return;
   const x=cv_.getContext('2d');x.imageSmoothingEnabled=false;
-  const W_=[{who:'aldair',name:'NETO',x:44,team:0,col:'#ffd23f'},{who:'heloisa',name:'ROSA',x:92,team:0,col:'#ff7ab0'},
-            {who:'kido',name:'KIKO',x:292,team:1,col:'#7dff6a'},{who:'malvar',name:'MALVAR',x:340,team:1,col:'#c77dff'}];
-  W_.forEach((w,i)=>Object.assign(w,{y:i===0||i===3?DFLOOR-7:DFLOOR,cd:.6+i*.45,hit:0,cast:0,bob:i*1.3,say:null,shield:0}));
-  wd={x,cv:cv_,t:0,last:performance.now(),W:W_,bolts:[],parts:[],beams:null,stars:Array.from({length:40},(_,i)=>[(i*97)%DW,(i*53)%60,i%3]),done:false,lock:[18,40],lockOn:-1};
+  const W_=[{who:'aldair',name:'NETO',x:96,y:DFLOOR,team:0,col:'#4d9dff',acro:true,saber:'#4dd2ff'},
+            {who:'heloisa',name:'ROSA',x:32,y:WD_BALC[0].y,team:0,col:'#ff5fa2'},
+            {who:'kido',name:'KIKO',x:288,y:DFLOOR,team:1,col:'#3fbf4f',acro:true,saber:'#7dff6a'},
+            {who:'malvar',name:'MALVAR',x:352,y:WD_BALC[1].y,team:1,col:'#a55dff'}];
+  W_.forEach((w,i)=>Object.assign(w,{cd:.8+i*.4,hit:0,cast:0,bob:i*1.3,say:null,shield:0,vx:0,vy:0,ground:true,flip:0,flipDir:1,air:0,hang:null,ai:1+i*.3}));
+  wd={x,cv:cv_,t:0,last:performance.now(),W:W_,bolts:[],parts:[],beams:null,stars:Array.from({length:36},(_,i)=>[(i*97)%DW,(i*53)%40,i%3]),done:false,saberT:0,leap:-1};
   requestAnimationFrame(wdFrame);
 }
-const tipOf=w=>{const i=wd.W.indexOf(w),up=wd.beams&&(i===0||i===3)&&wd.beams.pairs.some(p=>p.includes(i))?22:0; // in a beam lock the outer ones raise their wands over the others' heads
-  return [w.x+(w.team?-12:12)+(w.hit>0?(w.team?3:-3):0),w.y-30-up+Math.round(Math.sin(wd.t*3+w.bob))];};
-function wdBurst(x,y,col,n,sp){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(sp||40)*(.3+Math.random());wd.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-10,life:.5+Math.random()*.7,col:Math.random()<.3?'#ffffff':col});}}
+const wdFoe=w=>wd.W.find(o=>o.team!==w.team&&!!o.acro===!!w.acro);
+const wdFace=w=>{const f=wdFoe(w);return f?(f.x>w.x?1:-1):(w.team?-1:1);};
+const wdIn=(t,L)=>L.findIndex(([a,b])=>t>=a&&t<b);
+function tipOf(w){const f=wdFace(w);return w.hang?[w.x+f*3,w.y-26]:[w.x+f*9,w.y-15+Math.round(Math.sin(wd.t*3+w.bob))];}
+function wdBurst(x,y,col,n,sp){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(sp||40)*(.3+Math.random());wd.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-10,life:.4+Math.random()*.6,col:Math.random()<.3?'#ffffff':col});}}
 function wdCast(w){
-  const foes=wd.W.filter(o=>o.team!==w.team),f=foes[(Math.random()*foes.length)|0],[sx,sy]=tipOf(w),[tx,ty]=[f.x,f.y-24];
-  const col=WD_COLS[(Math.random()*WD_COLS.length)|0],d=Math.hypot(tx-sx,ty-sy),sp=150+Math.random()*90,arc=(Math.random()-.5)*60;
+  const foes=wd.W.filter(o=>o.team!==w.team),f=foes[(Math.random()*foes.length)|0],[sx,sy]=tipOf(w),tx=f.x,ty=f.y-12;
+  const col=WD_COLS[(Math.random()*WD_COLS.length)|0],d=Math.hypot(tx-sx,ty-sy)||1,sp=160+Math.random()*90,arc=(Math.random()-.5)*40;
   wd.bolts.push({x:sx,y:sy,sx,sy,tx,ty,k:0,len:d,sp,arc,col,team:w.team,target:f,trail:[]});
-  w.cast=.35;if(Math.random()<.35)w.say={t:WD_SPELLS[(Math.random()*WD_SPELLS.length)|0],life:1.4};
-  tone(500+Math.random()*700,.09,'triangle',.018);
+  w.cast=.3;if(Math.random()<.35)w.say={t:WD_SPELLS[(Math.random()*WD_SPELLS.length)|0],life:1.4};
+  tone(500+Math.random()*700,.08,'triangle',.016);
+}
+// a leap: lands on (tx,ty) after T seconds, with a somersault
+function wdJump(w,tx,ty,T,flip){
+  w.vx=(tx-w.x)/T;w.vy=(ty-w.y-.5*WD_G*T*T)/T;w.ground=false;w.hang=null;w.air=T;w.flip=flip?1:0;w.flipDir=tx>=w.x?1:-1;w.target=[tx,ty];
+  tone(300,.06,'sine',.015);
+}
+function wdAcroAI(w,dt){
+  const t=wd.t,ph=wdIn(t,WD_SABER);
+  if(w.hang){w.hang.t-=dt;w.x=w.hang.x+Math.sin(t*4+w.bob)*1.5;w.y=WD_BAR.y+26;if(w.hang.t<=0){w.hang=null;w.ground=false;w.vy=0;w.vx=wdFace(w)*30;}return;}
+  if(!w.ground)return;
+  if(ph>=0){ // blades of light in the middle of the stage
+    const me=wd.W.indexOf(w),home=me===0?176:208,other=wdFoe(w),sw=wd.leap===me;
+    if(Math.abs(w.x-home)>6&&!sw){if(Math.abs(w.x-home)>40)wdJump(w,home,DFLOOR,.6,true);else w.x+=Math.sign(home-w.x)*Math.min(Math.abs(home-w.x),60*dt);}
+    if(wd.leap<0&&t-WD_SABER[ph][0]>2.2&&t-WD_SABER[ph][0]<2.4&&me===0){wd.leap=0;wdJump(w,other.x+28,DFLOOR,.7,true);} // Neto leaps over Kiko...
+    if(wd.leap===0&&me===2&&t-WD_SABER[ph][0]>3.6){wd.leap=2;wdJump(w,wd.W[0].x-28,DFLOOR,.7,true);}       // ...and Kiko answers the same way
+    return;
+  }
+  wd.leap=-1;
+  // a spell coming close: dodge with a flip
+  for(const b of wd.bolts)if(b.target===w&&b.k>.55&&b.k<.8&&!b.dodged&&(b.dodged=Math.random()>.45?1:2)===1){const dx=(Math.random()<.5?-1:1)*(22+Math.random()*14);
+    wdJump(w,Math.max(14,Math.min(DW-14,w.x+dx)),wdSurfaceY(w.x+dx,w.y),.55,true);return;}
+  w.ai-=dt;if(w.ai>0)return;w.ai=1+Math.random()*1.6;
+  const r=Math.random(),side=w.team?1:0,ledge=WD_LEDGES[side],onLedge=w.y<DFLOOR-1;
+  if(r<.3){const lx=ledge.x0+8+Math.random()*(ledge.x1-ledge.x0-16);wdJump(w,lx,ledge.y,.75,Math.random()<.6);}                          // up to a ledge
+  else if(r<.5){const hx=WD_BAR.x0+10+Math.random()*(WD_BAR.x1-WD_BAR.x0-20);wdJump(w,hx,WD_BAR.y+26,.7,false);w.toHang=hx;}               // up to the chandelier
+  else if(r<.7&&onLedge){wdJump(w,side?248+Math.random()*80:60+Math.random()*70,DFLOOR,.7,true);}                                         // back down with a flip
+  else if(r<.85){wdJump(w,Math.max(70,Math.min(DW-70,w.x+(Math.random()-.5)*90)),w.y>=DFLOOR-1?DFLOOR:w.y,.5,Math.random()<.5);}        // a hop
+}
+function wdSurfaceY(x,y){for(const L of WD_LEDGES)if(Math.abs(y-L.y)<2&&x>L.x0&&x<L.x1)return L.y;return DFLOOR;}
+function wdPhysics(w,dt){
+  if(w.hang||w.ground)return;
+  const py=w.y;w.vy+=WD_G*dt;w.x+=w.vx*dt;w.y+=w.vy*dt;w.air-=dt;
+  if(w.toHang!=null&&w.vy>-10&&Math.abs(w.y-(WD_BAR.y+26))<6&&w.x>WD_BAR.x0&&w.x<WD_BAR.x1){w.hang={x:w.x,t:1.4+Math.random()*1.2};w.toHang=null;w.vx=w.vy=0;w.flip=0;w.y=WD_BAR.y+26;tone(200,.08,'square',.015);return;}
+  if(w.vy>0){
+    if(!wd.bow)for(const L of WD_LEDGES)if(py<=L.y&&w.y>=L.y&&w.x>L.x0&&w.x<L.x1){w.y=L.y;w.ground=true;} // at the curtain call everyone goes down to the stage
+    if(w.y>=DFLOOR){w.y=DFLOOR;w.ground=true;}
+    if(w.ground){w.vx=0;w.vy=0;w.flip=0;w.toHang=null;wdBurst(w.x,w.y,'#9a9084',4,20);}
+  }
+  w.x=Math.max(10,Math.min(DW-10,w.x));
+}
+// the curtain call: centre stage, facing the audience, two bows (0..1 amount of each)
+const WD_SPOTS=[176,150,208,234]; // Neto, Rosa, Kiko, Malvar (Rosa and Malvar at the ends, the fencers in the middle)
+const wdBowAmt=tb=>{const b=(s,d)=>{const k=(tb-s)/d;return k<=0||k>=1?0:Math.sin(Math.PI*k);};return Math.max(b(2.2,1.5),b(4.4,1.5));};
+function wdBowUpdate(dt){
+  const D=wd,tb=D.t-WD_LEN;
+  if(!D.bow){D.bow=true;D.bolts=[];D.beams=null;
+    D.W.forEach((w,i)=>{w.hang=null;w.toHang=null;w.cast=0;w.say=null;w.hit=0;w.shield=0;wdJump(w,WD_SPOTS[i],DFLOOR,.9,!!w.acro);});}
+  for(const w of D.W)wdPhysics(w,dt);
+  if(Math.random()<dt*(tb<1.2?8:22))tone(1500+Math.random()*900,.025,'square',.005); // applause
+  if(Math.random()<dt*40)D.parts.push({x:Math.random()*DW,y:-2,vx:(Math.random()-.5)*14,vy:6+Math.random()*10,life:2.5+Math.random(),col:WD_COLS[(Math.random()*WD_COLS.length)|0],conf:1}); // confetti
+  for(const p of D.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;if(!p.conf)p.vy+=60*dt;p.life-=dt;}
+  D.parts=D.parts.filter(p=>p.life>0&&p.y<DH);
 }
 function wdUpdate(dt){
-  const D=wd;D.t+=dt;const t=D.t;
-  const lockI=D.lock.findIndex(s=>t>=s&&t<s+6),finalClash=t>=WD_LEN-6;
-  // beam locks: Neto against Malvar, then Rosa against Kiko; the golden knot of light swings to and fro
-  if(lockI>=0||finalClash){
-    if(!D.beams){const pairs=finalClash?[[0,3],[1,2]]:lockI===0?[[0,3]]:[[1,2]];D.beams={pairs,start:t,cols:pairs.map(()=>[WD_COLS[(Math.random()*8)|0],WD_COLS[(Math.random()*8)|0]])};}
-    for(const [a,b] of D.beams.pairs){D.W[a].cast=.2;D.W[b].cast=.2;}
-    if(Math.random()<dt*30){const [a,b]=D.beams.pairs[0],m=wdKnot(a,b);wdBurst(m[0],m[1],'#ffe680',2,30);}
+  const D=wd;D.t+=dt;const t=D.t,lockI=wdIn(t,WD_LOCK),saberI=wdIn(t,WD_SABER);
+  if(t>=WD_LEN)return wdBowUpdate(dt);
+  // beam lock between the two balconies, high over the fight
+  if(lockI>=0){
+    if(!D.beams)D.beams={pairs:[[1,3]],start:t,cols:[[WD_COLS[(Math.random()*8)|0],WD_COLS[(Math.random()*8)|0]]]};
+    D.W[1].cast=D.W[3].cast=.2;
+    if(Math.random()<dt*30){const m=wdKnot(1,3);wdBurst(m[0],m[1],'#ffe680',2,30);}
     if(Math.random()<dt*3)tone(180+Math.random()*60,.15,'sawtooth',.01);
-  }else if(D.beams){ // the lock breaks with a bang
-    for(const [a,b] of D.beams.pairs){const m=wdKnot(a,b);wdBurst(m[0],m[1],'#ffe680',60,90);}
-    [196,262,330].forEach((f,i)=>tone(f,.3,'square',.03,i*.05));D.beams=null;
-  }
+  }else if(D.beams){const m=wdKnot(1,3);wdBurst(m[0],m[1],'#ffe680',60,90);[196,262,330].forEach((f,i)=>tone(f,.3,'square',.03,i*.05));D.beams=null;}
+  // the blades clash
+  if(saberI>=0){D.saberT-=dt;const a=D.W[0],b=D.W[2];
+    if(D.saberT<=0&&a.ground&&b.ground&&Math.abs(a.x-b.x)<40){D.saberT=.28+Math.random()*.2;const mx=(a.x+b.x)/2,my=DFLOOR-16-Math.random()*8;
+      wdBurst(mx,my,'#ffffff',10,60);wdBurst(mx,my,Math.random()<.5?a.saber:b.saber,8,50);tone(1400+Math.random()*500,.05,'square',.018);tone(90,.12,'sawtooth',.02);}}
   for(const w of D.W){
     w.hit=Math.max(0,w.hit-dt);w.cast=Math.max(0,w.cast-dt);w.shield=Math.max(0,w.shield-dt);
     if(w.say&&(w.say.life-=dt)<=0)w.say=null;
-    if(!D.beams||!D.beams.pairs.some(p=>p.includes(D.W.indexOf(w)))){
-      w.cd-=dt*(t>WD_LEN-14?2.2:1);if(w.cd<=0){wdCast(w);w.cd=.7+Math.random()*1.3;}
-    }
-    w.x+=Math.sin(t*1.7+w.bob)*dt*6; // they sidestep
+    if(w.acro){wdAcroAI(w,dt);wdPhysics(w,dt);}
+    else w.x+=Math.sin(t*1.7+w.bob)*dt*3;
+    const busy=(w.acro&&saberI>=0)||(!w.acro&&lockI>=0);
+    if(!busy){w.cd-=dt*(t>WD_LEN-14?2:1);if(w.cd<=0){wdCast(w);w.cd=.8+Math.random()*1.4;}}
   }
-  // bolts: curved flight, mid-air clashes, shields and hits
+  // bolts: curved flight, mid-air clashes; at the end they hit, meet a shield, or fly past a dodger
   for(const b of D.bolts){
-    b.k+=b.sp*dt/b.len;const k=Math.min(1,b.k);
-    b.x=b.sx+(b.tx-b.sx)*k;b.y=b.sy+(b.ty-b.sy)*k-Math.sin(k*Math.PI)*b.arc;
-    b.trail.push([b.x,b.y]);if(b.trail.length>9)b.trail.shift();
-    if(Math.random()<.5)D.parts.push({x:b.x,y:b.y,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,life:.3,col:b.col});
+    b.k+=b.sp*dt/b.len;const k=b.k;
+    b.x=b.sx+(b.tx-b.sx)*k;b.y=b.sy+(b.ty-b.sy)*k-Math.sin(Math.min(1,k)*Math.PI)*b.arc;
+    b.trail.push([b.x,b.y]);if(b.trail.length>8)b.trail.shift();
+    if(Math.random()<.4)D.parts.push({x:b.x,y:b.y,vx:(Math.random()-.5)*10,vy:(Math.random()-.5)*10,life:.25,col:b.col});
   }
-  for(const a of D.bolts)for(const c of D.bolts)if(!a.dead&&!c.dead&&a.team!==c.team&&Math.abs(a.x-c.x)<6&&Math.abs(a.y-c.y)<6){
-    a.dead=c.dead=true;wdBurst(a.x,a.y,a.col,22,70);wdBurst(a.x,a.y,c.col,22,70);tone(880,.12,'square',.025);}
-  for(const b of D.bolts){if(b.dead||b.k<1)continue;b.dead=true;const f=b.target;
-    if(Math.random()<.45){f.shield=.5;wdBurst(b.x,b.y,'#9fe8ff',14,50);tone(1200,.06,'sine',.02);}
-    else{f.hit=.4;wdBurst(b.x,b.y,b.col,26,80);tone(150,.12,'triangle',.03);}}
+  for(const a of D.bolts)for(const c of D.bolts)if(!a.dead&&!c.dead&&a.team!==c.team&&Math.abs(a.x-c.x)<5&&Math.abs(a.y-c.y)<5){
+    a.dead=c.dead=true;wdBurst(a.x,a.y,a.col,18,60);wdBurst(a.x,a.y,c.col,18,60);tone(880,.1,'square',.02);}
+  for(const b of D.bolts){if(b.dead||b.k<1)continue;const f=b.target,near=Math.hypot(f.x-b.x,f.y-12-b.y)<10;
+    if(!near){if(b.k>1.6||b.x<0||b.x>DW||b.y<0||b.y>DH){b.dead=true;wdBurst(b.x,b.y,b.col,5,20);}continue;} // dodged: it flies on and fizzles
+    b.dead=true;
+    if(!f.acro&&Math.random()<.5||f.acro&&Math.random()<.3){f.shield=.5;wdBurst(b.x,b.y,'#9fe8ff',12,45);tone(1200,.06,'sine',.02);}
+    else{f.hit=.4;wdBurst(b.x,b.y,b.col,22,70);tone(150,.12,'triangle',.03);}}
   D.bolts=D.bolts.filter(b=>!b.dead);
   for(const p of D.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=60*dt;p.life-=dt;}
   D.parts=D.parts.filter(p=>p.life>0&&p.y<DH);
-  if(t>=WD_LEN-.2&&!D.boom){D.boom=true;for(let i=0;i<6;i++)wdBurst(DW/2+(Math.random()-.5)*80,40+(Math.random()-.5)*30,WD_COLS[i],50,120);[262,330,392,523,659,784].forEach((f,i)=>tone(f,.4,'triangle',.04,i*.08));}
+  if(t>=WD_LEN-.2&&!D.boom){D.boom=true;for(let i=0;i<6;i++)wdBurst(DW/2+(Math.random()-.5)*90,30+(Math.random()-.5)*24,WD_COLS[i],45,110);[262,330,392,523,659,784].forEach((f,i)=>tone(f,.4,'triangle',.04,i*.08));}
 }
-function wdKnot(a,b){const [ax,ay]=tipOf(wd.W[a]),[bx,by]=tipOf(wd.W[b]),s=.5+Math.sin((wd.t-wd.beams.start)*2.3)*.18;return [ax+(bx-ax)*s,ay+(by-ay)*s];}
+function wdKnot(a,b){const [ax,ay]=tipOf(wd.W[a]),[bx,by]=tipOf(wd.W[b]),s=.5+Math.sin((wd.t-wd.beams.start)*2.3)*.2;return [ax+(bx-ax)*s,ay+(by-ay)*s];}
 function wdDraw(){
-  const D=wd,x=D.x,t=D.t,R=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),w,h);};
-  // night stage: sky, stars, a stone floor and two banners
+  const D=wd,x=D.x,t=D.t,R=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),w,h);},saberOn=wdIn(t,WD_SABER)>=0;
   const gr=x.createLinearGradient(0,0,0,DH);gr.addColorStop(0,'#120a24');gr.addColorStop(1,'#2a1430');x.fillStyle=gr;x.fillRect(0,0,DW,DH);
   for(const [sx,sy,k] of D.stars)if((Math.floor(t*3+k*7+sx)%5))R(sx,sy,1,1,k?'#d8d0ff':'#fff6c8');
-  R(0,DFLOOR,DW,DH-DFLOOR,'#3a2e28');for(let i=0;i<DW;i+=16)R(i+(Math.floor(i/16)%2)*8,DFLOOR+4,1,6,'#2a2420');R(0,DFLOOR,DW,1,'#5e564c');
-  // the two raised steps of the outer duellists, and a pennant over each side
-  for(const sx of [24,DW-64]){R(sx,DFLOOR-7,40,7,'#4a4239');R(sx,DFLOOR-7,40,1,'#776f63');R(sx,DFLOOR-1,40,1,'#2a2420');}
-  for(const [px0,c1,c2] of [[8,'#7a2e3e','#e0b22e'],[DW-30,'#2b4a6f','#9aa2a9']]){R(px0-2,6,26,2,'#5a3d24');
-    for(let yy=8;yy<44;yy++){const cut=yy>34?Math.abs(11-(yy-34)*1.1):99,w2=22;for(let xx=0;xx<w2;xx++)if(yy<=34||Math.abs(xx-11)>=11-(yy-34)*1.1)R(px0+xx,yy,1,1,xx<2||xx>19?c2:c1);}}
-  // beams under the duellists' hands
+  x.fillStyle='#efe3c8';x.beginPath();x.arc(DW-70,12,6,0,7);x.fill();x.fillStyle='#120a24';x.beginPath();x.arc(DW-67,10,5,0,7);x.fill(); // the moon
+  // floor, the two balconies (railings), the two floating ledges (on chains) and the chandelier bar with its candles
+  R(0,DFLOOR,DW,DH-DFLOOR,'#3a2e28');R(0,DFLOOR,DW,1,'#5e564c');for(let i=0;i<DW;i+=14)R(i,DFLOOR+3,1,4,'#2a2420');
+  for(const B of WD_BALC){R(B.x0,B.y,B.x1-B.x0,4,'#5e564c');R(B.x0,B.y,B.x1-B.x0,1,'#776f63');R(B.x0+4,B.y+4,6,DFLOOR-B.y-4,'#3e372f');
+    for(let xx=B.x0;xx<=B.x1;xx+=5)R(xx,B.y-6,1,6,'#776f63');R(B.x0,B.y-7,B.x1-B.x0+1,1,'#9a9084');}
+  for(const L of WD_LEDGES){R(L.x0,L.y,L.x1-L.x0,4,'#5e564c');R(L.x0,L.y,L.x1-L.x0,1,'#776f63');R(L.x0+3,L.y+4,L.x1-L.x0-6,2,'#3e372f');
+    for(const cx_ of [L.x0+4,L.x1-5])for(let yy=0;yy<L.y;yy+=3)R(cx_,yy,1,2,'#6e6a62');}
+  R(WD_BAR.x0,WD_BAR.y,WD_BAR.x1-WD_BAR.x0,2,'#a8862a');for(const cx_ of [WD_BAR.x0+10,(WD_BAR.x0+WD_BAR.x1)/2,WD_BAR.x1-10]){for(let yy=0;yy<WD_BAR.y;yy+=3)R(cx_,yy,1,2,'#a8862a');}
+  for(let cx_=WD_BAR.x0+6;cx_<WD_BAR.x1;cx_+=14){R(cx_,WD_BAR.y-4,2,4,'#efe3c8');R(cx_,WD_BAR.y-6-(Math.floor(t*8+cx_)%2),2,2,'#ffb030');}
+  R(4,6,14,22,'#7a2e3e');R(4,6,14,2,'#e0b22e');R(DW-18,6,14,22,'#2b4a6f');R(DW-18,6,14,2,'#9aa2a9');
+  // beam lock over the stage
   if(D.beams)D.beams.pairs.forEach(([a,b],i)=>{
     const A=tipOf(D.W[a]),B=tipOf(D.W[b]),m=wdKnot(a,b),[c1,c2]=D.beams.cols[i];
-    for(const [P,c] of [[A,c1],[B,c2]]){x.strokeStyle=c;x.globalAlpha=.35;x.lineWidth=5;x.beginPath();x.moveTo(P[0],P[1]);x.lineTo(m[0],m[1]);x.stroke();
-      x.globalAlpha=1;x.lineWidth=2;x.beginPath();x.moveTo(P[0],P[1]);
-      for(let k=1;k<=8;k++){const q=k/8;x.lineTo(P[0]+(m[0]-P[0])*q+(Math.random()-.5)*2,P[1]+(m[1]-P[1])*q+(Math.random()-.5)*2);}x.stroke();}
-    const r=5+Math.sin(t*20)*1.5;x.fillStyle='#fff6c8';x.globalAlpha=.5;x.beginPath();x.arc(m[0],m[1],r+4,0,7);x.fill();x.globalAlpha=1;x.fillStyle='#ffe680';x.beginPath();x.arc(m[0],m[1],r,0,7);x.fill();
+    for(const [P,c] of [[A,c1],[B,c2]]){x.strokeStyle=c;x.globalAlpha=.35;x.lineWidth=4;x.beginPath();x.moveTo(P[0],P[1]);x.lineTo(m[0],m[1]);x.stroke();
+      x.globalAlpha=1;x.lineWidth=1.5;x.beginPath();x.moveTo(P[0],P[1]);for(let k=1;k<=8;k++){const q=k/8;x.lineTo(P[0]+(m[0]-P[0])*q+(Math.random()-.5)*2,P[1]+(m[1]-P[1])*q+(Math.random()-.5)*2);}x.stroke();}
+    const r=4+Math.sin(t*20);x.fillStyle='#fff6c8';x.globalAlpha=.5;x.beginPath();x.arc(m[0],m[1],r+3,0,7);x.fill();x.globalAlpha=1;x.fillStyle='#ffe680';x.beginPath();x.arc(m[0],m[1],r,0,7);x.fill();
   });
-  // the four professors (paper sprites, doubled), wands, shields, incantations
+  // the professors at their in-game size
+  const bowing=D.bow&&D.t-WD_LEN>1.2,bowB=bowing?wdBowAmt(D.t-WD_LEN):0;
   for(const w of D.W){
-    const f=w.cast>0?1:0,s=personSprite(w.who,'coat',w.team?'left':'right',f,false),c=s.c,sc=2;
-    const X=Math.round(w.x-8*sc+(w.hit>0?(w.team?4:-4):0)),Y=Math.round(w.y-24*sc+Math.sin(t*3+w.bob));
-    x.globalAlpha=.35;x.fillStyle='#000';x.beginPath();x.ellipse(w.x,w.y,12,3,0,0,7);x.fill();x.globalAlpha=1;
-    if(w.hit>0&&Math.floor(t*20)%2)x.globalAlpha=.5;
-    x.drawImage(c,0,0,c.width,c.height,X-(c._ox||0)*sc,Y-(c._oy||0)*sc,c.width*sc,c.height*sc);x.globalAlpha=1;
-    const [tx,ty]=tipOf(w),hx=w.x+(w.team?-6:6);x.strokeStyle='#5a3d24';x.lineWidth=2;x.beginPath();x.moveTo(hx,ty+8);x.lineTo(tx,ty);x.stroke();
-    R(tx-1,ty-1,2,2,w.cast>0?'#ffffff':w.col);
-    if(w.shield>0){x.strokeStyle='#9fe8ff';x.globalAlpha=w.shield*2;x.lineWidth=2;x.beginPath();x.arc(w.x+(w.team?-14:14),w.y-22,16,0,7);x.stroke();x.globalAlpha=1;}
-    g=x;pxText(w.name,w.x,DFLOOR+3,'#efe3c8','center');
-    if(w.say){const tw=pxW(w.say.t)+6,bx=Math.max(1,Math.min(DW-tw-1,Math.round(w.x-tw/2))),by=Y-12;
-      R(bx,by,tw,9,'#1d1612');R(bx+1,by+1,tw-2,7,'#efe3c8');pxText(w.say.t,bx+3,by+2,w.col==='#ffd23f'?'#a8862a':w.col,);}
-    g=fctx;
+    if(bowing&&w.ground){ // the curtain call: facing the audience, bending forward (head and shoulders go down)
+      const c=personSprite(w.who,'coat','down',0,false).c,ox=c._ox||0,oy=c._oy||0,X=Math.round(w.x)-8-ox,Y=Math.round(w.y)-24-oy,cut=oy+14,dip=Math.round(bowB*5);
+      x.globalAlpha=.35;x.fillStyle='#000';x.beginPath();x.ellipse(w.x,w.y,6,1.5,0,0,7);x.fill();x.globalAlpha=1;
+      x.drawImage(c,0,cut,c.width,c.height-cut,X,Y+cut,c.width,c.height-cut);
+      x.drawImage(c,0,0,c.width,cut,X+Math.round(bowB*.5),Y+dip,c.width,cut-Math.round(bowB*2)); // the upper body leans down
+      continue;
+    }
+    const f=wdFace(w),s=personSprite(w.who,'coat',f>0?'right':'left',w.ground||w.hang?(w.cast>0?1:0):2,false),c=s.c;
+    if(w.ground||w.hang){x.globalAlpha=.35;x.fillStyle='#000';x.beginPath();x.ellipse(w.x,(w.hang?DFLOOR:w.y),6,1.5,0,0,7);x.fill();x.globalAlpha=1;}
+    if(w.hit>0&&Math.floor(t*20)%2)x.globalAlpha=.45;
+    x.save();x.translate(Math.round(w.x+(w.hit>0?-f*2:0)),Math.round(w.y-12));
+    if(!w.ground&&w.flip&&!w.hang){const T=Math.max(.01,w.air+ (w.vy>0?0:0)),prog=1-Math.max(0,w.air)/Math.max(.3,T+ (1-Math.max(0,w.air)));x.rotate(w.flipDir*(t*12%(Math.PI*2)));}
+    x.drawImage(c,-8-(c._ox||0),-12-(c._oy||0));x.restore();x.globalAlpha=1;
+    if(w.hang){R(w.x-4,WD_BAR.y+1,2,3,'#d9a37c');R(w.x+3,WD_BAR.y+1,2,3,'#d9a37c');} // hands on the bar
+    // the wand, or the blade of light
+    const hx=w.hang?w.x+f*3:w.x+f*5,hy=w.hang?w.y-24:w.y-11;
+    if(w.acro&&saberOn&&w.ground){
+      const a=-Math.PI/2+f*(.6+Math.sin(t*14+w.bob)*.9),ex=hx+Math.cos(a)*15,ey=hy+Math.sin(a)*15;
+      x.strokeStyle=w.saber;x.globalAlpha=.4;x.lineWidth=4;x.beginPath();x.moveTo(hx,hy);x.lineTo(ex,ey);x.stroke();
+      x.globalAlpha=1;x.strokeStyle='#ffffff';x.lineWidth=1.5;x.beginPath();x.moveTo(hx,hy);x.lineTo(ex,ey);x.stroke();R(hx-1,hy-1,2,2,'#2c3236');
+    }else{const [tx,ty]=tipOf(w);x.strokeStyle='#5a3d24';x.lineWidth=1.5;x.beginPath();x.moveTo(hx,hy);x.lineTo(tx,ty);x.stroke();R(tx-1,ty-1,2,2,w.cast>0?'#ffffff':w.col);}
+    if(w.shield>0){x.strokeStyle='#9fe8ff';x.globalAlpha=w.shield*2;x.lineWidth=1.5;x.beginPath();x.arc(w.x+f*8,w.y-12,10,0,7);x.stroke();x.globalAlpha=1;}
   }
-  // bolts with glowing trails, sparks
-  for(const b of D.bolts){b.trail.forEach(([px_,py_],i)=>{x.globalAlpha=(i+1)/b.trail.length*.7;R(px_-1,py_-1,3,3,b.col);});x.globalAlpha=1;R(b.x-2,b.y-2,4,4,'#ffffff');R(b.x-1,b.y-1,2,2,b.col);}
-  for(const p of D.parts){x.globalAlpha=Math.min(1,p.life*2);R(p.x,p.y,p.life>.4?2:1,p.life>.4?2:1,p.col);}x.globalAlpha=1;
-  // a countdown of the wd, tiny, in the corner
+  // incantations: dark letters on a light balloon with a border in the caster's colour (always readable)
+  g=x;
+  for(const w of D.W){
+    if((t<5||D.bow)&&!w.hang)pxText(w.name,w.x,Math.min(DH-7,w.y+3),'#efe3c8','center');
+    if(w.say){const tw=pxW(w.say.t)+6,bx=Math.max(1,Math.min(DW-tw-1,Math.round(w.x-tw/2))),by=Math.max(1,Math.round(w.y-38));
+      R(bx-1,by-1,tw+2,11,w.col);R(bx,by,tw,9,'#fbf4e4');pxText(w.say.t,bx+3,by+2,'#1d1612');}
+  }
+  g=fctx;
+  for(const b of D.bolts){b.trail.forEach(([px_,py_],i)=>{x.globalAlpha=(i+1)/b.trail.length*.7;R(px_-1,py_-1,2,2,b.col);});x.globalAlpha=1;R(b.x-1,b.y-1,3,3,'#ffffff');R(b.x,b.y,1,1,b.col);}
+  for(const p of D.parts){x.globalAlpha=Math.min(1,p.life*2);R(p.x,p.y,1,1,p.col);}x.globalAlpha=1;
 }
 function wdFrame(now){
   const D=wd;if(!D||D.done)return;
   const dt=Math.min(.05,(now-D.last)/1000);D.last=now;
   wdUpdate(dt);wdDraw();
-  if(D.t>=WD_LEN){D.done=true;curtainClose();return;}
+  if(D.t>=WD_LEN+WD_BOW){D.done=true;curtainClose();return;}
   requestAnimationFrame(wdFrame);
 }
-// the theatre curtain closes, then the stylised "to be continued" and, quietly, the way back to the title
+// the theatre curtain closes with the stylised "to be continued"; then it opens again on the film credits
 function curtainClose(){
   const c=$('cortina');c.hidden=false;void c.offsetWidth;c.classList.add('fecha');
   [392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
   setTimeout(()=>{c.classList.add('texto');},2900);
-  setTimeout(()=>{const b=$('btn-ag');b.hidden=false;c.appendChild(b);b.focus({preventScroll:true});},6500);
+  setTimeout(creditsStart,8200);
+}
+/* ---------- film credits after the curtain ----------
+   The curtain closes ("Continua na próxima temporada..."), opens again on a starry night and the credits roll:
+   starring the player (their avatar and their own journey: grade, hand-in time, missions, points, doors), the
+   professors, the students, the staff and the cat (each with their in-game sprite), the soundtrack, a special thanks
+   and the author. Then the curtain closes for good and "JOGAR DE NOVO" shows up. The roll cannot be skipped (the button only comes at the end). */
+let crRun=null;
+function crSprite(who,o){ // a character's in-game sprite on a small canvas (wanderers through their own sprite function)
+  let c=null;
+  try{
+    if(who==='player')c=personSprite('player',flags.jaleco?'coat':'shirt','down',0,false).c;
+    else if(who==='cida')c=personSprite('cida','shirt','down',0,false).c;
+    else if(o&&o.sprite){const tmp=Object.assign(Object.create(o),{x:8,y:23,dir:'down',anim:0,moving:false,sitting:0,hushed:false});const s_=o.sprite.call(tmp,0);c=s_&&s_.c;}
+    else c=personSprite(who,'coat','down',0,false).c;
+  }catch(e){c=null;}
+  const cv_=document.createElement('canvas');cv_.width=c?c.width:21;cv_.height=c?c.height:30;
+  if(c)cv_.getContext('2d').drawImage(c,0,0);return cv_;
+}
+function crCat(){const cv_=document.createElement('canvas');cv_.width=80;cv_.height=80;cv_.className='gato';const x=cv_.getContext('2d');
+  const gl=x.createRadialGradient(40,46,4,40,46,38);gl.addColorStop(0,'rgba(201,214,255,.45)');gl.addColorStop(1,'rgba(201,214,255,0)');x.fillStyle=gl;x.fillRect(0,0,80,80); // a soft glow: a black cat on a night sky
+  try{catPaint(x,42,68,4.2,{face:-1,pose:'sit',ph:0,t:0,alpha:1});}catch(e){}return cv_;}
+function crFind(id){for(const k in SCENES){const o=SCENES[k].find(q=>q.id===id);if(o)return o;}return null;}
+function creditsBuild(){
+  const R=$('cr-rolo');R.textContent='';
+  const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
+  const sec=t=>R.appendChild(el('div','cr-sec',t));
+  const pessoa=(cv_,nome,papel,big)=>{const d=el('div','cr-pessoa'+(big?' big':''));d.appendChild(cv_);const n=el('div','cr-nome',nome);if(papel)n.appendChild(el('small','',papel));d.appendChild(n);return d;};
+  const grade=(list,cls)=>{const g=el('div','cr-elenco'+(cls?' '+cls:''));list.forEach(([who,nome,papel,o])=>g.appendChild(pessoa(who==='gato'?crCat():crSprite(who,o),nome,papel)));R.appendChild(g);};
+  R.appendChild(el('div','cr-tit','Uninogwarts'));R.appendChild(el('div','cr-sub','Desafio bioquímico'));
+  sec('ESTRELANDO');
+  R.appendChild(pessoa(crSprite('player'),jogador||'Você',gen('o calouro','a caloura')+' do 1º ano',true));
+  sec('A JORNADA DE '+(nome1()||'').toUpperCase());
+  const doors=Math.max(corOpen(),flags.alost===6?10:0),pct=missPct(scoreGot);
+  const fic=el('div','cr-ficha');
+  [['Nota na lição',finalScore()+' de '+QUIZ_N],['Entrega das folhas',flags.entregaMin!=null?hhmm(flags.entregaMin):'—'],
+   ['Missões concluídas',pct+'%'],['Pontos',score+' de '+SCORE_MAX],['Portas do corredor das velas',doors+' de 10'],
+   ['Fichas do bilhete anônimo',fichaCount()+' de 10']].forEach(([a,b])=>{const r_=el('div','cr-dado');r_.appendChild(el('span','',a));r_.appendChild(el('b','',b));fic.appendChild(r_);});
+  R.appendChild(fic);
+  sec('OS PROFESSORES');
+  grade([['aldair','Prof. Neto','Bioquímica',aldair],['heloisa','Profa. Rosa','Bioquímica',heloisa],['kido','Prof. Kiko','Histologia',crFind('kido')],
+    ['malvar','Prof. Edmundo Malvar','Poções · fundador da Liga de Metabolismo',malvarR]],'quatro');
+  sec('OS ALUNOS');
+  grade([['marina','Marina','sua colega de estudos',crFind('marina')],['larissa','Larissa','2º ano · Liga de Metabolismo',larissa],
+    ['bruno','Bruno','1º ano · Liga de Metabolismo',crFind('bruno')],['tiago','Tiago','1º ano · o dono do caderno laranja',crFind('tiago')],
+    ['camila','Camila','monitora de Bioquímica',crFind('camila')],['gabriel','Gabriel','3º ano · o rei do Duelo Relâmpago',crFind('gabriel')],
+    ['lucas','Lucas','2º ano · o caderno de capa preta',crFind('lucas')],['pedro','Pedro','veterano · guardião das lendas',crFind('pedro')],
+    ['felipe','Felipe','2º ano · nunca viu parede nenhuma',crFind('felipe')],['bruna','Bruna','1º ano · a ficha que ela não usou',crFind('bruna')]]);
+  {const t=el('div','cr-turma');RECESS.forEach(o=>t.appendChild(pessoa(crSprite(o.id,o),o.name,'')));R.appendChild(el('div','cr-sec mini','E A TURMA DA SALA 101'));R.appendChild(t);}
+  sec('A FACULDADE');
+  grade([['cida','Dona Tati','secretaria',null],['lucia','Dona Lúcia','bibliotecária',crFind('lucia')],
+    ['zelador','Seu Antônio','zelador há vinte anos',zelObj],['gato','Arsenato','o gato · ninguém sabe de quem é',null]],'quatro');
+  sec('TRILHA SONORA');
+  const tr=el('div','cr-lista');['Laboratory of the Archmage','Courtyard of Enchantment','Alchemy & Arcana Academy','Whimsical Courtyard Echoes','Duel of Arcana']
+    .forEach(t=>tr.appendChild(el('div','',t)));R.appendChild(tr);
+  sec('AGRADECIMENTO ESPECIAL');
+  R.appendChild(el('div','cr-esp','Ana Carolina da Silva Fernandes'));
+  R.appendChild(el('div','cr-esp-txt','por testar o jogo, jogar várias e várias vezes e dar as sugestões que deixaram a Uninogwarts muito melhor.'));
+  sec('CRIAÇÃO, ROTEIRO E DIREÇÃO');
+  {const d=el('div','cr-pessoa big autor');const im=document.createElement('img');im.className='cr-foto';im.alt='';
+    const src=document.querySelector('.creditos-loading .cl-foto');if(src)im.src=src.src;d.appendChild(im);
+    const n=el('div','cr-nome','Prof. Dr. Aldair de França Neto');n.appendChild(el('small','','Bioquímica, magia e muitas madrugadas'));d.appendChild(n);R.appendChild(d);}
+  R.appendChild(el('div','cr-fim','Obrigado por jogar!'));
+}
+function creditsStart(){
+  const c=$('cortina'),C=$('creditos');creditsBuild();
+  C.hidden=false;c.classList.remove('texto');
+  setTimeout(()=>c.classList.remove('fecha'),700); // the curtain opens on the credits
+  const R=$('cr-rolo'),H=C.clientHeight;let y=H,last=performance.now();R.style.transform='translateY('+y+'px)';
+  crRun={done:false};
+  (function step(now){
+    if(!crRun||crRun.done)return;
+    const dt=Math.min(.05,(now-last)/1000);last=now;y-=dt*H/13; // one screen every 13 s (time to read)
+    R.style.transform='translateY('+y.toFixed(1)+'px)';
+    if(y<-R.offsetHeight-10)return creditsEnd();
+    requestAnimationFrame(step);
+  })(last);
+}
+function creditsEnd(){ // the curtain closes for good
+  if(!crRun||crRun.done)return;crRun.done=true;
+  const c=$('cortina');c.classList.add('fecha');[392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
+  setTimeout(()=>{$('creditos').hidden=true;c.classList.add('texto');},2900);
+  setTimeout(()=>{const b=$('btn-ag');b.hidden=false;c.appendChild(b);b.focus({preventScroll:true});},5600);
 }
 $('btn-ag').addEventListener('click',e=>{e.stopPropagation();if(!$('btn-ag').hidden)location.reload();});
 // for the opening screens (saved game screen)
 window.jogoSalvo=()=>{const d=saveRead();if(!d)return null;
   const dt=new Date(d.at),p2=n=>String(n).padStart(2,'0');
-  return {nome:d.jogador,avatar:d.avatar,pele:d.pele,hora:hhmm(Math.min(END_MIN,START_MIN+Math.floor(d.gameMin||0))),pct:missPct(new Set(d.scoreGot||[])),
+  return {nome:d.jogador,avatar:d.avatar,pele:d.pele,hora:hhmm(d.flags.graded&&d.flags.pass?START_MIN+Math.floor(d.gameMin||0):Math.min(END_MIN,START_MIN+Math.floor(d.gameMin||0))),pct:missPct(new Set(d.scoreGot||[])),
     quando:p2(dt.getDate())+'/'+p2(dt.getMonth()+1)+', às '+p2(dt.getHours())+'h'+p2(dt.getMinutes())};};
 window.continuarJogo=()=>{const d=saveRead();if(!d)return;unlockAudio();try{loadGame(d);}catch(e){console.error(e);saveClear();location.reload();}};
 window.apagarJogoSalvo=saveClear;
