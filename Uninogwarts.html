@@ -317,7 +317,7 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .ag-canto.bl{left:calc(var(--u)*3);bottom:calc(var(--u)*3);border-right:0;border-top:0}.ag-canto.bl::after{left:calc(var(--u)*1.6);bottom:calc(var(--u)*1.6)}
 .ag-canto.br{right:calc(var(--u)*3);bottom:calc(var(--u)*3);border-left:0;border-top:0}.ag-canto.br::after{right:calc(var(--u)*1.6);bottom:calc(var(--u)*1.6)}
 .ag-texto{display:flex;flex-direction:column;gap:calc(var(--u)*1.6);width:100%}
-#agradecimento .ag-texto p{margin:0;max-width:none;font-size:calc(var(--u)*5.6);line-height:1.15;text-align:justify;text-indent:calc(var(--u)*10);hyphens:auto}
+#agradecimento .ag-texto p{margin:0;max-width:none;font-size:calc(var(--u)*10);line-height:1.1;text-align:justify;text-indent:calc(var(--u)*10);hyphens:auto}
 #agradecimento .ag-assin{align-self:flex-end;margin-top:calc(var(--u)*1)}
 #ag-duelo{display:block;width:calc(var(--u)*360);height:calc(var(--u)*75);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
 /* the theatre curtain that ends the game */
@@ -365,9 +365,9 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .cr-fim{font-family:"Cinzel Decorative",Georgia,serif;font-weight:700;font-size:calc(var(--u)*11);color:#f2cf5a;margin:calc(var(--u)*14) 0 calc(var(--u)*30);text-shadow:0 0 calc(var(--u)*5) rgba(255,214,90,.6)}
 #cortina .btn{position:absolute;left:50%;bottom:calc(var(--u)*14);transform:translateX(-50%);font-size:calc(var(--u)*3)}
 .ag-assin{display:flex;align-items:center;gap:calc(var(--u)*4);text-align:left}
-.ag-foto{width:calc(var(--u)*19);height:calc(var(--u)*19);border-radius:50%;object-fit:cover;display:block;border:calc(var(--u)*.8) solid #F1DDA9;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.5)}
-.ag-nome{display:flex;flex-direction:column;gap:calc(var(--u)*1.2);font-size:calc(var(--u)*6.4);line-height:1.05;color:var(--muted)}
-.ag-nome b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*3.6);color:var(--accent);letter-spacing:.04em}
+.ag-foto{width:calc(var(--u)*21);height:calc(var(--u)*21);border-radius:50%;object-fit:cover;display:block;border:calc(var(--u)*.8) solid #F1DDA9;box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.5)}
+.ag-nome{display:flex;flex-direction:column;gap:calc(var(--u)*1.2);font-size:calc(var(--u)*7.4);line-height:1.05;color:var(--muted)}
+.ag-nome b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*4.2);color:var(--accent);letter-spacing:.04em}
 @media (prefers-reduced-motion:reduce){.tt-start,.tc-titulo{animation:none}}
 /* Score (HUD) and exam sheet (one multiple-choice question per glycolysis reaction, answered once) */
 .pts{font-family:var(--f-display);font-size:calc(var(--u)*2.6);letter-spacing:.06em;line-height:1;color:var(--ink);background:rgba(29,22,18,.88);border:calc(var(--u)*.6) solid var(--line);padding:calc(var(--u)*1.6) calc(var(--u)*2.2);white-space:nowrap;flex:none;margin-right:auto}
@@ -706,7 +706,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.28 &middot; Última atualização: 10 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.29 &middot; Última atualização: 10 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -7852,7 +7852,7 @@ function finale(){
    and Prof. Kiko fight like knights of light: they leap with somersaults between two floating ledges, hang from the
    chandelier and cast from there, dodge the spells with a flip (the spells fly past) and, three times, turn their
    wands into blades of light and fence in the middle of the stage. Sprites at their in-game size. One minute
-   (WD_LEN), then a theatre curtain closes over the screen with "Continua na próxima temporada...". */
+   (WD_LEN), then a theatre curtain closes over the screen and opens on the credits. */
 const WD_LEN=60,WD_BOW=7,DW=384,DH=80,DFLOOR=72,WD_G=420; // WD_BOW: the curtain call, in seconds
 const WD_SPELLS=['GLICOLISUS!','PIRUVATUM!','ALOSTERICUS!','FOSFORILATUS!','ATPUS MAXIMUS!','ENOLASIUS!','LACTATUM!','EXPELLIGLICOSE!','HEXOCINASIUM!','PROTEGO ATP!'];
 const WD_COLS=['#ff4d6d','#4dd2ff','#7dff6a','#ffd23f','#c77dff','#ff8c1a','#ffffff','#2effc0'];
@@ -8041,18 +8041,17 @@ function wdFrame(now){
   if(D.t>=WD_LEN+WD_BOW){D.done=true;curtainClose();return;}
   requestAnimationFrame(wdFrame);
 }
-// the theatre curtain closes with the stylised "to be continued"; then it opens again on the film credits
+// the theatre curtain closes and opens again on the film credits ("to be continued" only comes after them, in creditsEnd)
 function curtainClose(){
   const c=$('cortina');c.hidden=false;void c.offsetWidth;c.classList.add('fecha');
   [392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
-  setTimeout(()=>{c.classList.add('texto');},2900);
-  setTimeout(creditsStart,8200);
+  setTimeout(creditsStart,3600);
 }
 /* ---------- film credits after the curtain ----------
-   The curtain closes ("Continua na próxima temporada..."), opens again on a starry night and the credits roll:
+   The curtain closes, opens again on a starry night and the credits roll:
    starring the player (their avatar and their own journey: grade, hand-in time, missions, points, doors), the
    professors, the students, the staff and the cat (each with their in-game sprite), the soundtrack, a special thanks
-   and the author. Then the curtain closes for good and "JOGAR DE NOVO" shows up. The roll cannot be skipped (the button only comes at the end). */
+   and the author. Then the curtain closes for good, "Continua na próxima temporada..." (the last thing) and "JOGAR DE NOVO" show up. The roll cannot be skipped (the button only comes at the end). */
 let crRun=null;
 function crSprite(who,o){ // a character's in-game sprite on a small canvas (wanderers through their own sprite function)
   let c=null;
