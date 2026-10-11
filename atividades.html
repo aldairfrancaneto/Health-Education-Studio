@@ -159,7 +159,10 @@
       display: inline-block;
       animation: ring-spin 1.4s infinite ease-in-out;
     }
-  </style>
+  /* Texto corrido sempre justificado; o que está centralizado continua centralizado */
+p, li { text-align: justify; hyphens: auto; }
+.text-center p, .text-center li { text-align: center; }
+</style>
 <style>
 /* ================================================================
    COMO FUNCIONA ESTA PÁGINA

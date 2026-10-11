@@ -158,7 +158,10 @@
       display: inline-block;
       animation: ring-spin 1.4s infinite ease-in-out;
     }
-  </style>
+  /* Texto corrido sempre justificado; o que está centralizado continua centralizado */
+p, li { text-align: justify; hyphens: auto; }
+.text-center p, .text-center li { text-align: center; }
+</style>
 </head>
 <body class="text-dark-slate font-body-md antialiased selection:bg-secondary-container selection:text-dark-slate overflow-x-hidden min-h-screen" style="background-color: rgb(92, 148, 252); background-attachment: fixed;">
 <!-- TOP APP NAVIGATION BAR -->
@@ -267,7 +270,7 @@
             <span class="bg-secondary-container px-3 py-0.5 border-2 border-dark-slate inline-block -rotate-1 rounded-xl shadow-[3px_3px_0px_0px_#0f172a] text-dark-slate font-black">transformar</span>
             a aprendizagem em saúde.
           </h1>
-<p class="font-body-lg text-slate-600 text-base sm:text-lg max-w-2xl leading-relaxed">
+<p class="font-body-lg text-slate-600 text-base sm:text-lg leading-relaxed">
             Acredito que a aprendizagem pode ser desafiadora, significativa e envolvente. Por isso, desenvolvo recursos digitais educacionais que aproximam a investigação biológica, mecânicas de games e metodologias ativas.
           </p>
 <!-- Neo-Brutalist Interactive CTA Buttons -->
@@ -361,7 +364,7 @@
 <h2 class="font-headline-md text-xl sm:text-2xl font-bold text-dark-slate">Jogos</h2>
 </div>
 <!-- 3. CARDS DE MISSÃO: JOGOS EM DESTAQUE -->
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<section class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
 <!-- CARD 1: CÓDIGO LACTATO -->
 <article class="neo-tcg-card bg-[#1e293b] rounded-2xl p-3 sm:p-4 text-slate-900 border-[2.5px] border-dark-slate">
 <div class="bg-gradient-to-b from-[#fef2f2] via-[#fff8f8] to-[#fee2e2] border-2 border-red-300 rounded-xl p-3 sm:p-4 space-y-3 tcg-holo-shimmer">
@@ -380,7 +383,7 @@
 <!-- Type Line & Rarity -->
 <!-- Rules & Objective Box -->
 <div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner text-xs">
-<p class="text-slate-700 leading-relaxed font-mono">
+<p class="text-slate-700 leading-relaxed font-mono text-justify hyphens-auto">
 Você está diante de um paciente crítico. Interprete os sinais fisiológicos, colete pistas bioquímicas, resolva puzzles e tome decisões sob pressão para salvar o paciente.
             </p>
 <div class="space-y-1.5 pt-1">
@@ -398,8 +401,8 @@ Você está diante de um paciente crítico. Interprete os sinais fisiológicos, 
 </div>
 </div>
 <!-- Card Bottom: Difficulty & Action Button -->
-<div class="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3">
-<div class="flex items-center gap-2">
+<div class="pt-1 flex flex-col sm:flex-row lg:flex-col lg:items-stretch items-center justify-between gap-3">
+<div class="flex items-center justify-center gap-2 whitespace-nowrap">
 <span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
 <div class="flex items-center text-primary text-[16px]">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
@@ -410,7 +413,7 @@ Você está diante de um paciente crítico. Interprete os sinais fisiológicos, 
 </div>
 <span class="font-bold text-xs bg-red-100 border border-red-300 px-2 py-0.5 rounded">4 / 5</span>
 </div>
-<a class="w-full sm:w-auto px-5 py-2.5 bg-primary text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="projetos.html">
+<a class="w-full sm:w-auto lg:w-full px-5 py-2.5 bg-primary text-white neo-btn rounded-xl font-label-md text-xs font-bold whitespace-nowrap flex items-center justify-center gap-2" href="projetos.html">
 <span class="">INICIAR MISSÃO</span>
 <span class="material-symbols-outlined text-[16px]">play_arrow</span>
 </a>
@@ -435,7 +438,7 @@ Você está diante de um paciente crítico. Interprete os sinais fisiológicos, 
 <!-- Type Line & Rarity -->
 <!-- Rules & Objective Box -->
 <div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner text-xs">
-<p class="text-slate-700 leading-relaxed font-mono">
+<p class="text-slate-700 leading-relaxed font-mono text-justify hyphens-auto">
 Um plantão noturno no pronto-socorro para dominar a inflamação aguda: examine lâminas citológicas, atenda casos reais, decida a terapêutica e passe o plantão com segurança diagnóstica.
             </p>
 <div class="space-y-1.5 pt-1">
@@ -453,8 +456,8 @@ Um plantão noturno no pronto-socorro para dominar a inflamação aguda: examine
 </div>
 </div>
 <!-- Card Bottom: Difficulty & Action Button -->
-<div class="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3">
-<div class="flex items-center gap-2">
+<div class="pt-1 flex flex-col sm:flex-row lg:flex-col lg:items-stretch items-center justify-between gap-3">
+<div class="flex items-center justify-center gap-2 whitespace-nowrap">
 <span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
 <div class="flex items-center text-primary text-[16px]">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
@@ -465,8 +468,62 @@ Um plantão noturno no pronto-socorro para dominar a inflamação aguda: examine
 </div>
 <span class="font-bold text-xs bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded">5 / 5</span>
 </div>
-<a class="w-full sm:w-auto px-5 py-2.5 bg-power-green text-white neo-btn rounded-xl font-label-md text-xs font-bold flex items-center justify-center gap-2" href="projetos.html">
+<a class="w-full sm:w-auto lg:w-full px-5 py-2.5 bg-power-green text-white neo-btn rounded-xl font-label-md text-xs font-bold whitespace-nowrap flex items-center justify-center gap-2" href="projetos.html">
 <span class="">ENTRAR NO PLANTÃO</span>
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+</a>
+</div>
+</div>
+</article>
+<!-- CARD 3: UNINOGWARTS -->
+<article class="neo-tcg-card bg-[#1e293b] rounded-2xl p-3 sm:p-4 text-slate-900 border-[2.5px] border-dark-slate lg:col-span-2 xl:col-span-1">
+<div class="bg-gradient-to-b from-[#eff6ff] via-[#f0f9ff] to-[#dbeafe] border-2 border-blue-200 rounded-xl p-3 sm:p-4 space-y-3 tcg-holo-shimmer">
+<!-- Name & Mana Cost -->
+<div class="bg-white border-2 border-dark-slate rounded-xl px-3 py-2 flex items-center justify-between shadow-[2px_2px_0px_0px_#0f172a]">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 bg-speed-blue rounded-sm border border-dark-slate inline-block"></span>
+<h3 class="font-headline-md text-lg font-black text-speed-blue tracking-tight">Uninogwarts</h3>
+</div>
+<div class="flex items-center gap-1.5"><span class="px-2 py-0.5 bg-speed-blue text-white border border-dark-slate rounded font-label-sm text-[10px] font-bold">BIOQUÍMICA</span></div>
+</div>
+<!-- Visual Frame -->
+<div class="bg-gradient-to-br from-[#0c4a6e] via-[#1e3a8a] to-[#0f172a] border-2 border-dark-slate rounded-xl p-4 text-white">
+<h4 class="text-sm font-bold text-sky-100">Desafio Bioquímico · Temporada 1</h4>
+</div>
+<!-- Rules & Objective Box -->
+<div class="bg-white border-2 border-dark-slate rounded-xl p-4 space-y-3 shadow-inner text-xs">
+<p class="text-slate-700 leading-relaxed font-mono text-justify hyphens-auto">
+A glicólise vira mistério numa faculdade de magia em pixel-art: encontre as 10 folhas da atividade espalhadas pelo prédio, responda cada uma e entregue aos professores antes do fim da aula.
+            </p>
+<div class="space-y-1.5 pt-1">
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-blue-50 border border-blue-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-speed-blue">castle</span> 3 Andares · 10 Reações
+                </span>
+<span class="px-2.5 py-1 bg-blue-50 border border-blue-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-speed-blue">auto_stories</span> Missões Secundárias &amp; Mistérios
+                </span>
+<span class="px-2.5 py-1 bg-blue-50 border border-blue-200 font-label-sm text-xs rounded-lg flex items-center gap-1 font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[14px] text-speed-blue">sports_esports</span> Teclado, Toque ou Controle
+                </span>
+</div>
+</div>
+</div>
+<!-- Card Bottom: Difficulty & Action Button -->
+<div class="pt-1 flex flex-col sm:flex-row lg:flex-col lg:items-stretch items-center justify-between gap-3">
+<div class="flex items-center justify-center gap-2 whitespace-nowrap">
+<span class="text-xs font-mono font-bold text-dark-slate">DIFICULDADE:</span>
+<div class="flex items-center text-primary text-[16px]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-slate-300">star</span>
+<span class="material-symbols-outlined text-slate-300">star</span>
+</div>
+<span class="font-bold text-xs bg-blue-100 border border-blue-300 px-2 py-0.5 rounded">3 / 5</span>
+</div>
+<a class="w-full sm:w-auto lg:w-full px-5 py-2.5 bg-speed-blue text-white neo-btn rounded-xl font-label-md text-xs font-bold whitespace-nowrap flex items-center justify-center gap-2" href="projetos.html">
+<span class="">ENTRAR NA ACADEMIA</span>
 <span class="material-symbols-outlined text-[16px]">play_arrow</span>
 </a>
 </div>
