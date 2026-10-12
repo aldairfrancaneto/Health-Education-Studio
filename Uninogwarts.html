@@ -95,27 +95,13 @@ kbd{font-family:var(--f-display);font-size:calc(var(--u)*3.2);color:var(--ink);b
 .stats div{display:flex;flex-direction:column;gap:calc(var(--u)*1)}
 .stats b{font-family:var(--f-display);font-weight:400;font-size:calc(var(--u)*2.8);color:var(--muted);letter-spacing:.08em}
 
-/* Touch controls (phones only) */
-#pad{display:none;align-items:center;justify-content:space-between;gap:16px;width:100%}
-.dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:4px}
-.dpad button,.abtn{font-family:var(--f-display);font-size:11px;color:var(--ink);background:var(--panel);border:2px solid var(--line);border-bottom-width:5px;touch-action:none;user-select:none;-webkit-user-select:none}
-.dpad button{display:grid;place-items:center;padding:0}
-.dpad button svg{width:46%;height:46%;fill:currentColor;filter:drop-shadow(0 2px 0 rgba(0,0,0,.45))} /* arrows instead of W/A/S/D */
-.dpad button:active,.abtn:active,.dpad button.on{background:var(--line)}
-.abtn{width:84px;height:84px;border-radius:50%;background:var(--accent);color:#1a1606;border-color:#a8862a}
-@media (pointer:coarse){#pad{display:flex}}
-/* Phones held sideways: the buttons float, translucent, over the game itself (no row below it, no page footer),
-   so the game can take almost the whole screen */
+/* Phones held sideways: no page footer and almost no padding, so the game can take almost the whole screen
+   (on touch screens the player walks where the finger taps: there are no on-screen buttons) */
 @media (pointer:coarse) and (orientation:landscape){
   #app{padding:4px 8px;gap:0}
   .site-footer{display:none}
-  #pad{position:absolute;inset:0;z-index:15;align-items:center;padding:0 calc(env(safe-area-inset-right,0px) + 10px) 0 calc(env(safe-area-inset-left,0px) + 10px);box-sizing:border-box;pointer-events:none} /* sides, mid-height */
-  #pad>*{pointer-events:auto}
-  .dpad{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:3px}
-  .dpad button{background:rgba(42,28,22,.7);opacity:.55}
-  .abtn{width:58px;height:58px;font-size:8px;opacity:.55}
-  .dpad button.on,.abtn:active{opacity:1}
 }
+#game{touch-action:none}
 /* Controller button glyphs (shown in the hints once a game controller is used) */
 .gpb{display:inline-flex;align-items:center;justify-content:center;width:1.9em;height:1.9em;border-radius:50%;font-family:var(--f-display);font-size:9px;line-height:1;color:#fff;background:#5e564c;vertical-align:middle}
 .gpb.a{background:#3c9a3c}.gpb.b{background:#c0392b}.gpb.y{background:#c9a227;color:#1a1606}
@@ -693,22 +679,12 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     </div>
   </main>
 
-  <footer>
-    <div id="pad">
-      <div class="dpad">
-        <span></span><button data-k="KeyW" aria-label="Cima"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(0deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span>
-        <button data-k="KeyA" aria-label="Esquerda"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(-90deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span><button data-k="KeyD" aria-label="Direita"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(90deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button>
-        <span></span><button data-k="KeyS" aria-label="Baixo"><svg viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(180deg)"><path d="M8 3 L14 12 H2 Z"/></svg></button><span></span>
-      </div>
-      <button class="abtn" id="abtn" type="button">ENTER</button>
-    </div>
-  </footer>
 </div>
 
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.31 &middot; Última atualização: 10 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.32 &middot; Última atualização: 11 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -995,6 +971,8 @@ function bake(drawFn,hint,ink){
   const [cc,c2]=mk(bw,bh);c2.putImageData(out,0,0);
   return {c:cc,x:hx+x0-1,y:hy+y0-1};
 }
+// draws a scene object and keeps where it went (a finger tap on it walks there and talks/inspects)
+function blitO(o,t){const s_=spriteOf(o,t);blit(s_);o._rc=s_?{x:s_.x-(s_.c._ox||0),y:s_.y-(s_.c._oy||0),w:s_.c.width,h:s_.c.height}:null;}
 function blit(s){if(s)fctx.drawImage(s.c,s.x-(s.c._ox||0),s.y-(s.c._oy||0));} // people's paper canvases have a margin
 
 /* ---------- pixel font (3x5, accents above) ---------- */
@@ -7566,24 +7544,76 @@ function onKey(e){
 addEventListener('keydown',onKey);
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>keys.clear());
-// on-screen W/A/S/D: held down to walk; in dialogs, sheets, pause, word search, duel and poster each press is also
-// one arrow keystroke (an arrow, not the letter: in a sheet the letter A would pick option A)
-const DPAD_ARROW={KeyW:'ArrowUp',KeyS:'ArrowDown',KeyA:'ArrowLeft',KeyD:'ArrowRight'};
-document.querySelectorAll('.dpad button').forEach(b=>{
-  const k=b.dataset.k;
-  b.addEventListener('pointerdown',e=>{e.preventDefault();unlockAudio();b.classList.add('on');
-    if(state==='play'&&scene!=='salaSim'){keys.add(k);return;}
-    const a=DPAD_ARROW[k];onKey({code:a,key:a,repeat:false,target:b,preventDefault(){}});});
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{keys.delete(k);b.classList.remove('on');}));
-});
-$('abtn').addEventListener('click',onEnter);
 // a mouse click also works as ENTER (the dialog box advances, the game screen talks/inspects; it helps the Xbox
-// cursor mode). A finger tap does not: on the phone only the on-screen ENTER button does that.
-let lastPtr='';addEventListener('pointerdown',e=>{lastPtr=e.pointerType;},true);
+// cursor mode). On a touch screen the finger does everything: a tap advances the dialog, and on the game screen the
+// player walks to where the finger touched (or follows it while it slides); a tap on a person or a thing walks there
+// and talks/inspects on arrival (see touchTap / touchSteer).
+let touchOn=false,lastPtr='';addEventListener('pointerdown',e=>{lastPtr=e.pointerType;touchOn=e.pointerType==='touch';},true);
 const tapped=e=>(e.pointerType||lastPtr)==='touch';
-$('dialog').addEventListener('click',e=>{if(tapped(e))return;if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
+$('dialog').addEventListener('click',e=>{if(e.target.closest('button'))return;if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
 cv.addEventListener('mousemove',e=>{if(!inSim())return;const i=simHit(e);if(i>=0&&i!==simSel)simSel=i;});
 cv.addEventListener('click',e=>{if(inSim()){const i=simHit(e);if(i>=0){simSel=i;unlockAudio();simSelect();}return;}if(tapped(e))return;unlockAudio();if(state==='play')interact();});
+let tGo=null,tDrag=null; // tGo: where the player is walking to {x,y,o,sc}; tDrag: the finger still on the screen
+function tWorld(e){const b=cv.getBoundingClientRect();return{x:camX+(e.clientX-b.left)/b.width*W,y:(e.clientY-b.top)/b.height*H};}
+const inRc=(p,r_,m=0)=>r_&&p.x>=r_.x-m&&p.x<=r_.x+r_.w+m&&p.y>=r_.y-m&&p.y<=r_.y+r_.h+m;
+function tObjAt(p){ // the person or thing under the finger
+  let best=null,bd=1e9;
+  for(const o of objects){
+    if(!o.zone||!o.act)continue;
+    // its drawing or solid part; a wall thing also from the wall down to the floor in front of it; something drawn
+    // nowhere (a doorway) by the spot itself. Plain floor never counts, so a tap near a bench just walks.
+    const hit=inRc(p,o._rc,2)||inRc(p,o.solid,2)||(o.wall&&p.x>=o.zone.x&&p.x<=o.zone.x+o.zone.w&&p.y>=(o.top??0)&&p.y<=o.zone.y)||(!o._rc&&!o.solid&&inRc(p,o.zone));
+    if(!hit)continue;
+    const d=Math.abs(p.x-o.cx)+(o.wall?0:Math.abs(p.y-(o.base??p.y)))*.5;
+    if(d<bd){bd=d;best=o;}
+  }
+  return best;
+}
+function tClampY(y){ // keep the target on the floor
+  const c=isCor(),tp=c?COR_TOP:4,bt=c?COR_BOT:0,top=(scene.startsWith('sala')?66:54)+tp+1;
+  return Math.max(top,Math.min(210-bt-1,y));
+}
+// the player walks in a straight line; something in the way: he stops, and the finger shows another way
+function tSetGoal(p,o){
+  let x=p.x,y=tClampY(p.y);
+  if(o){const z=o.zone,m=Math.min(4,z.w/3,z.h/3); // the nearest spot inside the place where one talks to it
+    x=Math.max(z.x+m,Math.min(z.x+z.w-m,player.x));y=Math.max(z.y+m,Math.min(z.y+z.h-m,player.y));}
+  tGo={x,y,o,sc:scene,still:0,lx:player.x,ly:player.y};
+}
+cv.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='touch')return;
+  touchOn=true;unlockAudio();e.preventDefault();
+  if(state==='dialog'){if(!dialogChoices())advance();return;}
+  if(state!=='play'||inSim())return; // the simulator menu answers to the click (simHit)
+  if(scene==='simGlic'&&rideSt&&rideSt.mode==='desafio')return;
+  const p=tWorld(e),near=nearest();
+  // the "ENTER · NAME" label over the player, or the player himself: talk to whoever is next to him
+  if(near&&(inRc(p,tLabel,3)||Math.hypot(p.x-player.x,p.y-(player.y-10))<14)){tGo=null;interact();return;}
+  const o=tObjAt(p);
+  if(o&&o===near){tGo=null;interact();return;}
+  tSetGoal(p,o);tDrag={id:e.pointerId,o:!!o,x0:p.x,y0:p.y};
+});
+cv.addEventListener('pointermove',e=>{
+  if(!tDrag||e.pointerId!==tDrag.id||state!=='play')return;
+  const p=tWorld(e);
+  if(tDrag.o){if(Math.hypot(p.x-tDrag.x0,p.y-tDrag.y0)<12)return;tDrag.o=false;} // a slide after touching a thing: just walk
+  tSetGoal(p,null);
+});
+['pointerup','pointercancel'].forEach(ev=>addEventListener(ev,e=>{if(tDrag&&e.pointerId===tDrag.id)tDrag=null;}));
+// called by update(): the joystick of the finger. Returns the direction to walk this frame (or null)
+function touchSteer(dt){
+  if(!tGo)return null;
+  if(tGo.sc!==scene||state!=='play'||keys.size){tGo=null;return null;}
+  if(tGo.o){const o=tGo.o,z=o.zone; // arrived where one talks to it: talk/inspect (as ENTER would)
+    if(player.x>=z.x&&player.x<=z.x+z.w&&player.y>=z.y&&player.y<=z.y+z.h){tGo=null;tDrag=null;inspected.add(o.id);sfx.blip();o.act();return null;}}
+  const dx=tGo.x-player.x,dy=scene==='simGlic'?0:tGo.y-player.y,d=Math.hypot(dx,dy);
+  if(d<1.5){if(!tDrag)tGo=null;return null;}
+  // walked into a desk, a wall or someone: give up after a moment (the finger can always point somewhere else)
+  if(Math.hypot(player.x-tGo.lx,player.y-tGo.ly)<.3){tGo.still+=dt;if(tGo.still>.35){tGo=null;return null;}}else tGo.still=0;
+  tGo.lx=player.x;tGo.ly=player.y;
+  return{vx:dx/d,vy:dy/d,d};
+}
+let tLabel=null; // where the "ENTER · NAME" label was drawn (world coordinates)
 
 /* ---------- game controller (Xbox and other standard-mapping pads, through the Gamepad API) ----------
    A = ENTER, X = ESC in sheets, review, word search, poster and pause (and space on the name keyboard),
@@ -7758,18 +7788,21 @@ function update(dt){
     else if(!flags.timeUp&&gm>=END_MIN)timeUp();
   }
   player.moving=false;
-  if(state!=='play')return;
+  if(state!=='play'){tGo=null;tDrag=null;return;} // a dialog, a sheet or the pause stops a walk started with the finger
   let vx=0,vy=0;
   if(keys.has('KeyA')||keys.has('ArrowLeft'))vx-=1;
   if(keys.has('KeyD')||keys.has('ArrowRight'))vx+=1;
   if(keys.has('KeyW')||keys.has('ArrowUp'))vy-=1;
   if(keys.has('KeyS')||keys.has('ArrowDown'))vy+=1;
+  const tv=vx||vy?null:touchSteer(dt); // touch screens: walking towards the finger
+  if(tv){vx=tv.vx;vy=tv.vy;}
   if(scene==='simGlic'){vy=0;if(rideSt&&rideSt.mode==='desafio')vx=rideDone?0:1;}
   const spd=scene==='simGlic'&&rideSt?(rideSt.mode==='desafio'?110:SPEED)*rideFactor(player.x):SPEED;
   if(vx||vy){
     const n=Math.hypot(vx,vy);vx/=n;vy/=n;
     if(Math.abs(vx)>Math.abs(vy))player.dir=vx<0?'left':'right';else player.dir=vy<0?'up':'down';
-    const nx=player.x+vx*spd*dt,ny=player.y+vy*spd*dt;
+    const st=tv?Math.min(spd*dt,tv.d):spd*dt; // the finger's goal: stop on it, never past it
+    const nx=player.x+vx*st,ny=player.y+vy*st;
     const stuck=blocked(player.x,player.y); // already overlapping something: let the player walk out
     if(stuck||!blocked(nx,player.y))player.x=nx;
     else if(isCor()&&vx&&Math.abs(COR_MID-player.y)<26){ // walking into a door frame: slide towards the doorway
@@ -7809,7 +7842,7 @@ function render(t){
   if(scene==='terreo')drawClock();
   drawJanitorFloor();
   drawTorches(t);
-  for(const o of objects)if(o.wall){blit(spriteOf(o,t));if(o.fx){g=fctx;o.fx(t);}}
+  for(const o of objects)if(o.wall){blitO(o,t);if(o.fx){g=fctx;o.fx(t);}}
   const items=objects.filter(o=>!o.wall);
   const px_=Math.round(player.x),py_=Math.round(player.y);
   for(const o of items)if(!o.noShadow){const s=o.solid,jo=o===zelObj||o===cartObj||o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):o.sprite&&o.x!=null?stairFade(scene,o.x,o.y):1;
@@ -7825,7 +7858,7 @@ function render(t){
     if(it.o){
       const jo=it.o===zelObj||it.o===cartObj||it.o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):it.o.sprite&&it.o.x!=null?stairFade(scene,it.o.x,it.o.y):1; // fading on the last steps of a flight
       if(fa<1)fctx.globalAlpha=fa;
-      blit(spriteOf(it.o,t));if(it.o.fx){g=fctx;it.o.fx(t);}
+      blitO(it.o,t);if(it.o.fx){g=fctx;it.o.fx(t);}
       fctx.globalAlpha=1;
     }
     else if(topV)drawTopPlayer(px_,py_,player.dir,player.anim,player.moving);
@@ -7845,12 +7878,14 @@ function render(t){
   }
   if(!sim&&!ride){drawDiaryNote(px_,py_);drawScorePop(px_,py_);}
   // interaction prompt
+  tLabel=null;
   if(state==='play'&&!(ride&&rideSt&&rideSt.mode==='desafio')){
     const o=nearest();
     if(o){
-      const kl=padOn?'A':'ENTER',name=o.name.toUpperCase(),w=pxW(kl)+5+pxW(name)+6;
+      const kl=padOn?'A':touchOn?'TOQUE':'ENTER',name=o.name.toUpperCase(),w=pxW(kl)+5+pxW(name)+6;
       let bx=Math.round(px_-w/2);bx=Math.max(camX+2,Math.min(camX+W-w-2,bx));
       const by=ride?py_+29:py_-36; // on the ride: below the rail, so the poster stays visible
+      tLabel={x:bx,y:by,w,h:9};
       r(bx-1,by-1,w+2,11,'#1d1612');r(bx,by,w,9,'#3a2414');r(bx,by,w,1,'#d9a441');
       if(ride){r(px_-1,by-2,3,1,'#1d1612');px(px_,by-3,'#1d1612');}else{r(px_-1,by+10,3,1,'#1d1612');px(px_,by+11,'#1d1612');}
       if(padOn){r(bx+1,by+1,7,7,'#3c9a3c');pxText(kl,bx+3,by+2,'#ffffff');}else pxText(kl,bx+3,by+3,'#d9a441');
