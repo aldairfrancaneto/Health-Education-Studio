@@ -2774,7 +2774,14 @@ function drawClassCabinet(){
 }
 // exam sheets: each classroom keeps its sheets in one pile on a single front-row desk (desk index -> reactions),
 // in the classroom whose wall posters cover those reactions
-const EXAM_DESKS={sala103:{2:[3,4,5,6]},sala201:{1:[7,8,9,10]}};
+const EXAM_DESKS={sala103:{2:[4,5,6]},sala201:{1:[7,8,9]}};
+// the sheet of reaction 3 fell in the corridor: Prof. Malvar picked it up to take it to the lost-and-found and forgot it
+// on the side table of Sala 204. Nobody tells the player: they notice it missing from the pile and find it exploring.
+const MALVAR_SHEETS=[3];
+// the sheet of reaction 10: Tadeo (monitor of the 2nd floor) found it on the floor of Sala 201 when he locked the rooms;
+// he hands it over when the player asks him about lost sheets (after introducing himself)
+const TADEO_SHEETS=[10];
+const PILE_MISSING={sala103:3,sala201:10}; // the sheet that is not with the others in that room's pile
 const TABLE_SHEETS=[1,2]; // on a study table in the 2nd-floor corridor (the player studied there yesterday)
 // '' not answered, 'done' answered, 'ok'/'err' once the professors have graded it
 function examState(n){const a=provas&&provas[n];return !a?'':(flags.graded&&flags.pass)?(a.ok?'ok':'err'):'done';}
@@ -2803,7 +2810,7 @@ function collectPile(list,room,surf='carteira'){
   const s_=$('slot-folhas');s_.classList.add('got','pop');setTimeout(()=>s_.classList.remove('pop'),600);
   $('folhas-cnt').textContent=flags.held.length;
   sfx.item();
-  return [{t:'Você terminou as '+list.length+' folhas da '+room+'. Junta todas da '+surf+' e guarda com você.'},
+  return [{t:list.length===1?'Você terminou a folha da '+room+' e guarda com você.':'Você terminou as '+list.length+' folhas da '+room+'. Junta todas da '+surf+' e guarda com você.'},
           {t:'Você pegou: FOLHAS DA ATIVIDADE ('+flags.held.length+' de '+QUIZ_N+')'}];
 }
 // handing in: the sheets leave the inventory
@@ -2812,9 +2819,11 @@ function handSheets(){const s_=$('slot-folhas');s_.classList.remove('got');$('fo
 let pileBack=null; // pile to return to after answering one of its sheets
 function sheetPile(list,surf='carteira'){
   const st=n=>{const e=examState(n);return e==='ok'?'certa':e==='err'?'errada':e?'respondida':'em branco';};
-  const left=list.filter(n=>!provas[n]).length;
-  say([{t:'Em cima da '+surf+', uma pilha com '+list.length+' folhas da sua atividade de glicólise'+
-      (!left?', todas já respondidas.':left<list.length?', '+left+' ainda em branco.':'.')+' Qual você quer pegar?',
+  const left=list.filter(n=>!provas[n]).length,one=list.length===1;
+  const mn=PILE_MISSING[scene],falta=mn&&!provas[mn]?' A folha da reação '+mn+' não está aqui com as outras.':'';
+  say([{t:(one?'Em cima da '+surf+', uma folha da sua atividade de glicólise'+(left?'.':', já respondida.')+' Quer pegar?'
+      :'Em cima da '+surf+', uma pilha com '+list.length+' folhas da sua atividade de glicólise'+
+      (!left?', todas já respondidas.':left<list.length?', '+left+' ainda em branco.':'.')+falta+' Qual você quer pegar?'),
     choices:list.map(n=>({t:'Folha da reação '+n+' · '+st(n),fn:()=>{openQuiz(n);if(quiz)pileBack={list,surf};}}))
       .concat([{t:'Deixar a pilha na '+surf,fn:()=>{}}])}]);
 }
@@ -3529,6 +3538,22 @@ add({id:'caldeiraoProf',name:'Caldeirão do professor',cx:192,top:70,base:112,so
     fx:t=>cauldronFx(x+20,base-11,9,c,false,t,i*.29+.13),
     act:()=>say([{t:line}])});
 });
+{const list=MALVAR_SHEETS,x=222; // a small side table by the professor's cauldron
+  const o=add({id:'mesinhaMalvar',cx:x+12,top:84,base:108,solid:{x,y:102,w:24,h:6},zone:{x:x-8,y:92,w:40,h:30},
+    key:()=>pileGone(list)?'gone':list.map(examState).join(','),
+    draw:()=>{r(x+2,96,20,4,'#5a3d24');r(x+2,96,20,1,'#8a5a34');r(x+11,100,2,7,'#3a2414');r(x+6,106,12,2,'#2a1a10'); // round top, one leg, foot
+      if(!pileGone(list))drawSheetPile(x+11,94,list.map(examState));
+      r(x+15,90,4,5,'#1d2226');r(x+16,89,2,1,'#5d646a');px(x+16,92,'#2d3a6f');}, // the ink bottle (on top of the sheet)
+    provas:list,
+    act:()=>{
+      if(pileGone(list))return say([{t:'Uma mesinha de canto com um tinteiro e um bilhete: "Levar aos achados e perdidos." Riscado.'}]);
+      if(flags.folha3Vista)return sheetPile(list,'mesinha');
+      flags.folha3Vista=true;
+      say([{t:'Uma mesinha de canto. Debaixo de um tinteiro, uma folha com um bilhete preso por um clipe:'},
+        {who:'BILHETE',t:'"Achada no corredor do 2º andar. Levar aos achados e perdidos."'},
+        {who:me(),t:'É a minha folha da reação 3!'}],()=>sheetPile(list,'mesinha'));}});
+  Object.defineProperty(o,'name',{get:()=>pileGone(list)?'Mesinha':'Folha da atividade'});
+}
 add({id:'barrilPocoes',name:'Barril',cx:358,top:84,base:108,solid:{x:350,y:98,w:16,h:10},
   draw:()=>{r(350,86,16,22,'#7a522f');r(350,86,16,1,'#a87445');r(350,90,16,2,'#3a3a3a');r(350,102,16,2,'#3a3a3a');r(352,86,1,22,'#5a3d24');r(362,86,1,22,'#5a3d24');pxEllipse(358,86,8,2,'#5a3d24');},
   act:()=>say([{t:'Um barril com uma etiqueta: "Água de nascente lunar". Embaixo, alguém escreveu a lápis: "É só água da torneira".'}])});
@@ -3549,6 +3574,7 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
   talk:0,
   sprite:t=>{const c=personSprite('malvar','coat','down',0,blinkAt(t,1.7));return {c:c.c,x:254,y:77};},
   act(){
+    if(!flags.malvarQ)return malvarFirst(); // the first meeting comes before anything else
     if(flags.alost===6&&!flags.fundador){
       if(flags.dzDone)return malvarReveal();
       if(!flags.malvarConvite){flags.malvarConvite=true;setMood('malvar','smug',5);
@@ -3556,7 +3582,6 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
           {who:MW,t:'Um convite não faz ninguém membro de coisa nenhuma. Quem passou pelas portas ainda precisa provar que sabe frear e acelerar a via.'},
           {who:MW,t:'Volte quando tiver vencido o desafio do simulador. Aí, talvez, conversemos.'}]);}
     }
-    if(!flags.malvarQ)return malvarFirst();
     const k=this.talk++;
     if(flags.fundador)return say([{who:MW,t:[
       'Sexta-feira, depois da aula. Não me faça esperar.',
@@ -3578,14 +3603,14 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
 function malvarFirst(){
   const Q=gen('Senhor ','Senhorita ')+nome1();
   setMood('malvar','angry',3);
-  say([{who:MW,t:'Silêncio.'},
-    {who:MW,t:gen('Um calouro','Uma caloura')+'. Na minha sala. Sem ser '+gen('convidado','convidada')+'.'},
+  say((flags.malvarFolha?[{who:MW,t:'Você de novo. '+gen('O calouro','A caloura')+' da folha perdida.'}] // he already gave the sheet back
+    :[{who:MW,t:'Silêncio.'},{who:MW,t:gen('Um calouro','Uma caloura')+'. Na minha sala. Sem ser '+gen('convidado','convidada')+'.'}]).concat([
     {who:MW,t:'Já que veio... '+Q+', vejamos se o seu crachá vale alguma coisa.'},
     {who:MW,t:'Se eu trocar o fosfato do Elixir de Piruvato por arsenato, o que acontece com o ATP da reação 7?',choices:[
       {t:'A GAPDH usa o arsenato no lugar do fosfato, e o ATP da reação 7 deixa de ser formado.',fn:()=>{flags.malvarQ=1;sfx.item();
         say([{who:MW,t:'Hm. ...Correto.'},{who:MW,t:'Não se acostume. Acertar uma vez é sorte. Acertar sempre é estudo.'}]);}},
       {t:'O arsenato acelera a fosfoglicerato-cinase, e a reação 7 passa a gerar o dobro de ATP.',fn:()=>malvarWrong()},
-      {t:'O arsenato bloqueia a hexocinase logo no início, e a via para antes de chegar à reação 7.',fn:()=>malvarWrong()}]}]);
+      {t:'O arsenato bloqueia a hexocinase logo no início, e a via para antes de chegar à reação 7.',fn:()=>malvarWrong()}]}]));
 }
 function malvarWrong(){
   flags.malvarQ=1;sfx.bump();setMood('malvar','angry',4);
@@ -3638,13 +3663,15 @@ const malvarR={id:'malvarRonda',name:'Prof. Malvar (Poções)',x:0,y:0,dir:'down
   }};
 syncW(malvarR);
 function mrPlace(on){ // Malvar either in his room or on his round
+  if(!on&&tdMalOut)return; // (or in the old lab, at the end of "O Nome Embaralhado")
   const L=SCENES.sala204,i=L.indexOf(malvar);
   if(on&&i>=0)L.splice(i,1);
   if(!on&&i<0)L.push(malvar);
 }
 function mrStart(k){
   const R=MR_ROUNDS[k];flags['mr'+(k+1)]=true;
-  mr={k,sc:R.sc,path:R.path.map(p=>p.slice()),i:1,wait:0,endMin:R.min+14};
+  const gm0=gameMinutes();if(k===1)flags.mrMin2=gm0; // (saves from before the candles were tied to Malvar's errand: see tdVelasMin)
+  mr={k,sc:R.sc,path:R.path.map(p=>p.slice()),i:1,wait:0,endMin:Math.max(R.min,gm0)+14};
   Object.assign(malvarR,{x:R.path[0][0],y:R.path[0][1],dir:'down',moving:false});syncW(malvarR);
   mrPlace(true);SCENES[R.sc].push(malvarR);
   if(scene!==cat.sc&&cat.sc!==R.sc){catPlace(R.sc);cat.x=R.path[0][0]+14;cat.y=Math.max(98,R.path[0][1]+30);cat.goal=null;cat.slide=null;cat.path=[];catSync();} // the cat comes along (if nobody sees him leave)
@@ -3657,7 +3684,7 @@ function malvarRondaTick(dt){
   if(!startTime||state==='boot'||state==='intro')return;
   const gm=gameMinutes();
   if(!mr){
-    for(let k=0;k<MR_ROUNDS.length;k++)if(!flags['mr'+(k+1)]&&gm>=MR_ROUNDS[k].min&&gm<MR_ROUNDS[k].min+14&&scene!=='sala204'){mrStart(k);break;}
+    for(let k=0;k<MR_ROUNDS.length;k++)if(!flags['mr'+(k+1)]&&gm>=MR_ROUNDS[k].min&&gm<MR_ROUNDS[k].min+14&&scene!=='sala204'&&!tdMalOut){mrStart(k);break;}
     return;
   }
   const o=malvarR;o.moving=false;
@@ -3668,7 +3695,7 @@ function malvarRondaTick(dt){
   const dx=p[0]-o.x,dy=p[1]-o.y,d=Math.hypot(dx,dy);
   if(d<.6){o.x=p[0];o.y=p[1];syncW(o);mr.i++;
     if(p[2])mr.wait=p[2];
-    if(p[3]==='wall'){o.dir='right';mr.wait=3.5;tdGlint=3;flags.tdVi=true; // behind the tapestry, a shard of mirror catches the light (Tadeo)
+    if(p[3]==='wall'){o.dir='right';mr.wait=3.5;tdGlintGo(); // behind the tapestry, a shard of mirror catches the light (Tadeo)
       if(!flags.mrWall&&Math.hypot(player.x-o.x,player.y-o.y)<100){flags.mrWall=true;setMood('malvar','smug',6);
         say([{t:'O Prof. Malvar para diante da parede lisa do fim do corredor. Fica um tempo olhando para ela.'},
           {who:MW,t:'Paredes lisas não guardam nada...',run:()=>{o.dir=faceTo(o,player);}},
@@ -4060,14 +4087,29 @@ tadeo.sitCool=Infinity; // he never sits: he watches
     'O cianeto nem encosta na glicólise. Ele vai direto na cadeia respiratória, no complexo IV... Mas isso é assunto para outro dia.',
     'Sabia que o meu nome tem exatamente as mesmas letras de outra coisa? Ninguém nunca percebeu. Você também não vai.',
     ()=>'Estude, '+nome1()+'. Quem entende a via sabe onde ela é forte... e onde ela é frágil.'];
+  const folhaPend=()=>!provas[10]&&!flags.graded;
+  tadeo._folha=function(intro){ // asking about lost sheets: the sheet of reaction 10 (answered right there, or kept by him)
+    stopChat(this);this.wait=8;this.dir=faceTo(this,player);setMood('tadeo','smug',6);
+    const L=intro||[{who:me(),t:flags.folha10?'Tadeo, sobre aquela folha da reação 10...':'Com licença... Você por acaso viu alguma folha de atividade perdida? De glicólise.'}];
+    say(L.concat(flags.folha10?[{who:TW,t:'Ainda em branco. Que decepção.'}]:[
+      {who:TW,t:'Folha de glicólise? ...Esta aqui?'},
+      {who:TW,t:'Achei ontem no chão da Sala 201, quando fechei as salas do andar. Reação 10: a piruvato-cinase. A última porta da via.'},
+      {who:TW,t:'Curioso alguém perder justo a reação que decide se tudo valeu a pena.'},
+      {t:'O Tadeo estende a folha, mas demora um instante para soltar.',run:()=>{flags.folha10=true;}},
+      {who:TW,t:'Responda aqui mesmo. Quero ver se você sabe.'}]).concat([{who:TW,t:'E então?',choices:[
+        {t:'Responder a folha da reação 10',fn:()=>{openQuiz(10);if(quiz)pileBack={list:TADEO_SHEETS,surf:'tadeo'};}},
+        {t:'Agora não',fn:()=>say([{t:'O Tadeo dobra a folha e guarda no bolso do colete.'},{who:TW,t:'Quando quiser, ela está comigo.'}])}]}]));
+  };
   tadeo.act=function(){
     stopChat(this);this.wait=5;this.dir=faceTo(this,player);setMood('tadeo','smug',6);
     if(!flags.tadeo){flags.tadeo=true;
-      return say([{who:TW,t:gen('Um calouro','Uma caloura')+' de crachá novo. Tadeo Corniel, 3º ano. Monitor... quando me convém.'},
+      const ask=folhaPend()?[{who:me(),t:'Com licença... Você por acaso viu alguma folha de atividade perdida? De glicólise.'}]:[];
+      const P=ask.concat([{who:TW,t:gen('Um calouro','Uma caloura')+' de crachá novo. Tadeo Corniel, 3º ano. Monitor... quando me convém.'},
         {who:TW,t:'Glicólise, imagino. Dez reações. A maioria decora. Eu prefiro saber onde apertar para que tudo pare.'},
         {who:me(),t:'Parar? A ideia não é a via funcionar?'},
         {who:TW,t:'Funcionar é fácil. Controlar é que é interessante. Quem controla a enzima certa controla a célula inteira.'},
-        {who:TW,t:'Não me olhe assim. Estou falando de Bioquímica, é claro.',run:()=>setMood('player','worried',3)}]);}
+        {who:TW,t:'Não me olhe assim. Estou falando de Bioquímica, é claro.',run:()=>setMood('player','worried',3)}]);
+      return ask.length?tadeo._folha.call(this,P.concat([{who:TW,t:'Mas você perguntou de uma folha.'}])):say(P);}
     if(flags.alost===6&&!flags.tadeoLiga){flags.tadeoLiga=true;setMood('tadeo','angry',5);
       return say([{who:TW,t:'Esse selo no seu bolso... Então a Liga de Metabolismo mandou um convite para '+gen('um calouro','uma caloura')+'.'},
         {who:TW,t:'A mim, nunca mandaram. Três anos. Eu teria passado pelas dez portas de olhos fechados.'},
@@ -4704,7 +4746,10 @@ function updateObjective(){
     :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
     :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, na Sala 101, até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, na Sala 101')
     :!flags.profs&&!answered()?(flags.profsIn?'Pergunte aos professores, na Sala 101, pelas suas folhas':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
-    :'Ache e responda as 10 folhas esquecidas: salas 103 e 201 e uma mesa de estudo do 2º andar, até 11h30';
+    :(()=>{const m=[3,10].filter(n=>!provas[n]);return m.length&&answered()===QUIZ_N-m.length;})()
+      ?(!provas[3]&&!provas[10]?'Faltam as folhas das reações 3 e 10: elas não estavam com as outras. Onde será que foram parar?'
+        :'Falta a folha da reação '+(provas[3]?10:3)+': ela não estava com as outras. Onde será que foi parar?')
+    :'Ache e responda as 10 folhas esquecidas (os professores lembram das salas 103 e 201 e de uma mesa de estudo do 2º andar), até 11h30';
   curObj=t;diaryCheck();
 }
 // golden "!": the main story only (side quests have their own blue "!", see sideNeeds)
@@ -5043,8 +5088,14 @@ function closeQuiz(){
   // back to the pile while it still has blank sheets; a finished pile goes to the inventory
   if(pile&&justDone&&!flags.timeUp&&pile.some(n=>!provas[n])){sheetPile(pile,pb.surf);return;}
   if(pile&&justDone&&!pile.some(n=>!provas[n])){
-    const room={sala103:'Sala 103',sala201:'Sala 201',andar2:'mesa de estudo do 2º andar'}[scene]||'sala';
-    const got=collectPile(pile,room,pb.surf);
+    const room=pile===TADEO_SHEETS?'reação 10':pile===MALVAR_SHEETS?'reação 3':{sala103:'Sala 103',sala201:'Sala 201',andar2:'mesa de estudo do 2º andar'}[scene]||'sala';
+    const got=collectPile(pile,room,pb.surf),mn=PILE_MISSING[scene];
+    if(pile!==TADEO_SHEETS&&mn&&!provas[mn])got.push({who:me(),t:'E a da reação '+mn+'? Não estava com as outras... Onde será que ela foi parar?'});
+    if(pile===TADEO_SHEETS)got.push({who:'TADEO (3º ANO)',t:'Pronto. Agora é com os professores. E tente não perder mais nada, '+nome1()+'.',run:()=>setMood('tadeo','smug',5)});
+    if(pile===MALVAR_SHEETS&&SCENES.sala204.includes(malvar)){setMood('malvar','smug',5);flags.malvarFolha=true;
+      got.push({who:MW,t:'Hm. Então era sua. Estava jogada no corredor ontem.'},
+        {who:MW,t:'Eu ia levar para os achados e perdidos. ...Não me olhe assim. Professor também esquece.'},
+        {who:MW,t:'E não perca de novo. A reação 3 é a última coisa que um aluno deveria perder.'});}
     if(answered()===QUIZ_N&&!flags.seated)
       return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'}].concat(sheetsReadyLines())),sheetsReadyEnd);
     return say(got);
@@ -5207,7 +5258,7 @@ $('caca-close').addEventListener('click',closeCaca);
         {who:me(),t:'Camila, achei as '+CACA_WORDS.length+' palavras do caça-palavras do laboratório!'},
         {who:CW,t:'Que demais! Fui eu que deixei lá. Glicose, piruvato, citosol, ATP, NADH, lactato... Você revisou a glicólise do começo ao fim.'},
         {who:CW,t:'Agora é descansar e ir bem na prova de amanhã. Boa sorte!'}]);}
-    if(!flags.cacaTold){face();flags.cacaTold=flags.cacaDica=true;updatePauseExtra();
+    if(!flags.cacaTold&&flags.saiu101){face();flags.cacaTold=flags.cacaDica=true;updatePauseExtra();
       return say([{who:CW,t:'Oi! Sou a Camila, monitora de Bioquímica. Amanhã tem prova de glicólise, né?'},
         {who:CW,t:'Deixei um caça-palavras da glicólise na mesinha do laboratório, no térreo, ao lado da porta. São 7 palavras-chave da matéria.'},
         {who:CW,t:'É opcional e não vale nota. Mas cada palavra que você achar vem com uma dica de revisão. Ajuda muito para a prova!'},
@@ -5216,7 +5267,7 @@ $('caca-close').addEventListener('click',closeCaca);
       return say([{who:me(),t:'Camila, achei as '+CACA_WORDS.length+' palavras do caça-palavras!'},
         {who:CW,t:'Que demais! Glicose, piruvato, citosol, ATP, NADH, lactato... Você revisou a glicólise do começo ao fim.'},
         {who:CW,t:'Agora é descansar e ir bem na prova de amanhã. Boa sorte!'}]);}
-    if(!flags.caca&&this.rem++%2===0){face();
+    if(!flags.caca&&(flags.cacaTold||flags.cacaDica)&&this.rem++%2===0){face();
       return say([{who:CW,t:cacaCount()?'Já achou '+cacaCount()+' das '+CACA_WORDS.length+' palavras do caça-palavras? Continue, a revisão vale a pena!'
         :'Já passou no laboratório? O caça-palavras da glicólise está na mesinha ao lado da porta. É ótimo para revisar!'}].concat(coatTip()));}
     return act0.call(this);
@@ -5239,10 +5290,10 @@ function sideNeeds(o){
   if(sideMarker(o))return true; // next step of Tiago's notebook
   if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca;
   if(o.id==='tiago')return !flags.tiagoQ; // he still has a request (also after a "not now")
-  if(o.id==='camila')return !flags.cacaTold||(!!flags.caca&&!flags.cacaThanks);
+  if(o.id==='camila')return (!flags.cacaTold&&!!flags.saiu101)||(!!flags.caca&&!flags.cacaThanks);
   if(o.id==='gabriel')return !flags.duelWin;
   { const q=flags.bolsaQ||0; // the blood bags
-    if(o.id==='kido')return (q===0&&!!flags.cracha)||q===6;
+    if(o.id==='kido')return (q===0&&!!flags.cracha&&!!flags.saiu101)||q===6;
     if(o.id==='geladeira')return q===1;
     if(o===heloisa)return q===2||q===5;
     if(o.id==='lucia')return q===3;
@@ -5280,9 +5331,15 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(flags.duelOn&&!flags.duelWin)add_('duel','Duelo Relâmpago: acerte '+DUEL_WIN+' de '+DUEL_N+' contra o Gabriel, no 2º andar');
   const td=flags.td||0;
   if(td===3&&flags.brunoAuth)add_('recado','Leve ao Bruno, no térreo, o recado do Prof. Malvar: ele pode escrever o seu nome no livro'+(flags.dzReward?'':' (e conte que você venceu o desafio)'));
+  if(td===4&&!flags.tdFurto)add_(flags.tdLabVi?'tdEspera':'tdLab',flags.tdLabVi
+    ?'Daqui a pouco a Larissa sobe para acender as velas da sala oculta. Até lá, aproveite a manhã'
+    :'Vá ao laboratório do térreo: a Larissa e o Gabriel querem mostrar a gravação do seu desafio');
+  if(td===4&&flags.tdFurto&&flags.tdLarBye)add_('tdVelas','A Larissa subiu para acender as velas da sala oculta. Ela disse que já volta');
   if(td===5)add_('nome'+tdClues(),'O Nome Embaralhado: descubra quem levou o Livro dos Convites antes de sexta-feira (pistas: '+tdClues()+' de 5)');
   if(td===6)add_(flags.tdTrap?'nome7':'nome6',flags.tdTrap?'O Nome Embaralhado: passe três vezes diante da parede do fim do 2º andar e espere escondido no laboratório antigo'
     :'O Nome Embaralhado: encontre o Tadeo, no lado oeste do 2º andar, e deixe-o ver o seu convite');
+  if(flags.graded&&flags.pass&&scoreGot&&!allDone()){const n=SCORE_RULES.filter(r_=>!scoreGot.has(r_.k)).length;
+    add_('fim'+n,'Final completo: ainda falta'+(n>1?'m '+n+' missões':' 1 missão')+' para chegar a 100% ('+missPct(scoreGot)+'% concluído)');}
   return L;
 }
 function sideDone(){ // finished side quests, greyed out at the end of the diary
@@ -5383,8 +5440,10 @@ const SCORE_RULES=[
   {k:'cracha',pts:10,t:'Pegou o crachá',ok:()=>flags.cracha},
   {k:'profs',pts:10,t:'Falou com os professores',ok:()=>flags.profs},
   {k:'mesa',pts:15,t:'Folhas da mesa do 2º andar',ok:()=>pileDone(TABLE_SHEETS)},
-  {k:'s103',pts:20,t:'Folhas da Sala 103',ok:()=>pileDone(ROOM_SHEETS.sala103)},
-  {k:'s201',pts:20,t:'Folhas da Sala 201',ok:()=>pileDone(ROOM_SHEETS.sala201)},
+  {k:'s103',pts:15,t:'Folhas da Sala 103',ok:()=>pileDone(ROOM_SHEETS.sala103)},
+  {k:'s204',pts:10,t:'Folha da reação 3 (sala do Prof. Malvar)',ok:()=>pileDone(MALVAR_SHEETS)},
+  {k:'s201',pts:15,t:'Folhas da Sala 201',ok:()=>pileDone(ROOM_SHEETS.sala201)},
+  {k:'s10',pts:10,t:'Folha da reação 10 (com o Tadeo)',ok:()=>pileDone(TADEO_SHEETS)},
   {k:'bonus',pts:10,t:'Questão bônus respondida',ok:()=>!!provas.b},
   {k:'aprov',pts:50,t:'Atividade aprovada',ok:()=>flags.graded&&flags.pass},
   {k:'caca',pts:30,side:1,ok:()=>flags.caca},
@@ -5471,6 +5530,7 @@ const QUEST_NEXT={1:'gabriel',2:'lucia',3:'zelador',4:'secretaria',5:'tiago'};
 function tdNeeds(o){ // "O Nome Embaralhado": the next steps (null: not this quest's business)
   const td=flags.td||0,c=flags.tdC||{};
   if(o.id==='bruno'&&td===3&&flags.brunoAuth&&flags.dzReward)return true;
+  if(td===4&&!flags.tdFurto&&!flags.tdLabVi&&(o.id==='larissa'||o.id==='gabriel'))return true;
   if(td===5){
     if(o.id==='bruno')return !c.ouvido;
     if(o.id==='secretaria')return !c.cracha;
@@ -5643,7 +5703,7 @@ function bolsaRosa(o){
   kido.act=function(){
     const q=flags.bolsaQ||0;
     if(q>=1&&q<=6){stopChat(this);this.wait=5;this.dir=faceTo(this,player);return bolsaKiko(this);}
-    if(q===0&&flags.cracha){ // the offer comes after one of his jokes
+    if(q===0&&flags.cracha&&flags.saiu101){ // the offer comes after one of his jokes (once the player has been to Sala 101)
       const s0=say;let lines=null;
       say=(L)=>{lines=L;};try{k0.call(this);}finally{say=s0;}
       return bolsaKiko(this,lines||[]);
@@ -5663,9 +5723,12 @@ function bolsaRosa(o){
     }
     if(bolsaRosa(this))return;return h0.call(this);
   };
-  const z0=zelObj.act;
+  const z0=zelObj.act;zelObj._tiagoAct=z0;
   zelObj.act=function(){
-    if(flags.bolsaQ===4&&flags.tiagoQ!==3){
+    if(flags.bolsaQ===4&&flags.tiagoQ!==3)return zelObj._bolsa.call(this);
+    return z0.call(this);
+  };
+  zelObj._bolsa=function(){{
       jan.wait=5;const W_='SEU ANTÔNIO (ZELADOR)';
       return say([{who:me(),t:'Seu Antônio, o senhor viu uma bolsa de sangue no laboratório? A bolsa C, do professor Kiko.'},
         {who:W_,t:'Bolsa de sangue? Ah, vi sim, '+gen('doutor','doutora')+'! Ontem à noite, limpando o laboratório, tinha uma bolsinha dessas em cima da bancada, perto da janela.'},
@@ -5674,9 +5737,8 @@ function bolsaRosa(o){
         {who:W_,t:'Fiz besteira, foi? Eu só quis ajudar...',run:()=>bolsaUpd(5)},
         {who:me(),t:'Não, Seu Antônio! O senhor guardou bem na hora. Foi a bolsa que ficou esquecida na bancada. Vou contar para a professora Rosa.'}]);
     }
-    return z0.call(this);
   };
-  const luc=SCENES.andar2.find(o=>o.id==='lucia'),l0=luc.act,LW='DONA LÚCIA (BIBLIOTECÁRIA)';
+  const luc=SCENES.andar2.find(o=>o.id==='lucia'),l0=luc.act,LW='DONA LÚCIA (BIBLIOTECÁRIA)';luc._tiagoAct=l0;
   luc.act=function(){
     if(flags.bolsaQ!==3)return l0.call(this);
     say([{who:me(),t:'Dona Lúcia, a professora Rosa me mandou ler o "Manual de Hemoterapia". O capítulo das bolsas de sangue.'},
@@ -5790,11 +5852,15 @@ $('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();})
   gab.rem=0;
   gab.act=function(){
     stopChat(this);this.wait=4;this.dir=faceTo(this,player);
-    const doc=()=>gen('doutor','doutora')+' '+nome1(),k=this.talk++;
     if(flags.tiagoQ===1){flags.tiagoQ=2;updatePauseExtra();
       return say([{who:me(),t:'Gabriel, você viu um caderno de capa laranja por aí? É do Tiago, do 1º ano.'},
         {who:GW,t:'Laranja, cheio de adesivos? Vi ontem à tarde, em cima do balcão da biblioteca.'},
         {who:GW,t:'Pergunta para a Dona Lúcia, a bibliotecária. Ela está aqui no corredor do 2º andar.'}]);}
+    return gab._duel.call(this);
+  };
+  gab._duel=function(){ // the Duelo Relâmpago (and, once won, his tips)
+    stopChat(this);this.wait=4;this.dir=faceTo(this,player);
+    const doc=()=>gen('doutor','doutora')+' '+nome1(),k=this.talk++;
     if(!flags.duelTold){flags.duelTold=true;updatePauseExtra();
       return say([{who:GW,t:'Ei, '+gen('calouro','caloura')+'! Já ouviu falar do Duelo Relâmpago do 3º ano?'},
         {who:GW,t:'São '+DUEL_N+' perguntas de glicólise em '+DUEL_T+' segundos. No ano passado eu acertei 3. Para me vencer, você precisa de pelo menos '+DUEL_WIN+'.'},
@@ -5909,9 +5975,8 @@ function alostScene(from,to){
   }
   if(from==='salaCorredor'&&to==='andar2'){
     flags.secretOpen=false;secretAnim=-1;wallPass={n:0,side:null};secretClose=-.5; // the door is there as the player steps out, then turns back to bricks
-    if(flags.alost===6&&!SCENES.andar2.includes(larissa))larissaMove('andar2',334,470,96); // in front of the library from now on
-    const bru=flags.alost===6&&!flags.dzAsked; // Bruno waits by the wall with the Liga challenge
-    if(bru)brunoVisitIn();
+    const bru=flags.alost===6&&!flags.dzAsked&&tdClock>=tdArrive('bruno','andar2'); // Bruno waits by the wall with the Liga challenge
+    if(bru)brunoVisitIn();else if(flags.alost===6&&!flags.dzAsked)tdBruPend=true; // (he could not be up here yet: he comes up the stairs later)
     onArrive=()=>say([{t:'Atrás de você, os tijolos voltam ao lugar, um a um. A parede está lisa de novo.'}],bru?brunoVisitTalk:undefined);
   }
   if(to==='salaOculta'&&flags.alost===5)onArrive=ocReveal; // first time past the tenth door
@@ -6054,8 +6119,8 @@ add({id:'estanteVelha',name:'Estante antiga',cx:332,top:110,base:178,solid:{x:29
     {t:'Na contracapa de vários deles, as mesmas iniciais: "Prof. E. M.".'}])});
 add({id:'mesaPaginas',get name(){return flags&&flags.alost>=6?'Mesa com páginas':'Folhas sobre a mesa';},cx:258,top:104,base:124,solid:{x:230,y:112,w:56,h:12},
   draw:()=>{const x=230;r(x,106,56,7,'#5a3d24');r(x,106,56,1,'#7a522f');r(x,113,56,4,'#3a2414');r(x+2,117,3,7,'#2a1a10');r(x+51,117,3,7,'#2a1a10');
-    for(const [px0,py0] of [[x+8,103],[x+20,104],[x+33,103]]){r(px0,py0,10,6,'#efe3c8');r(px0+1,py0+2,7,1,'#9aa2a9');r(px0+1,py0+4,5,1,'#9aa2a9');}
-    r(x+47,100,3,6,'#efe3c8');px(x+48,98,'#e8913a');},
+    for(const [px0,py0] of [[x+3,103],[x+14,104],[x+25,103]]){r(px0,py0,10,6,'#efe3c8');r(px0+1,py0+2,7,1,'#9aa2a9');r(px0+1,py0+4,5,1,'#9aa2a9');}
+    r(x+52,100,3,6,'#efe3c8');px(x+53,98,'#e8913a');},
   act:()=>flags.alost===5?ocPages():say([{t:'Páginas soltas, escritas à mão: as reações 1, 3 e 10, e como cada uma é regulada.'},
     {t:'A letra é a mesma das fichas e dos livros da estante. No pé da última página: "E. M.".'}])});
 // the candle Larissa lights to show herself: an iron candlestick by her spot, dark until then, lit from then on
@@ -7327,9 +7392,11 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
       {who:'LUCAS (2º ANO)',t:'O estranho é que arrancaram justamente as páginas das reações 1, 3 e 10. As três irreversíveis.'},
       {who:'LUCAS (2º ANO)',t:'Se um dia você achar essas páginas, eu pago um café.'}]);
   });
+  kido._bolsaAct=kido.act;kido._hintOk=()=>mid()&&!flags.hintKiko;
   wrap(kido,function(){
     if(!mid()||flags.hintKiko)return false;flags.hintKiko=true;face(this);
-    say([{who:'PROF. KIKO (HISTOLOGIA)',t:'Uma sala que não está lá? Hahaha! Lenda de veterano, isso aí. Todo ano alguém pergunta.'},
+    say([{who:me(),t:'Professor, o senhor já ouviu falar de uma sala que não está lá?'},
+      {who:'PROF. KIKO (HISTOLOGIA)',t:'Uma sala que não está lá? Hahaha! Lenda de veterano, isso aí. Todo ano alguém pergunta.'},
       {who:'PROF. KIKO (HISTOLOGIA)',t:'...Mas, se for procurar, vá '+gen('sozinho','sozinha')+'.'}]);
   });
   wrap(find('felipe'),function(){
@@ -7372,7 +7439,7 @@ function brunoVisitIn(){
 function brunoVisitTalk(){
   if(!bruVis)return;
   bruVis.dir=faceTo(bruVis,player);setMood('bruno','happy',4);
-  dzConvite(()=>{if(bruVis)bruVis.path=[[363,116],[363,122],[363,216]];flags.td=Math.max(flags.td||0,2);tdGlint=3;flags.tdVi=true;}); // then down the stairs (and, behind the tapestry, the glint again)
+  dzConvite(()=>{if(bruVis)bruVis.path=[[363,116],[363,122],[363,216]];flags.td=Math.max(flags.td||0,2);tdGlintGo();}); // then down the stairs (and, behind the tapestry, the glint again)
 }
 function brunoVisitOut(){if(!bruVis)return;const i=SCENES.andar2.indexOf(bruVis);if(i>=0)SCENES.andar2.splice(i,1);bruVis=null;}
 function brunoVisitTick(dt){
@@ -7433,7 +7500,7 @@ function alostReset(){
         confesses his three years of waiting and holds the invitation "for a minute": he copies the seal in warm wax
      4  the player brings Malvar's message to Bruno (flags.tdTrip: game minute): Bruno goes up to write the name,
         Larissa and Gabriel (Felipe too) go down to the lab to watch the recording of the challenge; out of sight,
-        from 10h15 (the candles stolen from Sala 204 during Malvar's round) and 2 minutes after Bruno went up,
+        once Malvar has left Sala 204 (his round, or an errand right after the message: the candles) and 2 minutes after Bruno went up,
         Tadeo goes in with the fake seal and takes the book (flags.tdFurto: game minute)
      5  Larissa finds the player: the book is gone, Bruno is blamed; the player's seal was copied. Clues (flags.tdC):
         selo (Larissa), cracha (Dona Tati), esconderijo (the cat at the tapestry), deslize (Tadeo's slip, told to
@@ -7445,7 +7512,7 @@ function alostReset(){
         diary's light decides (a timing action, no defeat); LORDE CIANETO; Malvar punishes him (badge, detention in
         Sala 204, not expelled). Done: he stays in Sala 204 for the rest of the game.
    Off-screen moves only happen where the player is not looking (tdSync). No autosave during the scenes (tdCut). */
-var tdGlint=0,tdCut=false,tdMovers=[],tdNudge=0,tdOc=null,tdDuel=null,tdTemp=[],tdReady=false; // tdReady: this block has run (reset() may come first)
+var tdNicho=false,tdGlintSeen=false,tdGlint=0,tdCut=false,tdMovers=[],tdNudge=0,tdOc=null,tdDuel=null,tdTemp=[],tdReady=false; // tdReady: this block has run (reset() may come first)
 const TW_='TADEO (3º ANO)',BW_='BRUNO (1º ANO)',GW_='GABRIEL (3º ANO)',MW_='PROF. MALVAR';
 const TD_CLUES=['selo','cracha','esconderijo','deslize','ouvido'];
 const tdC=()=>flags.tdC||(flags.tdC={});
@@ -7491,42 +7558,143 @@ function tdNpc(id,name,key,outfit,x,y,dir,blink,act){
 }
 function tdTempOut(){for(const o of tdTemp){const sc=tdWhere(o);if(sc)SCENES[sc].splice(SCENES[sc].indexOf(o),1);}tdTemp=[];tdMovers=tdMovers.filter(m=>m.o===player?false:true);}
 const tdTadeo=()=>tadeo;
+// the player would see the theft: anywhere on the 2nd floor's way to the book (corridor, candle corridors, old lab)
+const tdSeen=()=>SCENE_ZONE[scene]==='andar2'&&scene!=='sala201'&&scene!=='sala204';
+// the candles: Tadeo opens Sala 204 with his badge 2 minutes after Malvar leaves it (flags.tdVelasT, set in tdSync)
+const tdVelasMin=()=>flags.tdVelasT!=null?flags.tdVelasT:flags.mrMin2!=null?flags.mrMin2+2:flags.mr2?7*60+30+167:null; // (older saves: the 10h15 round)
+const tdClockStuck=()=>gameMinutes()>=END_MIN&&!(flags.graded&&flags.pass); // the class is over and the clock waits for the hand-in
 const tdBruno=()=>tdFind('bruno')||tdBrunoObj;
 var tdBrunoObj=null,tdGabObj=null,tdFelObj=null;
 
-/* where each character should be at this step; moves happen only where the player is not looking (force: on load) */
+/* ---------- where everybody is: one person, one place, and nobody gets anywhere before they could ----------
+   TDS keeps where and when the player last saw each person (scene, tdClock seconds). A person leaves a scene only
+   while the player is not looking, then needs tdTravel() seconds to get anywhere (floors, rooms, the candle
+   corridors), counted both from that last sight and from the moment they left; if the player is already where
+   they are going, they come in on foot: up or down the stairs, through the door of a room, or out of the wall at
+   the end of the 2nd floor. force (a loaded game, a new game): straight to their places. */
+var tdBruPend=false,tdClock=0,TDS={},tdWait=null,tdMalOut=false,tdMalBack=0,tdLarUp=0,tdCatT=0;
+const TD_REAL={ocTadeo:'tadeo',ocLarissa:'larissa',ocGabriel:'gabriel',ocBruno:'bruno',ocMalvar:'malvar',malvarIn:'malvar',
+  malvarRonda:'malvar',brunoVisita:'bruno',larissaOc:'larissa'};
+const TD_TRACK=new Set(['tadeo','larissa','gabriel','bruno','felipe','malvar','gato']);
+// [floor, seconds from that floor's corridor]: a room is 3 s from its door, the candle corridors and the old lab are a
+// long walk from the secret wall; a flight of stairs is 5 s (about the player's own pace)
+const TD_POS={terreo:[0,0],salaLab:[0,3],salaSim:[0,3],simGlic:[0,3],andar1:[1,0],sala101:[1,3],sala103:[1,3],
+  andar2:[2,0],sala201:[2,3],sala204:[2,3],salaCorredor:[2,8],salaCorredor2:[2,16],salaOculta:[2,22]};
+function tdTravel(a,b){ // seconds on foot between two scenes
+  if(!a||!b||a===b)return 0;const A=TD_POS[a]||[0,0],B=TD_POS[b]||[0,0];
+  const d=A[0]!==B[0]?A[1]+5*Math.abs(A[0]-B[0])+B[1]:A[1]>=8&&B[1]>=8?Math.abs(A[1]-B[1]):A[1]+B[1];
+  return 2+d;
+}
+const tdArrive=(k,dest)=>TDS[k]?TDS[k].t+tdTravel(TDS[k].sc,dest):0; // the soonest they can be there, from the last sight
+function tdSeenTick(){for(const o of objects){const k=TD_REAL[o.id]||o.id;if(TD_TRACK.has(k))TDS[k]={sc:scene,t:tdClock};}}
+const TD_ROOMDOOR={salaLab:['terreo',522,66],sala101:['andar1',52,66],sala103:['andar1',518,66],sala201:['andar2',58,66],sala204:['andar2',648,66]};
+function tdEntry(sc,from){ // where somebody coming from `from` steps into `sc` (and, the other way, where they leave it)
+  const S=TD_POS[sc]||[0,0],F=TD_POS[from]||S;
+  if(S[1]>0&&S[1]<8||sc==='salaOculta')return [192,224];                                              // a room / the old lab: the door in the bottom wall
+  if(F[0]<S[0])return sc==='andar1'?[352,200]:[363,200];                   // up the stairs
+  if(F[0]>S[0])return sc==='terreo'?[352,60]:[572,58];                     // down the stairs
+  if(TD_ROOMDOOR[from]&&TD_ROOMDOOR[from][0]===sc)return TD_ROOMDOOR[from].slice(1); // out of a room on this floor
+  if(F[1]>=8)return [684,112];                                             // out of the secret wall
+  return sc==='andar1'?[352,200]:sc==='terreo'?[352,60]:[363,200];
+}
+function tdPlace(o,sc,spot){
+  if(spot&&spot.laneL){wOff(o);larissaMove(sc,...spot.laneL);return;}
+  if(!spot||spot.lane){wLane(o,sc);return;}
+  wOn(o,sc,spot.x,spot.y,spot.dir,false);
+}
+function tdWalkIn(o,sc,from,spot,then){ // into the player's scene, on foot
+  const [ex,ey]=tdEntry(sc,from),room=(TD_POS[sc]||[0,0])[1]>0,L=spot&&spot.laneL;
+  const tx=spot&&spot.x!=null?spot.x:Math.max(L?L[0]:o.x0,Math.min(L?L[1]:o.x1,ex)),ty=spot&&spot.y!=null?spot.y:L?L[2]:o.y0;
+  if(o===larissa)larissaMove(null,0,0,0);
+  wOn(o,sc,ex,ey,null,false);o.wait=60;
+  tdMove(o,room?[[192,206],[tx,ty]]:[[tx,ty]],40,()=>{
+    const x=o.x,y=o.y;
+    if(L){wOff(o);larissaMove(sc,...L);o.x=x;o.y=y;syncW(o);}
+    else if(!spot||spot.lane)wOn(o,sc,x,y,'down',true);
+    else if(spot.dir)o.dir=spot.dir;
+    o.wait=2;if(then)then();});
+}
+function tdGo(o,want,spot,force){
+  if(!o||tdMoving(o))return;
+  const at=tdWhere(o),k=o.id;
+  if(at===want){o._dest=undefined;return;}
+  if(force){o._dest=undefined;o._dep=null;if(!want)wOff(o);else tdPlace(o,want,spot);return;}
+  if(at&&at===scene)return;                                                // in sight: stays until the player looks away
+  if(o._dest!==want){o._dest=want;o._from=at||(o._dep&&o._dep.sc)||(TDS[k]&&TDS[k].sc)||want;}
+  if(at){o._dep={sc:at,t:tdClock};wOff(o);}                                // on the way (nowhere, for a while)
+  if(!want)return;
+  const arr=Math.max(tdArrive(k,want),o._dep?o._dep.t+tdTravel(o._dep.sc,want):0);
+  if(tdClock<arr)return;
+  if(want!==scene){o._dest=undefined;o._dep=null;tdPlace(o,want,spot);}
+  else if(state==='play'&&!fade&&!dialog){o._dest=undefined;o._dep=null;tdWalkIn(o,want,o._from,spot);}
+}
 function tdSync(force){
   if(!flags||!SCENES.andar2)return;
-  const td=flags.td||0,furto=!!flags.tdFurto,trap=td===6&&!!flags.tdTrap;
+  const td=flags.td||0,furto=!!flags.tdFurto,trap=td===6&&!!flags.tdTrap,oc=!!tdOc;
   tdBrunoObj=tdBrunoObj||tdFind('bruno');tdGabObj=tdGabObj||tdFind('gabriel');tdFelObj=tdFelObj||tdFind('felipe');
-  const put=(o,want,place)=>{
-    if(!o||tdMoving(o))return;const at=tdWhere(o);
-    if(at===want)return;
-    if(!force&&(at===scene||want===scene))return;
-    if(!want){wOff(o);return;}
-    place?place(o):wLane(o,want);
-  };
-  const lab=(x,y,dir)=>o=>wOn(o,'salaLab',x,y,dir,false);
-  put(tdBrunoObj,(td===4&&!furto)||trap?null:'terreo');
-  put(tdGabObj,td===4&&!furto?'salaLab':'andar2',td===4&&!furto?lab(358,196,'left'):null);
-  put(tdFelObj,td===4&&!furto?null:'andar2');
-  put(tadeo,td>=7?'sala204':trap?null:'andar2',td>=7?o=>{wOn(o,'sala204',318,92,'up',false);}:null);
-  // Larissa: to the lab while the recording is shown, back to the 2nd floor after the theft
+  // Bruno: by the wall with the Liga challenge (his visit), writing in the old lab, on watch by the stairs of the 2nd
+  // floor, arguing with Tadeo at its west end, fetching Malvar (the trap); otherwise on the ground floor
+  tdGo(tdBrunoObj,(flags.alost===6&&!flags.dzAsked)||bruVis||oc?null:td===4&&!furto?'salaOculta':td===6?'andar2':'terreo',
+    td===4&&!furto?{x:274,y:132,dir:'up'}:trap?{x:46,y:112,dir:'left'}:td===6?{x:384,y:124,dir:'left'}:{lane:1},force);
+  // Gabriel: in the lab for the recording, hidden in the old lab for the trap; otherwise the 2nd floor
+  tdGo(tdGabObj,oc||td===6?null:td===4&&!furto?'salaLab':'andar2',td===4&&!furto?{x:358,y:196,dir:'left'}:{lane:1},force);
+  tdGo(tdFelObj,'andar2',{lane:1},force);
+  // Tadeo: the 2nd floor (its west end while Bruno holds him), the old lab (the trap scene's own Tadeo), then Sala 204
+  if(tdNicho&&scene!=='andar2')tdNicho=false;
+  tdGo(tadeo,oc||tdNicho?null:td>=7?'sala204':'andar2',td>=7?{x:318,y:92,dir:'up'}:trap?{x:30,y:112,dir:'right'}:{lane:1},force);
+  // Larissa
   const lw=tdWhere(larissa);
-  if(td===4&&!furto&&lw!=='salaLab'&&(force||(lw!==scene&&scene!=='salaLab'))){larissaMove(null,0,0,0);wOn(larissa,'salaLab',282,196,'right',false);}
-  if((furto||td!==4)&&lw==='salaLab'&&(force||scene!=='salaLab')){wOff(larissa);larissaMove('andar2',334,470,96);}
+  if(td===4&&!furto&&!flags.tdLarSai)tdGo(larissa,'salaLab',{x:282,y:196,dir:'right'},force);
+  else if(td===4&&furto&&!flags.tdLarSai){ // up to light the candles (if she is with the player she says goodbye first: tdLarissaSai)
+    if(force||lw!==scene){if(lw)wOff(larissa);flags.tdLarSai=true;tdLarUp=Math.max(tdClock+tdTravel(lw,'salaOculta'),tdArrive('larissa','salaOculta'));}}
+  else if(td===4&&flags.tdLarSai){if(lw&&lw!==scene&&!tdMoving(larissa))wOff(larissa);} // upstairs until she comes back (tdLarReady)
+  else if(td===6||oc)tdGo(larissa,null,null,force);                       // hidden in the old lab
+  else if(flags.alost===6&&(!lw||(TD_POS[lw]||[0,0])[1]>0))tdGo(larissa,'andar2',{laneL:[334,470,96]},force); // home: in front of the library
   // the cat waits at the tapestry while the hiding place is still a secret
-  if(td===5&&!tdC().esconderijo&&typeof cat!=='undefined'&&(force||(scene!=='andar2'&&cat.sc!==scene))&&(cat.sc!=='andar2'||Math.abs(cat.x-480)>4)){
-    catPlace('andar2');Object.assign(cat,{x:480,y:74,goal:null,slide:null,path:[],mode:'sit',modeT:9,face:-1});catSync();}
+  if(td===5&&!tdC().esconderijo&&typeof cat!=='undefined'&&!cat.slide&&!tdCatPin()){
+    const sit=()=>{catPlace('andar2');Object.assign(cat,{x:480,y:74,goal:null,slide:null,path:[],mode:'sit',modeT:9,face:-1});catSync();};
+    if(cat.sc!=='andar2'){
+      if(force)sit();
+      else if(cat.sc!==scene&&!cat.goal&&tdClock>=tdArrive('gato','andar2')){
+        if(scene!=='andar2')sit();
+        else{const fl=CAT_FLOOR[cat.sc]==='andar1'?'andar1':'terreo';cat.goal={to:'andar2',exit:[0,0],arrive:JAN_STAIRS.andar2[fl],floor:true};catSwitch();}} // up the stairs, in front of the player
+    }else if(force||scene!=='andar2')sit();
+    else if((tdCatT-=1/60)<=0&&!cat.goal&&!cat.path.length){tdCatT=1;if(catGo(480,74)){cat.mode='walk';cat.target=null;}} // in sight: he walks over to it
+  }
+  // right after the message to Bruno, Malvar leaves Sala 204 for a while (his round, if it is under way, or down to the
+  // teachers' room): Tadeo opens it with his badge 2 minutes later and takes the candles. He never vanishes in sight.
+  if(td===4&&flags.tdVelasT==null&&!force){
+    if(mr){flags.tdVelasT=gameMinutes()+2;flags.tdVelasPor='ronda';}
+    else if(scene!=='sala204'&&!tdMalOut&&SCENES.sala204.includes(malvar)){tdMalOut=true;tdMalBack=tdClock+150;mrPlace(true);flags.tdVelasT=gameMinutes()+2;flags.tdVelasPor='cafe';}
+  }
+  // Malvar back in Sala 204 after the trap or his errand (on foot through the door, if the player is there)
+  if(tdMalOut&&!oc&&tdClock>=tdMalBack){
+    if(force||scene!=='sala204'){tdMalOut=false;mrPlace(false);}
+    else if(state==='play'&&!fade&&!SCENES.sala204.some(q=>q.id==='malvarIn')){
+      const M=tdNpc('malvarIn','Prof. Malvar (Poções)','malvar','coat',192,224,'up',1.7);SCENES.sala204.push(M);
+      tdMove(M,[[192,206],[262,100]],30,()=>{const i=SCENES.sala204.indexOf(M);if(i>=0)SCENES.sala204.splice(i,1);
+        const j=tdTemp.indexOf(M);if(j>=0)tdTemp.splice(j,1);tdMalOut=false;mrPlace(false);});
+    }
+  }
 }
+// the glint is Tadeo in the niche behind the tapestry, watching the wall in his shard of mirror: so it never happens
+// while he is in sight somewhere else, and he stays hidden there until the player leaves the 2nd floor
+function tdGlintGo(){
+  const w=tdWhere(tadeo);
+  if(w===scene&&tadeo.x>camX-12&&tadeo.x<camX+W+12)return; // he is right there, in plain sight: nobody behind the tapestry
+  if(w)wOff(tadeo);tdNicho=true;tdGlint=4;tdGlintSeen=false;
+}
+const tdAfter=(t,fn)=>{if(tdClock>=t)fn();else tdWait={t,fn};}; // a scene that waits for somebody to be able to get there
 const tdCatPin=()=>!!flags&&flags.td===5&&!tdC().esconderijo&&cat.sc==='andar2'&&Math.abs(cat.x-480)<6&&Math.abs(cat.y-74)<6;
 
 /* ---------- chapter 3: the confession, on the 2nd floor right after Malvar's revelation ---------- */
-function tdConfissao(){
-  const t_=tadeo;wOn(t_,'andar2',Math.max(20,Math.min(SW1-20,player.x-26)),player.y,'right',true);t_.wait=60;t_.dir=faceTo(t_,player);
+function tdConfissao(walked){
+  const t_=tadeo;if(!walked)wOn(t_,'andar2',Math.max(20,Math.min(SW1-20,player.x-26)),player.y,'right',true);t_.wait=60;t_.dir=faceTo(t_,player);
   setMood('tadeo','normal',30);
-  say([{who:TW_,t:'Calma. Não vim te morder. Vim pedir desculpas.'},
-    {who:TW_,t:'Fui amargo com você hoje cedo. Você não tem culpa de ter recebido o que eu esperei.'},
+  say((flags.tadeoLiga?[{who:TW_,t:'Calma. Não vim te morder. Vim pedir desculpas.'},
+    {who:TW_,t:'Fui amargo com você mais cedo. Você não tem culpa de ter recebido o que eu esperei.'}]
+    :[{who:TW_,t:'Ei, '+gen('calouro','caloura')+'. Tadeo Corniel, 3º ano, monitor deste andar. Vi o selo no seu bolso.'},
+      {who:TW_,t:'Então a Liga mandou um convite para você. Você não tem culpa de ter recebido o que eu esperei.',run:()=>{flags.tadeo=flags.tadeoLiga=true;}}]).concat([
     {who:me(),t:'Esperou?'},
     {who:TW_,t:'No meu 1º ano, o Malvar me chamou naquela sala. Disse que meu nome estava num livro e que, ao lado dele, tinha escrito: "ainda não".'},
     {who:TW_,t:'Três anos, '+nome1()+'. Eu passava as tardes diante daquela parede do lado leste. Ela é morna, sabia? Como se alguém respirasse do outro lado.'},
@@ -7534,7 +7702,7 @@ function tdConfissao(){
     {t:'Você entrega o convite. O Tadeo o segura com as duas mãos e fecha os dedos sobre o selo, em silêncio, como quem faz uma prece.'},
     {who:TW_,t:'Obrigado. De verdade.'},
     {t:'Ele devolve o convite.'},
-    {who:TW_,t:'Cuide bem dele.',run:()=>{flags.td=3;t_.wait=3;updatePauseExtra();}}]);
+    {who:TW_,t:'Cuide bem dele.',run:()=>{flags.td=3;t_.wait=3;updatePauseExtra();}}]));
 }
 
 /* ---------- chapter 4: Bruno goes up to write the name (the player brought Malvar's message) ---------- */
@@ -7542,32 +7710,51 @@ function tdRecado(bru){
   stopChat(bru);bru.wait=6;bru.dir=faceTo(bru,player);setMood('bruno','happy',6);
   say([{who:me(),t:'Bruno, o Prof. Malvar mandou dizer que você pode escrever o meu nome no livro.'},
     {who:BW_,t:'O fundador autorizou?! Então vou agora escrever o seu nome no Livro dos Convites. É a parte mais bonita da Liga.'},
-    {who:BW_,t:'A Larissa e o Gabriel desceram para o laboratório para ver a gravação do seu desafio. Passa lá, eles querem te ver!'}],
+    {who:BW_,t:'A Larissa e o Gabriel estão indo para o laboratório ver a gravação do seu desafio. Passa lá, eles querem te ver!'}],
     ()=>{flags.td=4;flags.tdTrip=gameMinutes();updatePauseExtra();
       wOff(bru);SCENES.terreo.push(bru);tdMove(bru,[[352,140],[352,40]],30,()=>wOff(bru));}); // up the stairs to the 2nd floor
 }
 function tdTheftTick(dt){
   if(flags.td!==4||flags.tdFurto)return;
-  const gm=gameMinutes();
-  if(gm<7*60+30+165||gm<(flags.tdTrip||0)+2)return; // the candles (10h15) and Bruno's time upstairs
-  if(scene==='andar2'){ // somebody would see: a message calls the player down
-    if(state==='play'&&!flags.tdMsg&&(tdNudge+=frameRaw)>45){flags.tdMsg=true;
-      say([{t:'Seu celular vibra. Mensagem da Larissa: "Cadê você? A gravação do seu desafio já começou! Estamos no laboratório."'}]);}
+  const gm=gameMinutes(),velas=tdVelasMin();
+  if(velas==null||(gm<velas&&!tdClockStuck()))return;           // the candles first (Malvar out of his room)
+  if(gm<(flags.tdTrip||0)+2&&!tdClockStuck())return;            // and Bruno's time upstairs
+  const B=tdBruno();
+  if(!tdClockStuck()&&(tdWhere(B)!=='salaOculta'||tdClock<(B._inOc||0)+8||tdWhere(larissa)!=='salaLab'||tdWhere(tdGabObj)!=='salaLab'))return; // "I waited for Larissa and Gabriel to go down and Bruno to go up alone"
+
+  if(tdSeen()){ // somebody would see: a message calls the player away (again every minute or so)
+    if(state==='play'&&!dialog&&(tdNudge+=frameRaw)>45){tdNudge=0;
+      say([{t:flags.tdMsg?'Seu celular vibra de novo. Larissa: "Ainda não veio? A gravação está esperando por você no laboratório!"'
+        :'Seu celular vibra. Mensagem da Larissa: "Cadê você? A gravação do seu desafio já começou! Estamos no laboratório."'}]);flags.tdMsg=true;}
     return;
   }
   flags.tdFurto=gm;
 }
+// right after the theft, if Larissa is where the player is: she says goodbye and goes up (out by the door, or off-screen)
+function tdLarissaSai(){
+  if(flags.td!==4||!flags.tdFurto||flags.tdLarSai||tdWhere(larissa)!==scene||tdMoving(larissa)||dialog||fade||onArrive)return;
+  flags.tdLarSai=true;flags.tdLarBye=true;tdLarUp=Infinity;stopChat(larissa);larissa.wait=60;larissa.dir=faceTo(larissa,player);
+  say([{who:LW,t:'Nossa, já é tarde! Vou subir para acender as velas da sala oculta antes que alguém sinta falta delas. Já volto!'}],()=>{
+    const room=(TD_POS[scene]||[0,0])[1]>0,[ex,ey]=tdEntry(scene,'salaOculta');
+    for(const k in WANDER){const i=WANDER[k].indexOf(larissa);if(i>=0)WANDER[k].splice(i,1);}
+    tdMove(larissa,room?[[larissa.x,206],[192,206],[ex,ey]]:[[ex,ey]],44,()=>{const sc=tdWhere(larissa);wOff(larissa);
+      tdLarUp=Math.max(tdClock+tdTravel(sc,'salaOculta'),tdArrive('larissa','salaOculta'));});});
+}
 // chapter 5 starts: Larissa comes to the player as they arrive in a corridor
-function tdLarissaVem(){
-  const sc=scene;larissaMove(sc,Math.max(20,player.x-80),Math.min(SW1-20,player.x+80),player.y);
-  larissa.x=Math.max(20,Math.min(SCENE_W[sc]-20,player.x+(player.x>SCENE_W[sc]-60?-24:24)));larissa.y=player.y;larissa.wait=30;larissa.dir=faceTo(larissa,player);syncW(larissa);
+// she comes back once she could have reached the old lab, seen the empty table and walked to where the player is
+const tdLarReady=()=>flags.td===4&&!!flags.tdFurto&&!!flags.tdLarSai&&!tdWhere(larissa)&&!tdMoving(larissa)&&!!TD_POS[scene]&&!/^sala(Sim|Corredor)|simGlic/.test(scene)&&tdClock>=tdLarUp+4+tdTravel('salaOculta',scene);
+function tdLarissaVem(walked){
+  const sc=scene;
+  if(!walked){larissaMove(sc,Math.max(20,player.x-80),Math.min(SW1-20,player.x+80),player.y);
+    larissa.x=Math.max(20,Math.min(SCENE_W[sc]-20,player.x+(player.x>SCENE_W[sc]-60?-24:24)));larissa.y=player.y;syncW(larissa);}
+  larissa.wait=30;larissa.dir=faceTo(larissa,player);
   player.dir=faceTo(player,larissa);setMood('larissa','worried',20);
   say([{who:LW,t:nome1()+'! O Livro dos Convites sumiu. Subi para acender as velas e o lugar dele estava vazio.'},
     {who:LW,t:'Só o Bruno subiu. Cruzei com ele na escada, com um livro grosso debaixo do braço.'},
     {who:me(),t:'O Bruno nunca faria isso.'},
     {who:LW,t:'Eu também achava. Mas só entra quem traz o selo dos três cadeados... Me mostra o seu convite.'},
     {t:'A Larissa examina o selo de cera contra a luz.'},
-    {who:LW,t:'...Isto aqui é marca de pressão. E tem um resto de cera de outra cor. Alguém copiou o seu selo.'},
+    {who:LW,t:'...Isto aqui é marca de pressão. E tem um resto de cera verde, que não é a do selo. Alguém copiou o seu selo.'},
     {who:LW,t:'Quem segurou o seu convite?'},
     {who:me(),t:'...O Tadeo.',run:()=>setMood('player','worried',4)},
     {who:LW,t:'O monitor do 2º andar. Na sexta-feira o fundador abre o livro. Se ele não estiver lá, o Bruno sai da Liga.'},
@@ -7592,28 +7779,32 @@ function tdConvite2(t_){
     // Bruno comes up the stairs and calls him away
     const b=tdBruno();tdCut=true;state='tdcut';keys.clear();
     wOff(t_);SCENES.andar2.push(t_);t_.dir='right';
-    wOn(b,'andar2',363,214,'up',false);
-    tdMove(b,[[363,118],[Math.min(SW1-20,t_.x+20),t_.y]],34,()=>{b.dir='left';t_.dir='right';setMood('bruno','angry',8);
+    tdAfter(Math.max(tdArrive('bruno','andar2'),b._dep?b._dep.t+tdTravel(b._dep.sc,'andar2'):0),()=>{
+    const up=tdWhere(b)!=='andar2';if(up)wOn(b,'andar2',363,214,'up',false);else{wOff(b);SCENES.andar2.push(b);syncW(b);}
+    tdMove(b,(up?[[363,118]]:[]).concat([[Math.min(SW1-20,t_.x+20),t_.y]]),34,()=>{b.dir='left';t_.dir='right';setMood('bruno','angry',8);
       say([{who:BW_,t:'Tadeo! Vem aqui. Fala na minha cara que não foi você.'},
         {who:TW_,t:'Bruno. Ninguém te acusou de nada, que eu saiba. Mas, se a consciência pesa... vamos conversar ali.'},
         {t:'Enquanto os dois se afastam para o fundo do corredor, você sabe o que fazer: passar três vezes diante da parede do fim do corredor.'}],
         ()=>{state='tdcut';
-          tdMove(t_,[[t_.x,112],[20,112]],26,()=>wOff(t_));
-          tdMove(b,[[b.x,116],[30,116]],26,()=>{wOff(b);flags.tdTrap=true;tdCut=false;state='play';updatePauseExtra();});});});
+          tdMove(t_,[[t_.x,112],[30,112]],26,()=>{t_.dir='right';});
+          tdMove(b,[[b.x,116],[46,112]],26,()=>{b.dir='left';flags.tdTrap=true;tdCut=false;state='play';updatePauseExtra();});});});});
   });
 }
 // the old lab: Larissa and Gabriel hidden behind the bookcase, the player behind the old bench
 function tdOcStart(){
   tdCut=true;tdOc={asked:new Set(),book:false};
+  // nobody in two places: the scene uses its own Tadeo, Larissa and Gabriel (and, later, Malvar and Bruno)
+  tdBrunoObj=tdBrunoObj||tdFind('bruno');tdGabObj=tdGabObj||tdFind('gabriel');
+  for(const o of [tadeo,tdBrunoObj,larissa,tdGabObj])if(o)wOff(o);
+  if(mr&&mr.sc!==scene)mrEnd();mrPlace(true);tdMalOut=true;tdMalBack=Infinity;
   const T=tdNpc('ocTadeo','Tadeo (3º ano)','tadeo','shirt',192,240,'up',2.3);
   const L=tdNpc('ocLarissa','Larissa (2º ano)','larissa','coat',326,160,'left',.8);
   const G=tdNpc('ocGabriel','Gabriel (3º ano)','gabriel','hoodie',350,160,'left',3.1);
   tdOc.T=T;tdOc.L=L;tdOc.G=G;
-  say([{t:'O laboratório antigo está em silêncio. Atrás da estante, a ponta do jaleco da Larissa e o capuz do Gabriel: os dois já estão escondidos.'},
-    {t:'Você se esconde atrás da bancada antiga e espera.',run:()=>{player.x=52;player.y=150;player.dir='right';}},
-    {t:'Passos no corredor das velas...'}],()=>{
-    state='tdcut';SCENES.salaOculta.push(T,L,G);
-    tdMove(T,[[192,140],[258,136]],24,()=>{T.dir='up';tdOc.book=true;
+  const tadeoVem=()=>{state='tdcut'; // Tadeo comes when he could have walked here from where the player left him
+    tdAfter(Math.max(tdClock+1.5,tdArrive('tadeo','salaOculta')),()=>say([{t:'Passos no corredor das velas...'}],()=>{
+    state='tdcut';SCENES.salaOculta.push(T);
+    tdMove(T,[[192,140],[274,136]],24,()=>{T.dir='up';tdOc.book=true;
       say([{t:'O Tadeo abre um livro grosso sobre a mesa e molha a pena na tinta. Ele escreve devagar: TADEO CORNIEL.'},
         {t:'As letras brilham... e somem, uma a uma.',run:()=>setMood('tadeo','angry',30)},
         {who:TW_,t:'Não. Não, não, não. Eu estou aqui dentro!'},
@@ -7621,7 +7812,15 @@ function tdOcStart(){
         tdMove(player,[[120,150],[170,140]],40,()=>{player.dir='right';T.dir='left';
           say([{who:TW_,t:'...Você. Claro que era você.',run:()=>setMood('tadeo','smug',30)},
             {who:TW_,t:'Vai, pergunte. Agora não faz mais diferença.'}],tdAsk);});});});
-  });
+  }));};
+  const esconde=()=>say([{t:'Você se esconde atrás da bancada antiga e espera.',run:()=>{player.x=52;player.y=150;player.dir='right';}}],tadeoVem);
+  const ready=Math.max(tdArrive('larissa','salaOculta'),tdArrive('gabriel','salaOculta'));
+  if(tdClock>=ready){SCENES.salaOculta.push(L,G);
+    say([{t:'O laboratório antigo está em silêncio. Atrás da estante, a ponta do jaleco da Larissa e o capuz do Gabriel: os dois já estão escondidos.'}],esconde);}
+  else say([{t:'O laboratório antigo está vazio. A Larissa e o Gabriel ainda não chegaram.'}],()=>{state='tdcut';
+    tdAfter(ready,()=>{Object.assign(L,{x:192,y:224,dir:'up'});Object.assign(G,{x:192,y:230,dir:'up'});syncW(L);syncW(G);SCENES.salaOculta.push(L,G);
+      tdMove(L,[[192,206],[326,160]],44,()=>{L.dir='left';});
+      tdMove(G,[[192,206],[350,160]],44,()=>{G.dir='left';say([{who:LW,t:'(sussurrando) Chegamos. Rápido, se esconda!'}],esconde);});});});
 }
 const TD_Q=[
   {k:'como',q:'Como você entrou aqui?',a:[
@@ -7630,7 +7829,7 @@ const TD_Q=[
     'E as portas de ferro? Você mesmo as deixou abertas. Eu só precisei andar.']},
   {k:'bruno',q:'Por que o Bruno?',a:['Toda via precisa de um culpado. Esperei a Larissa e o Gabriel descerem e o Bruno subir sozinho. Ele era o substrato perfeito.']},
   {k:'livro',q:'Como você sabia do livro?',a:['O Malvar me contou, no 1º ano. "Ainda não." Três anos esperando uma palavra virar outra.']},
-  {k:'porta',q:'E aquela conversa na porta da 204?',a:['Tudo o que eu te contei era verdade. Os três anos, a parede morna, tudo. Eu só não te contei o resto.']},
+  {k:'porta',q:'E aquela conversa no corredor, sobre os três anos?',a:['Tudo o que eu te contei era verdade. Os três anos, a parede morna, tudo. Eu só não te contei o resto.']},
   {k:'quer',q:'O que você quer com o livro?',a:['Estar nele. E, se ele não me aceitar... que ninguém mais esteja.']}];
 function tdAsk(){
   const left=TD_Q.filter(q=>!tdOc.asked.has(q.k));
@@ -7699,6 +7898,8 @@ function tdVitoria(){
     {t:'O caderno do Tadeo cai aberto no chão. Em cada linha, as mesmas letras, embaralhadas de novo e de novo: TADEO CORNIEL... ODETA CORNIEL... LORDE...'},
     {t:'Até a última linha: LORDE CIANETO.'},
     {who:TW_,t:'Um dia esse nome vai significar alguma coisa. E você vai lembrar que estava aqui quando ele nasceu.'}],()=>{state='tdcut';
+    const bS=TDS.bruno,vem=Math.max(tdClock+1,bS?bS.t+tdTravel(bS.sc,'sala204')+tdTravel('sala204','salaOculta'):0,tdArrive('malvar','salaOculta'));
+    tdAfter(vem,()=>{ // Bruno ran to Sala 204 for Malvar, and both came back here
     const M=tdNpc('ocMalvar','Prof. Malvar (Poções)','malvar','coat',192,240,'up',1.7),B=tdNpc('ocBruno','Bruno (1º ano)','bruno','hoodie',206,248,'up',1.7);
     tdOc.M=M;tdOc.B=B;SCENES.salaOculta.push(M,B);
     tdMove(B,[[214,176]],34);tdMove(M,[[200,160]],26,()=>{M.dir='right';B.dir='up';setMood('malvar','angry',30);
@@ -7714,20 +7915,23 @@ function tdVitoria(){
             {who:MW_,t:'Eu também nunca fui convidado para nada, Corniel. Por isso fundei a Liga. Não me faça me arrepender de não ter mandado você embora.'},
             {t:'A Larissa abraça o Bruno. O Gabriel apaga a vela que o Tadeo deixou cair.',run:()=>{setMood('bruno','happy',20);setMood('larissa','happy',20);}},
             {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],()=>{
+            const swap=(t_,o)=>{if(!o)return;const i=SCENES.salaOculta.indexOf(t_);if(i>=0)SCENES.salaOculta.splice(i,1);
+              wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
+            swap(tdOc.L,larissa);swap(tdOc.G,tdGabObj);swap(tdOc.B,tdBruno());
+            tdMalBack=tdClock+tdTravel('salaOculta','sala204'); // Malvar (and Tadeo, by the travel model) on their way to Sala 204
             flags.td=7;flags.tdTrap=false;tdCut=false;tdOc.ending=true;updatePauseExtra();
-            goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');});});});});});
+            goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');});});});});});});
 }
 
 /* ---------- scene changes and the clock ---------- */
 function tdScene(from,to){
   if(!flags)return;
+  if(from==='sala101'&&!flags.saiu101){flags.saiu101=true;updatePauseExtra();} // (Prof. Kiko and Camila only ask after this)
   if(from==='salaOculta'&&to==='salaOculta'&&tdOc&&tdOc.ending){tdTempOut();tdOc=null;return;}
-  if(from==='salaOculta'&&tdOc&&!tdOc.ending){tdTempOut();tdOc=null;tdCut=false;} // left in the middle (never by walking): the trap starts again
-  if(to==='andar2'&&flags.td===5&&!tdC().esconderijo&&typeof cat!=='undefined'){ // the cat is already waiting at the tapestry (moved during the fade)
-    catPlace('andar2');Object.assign(cat,{x:480,y:74,goal:null,slide:null,path:[],mode:'sit',modeT:9,face:-1});catSync();}
+  if(from==='salaOculta'&&tdOc&&!tdOc.ending){tdTempOut();tdOc=null;tdCut=false;tdWait=null;if(tdMalOut)tdMalBack=tdClock+tdTravel('salaOculta','sala204');} // left in the middle (never by walking): the trap starts again
   if(to==='salaOculta'&&flags.td===6&&flags.tdTrap&&!onArrive){onArrive=tdOcStart;return;}
-  if(to==='andar2'&&flags.alost===6&&flags.fundador&&(flags.td||0)<3&&!onArrive&&from!=='salaCorredor'){onArrive=tdConfissao;return;}
-  if(['terreo','andar1','andar2'].includes(to)&&flags.td===4&&flags.tdFurto&&gameMinutes()>=flags.tdFurto+1&&!onArrive&&tdWhere(larissa)!=='salaLab')onArrive=tdLarissaVem;
+  if(to==='andar2'&&flags.alost===6&&flags.fundador&&(flags.td||0)<3&&!onArrive&&from!=='salaCorredor'){onArrive=()=>tdConfissao(false);return;}
+  if(to==='salaLab'&&flags.td===4&&!flags.tdFurto)flags.tdLabVi=true;
 }
 /* NPCs who offer a side quest come to the player the first time the player passes close (after the badge): a "!"
    over the head, a few steps closer, and the offer (the player still chooses to accept it or not). Once each. */
@@ -7735,8 +7939,8 @@ var abord=null;
 const ABORD=[
   {id:'tiago',ok:()=>!flags.tiagoQ&&!flags.tiagoNo},
   {id:'gabriel',ok:()=>!flags.duelTold&&flags.tiagoQ!==1}, // (with Tiago's question pending he answers that instead)
-  {id:'kido',ok:()=>!flags.bolsaQ},
-  {id:'camila',ok:()=>!flags.cacaTold}];
+  {id:'kido',ok:()=>!flags.bolsaQ&&!!flags.saiu101},
+  {id:'camila',ok:()=>!flags.cacaTold&&!!flags.saiu101}];
 function abordTick(dt){
   if(abord){
     abord.t+=dt;const o=abord.o;
@@ -7765,14 +7969,44 @@ function abordDraw(){
 function tdTick(dt){
   abordTick(dt);
   if(!flags||!startTime)return;
+  tdClock+=dt;tdSeenTick();
+  if(tdWait&&tdClock>=tdWait.t){const f=tdWait.fn;tdWait=null;f();}
+  {const B=tdBrunoObj;if(B){const w=tdWhere(B)==='salaOculta';if(w&&!B._inOc)B._inOc=tdClock;else if(!w)B._inOc=0;}}
   if(tdGlint>0)tdGlint-=dt;
   if(state==='play'||state==='tdcut')tdMoversTick(dt);
   if(state==='tdDuel')tdDuelTick(dt);
-  if(state==='play'&&!tdCut){tdTheftTick(dt);tdSync(false);}
+  if(state==='play'&&!tdCut){tdTheftTick(dt);tdSync(false);tdWalkIns();}
+}
+/* the scenes that start where the player already is */
+function tdWalkUp(o,sc,then){ // somebody on this floor walks up to the player (from where they are, or from off-screen)
+  const side=player.x-camX<W/2?1:-1,seen_=tdWhere(o)===sc&&o.x>camX-4&&o.x<camX+W+4;
+  const x0=Math.max(12,Math.min(SCENE_W[sc]-12,side>0?camX+W+12:camX-12)),tx=Math.max(16,Math.min(SCENE_W[sc]-16,player.x+((seen_?o.x:x0)>player.x?22:-22)));
+  if(!seen_)wOn(o,sc,x0,player.y,null,false);else{wOff(o);SCENES[sc].push(o);syncW(o);}
+  o.wait=60;state='tdcut';tdCut=true;keys.clear();tGo=null;
+  tdMove(o,[[tx,player.y]],46,()=>{tdCut=false;state='play';o.dir=faceTo(o,player);wOff(o);SCENES[sc].push(o);WANDER[sc].push(o);syncW(o);then(true);});
+}
+function tdWalkIns(){
+  if(fade||dialog||onArrive||abord)return;
+  if(scene==='salaOculta'&&flags.td===6&&flags.tdTrap&&!tdOc){tdOcStart();return;}
+  if(tdBruPend&&scene==='andar2'&&!bruVis&&flags.alost===6&&!flags.dzAsked&&tdClock>=tdArrive('bruno','andar2')){ // Bruno, up the stairs
+    tdBruPend=false;brunoVisitIn();Object.assign(bruVis,{x:363,y:200,dir:'up'});syncW(bruVis);state='tdcut';tdCut=true;keys.clear();tGo=null;
+    tdMove(bruVis,[[363,122],[Math.max(20,Math.min(SW1-20,player.x+(player.x>363?-20:20))),player.y]],40,()=>{tdCut=false;state='play';brunoVisitTalk();});return;}
+  if(scene==='andar2'&&tdWhere(tadeo)==='andar2'&&flags.alost===6&&flags.fundador&&(flags.td||0)<3){tdWalkUp(tadeo,'andar2',tdConfissao);return;}
+  tdLarissaSai();
+  if(tdLarReady()){ // Larissa, back from the old lab, comes in the way she would (stairs, wall or door) and up to the player
+    const room=TD_POS[scene][1]>0,[ex]=tdEntry(scene,'salaOculta');
+    const tx=room?player.x:Math.max(16,Math.min(SCENE_W[scene]-16,player.x+(ex>player.x?22:-22))),ty=room?Math.min(player.y+20,206):player.y;
+    state='tdcut';tdCut=true;keys.clear();tGo=null;
+    tdWalkIn(larissa,scene,'salaOculta',{x:tx,y:ty},()=>{tdCut=false;state='play';
+      if(!room){const x=larissa.x;wOff(larissa);larissaMove(scene,Math.max(20,x-60),Math.min(SCENE_W[scene]-20,x+60),larissa.y);larissa.x=x;syncW(larissa);}
+      tdLarissaVem(true);});
+  }
 }
 function tdReset(){
-  abord=null;tdGlint=0;tdCut=false;tdMovers=[];tdNudge=0;tdDuel=null;
+  abord=null;tdGlint=0;tdNicho=false;tdCut=false;tdMovers=[];tdNudge=0;tdDuel=null;TDS={};tdWait=null;tdLarUp=0;tdBruPend=false;
   if(!tdReady)return;
+  if(tdMalOut){tdMalOut=false;if(!mr)mrPlace(false);}
+  for(const o of [tdBrunoObj,tdGabObj,tdFelObj,tadeo,larissa])if(o){o._dest=undefined;o._dep=null;}
   tdTempOut();tdOc=null;
   tdBrunoObj=tdBrunoObj||tdFind('bruno');tdGabObj=tdGabObj||tdFind('gabriel');tdFelObj=tdFelObj||tdFind('felipe');
   if(tdBrunoObj)wLane(tdBrunoObj,'terreo');
@@ -7783,13 +8017,14 @@ function tdReset(){
 }
 function tdLoad(){ // a saved game: everybody where this step wants them
   if(flags.alost===6&&!flags.td)flags.td=2; // saved before this quest existed
+  TDS={};tdWait=null;tdNicho=false;tdLarUp=tdClock;if(flags.profs&&scene!=='sala101')flags.saiu101=true; // (saved before this flag)tdBruPend=flags.alost===6&&!flags.dzAsked;
   if(flags.td===6&&flags.tdTrap&&scene==='salaOculta')onArrive=tdOcStart;
   tdSync(true);
 }
 
 /* ---------- the characters' lines at each step ---------- */
 {
-  const wrap=(o,fn)=>{if(!o)return;const a0=o.act;o.act=function(){if(fn.call(this)===false)return a0.call(this);};};
+  const wrap=(o,fn)=>{if(!o)return;const a0=o.act;o._preTd=a0;o.act=function(){if(fn.call(this)===false)return a0.call(this);};};
   const face=o=>{if('meet' in o)stopChat(o);o.wait=4;if(!(o.sitting>0))o.dir=faceTo(o,player);};
   wrap(tdFind('bruno'),function(){
     const td=flags.td||0;
@@ -7800,6 +8035,9 @@ function tdLoad(){ // a saved game: everybody where this step wants them
         {who:me(),t:'Bruno, quando você saiu da sala... notou alguma coisa estranha?'},
         {who:BW_,t:'Agora que você falou... quando eu descia a escada, ouvi os tijolos se mexendo atrás de mim. Achei que fosse a parede se fechando.',
           run:()=>{tdC().ouvido=true;updatePauseExtra();}}]);}
+    if(td===4&&!flags.tdFurto&&tdWhere(this)==='salaOculta'){this.dir='up';
+      return say([{who:BW_,t:'Shh, não me distrai! Estou caprichando na letra. O seu nome merece.'}]);}
+    if(td===6&&flags.tdTrap){this.dir='left';return say([{who:BW_,t:'Vai logo! Eu seguro ele aqui.'}]);}
     if(td===5||td===6){face(this);return say([{who:BW_,t:td===6?'Pode deixar comigo: quando você precisar, eu chamo o Tadeo para longe da parede.':'Se você descobrir quem foi... eu nem sei o que dizer.'}]);}
     if(td>=7&&!flags.tdBrunoFim){flags.tdBrunoFim=true;face(this);setMood('bruno','happy',6);
       return say([{who:BW_,t:'A Larissa me pediu desculpas três vezes. Eu disse que uma bastava.'},{who:BW_,t:'Valeu de novo, '+nome1()+'. Você é '+gen('o melhor calouro','a melhor caloura')+' que a Liga já teve.'}]);}
@@ -7808,7 +8046,8 @@ function tdLoad(){ // a saved game: everybody where this step wants them
   wrap(larissa,function(){
     const td=flags.td||0;
     if(td===4&&!flags.tdFurto&&tdWhere(this)==='salaLab'){this.dir=faceTo(this,player);
-      return say([{who:LW,t:'Olha só a gravação: na fase do jejum você freou a PFK-1 na hora certa. Pouca gente acerta essa de primeira!'}]);}
+      return say([{who:LW,t:'Olha só a gravação: na fase do jejum você freou a PFK-1 na hora certa. Pouca gente acerta essa de primeira!'},
+        {who:LW,t:'Daqui a pouco eu subo para acender as velas da sala oculta. Até lá, fique à vontade.'}]);}
     if(td===5){face(this);
       if(flags.tdSlip&&!tdC().deslize)return say([{who:me(),t:'O Tadeo disse que eu "entendo antes de decorar".'},
         {who:LW,t:'"Entende antes de decorar"... É exatamente o que o fundador escreveu ao lado do seu nome, no livro. Só quem leu o livro saberia.',
@@ -7824,12 +8063,13 @@ function tdLoad(){ // a saved game: everybody where this step wants them
     const td=flags.td||0;
     if(td>=7){this.dir='up';return say([{who:TW_,t:['...Vá embora, '+nome1()+'. Tenho frascos para arrumar.','(Ele nem levanta os olhos da prateleira.)'][(this.tdK=(this.tdK||0)+1)%2]}]);}
     if(td===6&&!flags.tdTrap)return tdConvite2(this);
+    if(td===6){this.dir='right';return say([{who:TW_,t:'Estou ocupado, '+nome1()+'. O Bruno tem muito a dizer, pelo jeito.'}]);}
     if(td===5&&!flags.tdSlip){face(this);this.wait=6;setMood('tadeo','smug',8);
       return say([{who:TW_,t:nome1()+'. Que cara é essa?'},{who:me(),t:'Sumiu um livro... da Liga.'},
         {who:TW_,t:'O livro? Que livro? Não sei de livro nenhum, '+nome1()+'.'},
         {who:TW_,t:'Mas você, pelo jeito, entende antes de decorar. Isso é raro.',run:()=>{flags.tdSlip=true;updatePauseExtra();}}]);}
     if(td===5){face(this);return say([{who:TW_,t:'Boa sorte com o seu livro sumido, '+nome1()+'.'}]);}
-    if(td===3||td===4){face(this);return say([{who:TW_,t:'Obrigado por hoje mais cedo, '+nome1()+'. Faz tempo que ninguém me ouvia.'}]);}
+    if(td===3||td===4){face(this);return say([{who:TW_,t:'Obrigado por ter me ouvido, '+nome1()+'. Faz tempo que ninguém me ouvia.'}]);}
     return false;
   });
   wrap(tdFind('gabriel'),function(){
@@ -7844,17 +8084,67 @@ function tdLoad(){ // a saved game: everybody where this step wants them
   });
   wrap(tdFind('secretaria'),function(){
     if(flags.td!==5||tdC().cracha)return false;
-    return say([{who:me(),t:'Dona Tati, dá para saber quem abriu a Sala 204 hoje de manhã?'},
-      {who:'DONA TATI',t:'O registro de crachás? Deixa eu ver... Sala 204, às 10h17. O crachá do monitor do 2º andar.'},
-      {who:'DONA TATI',t:'Engraçado, o professor Malvar estava na ronda do 1º andar nessa hora. Por quê, aconteceu alguma coisa?'},
+    return say([{who:me(),t:'Dona Tati, dá para saber onde o crachá de monitor do 2º andar foi usado hoje?'},
+      {who:'DONA TATI',t:'O registro de crachás? Deixa eu ver... Hoje ele só foi usado uma vez: na Sala 204, às '+hhmm(tdVelasMin())+'.'},
+      {who:'DONA TATI',t:flags.tdVelasPor==='cafe'?'Engraçado, o professor Malvar tinha descido para a sala dos professores nessa hora. Por quê, aconteceu alguma coisa?'
+        :'Engraçado, o professor Malvar estava na ronda do 1º andar nessa hora. Por quê, aconteceu alguma coisa?'},
       {who:me(),t:'Nada, não. '+gen('Obrigado','Obrigada')+', Dona Tati!',run:()=>{tdC().cracha=true;updatePauseExtra();}}]);
   });
   wrap(malvar,function(){
     if(flags.alost===6&&flags.dzDone&&!flags.fundador)return false; // the revelation first
-    if((flags.td||0)>=3&&gameMinutes()>=7*60+30+170&&!flags.tdVelas){flags.tdVelas=true;setMood('malvar','angry',5);
+    if((flags.td||0)>=3&&tdVelasMin()!=null&&gameMinutes()>=tdVelasMin()+3&&!flags.tdVelas){flags.tdVelas=true;setMood('malvar','angry',5);
       return say([{who:MW,t:'Sumiram três velas do meu armário. Se eu descobrir quem foi, vai desejar ter sido o arsenato.'}]);}
     return false;
   });
+}
+/* ---------- several things to talk about with the same person: the player chooses ----------
+   With two or more pending subjects the person asks what it is about and each choice runs that subject's own
+   conversation; with one (or none), the conversation goes straight on as before. */
+function topicMenu(o,who,greet,topics){
+  if(!o)return;const a0=o.act;o._menuNext=a0; // the conversation under the menu (its outer layer answers that layer's subject)
+  o.act=function(){
+    const T=topics.filter(t=>t.ok.call(this));
+    if(T.length<2)return a0.call(this);
+    if('meet' in this)stopChat(this);this.wait=Math.max(this.wait||0,6);if(this.x!=null&&!(this.sitting>0))this.dir=faceTo(this,player);
+    if(this===zelObj)jan.wait=6;
+    say([{who,t:greet(),choices:T.map(t=>({t:t.label(),fn:()=>t.run.call(this)}))}]);
+  };
+}
+{
+  const gab=tdFind('gabriel'),tati=tdFind('secretaria'),luc=tdFind('lucia');
+  topicMenu(gab,'GABRIEL (3º ANO)',()=>'Fala, '+gen('calouro','caloura')+'. O que manda?',[
+    {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===1,run(){return gab._preTd.call(this);}},
+    {label:()=>flags.duelWin?'Uma revanche do Duelo Relâmpago':'O Duelo Relâmpago',ok:()=>!!flags.duelTold,run(){gab.rem=0;return gab._duel.call(this);}},
+    {label:()=>flags.td===6?'O plano da Larissa':flags.td===4?'A gravação do meu desafio':'A Liga de Metabolismo',
+     ok:()=>(flags.td===4&&!flags.tdFurto&&tdWhere(gab)==='salaLab')||flags.td===6||(flags.alost===6&&!flags.gabLiga&&!!flags.duelTold),
+     run(){return gab._menuNext.call(this);}}]);
+  topicMenu(tati,'DONA TATI',()=>'Pois não? Em que posso ajudar?',[
+    {label:()=>'O caderno do Tiago, nos achados e perdidos',ok:()=>flags.tiagoQ===4,run(){return tati._preTd.call(this);}},
+    {label:()=>'O registro do crachá de monitor',ok:()=>flags.td===5&&!tdC().cracha,run(){return tati._menuNext.call(this);}}]);
+  topicMenu(luc,'DONA LÚCIA (BIBLIOTECÁRIA)',()=>'Fale baixinho, que aqui é biblioteca. Pois não?',[
+    {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===2,run(){return luc._tiagoAct.call(this);}},
+    {label:()=>'O Manual de Hemoterapia',ok:()=>flags.bolsaQ===3,run(){return luc._menuNext.call(this);}}]);
+  topicMenu(zelObj,'SEU ANTÔNIO (ZELADOR)',()=>'Bom dia, '+gen('doutor','doutora')+'! Precisa de alguma coisa?',[
+    {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===3,run(){return zelObj._tiagoAct.call(this);}},
+    {label:()=>'A bolsa de sangue do Prof. Kiko',ok:()=>flags.bolsaQ===4,run(){return zelObj._bolsa.call(this);}}]);
+  { // Tadeo: the sheet comes first only when it is the one thing to talk about
+    const a0=tadeo.act,TW2='TADEO (3º ANO)',folha=()=>!!flags.tadeo&&!provas[10]&&!flags.graded;
+    const others=[
+      {label:()=>'O livro que sumiu',ok:()=>flags.td===5&&!flags.tdSlip},
+      {label:()=>'Mostrar o convite outra vez',ok:()=>flags.td===6&&!flags.tdTrap},
+      {label:()=>'Só conversar',ok:()=>(flags.td||0)<3&&((flags.alost===6&&!flags.tadeoLiga)||!flags.tadeoDiario)}];
+    tadeo.act=function(){
+      if(!folha())return a0.call(this);
+      const T=others.filter(t=>t.ok());
+      if(!T.length)return tadeo._folha.call(this);
+      stopChat(this);this.wait=8;this.dir=faceTo(this,player);
+      say([{who:TW2,t:nome1()+'. O que foi agora?',choices:[{t:'A folha de atividade perdida',fn:()=>tadeo._folha.call(this)}]
+        .concat(T.map(t=>({t:t.label(),fn:()=>a0.call(this)})))}]);
+    };
+  }
+  topicMenu(kido,'PROF. KIKO (HISTOLOGIA)',()=>'Opa! Diga lá.',[
+    {label:()=>'A sala que não está lá',ok:()=>kido._hintOk(),run(){return kido._menuNext.call(this);}},
+    {label:()=>'As bolsas de sangue',ok:()=>(flags.bolsaQ||0)>=1&&flags.bolsaQ<=6,run(){return kido._bolsaAct.call(this);}}]);
 }
 // the tapestry near the stairs on the 2nd floor (the niche behind it: Tadeo's hiding place)
 SCENES.andar2.push({id:'tapecaria',name:'Tapeçaria',wall:true,cx:480,top:5,zone:wallZone(456,48),
@@ -7891,22 +8181,34 @@ SCENES.andar2.push({id:'tapecaria',name:'Tapeçaria',wall:true,cx:480,top:5,zone
     // fringe and tassels
     for(let i=1;i<w-1;i+=2)r(x+i,y+h+3,1,2,i%4===1?'#c99a3c':'#a8862a');
     for(const tx of [x+2,x+w-3]){r(tx,y+h+3,1,4,'#c99a3c');pxEllipse(tx,y+h+7,1,1,'#e8bf3f');}},
-  fx(t){if(tdGlint>0&&Math.floor(t*6)%2){px(502,26,'#ffffff');px(503,25,'#e6f8ff');px(501,27,'#e6f8ff');px(503,27,'#7fd4ff');}},
+  fx(t){ // the shard of mirror behind the tapestry catching the light: a pulsing star with a halo (and a crystal ping)
+    if(tdGlint<=0||scene!=='andar2'||502<camX-12||502>camX+W+12)return;
+    if(!tdGlintSeen){tdGlintSeen=true;flags.tdVi=true;tone(2093,.08,'triangle',.05);tone(2637,.12,'triangle',.045,.07);tone(3136,.2,'sine',.04,.15);}
+    const fade_=Math.min(1,tdGlint/.6,(4-tdGlint)/.25),pu=.6+.4*Math.sin(t*13),x=502,y=26,L=Math.round(5+9*pu*fade_);
+    const gl=fctx.createRadialGradient(x+.5,y+.5,1,x+.5,y+.5,34);gl.addColorStop(0,'rgba(225,248,255,'+(.95*fade_*pu).toFixed(3)+')');gl.addColorStop(.35,'rgba(160,220,255,'+(.4*fade_*pu).toFixed(3)+')');gl.addColorStop(1,'rgba(160,220,255,0)');
+    fctx.save();fctx.globalCompositeOperation='lighter';fctx.fillStyle=gl;fctx.fillRect(x-34,y-34,69,69);fctx.restore();
+    for(const [dx,dy,ph] of [[-11,-7,0],[9,-10,2.1],[12,8,4.2],[-9,10,1.3]]){if(Math.sin(t*9+ph)<.3)continue; // little sparks around it
+      const sx=x+dx,sy=y+dy;px(sx,sy,'#ffffff');px(sx-1,sy,'#bfe9ff');px(sx+1,sy,'#bfe9ff');px(sx,sy-1,'#bfe9ff');px(sx,sy+1,'#bfe9ff');}
+    fctx.globalAlpha=Math.max(.35,fade_);
+    for(let i=-L;i<=L;i++){const c=Math.abs(i)<2?'#ffffff':Math.abs(i)<L-1?'#e6f8ff':'#7fd4ff';px(x+i,y,c);px(x,y+i,c);}
+    const d=Math.round(L*.45);for(let i=1;i<=d;i++){const c=i<d?'#e6f8ff':'#7fd4ff';px(x+i,y+i,c);px(x-i,y-i,c);px(x+i,y-i,c);px(x-i,y+i,c);}
+    r(x-2,y-1,5,3,'#ffffff');r(x-1,y-2,3,5,'#ffffff');fctx.globalAlpha=1;
+  },
   act:()=>{
     const td=flags.td||0;
     if(td===5&&!tdC().esconderijo)return say((tdCatPin()?[{t:'O gato Arsenato está sentado diante da tapeçaria, imóvel, com o rabo balançando.'}]:[]).concat([
       {t:'Você afasta a ponta do tecido. Atrás dela há um nicho escuro na pedra.'},
-      {t:'No chão do nicho, gotas de cera vermelha. Na parede, preso numa fresta, um caco de espelho virado para o fim do corredor.'},
-      {who:me(),t:'Daqui ninguém vê a parede... mas o espelho vê.'+(flags.tdVi?' Era o brilho que eu vi hoje cedo!':''),run:()=>{tdC().esconderijo=true;setMood('player','surprised',4);updatePauseExtra();}}]));
+      {t:'No chão do nicho, gotas de cera verde. Na parede, preso numa fresta, um caco de espelho virado para o fim do corredor.'},
+      {who:me(),t:'Daqui ninguém vê a parede... mas o espelho vê.'+(flags.tdVi?' Era o brilho que eu vi!':''),run:()=>{tdC().esconderijo=true;setMood('player','surprised',4);updatePauseExtra();}}]));
     if(tdC().esconderijo)return say([{t:'O nicho atrás da tapeçaria. O caco de espelho continua virado para o fim do corredor.'}]);
     say([{t:'Uma tapeçaria antiga com um unicórnio bordado, puída nas pontas.'}].concat(flags.tdVi?[{t:'Por um instante, hoje, você jurou ter visto algo brilhar perto dela. Deve ter sido a luz da tocha.'}]:[]));
   }});
 // the Livro dos Convites on the old lab's table (gone from the theft until the end of the trap)
 const tdBookHere=()=>!!flags&&(!flags.tdFurto||(flags.td||0)>=7||!!(tdOc&&tdOc.book));
-{const OFF={x:-99,y:-99,w:0,h:0},Z={x:226,y:92,w:30,h:40};
-SCENES.salaOculta.push(Object.defineProperty({id:'livroConvites',name:'Livro dos Convites',cx:244,top:96,base:113,solid:{x:238,y:112,w:12,h:1},
+{const OFF={x:-99,y:-99,w:0,h:0},Z={x:262,y:92,w:22,h:40};
+SCENES.salaOculta.push(Object.defineProperty({id:'livroConvites',name:'Livro dos Convites',cx:274,top:96,base:125,noShadow:true,solid:{x:268,y:124,w:12,h:1},
   key:()=>tdBookHere()?1:0,
-  draw:()=>{if(!tdBookHere())return;r(236,103,14,7,'#1d1612');r(237,103,12,6,'#5a2230');r(237,103,12,1,'#7a2e3e');r(242,103,1,6,'#3a1a20');px(239,105,'#c99a3c');px(246,105,'#c99a3c');},
+  draw:()=>{if(!tdBookHere())return;r(267,102,14,8,'#1d1612');r(268,102,12,7,'#5a2230');r(268,102,12,1,'#7a2e3e');r(273,102,1,7,'#3a1a20');px(270,105,'#c99a3c');px(277,105,'#c99a3c');r(268,108,12,1,'#efe3c8');},
   act:()=>{
     const N=(jogador||'SEU NOME').toUpperCase();
     say([{t:'Um livro grosso de capa vinho, sem título na lombada. Na primeira página, em letra caprichada: LIVRO DOS CONVITES.'},
