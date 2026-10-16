@@ -688,7 +688,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.36 &middot; Última atualização: 14 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.38 &middot; Última atualização: 16 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1695,12 +1695,13 @@ function paperSpec(who,outfit,crop){
   if(PAL_FIX[who])pal=palFixed[who]||(palFixed[who]=Object.assign({},pal,PAL_FIX[who]));
   const me_=who==='player',hair=me_?{m:'messy',f:lab?'bun':'bushy',r:'curtains',g:lab?'pony':'wavy',d:'slick',p:'bob'}[avatar]:HAIR_STYLE[who]||(HEAD[who]===HEAD.pedro?'curly':'short');
   const out=OUTFIT_FIX[who]||outfit,badge=!me_||!!flags.cracha;
-  return {pal,hair,outfit:out,crop,badge,tr:me_?(avatar==='r'||avatar==='g'?{freckles:1}:{}):TRAITS[who]||{},look:lookOf(who,out,girl,pal),
+  const noPin=who==='tadeo'&&!!flags&&((flags.td||0)>=7||(typeof tdOc!=='undefined'&&!!tdOc&&!!tdOc.broche)); // he lost the monitor's badge
+  return {pal,hair,outfit:out,crop,badge,tr:me_?(avatar==='r'||avatar==='g'?{freckles:1}:{}):noPin?{}:TRAITS[who]||{},look:lookOf(who,out,girl,pal),
     pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
     diary:me_&&out==='coat', // no backpack with the lab coat: the player carries the diary in hand
     scarf:false,harry:me_&&avatar==='m',
     phones:false,bow:false,scrunchie:me_&&avatar==='f'&&lab,glasses:me_&&avatar==='m'?'#8a6a3a':GLASSES[who]||null,
-    key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||''].join(':')};
+    key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||'',noPin?'np':''].join(':')};
 }
 // mood: 'normal' | 'happy' | 'worried' | 'angry' | 'smug' | 'surprised'; talk: mouth open
 function paperGrid(sp,view,f,blink,mood,talk){
@@ -6099,7 +6100,7 @@ function buildBgOculta(){
 objects=SCENES.salaOculta;
 add({id:'velas',name:'Velas',deco:true,wall:true,cx:-99,top:0,draw:()=>{},fx(t){
   const fl=(x,y,ph)=>{const f=Math.floor(t*7+ph*3)%3;r(x,y-f%2,2,3,'#e8913a');px(x+(f===1?1:0),y-2,'#f2c94c');px(x,y-3+(f===2?1:0),'#fff27a');};
-  OC_CANDLES.forEach(([x,y],i)=>fl(x,y,i*.7));fl(139,80,.3);fl(205,80,1.4);}});
+  OC_CANDLES.forEach(([x,y],i)=>fl(x,y,i*.7));fl(139,80,.3);if(!(tdOc&&tdOc.vela))fl(205,80,1.4);}}); // (Tadeo takes that candle)
 [[140,1],[206,2]].forEach(([x,i])=>add({id:'candelabro'+i,name:'Candelabro',cx:x,top:78,base:104,solid:{x:x-4,y:100,w:8,h:4},
   draw:()=>{r(x-1,84,2,18,'#5d646a');r(x-4,101,8,3,'#2c3236');r(x-4,86,8,1,'#5d646a');r(x-1,82,3,4,'#efe3c8');r(x-4,84,1,2,'#5d646a');r(x+3,84,1,2,'#5d646a');},
   act:()=>say([{t:'Um candelabro de ferro. As velas são novas: alguém esteve aqui há pouco tempo.'}])}));
@@ -7512,7 +7513,7 @@ function alostReset(){
         diary's light decides (a timing action, no defeat); LORDE CIANETO; Malvar punishes him (badge, detention in
         Sala 204, not expelled). Done: he stays in Sala 204 for the rest of the game.
    Off-screen moves only happen where the player is not looking (tdSync). No autosave during the scenes (tdCut). */
-var tdNicho=false,tdGlintSeen=false,tdGlint=0,tdCut=false,tdMovers=[],tdNudge=0,tdOc=null,tdDuel=null,tdTemp=[],tdReady=false; // tdReady: this block has run (reset() may come first)
+var tdNicho=false,tdGlintSeen=false,tdGlint=0,tdCut=false,tdMovers=[],tdNudge=0,tdOc=null,tdDuel=null,tdTemp=[],tdShake=0,tdReady=false; // tdReady: this block has run (reset() may come first)
 const TW_='TADEO (3º ANO)',BW_='BRUNO (1º ANO)',GW_='GABRIEL (3º ANO)',MW_='PROF. MALVAR';
 const TD_CLUES=['selo','cracha','esconderijo','deslize','ouvido'];
 const tdC=()=>flags.tdC||(flags.tdC={});
@@ -7549,6 +7550,11 @@ const tdMoving=o=>tdMovers.some(m=>m.o===o);
 function tdNpc(id,name,key,outfit,x,y,dir,blink,act){
   const o={id,name,x,y,dir,anim:0,moving:false,down:false,
     sprite(t){
+      if(this.sit){const c=personSprite(key,outfit,'down',0,blinkAt(t,blink),19).c; // sitting on the floor, knees up, shoes in front
+        const k_=c;if(this._sitSrc!==k_){const s_=document.createElement('canvas');s_.width=c.width;s_.height=c.height+4;const q=s_.getContext('2d');q.drawImage(c,0,0);
+          q.fillStyle='#2f3a4f';q.fillRect(4,c.height-2,3,4);q.fillRect(9,c.height-2,3,4);q.fillStyle='#1d1612';q.fillRect(3,c.height+2,4,2);q.fillRect(9,c.height+2,4,2);
+          this._sitSrc=k_;this._sitC=s_;}
+        return {c:this._sitC,x:Math.round(this.x)-8,y:Math.round(this.y)-c.height+1};}
       const c=personSprite(key,outfit,this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,blink)).c;
       if(!this.down)return {c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};
       if(!this._rot){const r_=document.createElement('canvas');r_.width=c.height;r_.height=c.width;const q=r_.getContext('2d');q.translate(c.height,0);q.rotate(Math.PI/2);q.drawImage(c,0,0);this._rot=r_;}
@@ -7684,6 +7690,7 @@ function tdGlintGo(){
   if(w===scene&&tadeo.x>camX-12&&tadeo.x<camX+W+12)return; // he is right there, in plain sight: nobody behind the tapestry
   if(w)wOff(tadeo);tdNicho=true;tdGlint=4;tdGlintSeen=false;
 }
+const tdMusicBase=()=>isCor(scene)?.12:1; // the normal level where the player is (the candle corridors stay low)
 const tdAfter=(t,fn)=>{if(tdClock>=t)fn();else tdWait={t,fn};}; // a scene that waits for somebody to be able to get there
 const tdCatPin=()=>!!flags&&flags.td===5&&!tdC().esconderijo&&cat.sc==='andar2'&&Math.abs(cat.x-480)<6&&Math.abs(cat.y-74)<6;
 
@@ -7749,6 +7756,7 @@ function tdLarissaVem(walked){
     larissa.x=Math.max(20,Math.min(SCENE_W[sc]-20,player.x+(player.x>SCENE_W[sc]-60?-24:24)));larissa.y=player.y;syncW(larissa);}
   larissa.wait=30;larissa.dir=faceTo(larissa,player);
   player.dir=faceTo(player,larissa);setMood('larissa','worried',20);
+  music.duck(.12); // drama: the music drops with the news, back once the player names Tadeo
   say([{who:LW,t:nome1()+'! O Livro dos Convites sumiu. Subi para acender as velas e o lugar dele estava vazio.'},
     {who:LW,t:'Só o Bruno subiu. Cruzei com ele na escada, com um livro grosso debaixo do braço.'},
     {who:me(),t:'O Bruno nunca faria isso.'},
@@ -7756,7 +7764,7 @@ function tdLarissaVem(walked){
     {t:'A Larissa examina o selo de cera contra a luz.'},
     {who:LW,t:'...Isto aqui é marca de pressão. E tem um resto de cera verde, que não é a do selo. Alguém copiou o seu selo.'},
     {who:LW,t:'Quem segurou o seu convite?'},
-    {who:me(),t:'...O Tadeo.',run:()=>setMood('player','worried',4)},
+    {who:me(),t:'...O Tadeo.',run:()=>{setMood('player','worried',4);music.duck(tdMusicBase());}},
     {who:LW,t:'O monitor do 2º andar. Na sexta-feira o fundador abre o livro. Se ele não estiver lá, o Bruno sai da Liga.'},
     {who:LW,t:'Precisamos de provas. O crachá de monitor deixa rastro na secretaria. E fale com o Bruno: ele está no térreo, arrasado.',
       run:()=>{flags.td=5;tdC().selo=true;larissa.wait=4;updatePauseExtra();}}]);
@@ -7790,37 +7798,115 @@ function tdConvite2(t_){
           tdMove(b,[[b.x,116],[46,112]],26,()=>{b.dir='left';flags.tdTrap=true;tdCut=false;state='play';updatePauseExtra();});});});});
   });
 }
-// the old lab: Larissa and Gabriel hidden behind the bookcase, the player behind the old bench
+// the old lab: Larissa and Gabriel hidden behind the bookcase, the player behind the old bench.
+// The scene's props and effects live in tdOc: the candle (vela), the fire on the book (fogo), the scorched corner,
+// things that fall and stay on the floor, dust, smoke and sparks (pt), timers (tm), Malvar's badge and a "!" (bang).
+const TD_HIDE={L:[326,160],G:[350,160]},TD_PEEK={L:[295,164],G:[290,170]}; // peeking: Larissa half behind the bookcase
+const tdLater=(s,fn)=>{if(tdOc)tdOc.tm.push({t:tdClock+s,fn});};
+const tdHand=o=>[Math.round(o.x+(o.dir==='left'?-7:7)),Math.round(o.y-13)];
+const tdOff=o=>{const i=SCENES.salaOculta.indexOf(o);if(i>=0)SCENES.salaOculta.splice(i,1);};
+function tdHide(o,k,sp){tdMove(o,[TD_HIDE[k]],sp||30,()=>{o.dir='left';});}
+function tdPeek(o,k,back){tdMove(o,[TD_PEEK[k]],22,()=>{o.dir='left';});if(back)tdLater(back,()=>{if(!tdMoving(o))tdHide(o,k,26);});}
+function tdSnapHide(o,k){ // the player read fast: whoever is still out of the shadow is back in it now
+  if(Math.hypot(o.x-TD_HIDE[k][0],o.y-TD_HIDE[k][1])<1)return;
+  tdMovers=tdMovers.filter(m=>m.o!==o);o.x=TD_HIDE[k][0];o.y=TD_HIDE[k][1];o.dir='left';o.moving=false;syncW(o);
+}
+function tdPart(o){if(tdOc)tdOc.pt.push(Object.assign({vx:0,vy:0,g:0,life:1,age:0,c:'#efe3c8',k:'dot'},o));}
+function tdDust(x,y,n){for(let i=0;i<(n||8);i++)tdPart({x:x+Math.random()*10-5,y:y-Math.random()*3,vx:(Math.random()-.5)*26,vy:-6-Math.random()*10,life:.7+Math.random()*.5,c:Math.random()<.5?'#8a7a66':'#6e5a44',k:'dust'});}
+function tdSmoke(x,y,n){for(let i=0;i<(n||6);i++)tdPart({x:x+Math.random()*2-1,y,vx:(Math.random()-.5)*4,vy:-8-Math.random()*6,life:1.2+Math.random()*.8,age:-i*.18,c:'#9a9084',k:'smoke'});}
+function tdSparks(x,y,n,c){for(let i=0;i<(n||10);i++){const a=Math.random()*Math.PI*2,s=20+Math.random()*40;
+  tdPart({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-10,g:60,life:.3+Math.random()*.3,c:c||(i%2?'#fff27a':'#ffffff'),k:'spark'});}}
+// something falls (a book from the bookcase, a jar from the wall shelf, the wand, the notebook) and stays on the floor
+function tdFall(x,y0,y1,k,c,delay,vx){tdPart({x,y:y0,y1,vx:vx||0,g:260,life:1e9,age:-(delay||0),c,k});}
+function tdHiss(){for(let i=0;i<6;i++)tone(2600+Math.random()*1800,.04,'sawtooth',.004,i*.04);}
+function tdFxTick(dt){
+  if(tdShake>0)tdShake-=dt;
+  const O=tdOc;if(!O)return;
+  for(const m of O.tm.slice())if(tdClock>=m.t){O.tm.splice(O.tm.indexOf(m),1);m.fn();}
+  if(O.bang)O.bang.t-=dt;
+  const V=O.vela;
+  if(V&&V.st==='livro')O.fogo=Math.min(1,O.fogo+dt*.22);       // the page catches, slowly
+  if(V&&V.st==='voa'){V.u+=dt/.45;if(V.u>=1){V.st='chao';tdSparks(V.x1+5,V.y1-2,6,'#e8913a');tone(150,.05,'triangle',.04);}}
+  if(V&&V.st==='apagada'&&V.fumo>0){V.fumo-=dt;if(Math.random()<dt*7)tdSmoke(V.x+5,V.y-3,1);}
+  if(O.M&&O.M.moving&&!O.M.fast){O.step=(O.step||0)-dt;if(O.step<=0){O.step=.55;tone(72,.08,'triangle',.05);}} // Malvar's slow steps
+  for(const p of O.pt.slice()){
+    p.age+=dt;if(p.age<0)continue;
+    if(p.y1!=null){if(p.landed)continue;
+      p.vy+=p.g*dt;p.y+=p.vy*dt;p.x+=p.vx*dt;
+      if(p.y>=p.y1){p.y=p.y1;p.landed=true;
+        if(p.k==='jar'){tdSparks(p.x,p.y,7,'#b8e0ea');tone(2400+Math.random()*700,.07,'triangle',.022);tone(3300,.05,'sine',.015,.03);}
+        else{tdDust(p.x,p.y,5);tone(130+Math.random()*30,.05,'triangle',.035);}}
+      continue;}
+    if(p.age>=p.life){O.pt.splice(O.pt.indexOf(p),1);continue;}
+    p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.k==='dust'){p.vx*=.92;p.vy*=.9;}
+  }
+}
+function tdOcDraw(t){
+  const O=tdOc;if(!O||scene!=='salaOculta')return;
+  const flame=(x,y,ph)=>{const f=Math.floor(t*9+ph)%3;r(x,y-f%2,2,3,'#e8913a');px(x+(f===1?1:0),y-2,'#f2c94c');px(x,y-3+(f===2?1:0),'#fff27a');};
+  const glow=(x,y,rad,a)=>{const gl=fctx.createRadialGradient(x,y,1,x,y,rad);gl.addColorStop(0,'rgba(255,190,100,'+a+')');gl.addColorStop(1,'rgba(255,190,100,0)');
+    fctx.save();fctx.globalCompositeOperation='lighter';fctx.fillStyle=gl;fctx.fillRect(x-rad,y-rad,rad*2,rad*2);fctx.restore();};
+  // the corner of the book: blackening while it burns, scorched for good after
+  const k=O.queimado?1:O.fogo;
+  if(k>0){r(278,102,2,Math.min(8,Math.ceil(1+k*5)),'#1d1612');if(k>.35){px(277,102,'#3a2414');px(277,103,'#3a2414');}if(k>.7)px(279,109,'#3a2414');}
+  const V=O.vela;
+  if(V&&V.st==='livro'&&O.fogo>0){const n=1+Math.floor(O.fogo*2.5);for(let i=0;i<n;i++)flame(277+i*2-(n>2?2:0),101-(i%2),i*1.3);
+    glow(279,99,12+O.fogo*10,.3);if(Math.random()<.12)tdSmoke(279,95,1);}
+  if(V){
+    if(V.st==='mao'||V.st==='livro'){const [hx,hy]=V.st==='livro'?[281,110]:tdHand(O.T); // a white candle, wax running down
+      r(hx,hy-5,2,6,'#efe3c8');px(hx,hy-5,'#d8c79a');px(hx+1,hy-2,'#d8c79a');px(hx,hy-6,'#3a2414');flame(hx,hy-8,.5);glow(hx+1,hy-9,22,.32);}
+    else if(V.st==='voa'){const u=V.u,x=Math.round(V.x0+(V.x1-V.x0)*u),y=Math.round(V.y0+(V.y1-V.y0)*u-Math.sin(u*Math.PI)*18);
+      if(Math.floor(u*8)%2){r(x,y-3,2,5,'#efe3c8');flame(x,y-5,1);}else{r(x-2,y,5,2,'#efe3c8');flame(x+3,y-1,1);}}
+    else{r(V.x,V.y-2,5,2,'#efe3c8');r(V.x,V.y-1,5,1,'#d8c79a');px(V.x+5,V.y-2,'#3a2414');r(V.x-1,V.y,3,1,'#d8c79a'); // lying on the rug, a puddle of wax
+      if(V.st==='chao'){flame(V.x+6,V.y-2,2);glow(V.x+7,V.y-4,18,.28);}}
+  }
+  for(const p of O.pt){if(p.age<0)continue;const x=Math.round(p.x),y=Math.round(p.y);
+    if(p.k==='book'){if(p.landed){r(x-3,y-1,7,2,p.c);r(x-3,y-1,7,1,'#9a9084');px(x+3,y,'#efe3c8');}else{r(x-1,y-4,3,5,p.c);px(x-1,y-4,'#9a9084');}}
+    else if(p.k==='jar'){if(p.landed){px(x-2,y,p.c);px(x+2,y,p.c);px(x,y-1,'#d8f0f4');px(x+3,y+1,p.c);px(x-3,y+1,'#d8f0f4');px(x+1,y+1,'#9aa2a9');
+        fctx.globalAlpha=.5;r(x-3,y+2,7,1,p.c);fctx.globalAlpha=1;}           // glass bits and what was in the jar
+      else{r(x-1,y-4,3,4,p.c);r(x-1,y-5,3,1,'#9aa2a9');}}
+    else if(p.k==='wand'){if(p.landed){r(x-3,y,7,1,'#5a3d24');px(x+3,y,'#efe3c8');}else{const a=Math.floor(p.age*14)%2;if(a)r(x-3,y,7,1,'#5a3d24');else r(x,y-3,1,7,'#5a3d24');}}
+    else if(p.k==='caderno'){if(p.landed){r(x-6,y-3,13,6,'#1d1612');r(x-5,y-3,5,5,'#efe3c8');r(x+1,y-3,5,5,'#efe3c8');
+        for(let i=0;i<4;i++){r(x-5,y-3+i,4-(i%2),1,'#5a2230');r(x+1,y-3+i,4-((i+1)%2),1,i===3?'#a12a22':'#5a2230');}} // lines and lines of the same scrambled letters (the last one in red)
+      else{r(x-3,y-3,6,4,'#1f4a33');r(x-3,y-3,6,1,'#2c6a4a');}}
+    else{const a=Math.max(0,1-p.age/p.life);fctx.globalAlpha=p.k==='smoke'?a*.55:a;px(x,y,p.c);if(p.k==='smoke'&&p.age>.4)px(x+1,y-1,p.c);fctx.globalAlpha=1;}
+  }
+  if(O.broche==='M'&&O.M){const x=Math.round(O.M.x)+(O.M.dir==='left'?-9:7),y=Math.round(O.M.y)-12; // the badge in Malvar's hand
+    px(x,y,'#d8dee2');px(x+1,y,'#1f6b3f');px(x,y+1,'#1f6b3f');px(x+1,y+1,'#d8dee2');}
+  if(O.bang&&O.bang.t>0){const o=O.bang.o,x=Math.round(o.x),y=Math.round(o.y)-(o.sit?28:34)+Math.round(Math.sin(t*14));
+    r(x-2,y,5,10,'#1d1612');r(x-1,y+1,3,5,'#f2c94c');r(x-1,y+7,3,2,'#f2c94c');}
+}
 function tdOcStart(){
-  tdCut=true;tdOc={asked:new Set(),book:false};
+  tdCut=true;tdOc={asked:new Set(),book:false,tm:[],pt:[],vela:null,fogo:0,queimado:false,broche:null,bang:null};
   // nobody in two places: the scene uses its own Tadeo, Larissa and Gabriel (and, later, Malvar and Bruno)
   tdBrunoObj=tdBrunoObj||tdFind('bruno');tdGabObj=tdGabObj||tdFind('gabriel');
   for(const o of [tadeo,tdBrunoObj,larissa,tdGabObj])if(o)wOff(o);
   if(mr&&mr.sc!==scene)mrEnd();mrPlace(true);tdMalOut=true;tdMalBack=Infinity;
   const T=tdNpc('ocTadeo','Tadeo (3º ano)','tadeo','shirt',192,240,'up',2.3);
-  const L=tdNpc('ocLarissa','Larissa (2º ano)','larissa','coat',326,160,'left',.8);
-  const G=tdNpc('ocGabriel','Gabriel (3º ano)','gabriel','hoodie',350,160,'left',3.1);
+  const L=tdNpc('ocLarissa','Larissa (2º ano)','larissa','coat',...TD_HIDE.L,'left',.8);
+  const G=tdNpc('ocGabriel','Gabriel (3º ano)','gabriel','hoodie',...TD_HIDE.G,'left',3.1);
   tdOc.T=T;tdOc.L=L;tdOc.G=G;
   const tadeoVem=()=>{state='tdcut'; // Tadeo comes when he could have walked here from where the player left him
     tdAfter(Math.max(tdClock+1.5,tdArrive('tadeo','salaOculta')),()=>say([{t:'Passos no corredor das velas...'}],()=>{
     state='tdcut';SCENES.salaOculta.push(T);
     tdMove(T,[[192,140],[274,136]],24,()=>{T.dir='up';tdOc.book=true;
-      say([{t:'O Tadeo abre um livro grosso sobre a mesa e molha a pena na tinta. Ele escreve devagar: TADEO CORNIEL.'},
-        {t:'As letras brilham... e somem, uma a uma.',run:()=>setMood('tadeo','angry',30)},
-        {who:TW_,t:'Não. Não, não, não. Eu estou aqui dentro!'},
-        {who:me(),t:'Tadeo, para!'}],()=>{state='tdcut';
+      say([{t:'O Tadeo abre um livro grosso sobre a mesa e molha a pena na tinta. Ele escreve devagar: TADEO CORNIEL.',run:()=>sfx.pencil()},
+        {t:'As letras brilham... e somem, uma a uma.',run:()=>{setMood('tadeo','angry',30);sfx.ink();
+          for(let i=0;i<12;i++)tdPart({x:268+Math.random()*12,y:104+Math.random()*4,vy:-6-Math.random()*8,life:.9+Math.random()*.6,age:-i*.09,c:i%3?'#f2c94c':'#fff27a',k:'dot'});}},
+        {who:TW_,t:'Não. Não, não, não. Eu estou aqui dentro!',run:()=>{tdShake=.22;tone(95,.12,'triangle',.06);tdDust(274,124,6);}}, // a fist on the table
+        {who:me(),t:'Tadeo, para!'}],()=>{state='tdcut';music.duck(.25); // low while the player asks
         tdMove(player,[[120,150],[170,140]],40,()=>{player.dir='right';T.dir='left';
           say([{who:TW_,t:'...Você. Claro que era você.',run:()=>setMood('tadeo','smug',30)},
             {who:TW_,t:'Vai, pergunte. Agora não faz mais diferença.'}],tdAsk);});});});
   }));};
-  const esconde=()=>say([{t:'Você se esconde atrás da bancada antiga e espera.',run:()=>{player.x=52;player.y=150;player.dir='right';}}],tadeoVem);
+  const esconde=()=>say([{t:'Você se esconde atrás da bancada antiga e espera.',run:()=>{music.duck(.05);player.x=52;player.y=150;player.dir='right';}}],tadeoVem);
   const ready=Math.max(tdArrive('larissa','salaOculta'),tdArrive('gabriel','salaOculta'));
   if(tdClock>=ready){SCENES.salaOculta.push(L,G);
     say([{t:'O laboratório antigo está em silêncio. Atrás da estante, a ponta do jaleco da Larissa e o capuz do Gabriel: os dois já estão escondidos.'}],esconde);}
   else say([{t:'O laboratório antigo está vazio. A Larissa e o Gabriel ainda não chegaram.'}],()=>{state='tdcut';
     tdAfter(ready,()=>{Object.assign(L,{x:192,y:224,dir:'up'});Object.assign(G,{x:192,y:230,dir:'up'});syncW(L);syncW(G);SCENES.salaOculta.push(L,G);
-      tdMove(L,[[192,206],[326,160]],44,()=>{L.dir='left';});
-      tdMove(G,[[192,206],[350,160]],44,()=>{G.dir='left';say([{who:LW,t:'(sussurrando) Chegamos. Rápido, se esconda!'}],esconde);});});});
+      tdMove(L,[[192,206],TD_HIDE.L],44,()=>{L.dir='left';});
+      tdMove(G,[[192,206],TD_HIDE.G],44,()=>{G.dir='left';say([{who:LW,t:'(sussurrando) Chegamos. Rápido, se esconda!'}],esconde);});});});
 }
 const TD_Q=[
   {k:'como',q:'Como você entrou aqui?',a:[
@@ -7831,50 +7917,102 @@ const TD_Q=[
   {k:'livro',q:'Como você sabia do livro?',a:['O Malvar me contou, no 1º ano. "Ainda não." Três anos esperando uma palavra virar outra.']},
   {k:'porta',q:'E aquela conversa no corredor, sobre os três anos?',a:['Tudo o que eu te contei era verdade. Os três anos, a parede morna, tudo. Eu só não te contei o resto.']},
   {k:'quer',q:'O que você quer com o livro?',a:['Estar nele. E, se ele não me aceitar... que ninguém mais esteja.']}];
+// while the player asks, Tadeo never stands still: where he walks to, where he looks, what the hidden two do
+const TD_MV={
+  como:{p:[[244,140]],d:'left',react:()=>{const L=tdOc.L;setMood('larissa','worried',5);tdPeek(L,'L',4);}},
+  bruno:{p:[[250,142]],d:'left',after:()=>{const L=tdOc.L,G=tdOc.G,T=tdOc.T;return [
+    {t:'Atrás da estante, o Gabriel dá um passo para fora, de punhos fechados.',run:()=>{setMood('gabriel','angry',10);tdMove(G,[TD_PEEK.G],60,()=>{G.dir='left';});}},
+    {t:'A Larissa o segura pelo braço e o puxa de volta para a sombra.',run:()=>{setMood('larissa','worried',8);
+      tdMove(L,[[300,168]],80,()=>{L.dir='left';tdHide(L,'L',60);tdHide(G,'G',60);});}},
+    {t:'Um livro escorrega da estante e bate no chão.',run:()=>tdFall(344,138,182,'book','#2b4a6f')},
+    {t:'O Tadeo vira a cabeça para a estante. Silêncio.',run:()=>{tdSnapHide(L,'L');tdSnapHide(G,'G');T.dir='right';setMood('tadeo','surprised',4);}},
+    {who:TW_,t:'...Ratos. Este lugar está cheio deles.',run:()=>{T.dir='left';setMood('tadeo','smug',30);}}];}},
+  livro:{p:[[274,136]],d:'up',pre:[{t:'Ele volta até a mesa e passa os dedos pela capa do livro, devagar.'}],
+    react:()=>{setMood('gabriel','worried',5);tdPeek(tdOc.G,'G',4);}},
+  porta:{p:[[262,132]],d:'up',pre:[{t:'O Tadeo vira de costas para você.'}]},
+  quer:{p:[[214,140]],d:'left',pre:[{t:'Ele dá a volta na mesa e chega mais perto.'}],
+    react:()=>{setMood('gabriel','angry',5);setMood('larissa','worried',5);tdPeek(tdOc.G,'G',3.5);tdPeek(tdOc.L,'L',3.5);}}};
 function tdAsk(){
   const left=TD_Q.filter(q=>!tdOc.asked.has(q.k));
   if(!left.length)return tdProposta();
   say([{who:TW_,t:tdOc.asked.size?'Mais alguma pergunta?':'Pergunte o que quiser.',choices:left.map(q=>({t:q.q,fn:()=>{tdOc.asked.add(q.k);
-      say([{who:me(),t:q.q}].concat(q.a.map(t=>({who:TW_,t}))),tdAsk);}})).concat([{t:'Chega.',fn:tdProposta}])}]);
+      const mv=TD_MV[q.k],T=tdOc.T;
+      tdMove(T,mv.p,14,()=>{T.dir=mv.d;});
+      say([{who:me(),t:q.q}].concat(mv.pre||[],q.a.map((t,i)=>({who:TW_,t,run:i===0&&mv.react?mv.react:undefined})),mv.after?mv.after():[]),tdAsk);}}))
+    .concat([{t:'Chega.',fn:tdProposta}])}]);
 }
 function tdProposta(){
   const T=tdOc.T,L=tdOc.L,G=tdOc.G;
-  const fim=()=>{T.dir='up';
-    say([{who:TW_,t:'Então ninguém.',run:()=>setMood('tadeo','angry',30)},{t:'Ele aproxima a vela do livro.'}],()=>{state='tdcut';
-      tdMove(L,[[290,150],[286,146]],40);tdMove(G,[[300,172],[288,172]],40,()=>{L.dir='left';G.dir='left';T.dir='right';
-        say([{who:LW,t:'Ouvimos tudo, Tadeo.'},{who:GW_,t:'Larga a vela. Você sabe que é dois contra um.'},
-          {who:TW_,t:'E '+gen('o calouro','a caloura')+' sem varinha conta como o quê? Plateia?'}],()=>tdDuelStart(tdVitoria));});});};
+  tdSnapHide(L,'L');tdSnapHide(G,'G');
+  tdMove(T,[[190,140]],16,()=>{T.dir='left';}); // close, very close
+  setMood('tadeo','normal',20);
+  const recua=()=>{tdMove(T,[[236,138]],30,()=>{T.dir='left';});};
+  const fim=()=>say([{who:TW_,t:'Então ninguém.',run:()=>{setMood('tadeo','angry',40);music.duck(0);}}],()=>{state='tdcut'; // silence... until Larissa speaks
+    tdMove(T,[[206,112]],34,()=>{T.dir='up';
+      tdLater(.6,()=>{tdOc.vela={st:'mao'};tone(1320,.05,'triangle',.02); // a candle out of the candlestick
+        tdMove(T,[[274,136]],30,()=>{T.dir='up';tdOc.vela.st='livro';tdOc.fogo=.01;tdHiss();
+          say([{t:'Ele tira uma vela do candelabro e a aproxima do livro. A borda de uma página começa a escurecer.'}],()=>{state='tdcut';
+            tdMove(L,[[300,166],[290,150],[286,146]],60);tdMove(G,[[300,174],[288,172]],60,()=>{L.dir='left';G.dir='left';T.dir='right';
+              say([{who:LW,t:'Ouvimos tudo, Tadeo.',run:()=>music.special('duel')},{who:GW_,t:'Larga a vela. Você sabe que é dois contra um.'},
+                {who:TW_,t:'E '+gen('o calouro','a caloura')+' sem varinha conta como o quê? Plateia?'}],()=>tdDuelStart(tdVitoria));});});});});});});
   say([{who:TW_,t:'Escuta. Eles escolhem pelas razões erradas. Eu e você entendemos onde a via se decide. Imagina uma Liga nossa, sem velhos decidindo quem merece.',
-    choices:[{t:'Não.',fn:()=>say([{who:me(),t:'Não.'}],fim)},
-      {t:'...',fn:()=>say([{t:'A tinta do diário esfria e escurece.'},{who:me(),t:'...Não.'}],fim)}]}]);
+    choices:[{t:'Não.',fn:()=>say([{who:me(),t:'Não.',run:recua}],fim)},
+      {t:'...',fn:()=>say([{t:'Você não responde. O Tadeo espera, perto o bastante para você ouvir a respiração dele.'},
+        {t:'A tinta do diário esfria e escurece.'},{who:me(),t:'...Não.',run:recua}],fim)}]}]);
 }
 /* the duel: Larissa and Gabriel against Tadeo; when Larissa falls, the diary glows: open it at the right moment
-   (a marker runs along a bar; ENTER / A / tap inside the golden zone). A miss: Larissa gets up and it goes again. */
-function tdDuelStart(then){tdDuel={ph:'luta',t:0,dur:3,then,hit:0,p:0,tries:0};state='tdDuel';keys.clear();}
+   (a marker runs along a bar; ENTER / A / tap inside the golden zone). A miss: Larissa gets up and it goes again.
+   Choreography: they push and give ground with the beams; the first spell knocks the candle off the book; Larissa is
+   thrown against the bookcase (books fall); Gabriel steps in front of the player; the diary's light throws Tadeo
+   back against the wall (the jars on the shelf come down). */
+function tdDuelStart(then){tdDuel={ph:'luta',t:0,dur:3,then,hit:0,p:0,tries:0,knock:false};state='tdDuel';keys.clear();}
+function tdDuelSway(D,on){ // push and pull: the three give and take ground together
+  for(const o of [tdOc.T,tdOc.G,tdOc.L]){
+    if(!on||o.down||tdMoving(o)){if(o._bx!=null&&!tdMoving(o)&&!o.down){o.x=o._bx;syncW(o);}o._bx=null;continue;}
+    if(o._bx==null)o._bx=o.x;
+    o.x=o._bx+Math.round(Math.sin(D.t*5.2)*2.5+Math.sin(D.t*13)*.8);syncW(o);
+  }
+}
 function tdDuelTick(dt){
   const D=tdDuel;if(!D)return;D.t+=dt;D.hit=Math.max(0,D.hit-dt);
-  if(D.ph==='luta'&&D.t>=D.dur){D.ph='queda';D.t=0;tdOc.L.down=true;sfx.bump();}
+  const O=tdOc,T=O.T,L=O.L,G=O.G;
+  tdDuelSway(D,D.ph==='luta');
+  if(D.ph==='luta'&&!D.knock&&D.t>=.35){D.knock=true; // Gabriel's first spell: the candle flies out of Tadeo's hand
+    const [hx,hy]=tdHand(T),V=O.vela;
+    if(V){Object.assign(V,{st:'voa',u:0,x0:V.st==='livro'?281:hx,y0:V.st==='livro'?110:hy,x1:244,y1:158,x:244,y:158});}
+    O.fogo=0;O.queimado=true;tdSmoke(279,98,8);tdSparks(hx,hy,10,'#a6e6a6');tdHiss();}
+  if(D.ph==='luta'&&D.t>=D.dur){D.ph='queda';D.t=0;L.down=true;sfx.bump();
+    tdMove(L,[[292,182]],150,()=>{tdDust(292,182,12);tdShake=.35;tone(70,.18,'triangle',.06);
+      const n=D.tries?2:3,C=['#7a2e3e','#2b4a6f','#1f4a33','#a8862a'];
+      for(let i=0;i<n;i++)tdFall(304+i*13,120+i*14,179+(i%2)*4,'book',C[(i+D.tries)%4],.05+i*.12,(i-1)*6);});
+    if(Math.abs(G.x-206)>2)tdMove(G,[[206,142]],80,()=>{G.dir='right';T.dir='left';}); // Gabriel in front of the player
+  }
   else if(D.ph==='queda'&&D.t>=1.3){D.ph='diario';D.t=0;}
   else if(D.ph==='diario'){const u=(D.t*.85)%2;D.p=u<1?u:2-u;}
-  else if(D.ph==='falha'&&D.t>=1.6){D.ph='luta';D.t=0;D.dur=1.6;tdOc.L.down=false;}
-  else if(D.ph==='ok'&&D.t>=1.6){const f=D.then;tdDuel=null;state='play';tdOc.L.down=false;f();}
+  else if(D.ph==='falha'&&D.t>=1.6){D.ph='luta';D.t=0;D.dur=1.6;L.down=false;
+    tdMove(L,[[290,166],[288,150]],46,()=>{L.dir='left';});} // she gets up and comes back at him
+  else if(D.ph==='ok'&&D.t>=1.6){const f=D.then;tdDuel=null;state='play';L.down=false;tdDuelSway(D,false);f();}
 }
 function tdDuelHit(){
   const D=tdDuel;if(!D||D.ph!=='diario'||D.hit>0)return;D.hit=.3;
-  if(Math.abs(D.p-.5)<.11){D.ph='ok';D.t=0;[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.05,i*.08));}
+  if(Math.abs(D.p-.5)<.11){D.ph='ok';D.t=0;[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.05,i*.08));
+    const T=tdOc.T;tdMove(T,[[300,96]],90,()=>{T.dir='down';tdShake=.45;tone(80,.22,'triangle',.06);tdDust(300,96,8); // back against the wall
+      const C=['#86aebb','#5aa865','#a12a22','#c99a3c'];
+      for(let i=0;i<4;i++)tdFall(284+i*14,26+(i%2)*18,98+(i%3)*3,'jar',C[i],.08+i*.13);});}
   else{D.ph='falha';D.t=0;D.tries++;sfx.bump();}
 }
 function tdDuelDraw(t){
   const D=tdDuel;if(!D||!tdOc)return;
-  const T=tdOc.T,L=tdOc.L,G=tdOc.G,hand=o=>[Math.round(o.x+(o.dir==='left'?-7:7)),Math.round(o.y-13)];
+  const T=tdOc.T,L=tdOc.L,G=tdOc.G,hand=tdHand;
   const beam=(a,b,c1,c2)=>{const n=Math.max(4,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/2));
     for(let i=0;i<=n;i++){const u=i/n,x=Math.round(a[0]+(b[0]-a[0])*u),y=Math.round(a[1]+(b[1]-a[1])*u+Math.sin(u*9+t*30)*1.2);px(x,y,(i+Math.floor(t*20))%3?c1:c2);}};
   const wand=o=>{const [x,y]=hand(o),s=o.dir==='left'?-1:1;px(x,y,'#5a3d24');px(x+s,y-1,'#5a3d24');px(x+2*s,y-2,'#efe3c8');};
+  const moving=[T,G,L].some(o=>tdMoving(o));
   const ht=hand(T),hl=hand(L),hg=hand(G);
-  [T,G].concat(L.down?[]:[L]).forEach(wand);
-  if(D.ph!=='ok'){
-    const mid=L.down||D.ph==='falha'?[Math.round(ht[0]+(hg[0]-ht[0])*.72),Math.round((ht[1]+hg[1])/2)]:[Math.round((ht[0]+hl[0])/2+4),Math.round((ht[1]+hl[1]+hg[1])/3)];
-    beam(ht,mid,'#3fa682','#a6e6a6');beam(hg,mid,'#5fb4f0','#e6f8ff');if(!L.down)beam(hl,mid,'#ef6a5c','#ffd0c8');
+  [T,G].concat(L.down||tdMoving(L)?[]:[L]).forEach(wand);
+  if(D.ph!=='ok'&&!(moving&&D.ph==='queda')){
+    const mid=L.down||tdMoving(L)||D.ph==='falha'?[Math.round(ht[0]+(hg[0]-ht[0])*.72),Math.round((ht[1]+hg[1])/2)]:[Math.round((ht[0]+hl[0])/2+4),Math.round((ht[1]+hl[1]+hg[1])/3)];
+    beam(ht,mid,'#3fa682','#a6e6a6');beam(hg,mid,'#5fb4f0','#e6f8ff');if(!L.down&&!tdMoving(L))beam(hl,mid,'#ef6a5c','#ffd0c8');
     for(let i=0;i<6;i++)px(mid[0]+Math.round(Math.sin(t*17+i)*3),mid[1]+Math.round(Math.cos(t*13+i*2)*3),i%2?'#fff27a':'#ffffff');
   }
   const msg=D.ph==='queda'?'A LARISSA CAIU!':D.ph==='falha'?'NÃO FOI DESTA VEZ... A LARISSA SE LEVANTA!':D.ph==='luta'?'LARISSA E GABRIEL CONTRA O TADEO':null;
@@ -7893,34 +8031,59 @@ function tdDuelDraw(t){
   if(D.ph==='ok'){fctx.globalAlpha=Math.max(0,1-D.t/1.6);r(camX,0,W,H,'#fff7d0');fctx.globalAlpha=1;}
 }
 function tdVitoria(){
-  const T=tdOc.T;setMood('tadeo','angry',30);T.dir='down';
-  say([{t:'Uma luz dourada enche a sala. O Tadeo cobre os olhos, e a varinha escapa da mão dele.'},
-    {t:'O caderno do Tadeo cai aberto no chão. Em cada linha, as mesmas letras, embaralhadas de novo e de novo: TADEO CORNIEL... ODETA CORNIEL... LORDE...'},
-    {t:'Até a última linha: LORDE CIANETO.'},
+  const O=tdOc,T=O.T,L=O.L,G=O.G;setMood('tadeo','angry',30);T.dir='down';music.duck(0); // silence for the notebook and LORDE CIANETO
+  say([{t:'Uma luz dourada enche a sala. O Tadeo cobre os olhos, e a varinha escapa da mão dele.',
+      run:()=>{tdFall(T.x+7,T.y-14,T.y+10,'wand','#5a3d24',0,28);tone(1800,.04,'triangle',.02,.35);}},
+    {t:'O caderno do Tadeo cai aberto no chão. Em cada linha, as mesmas letras, embaralhadas de novo e de novo: TADEO CORNIEL... ODETA CORNIEL... LORDE...',
+      run:()=>{tdFall(T.x-9,T.y-12,T.y+7,'caderno','#1f4a33');setMood('player','worried',8);}},
+    {t:'Até a última linha: LORDE CIANETO.',run:()=>{const n=O.pt.find(p=>p.k==='caderno');if(n)tdSparks(n.x,n.y-2,5,'#a12a22');}},
     {who:TW_,t:'Um dia esse nome vai significar alguma coisa. E você vai lembrar que estava aqui quando ele nasceu.'}],()=>{state='tdcut';
+    music.duck(1);music.scene(scene); // the floor's music comes back as Malvar arrives
     const bS=TDS.bruno,vem=Math.max(tdClock+1,bS?bS.t+tdTravel(bS.sc,'sala204')+tdTravel('sala204','salaOculta'):0,tdArrive('malvar','salaOculta'));
-    tdAfter(vem,()=>{ // Bruno ran to Sala 204 for Malvar, and both came back here
-    const M=tdNpc('ocMalvar','Prof. Malvar (Poções)','malvar','coat',192,240,'up',1.7),B=tdNpc('ocBruno','Bruno (1º ano)','bruno','hoodie',206,248,'up',1.7);
-    tdOc.M=M;tdOc.B=B;SCENES.salaOculta.push(M,B);
-    tdMove(B,[[214,176]],34);tdMove(M,[[200,160]],26,()=>{M.dir='right';B.dir='up';setMood('malvar','angry',30);
-      say([{who:MW_,t:'Corniel.'},
-        {who:LW,t:'Ele confessou, professor. Nós dois ouvimos tudo. O Bruno não fez nada.'},
-        {who:MW_,t:'O broche, Corniel. Você usou o crachá de monitor para entrar na minha sala. Oficialmente, é por isso. Detenção na 204, o semestre inteiro.'},
-        {who:TW_,t:'O senhor não vai me expulsar?'},
-        {who:MW_,t:'Expulso, você vira problema de outra pessoa. Aqui, você é problema meu.'},
-        {who:TW_,t:'...Bruno. Desculpa.'}],()=>{state='tdcut';
-        tdMove(T,[[T.x,150],[192,150],[192,244]],24);tdMove(M,[[192,160],[192,244]],24,()=>{
-          for(const o of [T,M]){const i=SCENES.salaOculta.indexOf(o);if(i>=0)SCENES.salaOculta.splice(i,1);}
-          say([{t:'Na porta, você ainda ouve:'},
-            {who:MW_,t:'Eu também nunca fui convidado para nada, Corniel. Por isso fundei a Liga. Não me faça me arrepender de não ter mandado você embora.'},
-            {t:'A Larissa abraça o Bruno. O Gabriel apaga a vela que o Tadeo deixou cair.',run:()=>{setMood('bruno','happy',20);setMood('larissa','happy',20);}},
-            {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],()=>{
-            const swap=(t_,o)=>{if(!o)return;const i=SCENES.salaOculta.indexOf(t_);if(i>=0)SCENES.salaOculta.splice(i,1);
-              wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
-            swap(tdOc.L,larissa);swap(tdOc.G,tdGabObj);swap(tdOc.B,tdBruno());
-            tdMalBack=tdClock+tdTravel('salaOculta','sala204'); // Malvar (and Tadeo, by the travel model) on their way to Sala 204
-            flags.td=7;flags.tdTrap=false;tdCut=false;tdOc.ending=true;updatePauseExtra();
-            goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');});});});});});});
+    tdAfter(vem,()=>{ // Bruno ran to Sala 204 for Malvar, and both came back here: Bruno first, running
+    const M=tdNpc('ocMalvar','Prof. Malvar (Poções)','malvar','coat',192,240,'up',1.7),B=tdNpc('ocBruno','Bruno (1º ano)','bruno','hoodie',192,240,'up',1.7);
+    O.M=M;O.B=B;SCENES.salaOculta.push(B);
+    tdMove(B,[[192,206],[196,188]],78,()=>{B.dir=faceTo(B,T);O.bang={o:B,t:1.6};setMood('bruno','surprised',6);tone(880,.06,'square',.03);tone(1175,.08,'square',.03,.07);
+      say([{t:'O Bruno entra correndo e trava no meio do caminho ao ver o Tadeo.'}],()=>{state='tdcut';
+        // Malvar comes in slowly; everyone makes way
+        SCENES.salaOculta.push(M);
+        tdMove(B,[[146,186]],34,()=>{B.dir='right';}); // out of Malvar's way (and off the door)
+        tdMove(G,[[194,128]],30,()=>{G.dir='right';});
+        tdMove(L,[[L.x,Math.max(L.y,178)],[318,184]],30,()=>{L.dir='left';});
+        tdMove(M,[[192,206],[226,170],[256,136]],19,()=>{M.dir='right';T.dir='left';setMood('malvar','angry',40);setMood('tadeo','worried',40);
+          say([{who:MW_,t:'Corniel.'},
+            {who:LW,t:'Ele confessou, professor. Nós dois ouvimos tudo. O Bruno não fez nada.'},
+            {who:MW_,t:'O broche, Corniel. Você usou o crachá de monitor para entrar na minha sala. Oficialmente, é por isso. Detenção na 204, o semestre inteiro.'},
+            {t:'O Tadeo desce até o professor. Tira o broche de monitor do colete, devagar, e o deixa na mão do Malvar.',
+              run:()=>tdMove(T,[[300,118],[276,132]],22,()=>{T.dir='left';O.broche='M';tone(1568,.07,'triangle',.03);tone(1175,.1,'triangle',.025,.08);})},
+            {who:TW_,t:'O senhor não vai me expulsar?',run:()=>{if(!O.broche){tdMovers=tdMovers.filter(m=>m.o!==T);Object.assign(T,{x:276,y:132,dir:'left',moving:false});syncW(T);O.broche='M';}}},
+            {who:MW_,t:'Expulso, você vira problema de outra pessoa. Aqui, você é problema meu.'},
+            {who:TW_,t:'...Bruno. Desculpa.',run:()=>{T.dir=faceTo(T,B);setMood('bruno','angry',6);}}],()=>{state='tdcut';
+            // Malvar goes first; Tadeo stops at the door and looks back
+            tdMove(M,[[230,166],[192,192],[192,246]],20,()=>{tdOff(M);});
+            tdLater(1.2,()=>tdMove(T,[[262,152],[200,170],[192,208]],18,()=>{T.dir='up';setMood('tadeo','normal',8);
+              say([{t:'Na porta, o Tadeo para e olha para trás. Primeiro para o livro... depois para você.'},
+                {who:MW_,t:'(do corredor) Corniel.'}],()=>{state='tdcut';
+                tdMove(T,[[192,246]],22,()=>{tdOff(T);
+                  say([{t:'Na porta, você ainda ouve:'},
+                    {who:MW_,t:'Eu também nunca fui convidado para nada, Corniel. Por isso fundei a Liga. Não me faça me arrepender de não ter mandado você embora.'}],()=>{state='tdcut';
+                    // the candle Tadeo dropped: Gabriel stamps it out; Larissa hugs Bruno, who sits on the floor, laughing
+                    const V=O.vela;
+                    tdMove(G,[[V?V.x-6:236,V?V.y+1:158]],34,()=>{G.dir='right';
+                      if(V){V.st='apagada';V.fumo=3;tdSmoke(V.x+5,V.y-3,5);tdHiss();}
+                      say([{t:'O Gabriel pisa na vela caída. A chama morre num fio de fumaça.'}],()=>{state='tdcut';
+                        tdMove(L,[[B.x+10,B.y]],38,()=>{L.dir='left';B.dir='right';setMood('bruno','happy',30);setMood('larissa','happy',30);
+                          for(let i=0;i<5;i++)tdPart({x:B.x+5+Math.random()*4-2,y:B.y-22,vy:-10-Math.random()*6,vx:(Math.random()-.5)*8,life:1+Math.random()*.5,age:-i*.15,c:i%2?'#f2c94c':'#ef9fb0',k:'dot'});
+                          say([{t:'A Larissa abraça o Bruno.'},
+                            {t:'O Bruno se senta no chão, rindo de alívio.',run:()=>{B.sit=true;B.dir='down';syncW(B);tdDust(B.x,B.y,4);}},
+                            {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],()=>{
+                            B.sit=false;
+                            const swap=(t_,o)=>{if(!o)return;tdOff(t_);
+                              wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
+                            swap(O.L,larissa);swap(O.G,tdGabObj);swap(O.B,tdBruno());
+                            tdMalBack=tdClock+tdTravel('salaOculta','sala204'); // Malvar (and Tadeo, by the travel model) on their way to Sala 204
+                            flags.td=7;flags.tdTrap=false;tdCut=false;O.ending=true;updatePauseExtra();
+                            goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');});});});});});});});}));});});});});});});
 }
 
 /* ---------- scene changes and the clock ---------- */
@@ -7972,9 +8135,10 @@ function tdTick(dt){
   tdClock+=dt;tdSeenTick();
   if(tdWait&&tdClock>=tdWait.t){const f=tdWait.fn;tdWait=null;f();}
   {const B=tdBrunoObj;if(B){const w=tdWhere(B)==='salaOculta';if(w&&!B._inOc)B._inOc=tdClock;else if(!w)B._inOc=0;}}
-  if(tdGlint>0)tdGlint-=dt;
-  if(state==='play'||state==='tdcut')tdMoversTick(dt);
+  if(tdGlint>0){tdGlint-=dt;if(tdGlint<=0&&music.ducking()===.4)music.duck(tdMusicBase());} // the glint's short drop ends with it
+  if(state==='play'||state==='tdcut'||tdOc&&(state==='dialog'||state==='tdDuel'))tdMoversTick(dt); // in the old lab people move while they talk
   if(state==='tdDuel')tdDuelTick(dt);
+  tdFxTick(dt);
   if(state==='play'&&!tdCut){tdTheftTick(dt);tdSync(false);tdWalkIns();}
 }
 /* the scenes that start where the player already is */
@@ -8003,7 +8167,7 @@ function tdWalkIns(){
   }
 }
 function tdReset(){
-  abord=null;tdGlint=0;tdNicho=false;tdCut=false;tdMovers=[];tdNudge=0;tdDuel=null;TDS={};tdWait=null;tdLarUp=0;tdBruPend=false;
+  abord=null;try{music.duck(1);}catch(e){}tdGlint=0;tdNicho=false;tdCut=false;tdMovers=[];tdNudge=0;tdDuel=null;TDS={};tdWait=null;tdLarUp=0;tdBruPend=false;
   if(!tdReady)return;
   if(tdMalOut){tdMalOut=false;if(!mr)mrPlace(false);}
   for(const o of [tdBrunoObj,tdGabObj,tdFelObj,tadeo,larissa])if(o){o._dest=undefined;o._dep=null;}
@@ -8183,7 +8347,7 @@ SCENES.andar2.push({id:'tapecaria',name:'Tapeçaria',wall:true,cx:480,top:5,zone
     for(const tx of [x+2,x+w-3]){r(tx,y+h+3,1,4,'#c99a3c');pxEllipse(tx,y+h+7,1,1,'#e8bf3f');}},
   fx(t){ // the shard of mirror behind the tapestry catching the light: a pulsing star with a halo (and a crystal ping)
     if(tdGlint<=0||scene!=='andar2'||502<camX-12||502>camX+W+12)return;
-    if(!tdGlintSeen){tdGlintSeen=true;flags.tdVi=true;tone(2093,.08,'triangle',.05);tone(2637,.12,'triangle',.045,.07);tone(3136,.2,'sine',.04,.15);}
+    if(!tdGlintSeen){tdGlintSeen=true;flags.tdVi=true;music.duck(.4);tone(2093,.08,'triangle',.05);tone(2637,.12,'triangle',.045,.07);tone(3136,.2,'sine',.04,.15);}
     const fade_=Math.min(1,tdGlint/.6,(4-tdGlint)/.25),pu=.6+.4*Math.sin(t*13),x=502,y=26,L=Math.round(5+9*pu*fade_);
     const gl=fctx.createRadialGradient(x+.5,y+.5,1,x+.5,y+.5,34);gl.addColorStop(0,'rgba(225,248,255,'+(.95*fade_*pu).toFixed(3)+')');gl.addColorStop(.35,'rgba(160,220,255,'+(.4*fade_*pu).toFixed(3)+')');gl.addColorStop(1,'rgba(160,220,255,0)');
     fctx.save();fctx.globalCompositeOperation='lighter';fctx.fillStyle=gl;fctx.fillRect(x-34,y-34,69,69);fctx.restore();
@@ -8263,6 +8427,7 @@ const music=(()=>{
     stop(){cur=null;},
     special(k){zone=null;duck=1;fast=1.2;const a=el(k);a.loop=true;try{a.currentTime=0;}catch(e){}cur=null;play(k);}, // a track of its own, looping (not part of a floor playlist)
     duck(f){if(f!==duck){duck=f;fast=1.2;}}, // quick drop/return of the volume
+    ducking(){return duck;},
     tick(dt){
       if(fast>0)fast-=dt;
       for(const k in els){
@@ -8809,13 +8974,15 @@ function render(t){
       pxText(name,bx+3+pxW(kl)+5,by+3,'#efe3c8');
     }
   }
+  tdOcDraw(t);
   if(state==='tdDuel')tdDuelDraw(t);
   abordDraw();
   if(banner){const a=Math.min(1,banner.t/.4);fctx.globalAlpha=a;plaque(camX+W/2,58,banner.text,'#3a2414','#d9a441');fctx.globalAlpha=1;}
   if(saveFlash>0)drawSaveFlash();
   if(fade){const a=fade.phase==='out'?fade.t/fade.dur:1-fade.t/fade.dur;fctx.fillStyle='rgba(13,8,6,'+Math.max(0,Math.min(1,a))+')';fctx.fillRect(camX,0,W,H);}
   ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(frame,camX,0,W,H,0,0,cv.width,cv.height);
+  {const sh=tdShake>0?[Math.round(Math.random()*2-1),Math.round(Math.random()*2-1)]:[0,0]; // the old lab shakes (the duel)
+  ctx.drawImage(frame,camX+sh[0],sh[1],W,H,0,0,cv.width,cv.height);}
   if(isCor())drawCorText();
   drawNameTagText();
   if(catHere){fctx=fctx0;g=fctx;catDraw(ctx,cv.width/W,t);ctx.drawImage(topL,camX,0,W,H,0,0,cv.width,cv.height);}
