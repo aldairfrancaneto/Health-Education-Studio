@@ -310,6 +310,10 @@ body.gp .tela-enredo .ctl-help{display:flex}
 #agradecimento .ag-assin{align-self:flex-end;margin-top:calc(var(--u)*1)}
 #ag-duelo{display:block;width:calc(var(--u)*360);height:calc(var(--u)*75);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
 /* the theatre curtain that ends the game */
+#transFinal{position:absolute;inset:0;z-index:44;background:#0b0705;opacity:0;transition:opacity 2.6s ease;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*5);padding:0 calc(var(--u)*14)}
+#transFinal.on{opacity:1;pointer-events:auto}
+#transFinal p{margin:0;text-align:center;font-family:var(--f-body);font-size:calc(var(--u)*4.4);line-height:1.35;color:#efe3c8;opacity:0;transform:translateY(calc(var(--u)*1.5));transition:opacity 1.6s ease,transform 1.6s ease}
+#transFinal p.on{opacity:1;transform:none}
 #cortina{position:absolute;inset:0;z-index:45;overflow:hidden;pointer-events:none}
 #cortina.texto,#cortina:has(.btn){pointer-events:auto}
 #cortina .ct-l,#cortina .ct-r{position:absolute;top:0;bottom:0;width:0;transition:width 2.8s cubic-bezier(.6,.05,.3,1);
@@ -372,6 +376,9 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .sh-fb b{display:block;font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.06em;color:#1f4a33;margin-bottom:4px}
 .sheet.bonus{background:#f6efd8;border-color:#d9a441}
 .sheet.bonus .sh-head{color:#a8862a}
+/* the Liga challenges (Prof. Malvar): old parchment, black ink, the red wax seal */
+.sheet.liga{background:#ece0bf;border-color:#2a1c16;background-image:radial-gradient(circle at 96% 6%,#a12a22 0 14px,#7a1e18 15px,transparent 17px)}
+.sheet.liga .sh-head{color:#5a2230;padding-right:40px}
 #dlg-choices{display:flex;flex-direction:column;gap:calc(var(--u)*1.4);margin-top:calc(var(--u)*2.5)}
 #dlg-choices:empty{display:none}
 #dlg-choices button{all:unset;cursor:pointer;font-size:calc(var(--u)*7);line-height:1.05;color:var(--ink);padding:calc(var(--u)*.6) calc(var(--u)*2);border:calc(var(--u)*.5) solid transparent}
@@ -636,6 +643,8 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="slot opt" id="slot-bolsas" title="Bolsas de sangue e laudo do hemocentro (do Prof. Kiko)"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="2" fill="#c9cfd3"/><rect x="2" y="2" width="8" height="9" fill="#efe3c8"/><rect x="3" y="4" width="6" height="6" fill="#a12a22"/><rect x="3" y="4" width="6" height="1" fill="#d0352b"/><rect x="4" y="6" width="4" height="1" fill="#efe3c8"/><rect x="5" y="11" width="2" height="1" fill="#c9cfd3"/></svg></div></div>
       <div class="slot opt" id="slot-convite" title="Carta-convite da Liga de Metabolismo"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="3" width="10" height="7" fill="#efe3c8"/><rect x="1" y="3" width="10" height="1" fill="#d8c79a"/><rect x="2" y="4" width="2" height="1" fill="#b3a38a"/><rect x="4" y="5" width="4" height="1" fill="#b3a38a"/><rect x="8" y="4" width="2" height="1" fill="#b3a38a"/><rect x="5" y="6" width="2" height="2" fill="#a12a22"/><rect x="4" y="6" width="1" height="1" fill="#7a2e3e"/></svg></div></div>
       <div class="slot opt" id="slot-distintivo" title="Distintivo de Monitor do Simulador"><div class="box"><svg viewBox="0 0 12 12"><rect x="4" y="0" width="4" height="3" fill="#2d6fb5"/><rect x="3" y="3" width="6" height="1" fill="#a8862a"/><rect x="2" y="4" width="8" height="6" fill="#c99a3c"/><rect x="3" y="10" width="6" height="1" fill="#a8862a"/><rect x="4" y="5" width="4" height="4" fill="#1f4a33"/><rect x="5" y="6" width="2" height="2" fill="#5aa865"/></svg></div></div>
+      <div class="slot opt" id="slot-ligafolhas" title="Folhas dos desafios do Prof. Malvar"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="7" height="9" fill="#d8c79a"/><rect x="2" y="2" width="7" height="9" fill="#ece0bf"/><rect x="3" y="4" width="5" height="1" fill="#5a3d24"/><rect x="3" y="6" width="5" height="1" fill="#5a3d24"/><rect x="3" y="8" width="3" height="1" fill="#5a3d24"/><rect x="6" y="8" width="3" height="3" fill="#a12a22"/><rect x="7" y="9" width="1" height="1" fill="#7a1e18"/></svg><b class="cnt" id="ligafolhas-cnt"></b></div></div>
+      <div class="slot opt" id="slot-chapeu" title="Chapéu da Liga (presente do Prof. Malvar)"><div class="box"><svg viewBox="0 0 12 12"><rect x="6" y="0" width="2" height="1" fill="#5e3f24"/><rect x="7" y="1" width="2" height="2" fill="#5e3f24"/><rect x="5" y="1" width="2" height="2" fill="#7a5634"/><rect x="4" y="3" width="4" height="2" fill="#7a5634"/><rect x="4" y="5" width="5" height="1" fill="#3e2816"/><rect x="3" y="6" width="6" height="2" fill="#97704a"/><rect x="4" y="6" width="1" height="1" fill="#1d1612"/><rect x="7" y="6" width="1" height="1" fill="#1d1612"/><rect x="0" y="8" width="12" height="2" fill="#7a5634"/><rect x="1" y="10" width="10" height="1" fill="#5e3f24"/></svg></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
       </div>
@@ -667,6 +676,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
         <button class="btn" id="btn-ag" hidden type="button" data-gp="<span class=&quot;gpb a&quot;>A</span> · JOGAR DE NOVO">ENTER · JOGAR DE NOVO</button>
       </div>
       <div id="creditos" hidden aria-label="Créditos"><div class="cr-rolo" id="cr-rolo"></div></div>
+      <div id="transFinal" hidden aria-live="polite"></div>
       <div id="cortina" hidden aria-live="polite"><div class="ct-l"></div><div class="ct-r"></div><div class="ct-sanefa"></div>
         <p class="ct-txt">Continua na próxima temporada...</p></div>
       <div class="overlay" id="end" hidden>
@@ -688,7 +698,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.38 &middot; Última atualização: 16 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.45 &middot; Última atualização: 17 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -739,7 +749,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </div>
   <div class="quiz-body" id="quiz-body">
     <div class="sheet">
-      <div class="sh-head"><span>UNINOGWARTS · ATIVIDADE DE BIOQUÍMICA</span><span id="quiz-aluno"></span></div>
+      <div class="sh-head"><span id="quiz-head">UNINOGWARTS · ATIVIDADE DE BIOQUÍMICA</span><span id="quiz-aluno"></span></div>
       <h3 id="quiz-title"></h3>
       <div class="sh-sub" id="quiz-sub"></div>
       <p id="quiz-q"></p>
@@ -1073,7 +1083,7 @@ function reset(){
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
   dialog=null;if($('laudo-mini'))$('laudo-mini').hidden=true;labOpen=false;startTime=0;rideSt=null;simPage='main';dz=null;if($('dz'))$('dz').hidden=true;endTime=0;gameMin=0;
-  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';
+  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo','chapeu','ligafolhas'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';$('ligafolhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
   if(typeof cat!=='undefined')catReset();
@@ -3585,7 +3595,7 @@ const malvar=add({id:'malvar',name:'Prof. Malvar (Poções)',cx:262,top:76,base:
     }
     const k=this.talk++;
     if(flags.fundador)return say([{who:MW,t:[
-      'Sexta-feira, depois da aula. Não me faça esperar.',
+      'No fim do dia, depois da última aula. Não me faça esperar.',
       'O diário ainda brilha? ...Não me olhe assim. Eu não sei de nada.',
       'Membro da Liga não fica parado na frente do meu caldeirão. Vá estudar.',
       'Se alguém perguntar, eu nunca ouvi falar de Liga nenhuma. Nem de você.'][k%4]}]);
@@ -3634,7 +3644,7 @@ function malvarReveal(){
     {who:MW,t:'...E esse diário. Fazia muitos anos que eu não o via. Ele escolhe o dono. Não me pergunte como.'},
     {who:MW,t:'A Larissa sabe que as páginas são minhas e guarda o segredo. Ótima aluna. Melhor assim. Nem uma palavra, '+nome1()+'.'},
     {who:MW,t:'E diga ao Bruno que ele pode escrever o seu nome no livro. Ele sabe qual.',run:()=>{flags.brunoAuth=true;}},
-    {who:MW,t:'Sexta-feira, depois da aula. Não se atrase. Detesto atrasos quase tanto quanto detesto quem decora sem entender.',
+    {who:MW,t:'Hoje, no fim do dia. Não se atrase. Detesto atrasos quase tanto quanto detesto quem decora sem entender.',
       run:()=>{flags.fundador=true;updatePauseExtra();}}]);
 }
 /* ---------- Prof. Malvar's rounds ----------
@@ -5004,20 +5014,28 @@ const bonusOk=()=>!!(provas.b&&provas.b.ok);
 function finalScore(){return Math.min(QUIZ_N,sheetsRight()+(bonusOk()?1:0));}
 const quizEl=$('quiz'),quizOpts=$('quiz-opts');
 let quiz=null; // sheet on screen: {n,sel}
+// the same sheet also shows Prof. Malvar's Liga challenges ('f1'..'f8' fructose, 'g1'..'g8' galactose): their answers live in flags.lgAns
+const isLiga=n=>typeof n==='string'&&/^[fg]\d$/.test(n);
+const qOf=n=>isLiga(n)?LIGA_Q[n]:QUIZ[n];
+const ansOf=n=>isLiga(n)?(flags.lgAns||{})[n]:provas[n];
 function sheetsRight(){return Object.keys(provas).filter(k=>k!=='b'&&provas[k].ok).length;} // the 10 regular sheets only
 function updateScore(){ // sheets answered so far; the grade only after the professors correct them
   $('pts-label').textContent=flags.graded?'NOTA':'FOLHAS';
   $('pts-k').textContent=(flags.graded?finalScore():answered())+'/'+QUIZ_N+(provas.b&&!flags.graded?' +B':'');
 }
 function openQuiz(n){
-  if(!provas[n]&&flags.timeUp&&!flags.review)return say([{t:'A aula já acabou. Não dá mais tempo de responder esta folha.'}]);
-  const q=QUIZ[n];
+  const lg=isLiga(n);
+  if(!lg&&!provas[n]&&flags.timeUp&&!flags.review)return say([{t:'A aula já acabou. Não dá mais tempo de responder esta folha.'}]);
+  const q=qOf(n);
   quiz={n,sel:-1};
-  $('quiz-bar').textContent=isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
+  const via=lg?(n[0]==='f'?'FRUTOSE':'GALACTOSE'):'';
+  $('quiz-bar').textContent=lg?'DESAFIO DA LIGA · '+via+' · FOLHA '+n[1]+' DE 8':isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
+  $('quiz-head').textContent=lg?'LIGA DE METABOLISMO · DESAFIO DO PROF. E. M.':'UNINOGWARTS · ATIVIDADE DE BIOQUÍMICA';
   $('quiz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
-  $('quiz-title').textContent=isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
+  $('quiz-title').textContent=lg?'Folha '+n[1]+': '+q.t:isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
   quizEl.querySelector('.sheet').classList.toggle('bonus',isBonus(n));
-  $('quiz-sub').textContent=q.sub;
+  quizEl.querySelector('.sheet').classList.toggle('liga',lg);
+  $('quiz-sub').textContent=lg?'Desafio da '+via.toLowerCase()+' · caso clínico':q.sub;
   $('quiz-q').innerHTML=q.q;
   quizOpts.textContent='';
   q.o.forEach((t,i)=>{
@@ -5032,15 +5050,17 @@ function openQuiz(n){
   tone(660,.06,'square',.03);
 }
 function renderQuiz(){
-  const q=QUIZ[quiz.n],a=provas[quiz.n],msg=$('quiz-msg'),rev=!!flags.review;
+  const lg=isLiga(quiz.n),q=qOf(quiz.n),a=ansOf(quiz.n),msg=$('quiz-msg'),rev=!!flags.review&&!lg;
   // the answer key and the professor's comment appear in the correction review, or on graded sheets after a pass
-  const shown=rev||(a&&flags.graded&&flags.pass);
+  // (Prof. Malvar grades his own sheets out loud, when they are handed in)
+  const shown=!lg&&(rev||(a&&flags.graded&&flags.pass));
   [...quizOpts.children].forEach((b,i)=>{
     b.className='qopt'+(shown?(i===q.c?' right':a&&i===a.sel?' wrong':' off'):a?(i===a.sel?' sel':' off'):(i===quiz.sel?' sel':''));
     b.disabled=!!a||rev;
   });
   msg.className=shown?(a&&a.ok?'ok':'err'):'';
   msg.textContent=shown?(!a?'Em branco. Gabarito: letra '+LETTERS[q.c]+'.':a.ok?'Resposta correta.':'Resposta errada. Gabarito: letra '+LETTERS[q.c]+'.')
+    :lg?(a?'Resposta registrada. O Prof. Malvar corrige pessoalmente quando você entregar as folhas.':'Atenção: cada folha só pode ser respondida uma vez. O Prof. Malvar não aceita rasuras.')
     :a?'Resposta registrada. Os professores corrigem quando você entregar as folhas.'
     :isBonus(quiz.n)?'Questão bônus: vale um ponto extra na atividade. Só pode ser respondida uma vez.'
     :'Atenção: esta folha só pode ser respondida uma vez.';
@@ -5063,29 +5083,34 @@ function fitQuiz(){
 }
 addEventListener('resize',fitQuiz);
 function quizPick(i){
-  if(!quiz||provas[quiz.n]||flags.review)return;
+  if(!quiz||ansOf(quiz.n)||flags.review)return;
   quiz.sel=i;renderQuiz();sfx.blip();
   (i===4?$('quiz-back'):quizOpts.children[i]).scrollIntoView({block:'nearest'});
 }
 function quizMove(d){ // A, B, C, D and then the DEIXAR PARA DEPOIS button (a controller reaches it with the d-pad)
-  if(!quiz||provas[quiz.n]||flags.review)return;
+  if(!quiz||ansOf(quiz.n)||flags.review)return;
   quizPick(quiz.sel<0?(d>0?0:4):(quiz.sel+d+5)%5);
 }
 function quizEnter(){
   if(!quiz)return;
-  if(quiz.sel===4&&!provas[quiz.n]&&!flags.review){closeQuiz();return;}
-  if(provas[quiz.n]||flags.review){closeQuiz();return;}
+  if(quiz.sel===4&&!ansOf(quiz.n)&&!flags.review){closeQuiz();return;}
+  if(ansOf(quiz.n)||flags.review){closeQuiz();return;}
   if(quiz.sel<0){$('quiz-msg').textContent='Escolha uma alternativa antes de confirmar.';sfx.bump();return;}
-  const ok=quiz.sel===QUIZ[quiz.n].c;
-  provas[quiz.n]={sel:quiz.sel,ok};quiz.fresh=true;
+  const ok=quiz.sel===qOf(quiz.n).c;
+  if(isLiga(quiz.n))(flags.lgAns||(flags.lgAns={}))[quiz.n]={sel:quiz.sel,ok};else provas[quiz.n]={sel:quiz.sel,ok};quiz.fresh=true;
   updateScore();renderQuiz();
   sfx.item(); // no right/wrong feedback here: the professors do the grading
   $('quiz-msg').scrollIntoView({block:'nearest'});
 }
 function closeQuiz(){
-  const pb=pileBack,pile=pb&&pb.list,justDone=quiz&&provas[quiz.n]&&quiz.fresh;pileBack=null;
+  const pb=pileBack,pile=pb&&pb.list,justDone=quiz&&ansOf(quiz.n)&&quiz.fresh;pileBack=null;
   quizEl.hidden=true;quiz=null;state='play';keys.clear();$('quiz-back').classList.remove('kb');
   if(flags.review){showReview();return;}
+  if(pb&&pb.liga){ // Prof. Malvar's sheets: back to the bundle, or the finished bundle goes with the player
+    if(justDone&&pile.some(n=>!ansOf(n)))return ligaPile(pile,pb.surf);
+    if(justDone)ligaCollect(pile,pb.surf);
+    return;
+  }
   // back to the pile while it still has blank sheets; a finished pile goes to the inventory
   if(pile&&justDone&&!flags.timeUp&&pile.some(n=>!provas[n])){sheetPile(pile,pb.surf);return;}
   if(pile&&justDone&&!pile.some(n=>!provas[n])){
@@ -5278,6 +5303,7 @@ $('caca-close').addEventListener('click',closeCaca);
    after grading), and each accepted, unfinished side quest gets a blue "EXTRA" line above the main objective. */
 function sideNeeds(o){
   const tn=tdNeeds(o);if(tn!=null)return tn;
+  if(ligaNeeds(o))return true; // Prof. Malvar's fructose and galactose challenges
   if(flags.alost){ // the room that is not there
     if(o.id==='locker42')return flags.alost===1||flags.alost===3;
     if(FICHA_AT[o.id])return flags.alost===2&&!fichaSet()[FICHA_AT[o.id]];
@@ -5294,7 +5320,7 @@ function sideNeeds(o){
   if(o.id==='camila')return (!flags.cacaTold&&!!flags.saiu101)||(!!flags.caca&&!flags.cacaThanks);
   if(o.id==='gabriel')return !flags.duelWin;
   { const q=flags.bolsaQ||0; // the blood bags
-    if(o.id==='kido')return (q===0&&!!flags.cracha&&!!flags.saiu101)||q===6;
+    if(o.id==='kido')return (q===0&&!!flags.cracha&&!!flags.saiu101&&(flags.kikoConv||0)>=1)||q===6; // (the offer comes in the 2nd talk after Sala 101)
     if(o.id==='geladeira')return q===1;
     if(o===heloisa)return q===2||q===5;
     if(o.id==='lucia')return q===3;
@@ -5308,9 +5334,13 @@ const TIAGO_STEP=['',
   'peça à Dona Tati, nos achados e perdidos da secretaria',
   'devolva o caderno ao Tiago, no 1º andar',
   'devolvido! O Tiago agora é seu amigo'];
+// step 2 goes round the building: Gabriel (2nd floor) → Pedro (ground floor) → Bruna (1st floor) → Dona Lúcia (2nd floor).
+// flags.tiagoS: 0 Pedro, 1 Bruna, 2 Lúcia (saves from before this have none: straight to Lúcia)
+const TIAGO_SUB=['pergunte ao Pedro, o veterano, no térreo','procure a Bruna (1º ano), no 1º andar','fale com a Dona Lúcia, a bibliotecária, no 2º andar'];
+const tiagoSub=()=>flags.tiagoS==null?2:flags.tiagoS;
 function sideActive(){ // accepted and not finished yet: {k: key (a new key = a new note in the diary), t: text}
   const L=[],q=flags.tiagoQ||0,add_=(k,t)=>L.push({k,t});
-  if(q>=1&&q<=5)add_('tiago'+q,'Caderno do Tiago: '+TIAGO_STEP[q]);
+  if(q>=1&&q<=5)add_('tiago'+q+(q===2?'_'+tiagoSub():''),'Caderno do Tiago: '+(q===2?TIAGO_SUB[tiagoSub()]:TIAGO_STEP[q]));
   if(flags.viaTip&&!flags.viaOk)add_('via','Simulador do laboratório (térreo): escolha "Percorrer a via" e complete as 10 reações');
   if(flags.cacaDica&&!flags.caca)add_('caca','Caça-palavras na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
   if(flags.caca&&flags.cacaTold&&!flags.cacaThanks)add_('camila','Conte à Camila, no 1º andar, que achou todas as palavras');
@@ -5336,9 +5366,10 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
     ?'Daqui a pouco a Larissa sobe para acender as velas da sala oculta. Até lá, aproveite a manhã'
     :'Vá ao laboratório do térreo: a Larissa e o Gabriel querem mostrar a gravação do seu desafio');
   if(td===4&&flags.tdFurto&&flags.tdLarBye)add_('tdVelas','A Larissa subiu para acender as velas da sala oculta. Ela disse que já volta');
-  if(td===5)add_('nome'+tdClues(),'O Nome Embaralhado: descubra quem levou o Livro dos Convites antes de sexta-feira (pistas: '+tdClues()+' de 5)');
+  if(td===5)add_('nome'+tdClues(),'O Nome Embaralhado: descubra quem levou o Livro dos Convites antes da reunião do fim do dia (pistas: '+tdClues()+' de 5)');
   if(td===6)add_(flags.tdTrap?'nome7':'nome6',flags.tdTrap?'O Nome Embaralhado: passe três vezes diante da parede do fim do 2º andar e espere escondido no laboratório antigo'
     :'O Nome Embaralhado: encontre o Tadeo, no lado oeste do 2º andar, e deixe-o ver o seu convite');
+  ligaActive(add_);
   if(flags.graded&&flags.pass&&scoreGot&&!allDone()){const n=SCORE_RULES.filter(r_=>!scoreGot.has(r_.k)).length;
     add_('fim'+n,'Final completo: ainda falta'+(n>1?'m '+n+' missões':' 1 missão')+' para chegar a 100% ('+missPct(scoreGot)+'% concluído)');}
   return L;
@@ -5354,6 +5385,7 @@ function sideDone(){ // finished side quests, greyed out at the end of the diary
   if(flags.bolsaQ===7)L.push({k:'bolsa',t:'Bolsas de sangue: o Prof. Kiko já tem a explicação para a aula prática'});
   if(flags.duelWin)L.push({k:'duelo',t:'Duelo Relâmpago: você venceu o Gabriel!'});
   if((flags.td||0)>=7)L.push({k:'tadeo',t:'O Nome Embaralhado: o Tadeo foi pego em flagrante e o Bruno, inocentado'});
+  ligaDone(L);
   return L;
 }
 /* ---------- the diary (pause menu) ----------
@@ -5456,7 +5488,9 @@ const SCORE_RULES=[
   {k:'fundador',pts:40,side:1,ok:()=>!!flags.fundador},
   {k:'duelo',pts:30,side:1,ok:()=>flags.duelWin},
   {k:'bolsa',pts:50,side:1,ok:()=>flags.bolsaQ===7},
-  {k:'tadeo',pts:80,side:1,ok:()=>(flags.td||0)>=7}];
+  {k:'tadeo',pts:80,side:1,ok:()=>(flags.td||0)>=7},
+  {k:'ligaF',pts:40,side:1,ok:()=>flags.lgF===5},
+  {k:'ligaG',pts:40,side:1,ok:()=>flags.lgG===5}];
 const allDone=()=>!!scoreGot&&SCORE_RULES.every(r_=>scoreGot.has(r_.k)); // 100% of the game
 const SCORE_MAX=SCORE_RULES.reduce((a,r_)=>a+r_.pts,0);
 var score,scoreGot,scorePops; // set in reset()
@@ -5545,7 +5579,7 @@ function tdNeeds(o){ // "O Nome Embaralhado": the next steps (null: not this que
   }
   return null;
 }
-const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
+const sideMarker=o=>!!flags.tiagoQ&&(flags.tiagoQ===2?['pedro','bruna','lucia'][tiagoSub()]:QUEST_NEXT[flags.tiagoQ])===o.id;
 {
   const tia=SCENES.andar1.find(o=>o.id==='tiago'),TW='TIAGO (1º ANO)';
   const TIPS=['Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
@@ -5581,11 +5615,30 @@ const sideMarker=o=>!!flags.tiagoQ&&QUEST_NEXT[flags.tiagoQ]===o.id;
   };
   const luc=SCENES.andar2.find(o=>o.id==='lucia'),act0=luc.act,LW='DONA LÚCIA (BIBLIOTECÁRIA)';
   luc.act=function(){
-    if(flags.tiagoQ!==2)return act0.call(this);
-    flags.tiagoQ=3;updatePauseExtra();
-    say([{who:me(),t:'Dona Lúcia, a senhora viu um caderno laranja, cheio de adesivos? É do Tiago, do 1º ano.'},
-      {who:LW,t:'Aquele que ficou no balcão da biblioteca ontem? No fim do dia, o Seu Antônio, o zelador, recolheu tudo o que ficou esquecido.'},
+    if(flags.tiagoQ!==2||tiagoSub()<2)return act0.call(this);
+    const bruna=flags.tiagoS===2;flags.tiagoQ=3;updatePauseExtra();
+    say([{who:me(),t:bruna?'Dona Lúcia, a Bruna deixou aqui ontem um caderno laranja, cheio de adesivos. É do Tiago, do 1º ano.'
+        :'Dona Lúcia, a senhora viu um caderno laranja, cheio de adesivos? É do Tiago, do 1º ano.'},
+      {who:LW,t:bruna?'Ah, a menina de cabelo curtinho? Deixou, sim. Eu ia guardar na gaveta, mas no fim do dia o Seu Antônio, o zelador, recolheu tudo o que estava no balcão.'
+        :'Aquele que ficou no balcão da biblioteca ontem? No fim do dia, o Seu Antônio, o zelador, recolheu tudo o que ficou esquecido.'},
       {who:LW,t:'Ele vive limpando algum canto do prédio. Procure o carrinho de limpeza dele.'}]);
+  };
+  // the two new links of the trail
+  const p0=pedro.act,PW='PEDRO (VETERANO)';
+  pedro.act=function(){
+    if(flags.tiagoQ!==2||tiagoSub()!==0)return p0.call(this);
+    flags.tiagoS=1;updatePauseExtra();this.wait=4;if(!(this.sitting>0)){this.tx=null;this.dir=player.x<this.x?'left':'right';}
+    say([{who:me(),t:'Pedro, o Gabriel disse que você estava com um caderno laranja ontem, na biblioteca. É do Tiago, do 1º ano.'},
+      {who:PW,t:'O dos adesivos? Folheei, sim! Resumo caprichado, viu? Tinha até a regulação da PFK-1 desenhada com setinhas.'},
+      {who:PW,t:'Mas não fiquei com ele. A Bruna, do 1º ano, disse que conhecia o dono e levou para entregar. Ela anda pelo 1º andar.'}]);
+  };
+  const bru=SCENES.andar1.find(o=>o.id==='bruna'),b0=bru.act,BRW='BRUNA (1º ANO)';
+  bru.act=function(){
+    if(flags.tiagoQ!==2||tiagoSub()!==1)return b0.call(this);
+    flags.tiagoS=2;updatePauseExtra();stopChat(this);this.wait=4;if(!(this.sitting>0))this.dir=faceTo(this,player);
+    say([{who:me(),t:'Bruna, o Pedro disse que você levou o caderno laranja do Tiago para entregar a ele.'},
+      {who:BRW,t:'Levei! Mas rodei o 1º andar inteiro e não achei o Tiago. Depois fiquei sabendo que ele tinha ido embora mais cedo.'},
+      {who:BRW,t:'Aí subi de novo e deixei o caderno no balcão da biblioteca, com a Dona Lúcia. Ela guarda tudo o que esquecem por lá.'}]);
   };
 }
 
@@ -5704,7 +5757,9 @@ function bolsaRosa(o){
   kido.act=function(){
     const q=flags.bolsaQ||0;
     if(q>=1&&q<=6){stopChat(this);this.wait=5;this.dir=faceTo(this,player);return bolsaKiko(this);}
-    if(q===0&&flags.cracha&&flags.saiu101){ // the offer comes after one of his jokes (once the player has been to Sala 101)
+    // he never comes to the player: the offer comes after one of his jokes, in the 2nd talk counted after the player
+    // first leaves Sala 101 (the first one is only the joke); "not now" and he asks again in the next talk
+    if(q===0&&flags.cracha&&flags.saiu101&&(flags.kikoConv=(flags.kikoConv||0)+1)>=2){
       const s0=say;let lines=null;
       say=(L)=>{lines=L;};try{k0.call(this);}finally{say=s0;}
       return bolsaKiko(this,lines||[]);
@@ -5853,10 +5908,10 @@ $('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();})
   gab.rem=0;
   gab.act=function(){
     stopChat(this);this.wait=4;this.dir=faceTo(this,player);
-    if(flags.tiagoQ===1){flags.tiagoQ=2;updatePauseExtra();
+    if(flags.tiagoQ===1){flags.tiagoQ=2;flags.tiagoS=0;updatePauseExtra();
       return say([{who:me(),t:'Gabriel, você viu um caderno de capa laranja por aí? É do Tiago, do 1º ano.'},
-        {who:GW,t:'Laranja, cheio de adesivos? Vi ontem à tarde, em cima do balcão da biblioteca.'},
-        {who:GW,t:'Pergunta para a Dona Lúcia, a bibliotecária. Ela está aqui no corredor do 2º andar.'}]);}
+        {who:GW,t:'Laranja, cheio de adesivos? Vi ontem à tarde, na biblioteca. O Pedro estava folheando.'},
+        {who:GW,t:'Sabe o Pedro, o veterano? Ele vive no térreo, contando lendas da faculdade para os calouros. Pergunta para ele.'}]);}
     return gab._duel.call(this);
   };
   gab._duel=function(){ // the Duelo Relâmpago (and, once won, his tips)
@@ -6100,7 +6155,7 @@ function buildBgOculta(){
 objects=SCENES.salaOculta;
 add({id:'velas',name:'Velas',deco:true,wall:true,cx:-99,top:0,draw:()=>{},fx(t){
   const fl=(x,y,ph)=>{const f=Math.floor(t*7+ph*3)%3;r(x,y-f%2,2,3,'#e8913a');px(x+(f===1?1:0),y-2,'#f2c94c');px(x,y-3+(f===2?1:0),'#fff27a');};
-  OC_CANDLES.forEach(([x,y],i)=>fl(x,y,i*.7));fl(139,80,.3);if(!(tdOc&&tdOc.vela))fl(205,80,1.4);}}); // (Tadeo takes that candle)
+  OC_CANDLES.forEach(([x,y],i)=>fl(x,y,i*.7));fl(139,80,.3);if(!(tdOc&&tdOc.vela&&tdOc.vela.st!=='volta'))fl(205,80,1.4);}}); // (Tadeo takes that candle; Larissa puts it back)
 [[140,1],[206,2]].forEach(([x,i])=>add({id:'candelabro'+i,name:'Candelabro',cx:x,top:78,base:104,solid:{x:x-4,y:100,w:8,h:4},
   draw:()=>{r(x-1,84,2,18,'#5d646a');r(x-4,101,8,3,'#2c3236');r(x-4,86,8,1,'#5d646a');r(x-1,82,3,4,'#efe3c8');r(x-4,84,1,2,'#5d646a');r(x+3,84,1,2,'#5d646a');},
   act:()=>say([{t:'Um candelabro de ferro. As velas são novas: alguém esteve aqui há pouco tempo.'}])}));
@@ -6446,6 +6501,7 @@ function drawTopPlayer(x,y,dir,anim,moving){
   const st=moving?[0,2,0,-2][Math.floor(anim)%4]:0,c=topCanvas(dir,st),X=Math.round(x)-13,Y=Math.round(y)-8-13;
   pxEllipse(Math.round(x)+1,Math.round(y)-6,11,9,'rgba(12,7,4,.4)');
   fctx.drawImage(c,X,Y);
+  if(flags.chapeu)drawTopHat(x,y,dir);
 }
 // a door leaf seen from above, turning on its hinge (x,y): a=0 across the doorway, a=pi/2 along the corridor;
 // sy 1 hinge on top, -1 at the bottom. pat(s,t): colour at s px from the hinge and t across the thickness (-th..th).
@@ -6710,6 +6766,7 @@ function drawRide(t){
   const du=rideSt?(rideSt.duck=(rideSt.duck||0)+(Math.min(12,need)-(rideSt.duck||0))*.25):0;
   g.save();g.beginPath();g.rect(X-20,0,40,Y-4-bob);g.clip();
   blit({c:c.c,x:X-8,y:Math.round(Y-27-bob+du)});
+  if(flags.chapeu)drawHat(X,Math.round(Y-27-bob+du),face);
   g.restore();
   // the car
   const top=Y-12-bob;
@@ -7405,7 +7462,7 @@ $('sg-ok').addEventListener('click',e=>{e.stopPropagation();if(!sg)return;if(sg.
       return say([{who:me(),t:'Felipe, você sabe alguma coisa sobre uma parede sem porta neste andar?'},
         {who:'FELIPE (2º ANO)',t:'Parede sem porta? Que parede? Ali nunca teve nada.'},{t:'Ele desvia o olhar rápido demais.'}]);}
     if(flags.alost===6&&!flags.felipeDone){flags.felipeDone=true;face(this);
-      return say([{who:'FELIPE (2º ANO)',t:'Ah... então você achou.'},{who:'FELIPE (2º ANO)',t:gen('Bem-vindo','Bem-vinda')+' à Liga. Sexta-feira, depois da aula. Você já sabe onde.'}]);}
+      return say([{who:'FELIPE (2º ANO)',t:'Ah... então você achou.'},{who:'FELIPE (2º ANO)',t:gen('Bem-vindo','Bem-vinda')+' à Liga. A gente se reúne hoje, no fim do dia. Você já sabe onde.'}]);}
     return false;
   });
   wrap(find('larissa'),function(){
@@ -7556,7 +7613,10 @@ function tdNpc(id,name,key,outfit,x,y,dir,blink,act){
           this._sitSrc=k_;this._sitC=s_;}
         return {c:this._sitC,x:Math.round(this.x)-8,y:Math.round(this.y)-c.height+1};}
       const c=personSprite(key,outfit,this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,blink)).c;
-      if(!this.down)return {c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};
+      if(!this.down&&!this.jz&&!this.rot)return {c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};
+      if(!this.down){const d=32,k_=this._hc||(this._hc=document.createElement('canvas'));k_.width=d;k_.height=d; // in the air (a leap, a flip)
+        const q=k_.getContext('2d');q.imageSmoothingEnabled=false;q.translate(d/2,d/2);q.rotate(this.rot||0);q.drawImage(c,-c.width/2,-c.height/2);
+        return {c:k_,x:Math.round(this.x)-8+c.width/2-d/2,y:Math.round(this.y)-23+c.height/2-d/2-Math.round(this.jz||0)};}
       if(!this._rot){const r_=document.createElement('canvas');r_.width=c.height;r_.height=c.width;const q=r_.getContext('2d');q.translate(c.height,0);q.rotate(Math.PI/2);q.drawImage(c,0,0);this._rot=r_;}
       return {c:this._rot,x:Math.round(this.x)-12,y:Math.round(this.y)-14};},
     act:act||(()=>{})};
@@ -7613,7 +7673,7 @@ function tdWalkIn(o,sc,from,spot,then){ // into the player's scene, on foot
   const tx=spot&&spot.x!=null?spot.x:Math.max(L?L[0]:o.x0,Math.min(L?L[1]:o.x1,ex)),ty=spot&&spot.y!=null?spot.y:L?L[2]:o.y0;
   if(o===larissa)larissaMove(null,0,0,0);
   wOn(o,sc,ex,ey,null,false);o.wait=60;
-  tdMove(o,room?[[192,206],[tx,ty]]:[[tx,ty]],40,()=>{
+  tdMove(o,room?[[192,206],[tx,ty]]:[[tx,ty]],spot&&spot.speed||40,()=>{
     const x=o.x,y=o.y;
     if(L){wOff(o);larissaMove(sc,...L);o.x=x;o.y=y;syncW(o);}
     else if(!spot||spot.lane)wOn(o,sc,x,y,'down',true);
@@ -7652,7 +7712,7 @@ function tdSync(force){
   const lw=tdWhere(larissa);
   if(td===4&&!furto&&!flags.tdLarSai)tdGo(larissa,'salaLab',{x:282,y:196,dir:'right'},force);
   else if(td===4&&furto&&!flags.tdLarSai){ // up to light the candles (if she is with the player she says goodbye first: tdLarissaSai)
-    if(force||lw!==scene){if(lw)wOff(larissa);flags.tdLarSai=true;tdLarUp=Math.max(tdClock+tdTravel(lw,'salaOculta'),tdArrive('larissa','salaOculta'));}}
+    if(force||lw!==scene){if(lw)wOff(larissa);flags.tdLarSai=true;tdLarUp=tdClock+TD_LAR[0];}}
   else if(td===4&&flags.tdLarSai){if(lw&&lw!==scene&&!tdMoving(larissa))wOff(larissa);} // upstairs until she comes back (tdLarReady)
   else if(td===6||oc)tdGo(larissa,null,null,force);                       // hidden in the old lab
   else if(flags.alost===6&&(!lw||(TD_POS[lw]||[0,0])[1]>0))tdGo(larissa,'andar2',{laneL:[334,470,96]},force); // home: in front of the library
@@ -7744,12 +7804,14 @@ function tdLarissaSai(){
   say([{who:LW,t:'Nossa, já é tarde! Vou subir para acender as velas da sala oculta antes que alguém sinta falta delas. Já volto!'}],()=>{
     const room=(TD_POS[scene]||[0,0])[1]>0,[ex,ey]=tdEntry(scene,'salaOculta');
     for(const k in WANDER){const i=WANDER[k].indexOf(larissa);if(i>=0)WANDER[k].splice(i,1);}
-    tdMove(larissa,room?[[larissa.x,206],[192,206],[ex,ey]]:[[ex,ey]],44,()=>{const sc=tdWhere(larissa);wOff(larissa);
-      tdLarUp=Math.max(tdClock+tdTravel(sc,'salaOculta'),tdArrive('larissa','salaOculta'));});});
+    tdMove(larissa,room?[[larissa.x,206],[192,206],[ex,ey]]:[[ex,ey]],70,()=>{const sc=tdWhere(larissa);wOff(larissa);
+      tdLarUp=tdClock+TD_LAR[0];});});
 }
 // chapter 5 starts: Larissa comes to the player as they arrive in a corridor
-// she comes back once she could have reached the old lab, seen the empty table and walked to where the player is
-const tdLarReady=()=>flags.td===4&&!!flags.tdFurto&&!!flags.tdLarSai&&!tdWhere(larissa)&&!tdMoving(larissa)&&!!TD_POS[scene]&&!/^sala(Sim|Corredor)|simGlic/.test(scene)&&tdClock>=tdLarUp+4+tdTravel('salaOculta',scene);
+// she comes back once she could have reached the old lab, seen the empty table and run to where the player is
+// (she runs both ways, in a hurry: [up, back] in seconds; with the walk out and in she is back ~30 s after leaving)
+const TD_LAR=[12,14];
+const tdLarReady=()=>flags.td===4&&!!flags.tdFurto&&!!flags.tdLarSai&&!tdWhere(larissa)&&!tdMoving(larissa)&&!!TD_POS[scene]&&!/^sala(Sim|Corredor)|simGlic/.test(scene)&&tdClock>=tdLarUp+TD_LAR[1];
 function tdLarissaVem(walked){
   const sc=scene;
   if(!walked){larissaMove(sc,Math.max(20,player.x-80),Math.min(SW1-20,player.x+80),player.y);
@@ -7757,7 +7819,7 @@ function tdLarissaVem(walked){
   larissa.wait=30;larissa.dir=faceTo(larissa,player);
   player.dir=faceTo(player,larissa);setMood('larissa','worried',20);
   music.duck(.12); // drama: the music drops with the news, back once the player names Tadeo
-  say([{who:LW,t:nome1()+'! O Livro dos Convites sumiu. Subi para acender as velas e o lugar dele estava vazio.'},
+  say([{who:LW,t:nome1()+'! O Livro dos Convites sumiu! Subi para acender as velas e o lugar dele estava vazio. Vim correndo te contar.'},
     {who:LW,t:'Só o Bruno subiu. Cruzei com ele na escada, com um livro grosso debaixo do braço.'},
     {who:me(),t:'O Bruno nunca faria isso.'},
     {who:LW,t:'Eu também achava. Mas só entra quem traz o selo dos três cadeados... Me mostra o seu convite.'},
@@ -7765,7 +7827,7 @@ function tdLarissaVem(walked){
     {who:LW,t:'...Isto aqui é marca de pressão. E tem um resto de cera verde, que não é a do selo. Alguém copiou o seu selo.'},
     {who:LW,t:'Quem segurou o seu convite?'},
     {who:me(),t:'...O Tadeo.',run:()=>{setMood('player','worried',4);music.duck(tdMusicBase());}},
-    {who:LW,t:'O monitor do 2º andar. Na sexta-feira o fundador abre o livro. Se ele não estiver lá, o Bruno sai da Liga.'},
+    {who:LW,t:'O monitor do 2º andar. Hoje, no fim do dia, o fundador abre o livro na reunião. Se ele não estiver lá, o Bruno sai da Liga.'},
     {who:LW,t:'Precisamos de provas. O crachá de monitor deixa rastro na secretaria. E fale com o Bruno: ele está no térreo, arrasado.',
       run:()=>{flags.td=5;tdC().selo=true;larissa.wait=4;updatePauseExtra();}}]);
 }
@@ -7803,7 +7865,7 @@ function tdConvite2(t_){
 // things that fall and stay on the floor, dust, smoke and sparks (pt), timers (tm), Malvar's badge and a "!" (bang).
 const TD_HIDE={L:[326,160],G:[350,160]},TD_PEEK={L:[295,164],G:[290,170]}; // peeking: Larissa half behind the bookcase
 const tdLater=(s,fn)=>{if(tdOc)tdOc.tm.push({t:tdClock+s,fn});};
-const tdHand=o=>[Math.round(o.x+(o.dir==='left'?-7:7)),Math.round(o.y-13)];
+const tdHand=o=>[Math.round(o.x+(o.dir==='left'?-7:7)),Math.round(o.y-13-(o.jz||0))];
 const tdOff=o=>{const i=SCENES.salaOculta.indexOf(o);if(i>=0)SCENES.salaOculta.splice(i,1);};
 function tdHide(o,k,sp){tdMove(o,[TD_HIDE[k]],sp||30,()=>{o.dir='left';});}
 function tdPeek(o,k,back){tdMove(o,[TD_PEEK[k]],22,()=>{o.dir='left';});if(back)tdLater(back,()=>{if(!tdMoving(o))tdHide(o,k,26);});}
@@ -7822,6 +7884,7 @@ function tdHiss(){for(let i=0;i<6;i++)tone(2600+Math.random()*1800,.04,'sawtooth
 function tdFxTick(dt){
   if(tdShake>0)tdShake-=dt;
   const O=tdOc;if(!O)return;
+  tdHopTick(dt);
   for(const m of O.tm.slice())if(tdClock>=m.t){O.tm.splice(O.tm.indexOf(m),1);m.fn();}
   if(O.bang)O.bang.t-=dt;
   const V=O.vela;
@@ -7852,7 +7915,7 @@ function tdOcDraw(t){
   const V=O.vela;
   if(V&&V.st==='livro'&&O.fogo>0){const n=1+Math.floor(O.fogo*2.5);for(let i=0;i<n;i++)flame(277+i*2-(n>2?2:0),101-(i%2),i*1.3);
     glow(279,99,12+O.fogo*10,.3);if(Math.random()<.12)tdSmoke(279,95,1);}
-  if(V){
+  if(V&&V.st!=='sumiu'&&V.st!=='volta'){
     if(V.st==='mao'||V.st==='livro'){const [hx,hy]=V.st==='livro'?[281,110]:tdHand(O.T); // a white candle, wax running down
       r(hx,hy-5,2,6,'#efe3c8');px(hx,hy-5,'#d8c79a');px(hx+1,hy-2,'#d8c79a');px(hx,hy-6,'#3a2414');flame(hx,hy-8,.5);glow(hx+1,hy-9,22,.32);}
     else if(V.st==='voa'){const u=V.u,x=Math.round(V.x0+(V.x1-V.x0)*u),y=Math.round(V.y0+(V.y1-V.y0)*u-Math.sin(u*Math.PI)*18);
@@ -7877,7 +7940,7 @@ function tdOcDraw(t){
     r(x-2,y,5,10,'#1d1612');r(x-1,y+1,3,5,'#f2c94c');r(x-1,y+7,3,2,'#f2c94c');}
 }
 function tdOcStart(){
-  tdCut=true;tdOc={asked:new Set(),book:false,tm:[],pt:[],vela:null,fogo:0,queimado:false,broche:null,bang:null};
+  tdCut=true;tdOc={asked:new Set(),book:false,tm:[],pt:[],hops:[],vela:null,fogo:0,queimado:false,broche:null,bang:null};
   // nobody in two places: the scene uses its own Tadeo, Larissa and Gabriel (and, later, Malvar and Bruno)
   tdBrunoObj=tdBrunoObj||tdFind('bruno');tdGabObj=tdGabObj||tdFind('gabriel');
   for(const o of [tadeo,tdBrunoObj,larissa,tdGabObj])if(o)wOff(o);
@@ -7952,54 +8015,132 @@ function tdProposta(){
       tdLater(.6,()=>{tdOc.vela={st:'mao'};tone(1320,.05,'triangle',.02); // a candle out of the candlestick
         tdMove(T,[[274,136]],30,()=>{T.dir='up';tdOc.vela.st='livro';tdOc.fogo=.01;tdHiss();
           say([{t:'Ele tira uma vela do candelabro e a aproxima do livro. A borda de uma página começa a escurecer.'}],()=>{state='tdcut';
-            tdMove(L,[[300,166],[290,150],[286,146]],60);tdMove(G,[[300,174],[288,172]],60,()=>{L.dir='left';G.dir='left';T.dir='right';
+            tdMove(L,[[300,162],[TD_DS.L[0]+8,TD_DS.L[1]]],60);tdMove(G,[[350,192],[TD_DS.G[0]+8,TD_DS.G[1]]],60,()=>{L.dir='left';G.dir='left';T.dir='right';
               say([{who:LW,t:'Ouvimos tudo, Tadeo.',run:()=>music.special('duel')},{who:GW_,t:'Larga a vela. Você sabe que é dois contra um.'},
-                {who:TW_,t:'E '+gen('o calouro','a caloura')+' sem varinha conta como o quê? Plateia?'}],()=>tdDuelStart(tdVitoria));});});});});});});
+                {who:TW_,t:'E '+gen('o calouro','a caloura')+' sem varinha conta como o quê? Plateia?'}],tdDuelPrep);});});});});});});
   say([{who:TW_,t:'Escuta. Eles escolhem pelas razões erradas. Eu e você entendemos onde a via se decide. Imagina uma Liga nossa, sem velhos decidindo quem merece.',
     choices:[{t:'Não.',fn:()=>say([{who:me(),t:'Não.',run:recua}],fim)},
       {t:'...',fn:()=>say([{t:'Você não responde. O Tadeo espera, perto o bastante para você ouvir a respiração dele.'},
         {t:'A tinta do diário esfria e escurece.'},{who:me(),t:'...Não.',run:recua}],fim)}]}]);
 }
-/* the duel: Larissa and Gabriel against Tadeo; when Larissa falls, the diary glows: open it at the right moment
-   (a marker runs along a bar; ENTER / A / tap inside the golden zone). A miss: Larissa gets up and it goes again.
-   Choreography: they push and give ground with the beams; the first spell knocks the candle off the book; Larissa is
-   thrown against the bookcase (books fall); Gabriel steps in front of the player; the diary's light throws Tadeo
-   back against the wall (the jars on the shelf come down). */
-function tdDuelStart(then){tdDuel={ph:'luta',t:0,dur:3,then,hit:0,p:0,tries:0,knock:false};state='tdDuel';keys.clear();}
+/* the duel: Larissa and Gabriel against Tadeo, across the rug (Tadeo on the left, by the cauldron; the two on the right,
+   by the table and the bookcase; the player back by the door). Three times something goes wrong and the diary glows:
+   open it at the right moment (a marker runs along a bar; ENTER / A / tap inside the golden zone). Each light is
+   harder than the one before (faster marker, narrower zone). A miss: they pick themselves up and it goes again.
+   Choreography: the three leap, cartwheel and roll out of the way of the spells (tdHop/tdAcro); the first spell
+   knocks the candle off; 1st fall: Larissa is thrown against the bookcase (books fall); 2nd: Gabriel loses his wand;
+   3rd: Tadeo aims at the player and Gabriel dives in front. Light 1 and 2 throw Tadeo back with a flip (he gets up);
+   light 3 throws him against the cauldron. */
+const TD_DS={T:[112,150],L:[272,140],G:[282,184],P:[222,206],GF:[198,198]}; // duel spots (GF: Gabriel in front of the player)
+const TD_LV=[{dur:3,sp:.8,z:.12},{dur:2.4,sp:1.15,z:.085},{dur:2,sp:1.55,z:.06}]; // the three lights, each one harder
+// acrobatics while the spells fly: [time, who, kind]
+const TD_ACRO=[[[1.1,'G','esq'],[1.9,'T','esq'],[2.5,'L','salto']],
+  [[.5,'L','cambalhota'],[1.2,'T','giro'],[1.8,'G','esq']],
+  [[.4,'T','salto'],[.9,'G','esq'],[1.4,'L','esq']]];
+function tdHop(o,x,y,h,dur,spin,then){ // a leap through the air (spin: whole turns, + = forwards)
+  if(!tdOc)return;tdMovers=tdMovers.filter(m=>m.o!==o);tdOc.hops=tdOc.hops.filter(q=>q.o!==o);
+  tdOc.hops.push({o,x0:o.x,y0:o.y,x,y,h,dur,spin:spin||0,u:0,then});o.hop=true;o._bx=null;
+  tone(330+Math.random()*80,.06,'triangle',.025);
+}
+function tdHopTick(dt){
+  const O=tdOc;if(!O)return;
+  for(const q of O.hops.slice()){
+    const o=q.o;q.u=Math.min(1,q.u+dt/q.dur);const u=q.u;
+    o.x=q.x0+(q.x-q.x0)*u;o.y=q.y0+(q.y-q.y0)*u;o.jz=Math.sin(Math.PI*u)*q.h;
+    o.rot=q.spin*u*Math.PI*2*(o.dir==='left'?-1:1);o.moving=false;syncW(o);
+    if(u>=1){O.hops.splice(O.hops.indexOf(q),1);o.jz=0;o.rot=0;o.hop=false;o._bx=null;tdDust(o.x,o.y,4);tone(110,.05,'triangle',.03);if(q.then)q.then();}
+  }
+}
+function tdBolt(from,to,c){ // a stray spell flying past the one who dodged it
+  const [ax,ay]=tdHand(from),dx=to[0]-ax,dy=to[1]-13-ay,d=Math.hypot(dx,dy)||1;
+  for(let i=0;i<6;i++)tdPart({x:ax,y:ay,vx:dx/d*230,vy:dy/d*230,life:(d+30)/230,age:-i*.02,c:i%2?'#fff27a':c,k:'dot'});
+  tone(980,.07,'square',.018);
+}
+function tdAcro(o,k){
+  const O=tdOc;if(!o||o.down||o.noWand||o.hop||tdMoving(o))return;
+  const bx=o.x,by=o.y,f=o.dir==='left'?-1:1,foe=o===O.T?(O.L.down?O.G:O.L):O.T;
+  if(k==='esq'){const dy=by>165?-16:16;tdBolt(foe,[bx,by],o===O.T?'#5fb4f0':'#3fa682');
+    tdHop(o,bx,by+dy,10,.42,1,()=>tdLater(.25,()=>{if(!o.down&&!o.noWand&&tdDuel&&tdDuel.ph==="luta")tdHop(o,bx,by,7,.36,0);}));}   // cartwheel out of the way, and back
+  else if(k==='salto'){tdBolt(foe,[bx,by+2],o===O.T?'#ef6a5c':'#3fa682');tdHop(o,bx,by,19,.62,-1);}  // a backflip over the spell
+  else if(k==='giro')tdHop(o,bx,by,21,.66,1,()=>tdSparks(tdHand(o)[0],tdHand(o)[1],8,'#a6e6a6'));       // a spinning jump, casting at the top
+  else if(k==='cambalhota')tdHop(o,bx+f*18,by,8,.45,1,()=>tdLater(.2,()=>{if(!o.down&&tdDuel&&tdDuel.ph==="luta")tdHop(o,bx,by,6,.34,0);})); // a forward roll and back
+}
+function tdDuelPrep(){ // the stage opens: Tadeo springs back across the rug with the candle; the two take their places
+  state='tdcut';const O=tdOc,T=O.T,L=O.L,G=O.G,V=O.vela;
+  if(V&&V.st==='livro'){V.st='mao';O.fogo=0;O.queimado=true;tdSmoke(279,98,5);}
+  T.dir='right';
+  tdMove(player,[[player.x,186],TD_DS.P],60,()=>{player.dir='left';});
+  tdHop(T,200,150,16,.55,-1,()=>{T.dir='right';tdHop(T,...TD_DS.T,14,.5,-1,()=>{T.dir='right';});});
+  tdLater(.4,()=>{L.dir='left';tdHop(L,...TD_DS.L,12,.5,1,()=>{L.dir='left';});});
+  tdLater(.6,()=>{G.dir='left';tdHop(G,...TD_DS.G,10,.55,1,()=>{G.dir='left';});});
+  tdLater(1.8,()=>tdDuelStart(tdVitoria));
+}
+function tdDuelStart(then){tdDuel={ph:'luta',t:0,lv:0,dur:TD_LV[0].dur,then,hit:0,p:0,tries:0,knock:false,acro:0,rec:false};state='tdDuel';keys.clear();}
 function tdDuelSway(D,on){ // push and pull: the three give and take ground together
   for(const o of [tdOc.T,tdOc.G,tdOc.L]){
+    if(o.hop)continue;
     if(!on||o.down||tdMoving(o)){if(o._bx!=null&&!tdMoving(o)&&!o.down){o.x=o._bx;syncW(o);}o._bx=null;continue;}
     if(o._bx==null)o._bx=o.x;
     o.x=o._bx+Math.round(Math.sin(D.t*5.2)*2.5+Math.sin(D.t*13)*.8);syncW(o);
   }
 }
+const tdBusy=()=>tdOc.hops.length>0||[tdOc.T,tdOc.L,tdOc.G].some(o=>tdMoving(o));
+function tdQueda(D){ // something goes wrong: the diary will glow
+  const O=tdOc,T=O.T,L=O.L,G=O.G;D.ph='queda';D.t=0;
+  if(D.lv===0){L.down=true;sfx.bump();
+    tdMove(L,[[318,192]],150,()=>{tdDust(318,192,12);tdShake=.35;tone(70,.18,'triangle',.06);
+      const n=D.tries?2:3,C=['#7a2e3e','#2b4a6f','#1f4a33','#a8862a'];
+      for(let i=0;i<n;i++)tdFall(306+i*14,120+i*14,181+(i%2)*4,'book',C[(i+D.tries)%4],.05+i*.12,(i-1)*6);});}
+  else if(D.lv===1){G.noWand=true;sfx.bump();const [hx,hy]=tdHand(G); // Gabriel's wand flies off; he rolls back
+    tdFall(hx,hy-6,G.y+16,'wand','#5a3d24',0,-46);O.gWand=O.pt[O.pt.length-1];tdSparks(hx,hy,8,'#5fb4f0');
+    tdHop(G,G.x+16,G.y+6,9,.5,-1,()=>{G.dir='left';});}
+  else{T.dir='right';tone(220,.2,'sawtooth',.03);D.aim=true; // Tadeo aims at the player: Gabriel dives in front
+    tdHop(G,...TD_DS.GF,15,.6,1,()=>{G.dir='left';tdDust(G.x,G.y,6);});}
+}
+function tdRecover(lv){ // back on their feet (after a light, or after a miss)
+  const O=tdOc,L=O.L,G=O.G;
+  if(L.down){tdMovers=tdMovers.filter(m=>m.o!==L);L.down=false;tdHop(L,...TD_DS.L,16,.7,-1,()=>{L.dir='left';});} // a kip-up and a backflip back to her place
+  if(G.noWand){const W=O.gWand; // Gabriel rolls to his wand
+    tdMove(G,[[W?W.x:G.x,W?W.y:G.y]],90,()=>{if(W)O.pt.splice(O.pt.indexOf(W),1);O.gWand=null;G.noWand=false;tone(1320,.05,'triangle',.02);
+      tdHop(G,...TD_DS.G,12,.55,1,()=>{G.dir='left';});});}
+  else if(lv===2&&(Math.abs(G.x-TD_DS.G[0])>2||Math.abs(G.y-TD_DS.G[1])>2))tdHop(G,...TD_DS.G,10,.5,-1,()=>{G.dir='left';});
+}
 function tdDuelTick(dt){
   const D=tdDuel;if(!D)return;D.t+=dt;D.hit=Math.max(0,D.hit-dt);
-  const O=tdOc,T=O.T,L=O.L,G=O.G;
-  tdDuelSway(D,D.ph==='luta');
-  if(D.ph==='luta'&&!D.knock&&D.t>=.35){D.knock=true; // Gabriel's first spell: the candle flies out of Tadeo's hand
-    const [hx,hy]=tdHand(T),V=O.vela;
-    if(V){Object.assign(V,{st:'voa',u:0,x0:V.st==='livro'?281:hx,y0:V.st==='livro'?110:hy,x1:244,y1:158,x:244,y:158});}
-    O.fogo=0;O.queimado=true;tdSmoke(279,98,8);tdSparks(hx,hy,10,'#a6e6a6');tdHiss();}
-  if(D.ph==='luta'&&D.t>=D.dur){D.ph='queda';D.t=0;L.down=true;sfx.bump();
-    tdMove(L,[[292,182]],150,()=>{tdDust(292,182,12);tdShake=.35;tone(70,.18,'triangle',.06);
-      const n=D.tries?2:3,C=['#7a2e3e','#2b4a6f','#1f4a33','#a8862a'];
-      for(let i=0;i<n;i++)tdFall(304+i*13,120+i*14,179+(i%2)*4,'book',C[(i+D.tries)%4],.05+i*.12,(i-1)*6);});
-    if(Math.abs(G.x-206)>2)tdMove(G,[[206,142]],80,()=>{G.dir='right';T.dir='left';}); // Gabriel in front of the player
+  const O=tdOc,T=O.T,AC=TD_ACRO[D.lv];
+  tdDuelSway(D,D.ph==='luta'||D.ph==='diario'&&!T.hop);
+  if(D.ph==='luta'){
+    if(!D.knock&&D.t>=.35){D.knock=true; // Gabriel's first spell: the candle flies out of Tadeo's hand
+      const [hx,hy]=tdHand(T),V=O.vela;
+      if(V&&(V.st==='mao'||V.st==='livro')){Object.assign(V,{st:'voa',u:0,x0:V.st==='livro'?281:hx,y0:V.st==='livro'?110:hy,x1:176,y1:176,x:176,y:176});}
+      O.fogo=0;O.queimado=true;tdSparks(hx,hy,10,'#a6e6a6');tdHiss();}
+    while(D.acro<AC.length&&D.t>=AC[D.acro][0]){const [at,w,k]=AC[D.acro++];if(at<D.dur-.9)tdAcro(O[w],k);}
+    if(D.t>=D.dur&&!tdBusy())tdQueda(D);
   }
-  else if(D.ph==='queda'&&D.t>=1.3){D.ph='diario';D.t=0;}
-  else if(D.ph==='diario'){const u=(D.t*.85)%2;D.p=u<1?u:2-u;}
-  else if(D.ph==='falha'&&D.t>=1.6){D.ph='luta';D.t=0;D.dur=1.6;L.down=false;
-    tdMove(L,[[290,166],[288,150]],46,()=>{L.dir='left';});} // she gets up and comes back at him
-  else if(D.ph==='ok'&&D.t>=1.6){const f=D.then;tdDuel=null;state='play';L.down=false;tdDuelSway(D,false);f();}
+  else if(D.ph==='queda'&&D.t>=1.3&&!tdBusy()){D.ph='diario';D.t=0;}
+  else if(D.ph==='diario'){const u=(D.t*TD_LV[D.lv].sp)%2;D.p=u<1?u:2-u;}
+  else if(D.ph==='abalo'){ // Tadeo was thrown back; he gets up and comes at them again
+    if(D.t>=.8&&!D.rec){D.rec=true;tdRecover(D.lv);}
+    if(D.t>=2&&!D.back&&!T.hop){D.back=true;setMood('tadeo','angry',30);tdHop(T,...TD_DS.T,10,.5,1,()=>{T.dir='right';});}
+    if(D.back&&!tdBusy()){D.lv++;Object.assign(D,{ph:'luta',t:0,dur:TD_LV[D.lv].dur,acro:0,rec:false,back:false,aim:false});}
+  }
+  else if(D.ph==='falha'){
+    if(D.t>=.5&&!D.rec){D.rec=true;D.aim=false;tdRecover(D.lv);}
+    if(D.t>=1.6&&!tdBusy())Object.assign(D,{ph:'luta',t:0,dur:1.6,acro:0,rec:false});
+  }
+  else if(D.ph==='ok'&&D.t>=1.6&&!tdBusy()){const f=D.then;tdDuel=null;state='play';O.L.down=false;tdDuelSway(D,false);f();}
 }
 function tdDuelHit(){
   const D=tdDuel;if(!D||D.ph!=='diario'||D.hit>0)return;D.hit=.3;
-  if(Math.abs(D.p-.5)<.11){D.ph='ok';D.t=0;[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.05,i*.08));
-    const T=tdOc.T;tdMove(T,[[300,96]],90,()=>{T.dir='down';tdShake=.45;tone(80,.22,'triangle',.06);tdDust(300,96,8); // back against the wall
-      const C=['#86aebb','#5aa865','#a12a22','#c99a3c'];
-      for(let i=0;i<4;i++)tdFall(284+i*14,26+(i%2)*18,98+(i%3)*3,'jar',C[i],.08+i*.13);});}
-  else{D.ph='falha';D.t=0;D.tries++;sfx.bump();}
+  const T=tdOc.T;
+  if(Math.abs(D.p-.5)<TD_LV[D.lv].z){[523,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.05,i*.08));
+    tdShake=.3;tdSparks(T.x,T.y-12,14,'#fff27a');
+    if(D.lv<2){D.ph='abalo';D.t=0;D.rec=false;D.back=false;setMood('tadeo','surprised',3);
+      tdHop(T,Math.max(96,T.x-24),T.y+3,12,.55,-1,()=>{T.dir='right';tdShake=.25;tone(80,.18,'triangle',.05);});}  // thrown back with a flip
+    else{D.ph='ok';D.t=0;D.aim=false;
+      tdHop(T,90,130,16,.7,-1,()=>{T.dir='down';tdShake=.45;tone(80,.22,'triangle',.06);tdDust(90,130,10); // against the cauldron
+        tdSmoke(70,108,8);tdSparks(70,110,12,'#5aa865');tone(196,.3,'sine',.03,.1);});}}
+  else{D.ph='falha';D.t=0;D.rec=false;D.tries++;sfx.bump();}
 }
 function tdDuelDraw(t){
   const D=tdDuel;if(!D||!tdOc)return;
@@ -8007,35 +8148,43 @@ function tdDuelDraw(t){
   const beam=(a,b,c1,c2)=>{const n=Math.max(4,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/2));
     for(let i=0;i<=n;i++){const u=i/n,x=Math.round(a[0]+(b[0]-a[0])*u),y=Math.round(a[1]+(b[1]-a[1])*u+Math.sin(u*9+t*30)*1.2);px(x,y,(i+Math.floor(t*20))%3?c1:c2);}};
   const wand=o=>{const [x,y]=hand(o),s=o.dir==='left'?-1:1;px(x,y,'#5a3d24');px(x+s,y-1,'#5a3d24');px(x+2*s,y-2,'#efe3c8');};
-  const moving=[T,G,L].some(o=>tdMoving(o));
-  const ht=hand(T),hl=hand(L),hg=hand(G);
-  [T,G].concat(L.down||tdMoving(L)?[]:[L]).forEach(wand);
-  if(D.ph!=='ok'&&!(moving&&D.ph==='queda')){
-    const mid=L.down||tdMoving(L)||D.ph==='falha'?[Math.round(ht[0]+(hg[0]-ht[0])*.72),Math.round((ht[1]+hg[1])/2)]:[Math.round((ht[0]+hl[0])/2+4),Math.round((ht[1]+hl[1]+hg[1])/3)];
-    beam(ht,mid,'#3fa682','#a6e6a6');beam(hg,mid,'#5fb4f0','#e6f8ff');if(!L.down&&!tdMoving(L))beam(hl,mid,'#ef6a5c','#ffd0c8');
+  const act=o=>!o.down&&!o.noWand&&!o.hop&&!tdMoving(o);
+  [T,G,L].filter(o=>!o.down&&!o.noWand&&!o.rot).forEach(wand);
+  const cast=[G,L].filter(act);
+  if(D.ph!=='ok'&&D.ph!=='abalo'&&act(T)&&cast.length){
+    const ht=hand(T),av=[cast.reduce((a,o)=>a+hand(o)[0],0)/cast.length,cast.reduce((a,o)=>a+hand(o)[1],0)/cast.length];
+    const k=(cast.length>1?.5:.66)+(D.aim?.12:0); // the fewer they are, the closer Tadeo's spell gets to them
+    const mid=[Math.round(ht[0]+(av[0]-ht[0])*k),Math.round(ht[1]+(av[1]-ht[1])*k)];
+    beam(ht,mid,'#3fa682','#a6e6a6');
+    if(cast.includes(G))beam(hand(G),mid,'#5fb4f0','#e6f8ff');if(cast.includes(L))beam(hand(L),mid,'#ef6a5c','#ffd0c8');
     for(let i=0;i<6;i++)px(mid[0]+Math.round(Math.sin(t*17+i)*3),mid[1]+Math.round(Math.cos(t*13+i*2)*3),i%2?'#fff27a':'#ffffff');
   }
-  const msg=D.ph==='queda'?'A LARISSA CAIU!':D.ph==='falha'?'NÃO FOI DESTA VEZ... A LARISSA SE LEVANTA!':D.ph==='luta'?'LARISSA E GABRIEL CONTRA O TADEO':null;
+  const msg=D.ph==='queda'?['A LARISSA CAIU!','O GABRIEL FOI DESARMADO!','O TADEO MIRA EM VOCÊ!'][D.lv]
+    :D.ph==='falha'?'NÃO FOI DESTA VEZ... '+['A LARISSA SE LEVANTA!','O GABRIEL VAI ATRÁS DA VARINHA!','O GABRIEL SEGURA O FEITIÇO!'][D.lv]
+    :D.ph==='abalo'?['A LUZ ACERTOU! MAS ELE SE LEVANTA...','DE NOVO! ELE AINDA RESISTE...'][D.lv]
+    :D.ph==='luta'?['LARISSA E GABRIEL CONTRA O TADEO','O TADEO VOLTA AO ATAQUE!','O TADEO ESTÁ FURIOSO!'][D.lv]:null;
   if(msg){const w=pxW(msg)+10;r(192-w/2,8,w,11,'#1d1612');r(192-w/2+1,9,w-2,9,'#3a2414');pxText(msg,192,11,'#f2c94c','center');}
   if(D.ph==='diario'){
-    const bx=92,by=196,bw=200;
+    const bx=92,by=44,bw=200,zw=Math.round(TD_LV[D.lv].z*2*bw);
     const m='O DIÁRIO BRILHA! ABRA NA HORA CERTA',k=padOn?'A':touchOn?'TOQUE':'ENTER';
     r(bx-6,by-22,bw+12,40,'#1d1612');r(bx-5,by-21,bw+10,38,'#2a1d14');
     pxText(m,192,by-17,'#fff27a','center');
-    r(bx,by-6,bw,9,'#0b0806');r(bx+bw/2-22,by-6,44,9,'#a8862a');r(bx+bw/2-22,by-6,44,1,'#f2c94c');
+    r(bx,by-6,bw,9,'#0b0806');r(bx+bw/2-zw/2,by-6,zw,9,'#a8862a');r(bx+bw/2-zw/2,by-6,zw,1,'#f2c94c');
     const mx=Math.round(bx+D.p*bw);r(mx-1,by-9,3,15,'#ffffff');
     pxText(k,192,by+6,'#a9c7d2','center');
+    pxText('LUZ '+(D.lv+1)+' DE 3',bx,by+6,'#f2c94c');
+    for(let i=0;i<3;i++){const x=bx+bw-24+i*9;r(x,by+5,7,7,'#1d1612');r(x+1,by+6,5,5,i<D.lv?'#fff27a':'#3a2414');} // the lights already landed
     const [px0,py0]=[Math.round(player.x),Math.round(player.y-12)],a=.35+.25*Math.sin(t*10); // the diary glows in the player's hand
     fctx.globalAlpha=a;pxEllipse(px0+5,py0+4,7,5,'#fff27a');fctx.globalAlpha=1;
   }
-  if(D.ph==='ok'){fctx.globalAlpha=Math.max(0,1-D.t/1.6);r(camX,0,W,H,'#fff7d0');fctx.globalAlpha=1;}
+  if(D.ph==='ok'||D.ph==='abalo'){const k_=D.ph==='ok'?1.6:.7;if(D.t<k_){fctx.globalAlpha=Math.max(0,1-D.t/k_)*(D.ph==='ok'?1:.6);r(camX,0,W,H,'#fff7d0');fctx.globalAlpha=1;}}
 }
 function tdVitoria(){
   const O=tdOc,T=O.T,L=O.L,G=O.G;setMood('tadeo','angry',30);T.dir='down';music.duck(0); // silence for the notebook and LORDE CIANETO
-  say([{t:'Uma luz dourada enche a sala. O Tadeo cobre os olhos, e a varinha escapa da mão dele.',
+  say([{t:'Uma luz dourada enche a sala pela terceira vez. O Tadeo bate contra o caldeirão, cobre os olhos, e a varinha escapa da mão dele.',
       run:()=>{tdFall(T.x+7,T.y-14,T.y+10,'wand','#5a3d24',0,28);tone(1800,.04,'triangle',.02,.35);}},
     {t:'O caderno do Tadeo cai aberto no chão. Em cada linha, as mesmas letras, embaralhadas de novo e de novo: TADEO CORNIEL... ODETA CORNIEL... LORDE...',
-      run:()=>{tdFall(T.x-9,T.y-12,T.y+7,'caderno','#1f4a33');setMood('player','worried',8);}},
+      run:()=>{tdFall(T.x+16,T.y-12,T.y+9,'caderno','#1f4a33');setMood('player','worried',8);}},
     {t:'Até a última linha: LORDE CIANETO.',run:()=>{const n=O.pt.find(p=>p.k==='caderno');if(n)tdSparks(n.x,n.y-2,5,'#a12a22');}},
     {who:TW_,t:'Um dia esse nome vai significar alguma coisa. E você vai lembrar que estava aqui quando ele nasceu.'}],()=>{state='tdcut';
     music.duck(1);music.scene(scene); // the floor's music comes back as Malvar arrives
@@ -8043,25 +8192,25 @@ function tdVitoria(){
     tdAfter(vem,()=>{ // Bruno ran to Sala 204 for Malvar, and both came back here: Bruno first, running
     const M=tdNpc('ocMalvar','Prof. Malvar (Poções)','malvar','coat',192,240,'up',1.7),B=tdNpc('ocBruno','Bruno (1º ano)','bruno','hoodie',192,240,'up',1.7);
     O.M=M;O.B=B;SCENES.salaOculta.push(B);
-    tdMove(B,[[192,206],[196,188]],78,()=>{B.dir=faceTo(B,T);O.bang={o:B,t:1.6};setMood('bruno','surprised',6);tone(880,.06,'square',.03);tone(1175,.08,'square',.03,.07);
+    tdMove(B,[[192,206],[192,188]],78,()=>{B.dir=faceTo(B,T);O.bang={o:B,t:1.6};setMood('bruno','surprised',6);tone(880,.06,'square',.03);tone(1175,.08,'square',.03,.07);
       say([{t:'O Bruno entra correndo e trava no meio do caminho ao ver o Tadeo.'}],()=>{state='tdcut';
         // Malvar comes in slowly; everyone makes way
         SCENES.salaOculta.push(M);
-        tdMove(B,[[146,186]],34,()=>{B.dir='right';}); // out of Malvar's way (and off the door)
-        tdMove(G,[[194,128]],30,()=>{G.dir='right';});
-        tdMove(L,[[L.x,Math.max(L.y,178)],[318,184]],30,()=>{L.dir='left';});
-        tdMove(M,[[192,206],[226,170],[256,136]],19,()=>{M.dir='right';T.dir='left';setMood('malvar','angry',40);setMood('tadeo','worried',40);
+        tdMove(B,[[146,192]],34,()=>{B.dir='right';}); // out of Malvar's way (and off the door)
+        tdMove(G,[[226,150]],30,()=>{G.dir='left';});
+        tdMove(L,[[L.x,Math.max(L.y,178)],[300,190]],30,()=>{L.dir='left';});
+        tdMove(M,[[192,206],[176,172],[132,140]],19,()=>{M.dir='left';T.dir='right';setMood('malvar','angry',40);setMood('tadeo','worried',40);
           say([{who:MW_,t:'Corniel.'},
             {who:LW,t:'Ele confessou, professor. Nós dois ouvimos tudo. O Bruno não fez nada.'},
             {who:MW_,t:'O broche, Corniel. Você usou o crachá de monitor para entrar na minha sala. Oficialmente, é por isso. Detenção na 204, o semestre inteiro.'},
-            {t:'O Tadeo desce até o professor. Tira o broche de monitor do colete, devagar, e o deixa na mão do Malvar.',
-              run:()=>tdMove(T,[[300,118],[276,132]],22,()=>{T.dir='left';O.broche='M';tone(1568,.07,'triangle',.03);tone(1175,.1,'triangle',.025,.08);})},
-            {who:TW_,t:'O senhor não vai me expulsar?',run:()=>{if(!O.broche){tdMovers=tdMovers.filter(m=>m.o!==T);Object.assign(T,{x:276,y:132,dir:'left',moving:false});syncW(T);O.broche='M';}}},
+            {t:'O Tadeo se levanta e vai até o professor. Tira o broche de monitor do colete, devagar, e o deixa na mão do Malvar.',
+              run:()=>tdMove(T,[[100,138],[114,140]],22,()=>{T.dir='right';O.broche='M';tone(1568,.07,'triangle',.03);tone(1175,.1,'triangle',.025,.08);})},
+            {who:TW_,t:'O senhor não vai me expulsar?',run:()=>{if(!O.broche){tdMovers=tdMovers.filter(m=>m.o!==T);Object.assign(T,{x:114,y:140,dir:'right',moving:false});syncW(T);O.broche='M';}}},
             {who:MW_,t:'Expulso, você vira problema de outra pessoa. Aqui, você é problema meu.'},
             {who:TW_,t:'...Bruno. Desculpa.',run:()=>{T.dir=faceTo(T,B);setMood('bruno','angry',6);}}],()=>{state='tdcut';
             // Malvar goes first; Tadeo stops at the door and looks back
-            tdMove(M,[[230,166],[192,192],[192,246]],20,()=>{tdOff(M);});
-            tdLater(1.2,()=>tdMove(T,[[262,152],[200,170],[192,208]],18,()=>{T.dir='up';setMood('tadeo','normal',8);
+            tdMove(M,[[170,176],[192,200],[192,246]],20,()=>{tdOff(M);});
+            tdLater(1.2,()=>tdMove(T,[[150,172],[192,208]],18,()=>{T.dir='up';setMood('tadeo','normal',8);
               say([{t:'Na porta, o Tadeo para e olha para trás. Primeiro para o livro... depois para você.'},
                 {who:MW_,t:'(do corredor) Corniel.'}],()=>{state='tdcut';
                 tdMove(T,[[192,246]],22,()=>{tdOff(T);
@@ -8069,21 +8218,72 @@ function tdVitoria(){
                     {who:MW_,t:'Eu também nunca fui convidado para nada, Corniel. Por isso fundei a Liga. Não me faça me arrepender de não ter mandado você embora.'}],()=>{state='tdcut';
                     // the candle Tadeo dropped: Gabriel stamps it out; Larissa hugs Bruno, who sits on the floor, laughing
                     const V=O.vela;
-                    tdMove(G,[[V?V.x-6:236,V?V.y+1:158]],34,()=>{G.dir='right';
+                    tdMove(G,[[V?V.x-6:180,V?V.y+1:176]],34,()=>{G.dir='right';
                       if(V){V.st='apagada';V.fumo=3;tdSmoke(V.x+5,V.y-3,5);tdHiss();}
                       say([{t:'O Gabriel pisa na vela caída. A chama morre num fio de fumaça.'}],()=>{state='tdcut';
                         tdMove(L,[[B.x+10,B.y]],38,()=>{L.dir='left';B.dir='right';setMood('bruno','happy',30);setMood('larissa','happy',30);
                           for(let i=0;i<5;i++)tdPart({x:B.x+5+Math.random()*4-2,y:B.y-22,vy:-10-Math.random()*6,vx:(Math.random()-.5)*8,life:1+Math.random()*.5,age:-i*.15,c:i%2?'#f2c94c':'#ef9fb0',k:'dot'});
                           say([{t:'A Larissa abraça o Bruno.'},
-                            {t:'O Bruno se senta no chão, rindo de alívio.',run:()=>{B.sit=true;B.dir='down';syncW(B);tdDust(B.x,B.y,4);}},
-                            {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],()=>{
-                            B.sit=false;
-                            const swap=(t_,o)=>{if(!o)return;tdOff(t_);
-                              wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
-                            swap(O.L,larissa);swap(O.G,tdGabObj);swap(O.B,tdBruno());
-                            tdMalBack=tdClock+tdTravel('salaOculta','sala204'); // Malvar (and Tadeo, by the travel model) on their way to Sala 204
-                            flags.td=7;flags.tdTrap=false;tdCut=false;O.ending=true;updatePauseExtra();
-                            goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');});});});});});});});}));});});});});});});
+                            {t:'O Bruno ri de alívio, ainda meio sem acreditar.',run:()=>{B.dir=faceTo(B,player);setMood('bruno','happy',30);}},
+                            {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],tdEpilogo);});});});});});});}));});});});});});});
+}
+/* the end of the arc, among friends (the last scene of a Harry Potter film): who was brave, the name that stayed in the
+   book, the candle lit again, the meeting at the end of the day. With the game at 100%, the four walk out together
+   and the screen goes slowly dark into the professors' duel (finaleSoft); otherwise the game goes on. */
+function tdEpilogo(){
+  const O=tdOc,L=O.L,G=O.G,B=O.B,V=O.vela;state='tdcut';
+  tdMove(player,[[184,196]],40,()=>{player.dir='left';});
+  tdMove(G,[[168,172]],30,()=>{G.dir='down';});
+  const glowBook=()=>{sfx.ink();for(let i=0;i<16;i++)tdPart({x:266+Math.random()*16,y:104+Math.random()*4,vy:-5-Math.random()*9,vx:(Math.random()-.5)*6,life:1.2+Math.random()*.8,age:-i*.08,c:i%3?'#f2c94c':'#fff27a',k:'dot'});};
+  const parte2=()=>say([
+    {t:'O Bruno abre o Livro dos Convites, com o canto ainda chamuscado, e passa as páginas até a última.',run:()=>sfx.pencil()},
+    {who:BW_,t:'Eu escrevi o seu nome aqui antes de tudo acontecer. Será que a tinta...'},
+    {t:'Na última linha, as letras brilham, douradas: '+(jogador||nome1()).trim().toUpperCase()+'. Nenhuma delas sumiu.',run:glowBook},
+    {who:GW_,t:gen('Bem-vindo','Bem-vinda')+' à Liga de Metabolismo, '+nome1()+'. Agora é oficial.',run:()=>setMood('player','happy',10)},
+    {who:LW,t:'Falta uma coisa.',run:()=>{
+      tdMove(L,[[V?V.x+2:180,V?V.y:176]],40,()=>{if(V)V.st='sumiu';tone(1320,.05,'triangle',.02); // she picks up the candle
+        tdMove(L,[[206,112]],40,()=>{L.dir='up';if(V)V.st='volta';tdSparks(205,80,6,'#f2c94c');tone(660,.12,'triangle',.03);tone(990,.16,'triangle',.025,.1);});});}},
+    {t:'A Larissa recoloca a vela no candelabro e a acende de novo.'},
+    {who:LW,t:'A reunião da Liga é hoje, no fim do dia. E, pela primeira vez em muito tempo, a gente vai ter uma história de verdade para contar.'},
+    {who:BW_,t:'E o Tadeo?'},
+    {who:GW_,t:'Detenção na 204, o semestre inteiro, com o Malvar. Sinceramente? Não sei de quem eu tenho mais pena.',run:()=>setMood('gabriel','happy',8)},
+    {who:me(),t:'Sabe... acho que ele só queria que alguém escolhesse ele.'},
+    {who:LW,t:'Todo mundo quer ser escolhido. O que mostra quem a gente é... é o que a gente faz quando não é.',run:()=>{if(!tdMoving(L))L.dir=faceTo(L,player);}},
+    {who:GW_,t:'Tá bom, chega de filosofia. Quem topa um pão de queijo na cantina? Hoje eu pago. Só hoje.'},
+    {who:BW_,t:'Eu topo!',run:()=>{setMood('bruno','happy',10);O.bang={o:B,t:1};}}],tdArcoFim);
+  say([{t:'Por um momento, ninguém diz nada. Só se ouve o estalo das velas.'},
+    {who:GW_,t:'Bom... alguém mais acha que isso devia valer ponto extra na Liga?'},
+    {who:LW,t:'Gabriel!',run:()=>setMood('larissa','happy',10)},
+    {who:BW_,t:'Mais cedo eu achei que ia ser expulso da Liga. E aí '+gen('um calouro','uma caloura')+' sem varinha encarou um monitor do 3º ano.',
+      run:()=>{B.dir=faceTo(B,player);}},
+    {who:me(),t:'Eu não encarei ninguém. Quem duelou foram vocês.'},
+    {who:LW,t:'Não foi a nossa varinha que derrubou o Tadeo, '+nome1()+'. Foi a luz do seu diário. Três vezes.'},
+    {who:GW_,t:'Três anos de Liga e eu nunca vi um diário fazer aquilo.'},
+    {t:'Você abre o diário. As páginas ainda estão mornas. Devagar, a tinta dourada escreve uma frase nova:',
+      run:()=>{for(let i=0;i<10;i++)tdPart({x:player.x+Math.random()*10-5,y:player.y-14,vy:-6-Math.random()*8,vx:(Math.random()-.5)*8,life:1+Math.random()*.6,age:-i*.1,c:i%2?'#fff27a':'#f2c94c',k:'dot'});sfx.ink();}},
+    {who:'DIÁRIO',t:'"Ter coragem não é deixar de ter medo. É ficar quando todos esperam que você fuja." E. M.'},
+    {who:LW,t:'O Prof. Malvar ficou de olho em você o dia inteiro. Do jeito dele... mas ficou.'},
+    {who:BW_,t:'Ah! O livro!',run:()=>tdMove(B,[[200,168],[262,134]],50,()=>{B.dir='up';})}],
+    ()=>{state='tdcut';const go=()=>{if(tdMoving(B))return tdLater(.2,go);B.dir='up';
+      tdMove(player,[[242,142]],40,()=>{player.dir='up';});tdMove(G,[[208,152]],34,()=>{G.dir='right';});parte2();};go();});
+}
+function tdArcoFim(){ // the arc is over: 100% of the game → the four walk out and the finale comes in slowly; otherwise the game goes on
+  const O=tdOc;flags.td=7;flags.tdTrap=false;updatePauseExtra();scoreCheck();
+  if(flags.graded&&flags.pass&&allDone()){
+    scorePops.length=0;state='tdcut';
+    say([{t:'Vocês quatro saem juntos do laboratório antigo, rindo alto pelo corredor das velas. Atrás de vocês, a vela acesa ilumina o seu nome no livro.'}],()=>{
+      state='tdcut';
+      for(const [o,d] of [[O.B,0],[O.L,.3],[O.G,.6],[player,.9]])tdLater(d,()=>tdMove(o,[[o.x,Math.max(o.y,200)],[192+(o===player?0:(o===O.L?-6:6)),206],[192,250]],34));
+      tdLater(1.2,()=>finaleSoft(['No fim do dia, a Liga de Metabolismo se reuniu no laboratório antigo. Havia um nome novo no livro.',
+        'Enquanto isso, os professores resolveram comemorar o fim do dia... do jeito deles.']));});
+    return;
+  }
+  const swap=(t_,o)=>{if(!o)return;tdOff(t_);
+    wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
+  swap(O.L,larissa);swap(O.G,tdGabObj);swap(O.B,tdBruno());
+  tdMalBack=tdClock+tdTravel('salaOculta','sala204'); // Malvar (and Tadeo, by the travel model) on their way to Sala 204
+  tdCut=false;O.ending=true;
+  goScene('salaOculta',player.x,player.y,player.dir,'O NOME EMBARALHADO');
 }
 
 /* ---------- scene changes and the clock ---------- */
@@ -8102,7 +8302,6 @@ var abord=null;
 const ABORD=[
   {id:'tiago',ok:()=>!flags.tiagoQ&&!flags.tiagoNo},
   {id:'gabriel',ok:()=>!flags.duelTold&&flags.tiagoQ!==1}, // (with Tiago's question pending he answers that instead)
-  {id:'kido',ok:()=>!flags.bolsaQ&&!!flags.saiu101},
   {id:'camila',ok:()=>!flags.cacaTold&&!!flags.saiu101}];
 function abordTick(dt){
   if(abord){
@@ -8161,7 +8360,7 @@ function tdWalkIns(){
     const room=TD_POS[scene][1]>0,[ex]=tdEntry(scene,'salaOculta');
     const tx=room?player.x:Math.max(16,Math.min(SCENE_W[scene]-16,player.x+(ex>player.x?22:-22))),ty=room?Math.min(player.y+20,206):player.y;
     state='tdcut';tdCut=true;keys.clear();tGo=null;
-    tdWalkIn(larissa,scene,'salaOculta',{x:tx,y:ty},()=>{tdCut=false;state='play';
+    tdWalkIn(larissa,scene,'salaOculta',{x:tx,y:ty,speed:72},()=>{tdCut=false;state='play';
       if(!room){const x=larissa.x;wOff(larissa);larissaMove(scene,Math.max(20,x-60),Math.min(SCENE_W[scene]-20,x+60),larissa.y);larissa.x=x;syncW(larissa);}
       tdLarissaVem(true);});
   }
@@ -8286,7 +8485,7 @@ function topicMenu(o,who,greet,topics){
     {label:()=>'O caderno do Tiago, nos achados e perdidos',ok:()=>flags.tiagoQ===4,run(){return tati._preTd.call(this);}},
     {label:()=>'O registro do crachá de monitor',ok:()=>flags.td===5&&!tdC().cracha,run(){return tati._menuNext.call(this);}}]);
   topicMenu(luc,'DONA LÚCIA (BIBLIOTECÁRIA)',()=>'Fale baixinho, que aqui é biblioteca. Pois não?',[
-    {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===2,run(){return luc._tiagoAct.call(this);}},
+    {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===2&&tiagoSub()>=2,run(){return luc._tiagoAct.call(this);}},
     {label:()=>'O Manual de Hemoterapia',ok:()=>flags.bolsaQ===3,run(){return luc._menuNext.call(this);}}]);
   topicMenu(zelObj,'SEU ANTÔNIO (ZELADOR)',()=>'Bom dia, '+gen('doutor','doutora')+'! Precisa de alguma coisa?',[
     {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===3,run(){return zelObj._tiagoAct.call(this);}},
@@ -8381,6 +8580,563 @@ SCENES.salaOculta.push(Object.defineProperty({id:'livroConvites',name:'Livro dos
   }},'zone',{get:()=>tdBookHere()?Z:OFF}));}
 tdReady=true;
 
+/* ---------- side quest: Prof. Malvar's challenges (fructose and galactose) ----------
+   Offered by Malvar in Sala 204 from the second meeting on (flags.malvarQ), even before the player joins the Liga:
+   the sheets carry the Liga's wax seal and the initials "E. M.", a clue before the revelation. One challenge after
+   the other, 8 clinical-case sheets each (the questions of the fructose / galactose PDF), and he does not have all
+   the sheets: he only says where the first half is; he grades every bundle himself, out loud, and only then tells
+   where the second half is:
+     galactose (first)  1-4 in the locked cabinet of Sala 101 (he lends the key) · 5-8 with Prof. Neto
+     fructose (second)  1-4 inside a book of his own room (Sala 204) · 5-8 on the dusty bench of the old lab (salaOculta)
+   Between the two he hints at a prize. flags.lgG / flags.lgF: 0 not offered (flags.lgNo: "not now"), 1 first bundle
+   out there, 2 first bundle answered and held, 3 graded (the second bundle out there), 4 second bundle held, 5 graded,
+   done. flags.lgAns: {f1:{sel,ok}..}, flags.lgHeld: sheets in the inventory, flags.lgNota: {F1,F2,G1,G2} right
+   answers per bundle. The prize, the old Liga hat, only for a final grade of 7 or more (12 of the 16 sheets):
+   flags.chapeu worn, flags.chapeuPego owned (locker 42 keeps it), flags.lgSemChapeu: the grade fell short.
+   Worn, the hat talks every 5 real minutes (hatTick): gossip about the people of the school, and now and then a
+   secret it is about to tell when some magic shuts it up. */
+const LIGA_Q={
+  f1:{"t": "Entrada da frutose no fígado e primeira fosforilação", "q": "Uma criança de 3 anos passa por exames de rotina após a introdução de frutas e sacarose na dieta. No fígado, a frutose ingerida é rapidamente captada e preparada para o metabolismo energético. Qual é a enzima hepática responsável pela fosforilação inicial da frutose e qual é o seu produto direto?", "o": ["Hexocinase IV (glicocinase), que converte a frutose em frutose-6-fosfato utilizando fosfato inorgânico.", "Aldolase B, que promove a clivagem da frutose livre diretamente em gliceraldeído e di-hidroxiacetona.", "Frutocinase (cetohexocinase), que transfere um grupo fosfato do ATP para formar frutose-1-fosfato.", "Triose-cinase, que fosforila a frutose livre na posição C3 gerando gliceraldeído-3-fosfato intracelular."], "c": 2},
+  f2:{"t": "Intolerância Hereditária à Frutose (Deficiência de Aldolase B)", "q": "Um bebê de 6 meses apresenta vômitos, irritabilidade, icterícia e hipoglicemia grave logo após o início do desmame, quando passou a consumir papinhas de frutas e sucos ricos em sacarose. O teste genético confirma a Intolerância Hereditária à Frutose. A gravidade dessa doença metabólica deve-se à deficiência de qual enzima e a qual efeito celular?", "o": ["Deficiência da aldolase B, levando ao acúmulo de frutose-1-fosfato e ao sequestro de fosfato inorgânico.", "Deficiência da frutocinase, acumulando frutose livre que oxida a membrana citoplasmática dos hepatócitos.", "Deficiência da triose-cinase, impedindo a síntese de NADH durante o processo de fermentação láctica.", "Deficiência da hexocinase II, que bloqueia o transporte de glicose pelos receptores insulino-dependentes."], "c": 0},
+  f3:{"t": "Desvio do ponto de controle da PFK-1 e Lipogênese", "q": "Um paciente adulto com dieta rica em xarope de milho com alto teor de frutose desenvolve esteatose hepática não alcoólica e hipertrigliceridemia. O nutricionista explica que o metabolismo hepático da frutose estimula a síntese de gordura mais do que a glicose. Qual é a explicação bioquímica para esse efeito?", "o": ["A frutose ativa alostericamente a glicose-6-fosfatase, forçando o fígado a converter todo o piruvato em lipídeos.", "A frutose impede a entrada de acetil-CoA no ciclo de Krebs por inibir diretamente a citrato-sintase.", "A fosforilação da frutose consome todo o oxigênio celular, forçando a célula a realizar a beta-oxidação.", "Os produtos da frutose entram na glicólise após a PFK-1, ignorando o principal ponto de regulação da via."], "c": 3},
+  f4:{"t": "Metabolismo extrahepático da frutose (Músculo e Adipócitos)", "q": "Durante um treino de corrida prolongado, um atleta consome um gel de carboidratos contendo frutose. No músculo esquelético, a frutose é metabolizada por uma rota diferente daquela utilizada pelo fígado. Como ocorre a entrada da frutose na glicólise nos tecidos extrahepáticos?", "o": ["A frutose é convertida diretamente em galactose-1-fosfato pela galactocinase muscular para entrar na via.", "A frutose é fosforilada pela hexocinase a frutose-6-fosfato, entrando diretamente na via glicolítica.", "A frutose precisa ser descarboxilada a lactato no citosol muscular antes de ser utilizada pelas mitocôndrias.", "A frutose combina-se com a UDP-glicose para formar glicogênio muscular sem passar pela fase preparatória."], "c": 1},
+  f5:{"t": "Frutosúria Essencial (Deficiência de Frutocinase)", "q": "Um jovem de 20 anos realiza exames admissionais e apresenta presença de substâncias redutoras na urina (frutosúria), embora esteja totalmente assintomático e com glicemia de jejum normal. O diagnóstico é de Frutosúria Essencial. Por que essa alteração genética é considerada uma condição clinicamente benigna?", "o": ["Porque a frutose não metabolizada é totalmente convertida em glicose-6-fosfato pelos eritrócitos do sangue.", "Porque o excesso de frutose estimula a secreção compensatória de insulina pelas células beta do pâncreas.", "Porque a ausência da frutocinase faz com que a frutose não seja retida nas células, sendo eliminada na urina.", "Porque a frutose livre consegue substituir o oxigênio como aceptor final de elétrons na cadeia respiratória."], "c": 2},
+  f6:{"t": "Destino do Gliceraldeído no Fígado (Triose-cinase)", "q": "No hepatócito, a aldolase B cliva a frutose-1-fosfato em di-hidroxiacetona-fosfato (DHAP) e gliceraldeído livre. Para que o gliceraldeído livre siga para a glicólise ou gliconeogênese, ele precisa ser modificado. Qual reação química permite a integração do gliceraldeído nessa via?", "o": ["Fosforilação do gliceraldeído a gliceraldeído-3-fosfato pela enzima triose-cinase com consumo de ATP.", "Redução do gliceraldeído a glicerol pela lactato-desidrogenase com consumo de uma molécula de FADH2.", "Isomerização direta do gliceraldeído em glicose-1-fosfato catalisada pela enzima fosfoglicomutase.", "Condensação do gliceraldeído com oxaloacetato para formar citrato no interior da matriz mitocondrial."], "c": 0},
+  f7:{"t": "Via do Sorbitol (Poliol) no Diabetes e nos Testículos", "q": "Pacientes com diabetes mellitus não controlado podem desenvolver catarata precocemente devido ao acúmulo de açúcares no cristalino. Essa mesma via metabólica (via do poliol) é utilizada fisiologicamente nas vesículas seminais para fornecer combustível aos espermatozoides. Como a glicose é convertida em frutose nessa via?", "o": ["A glicose é oxidada a glucuronato no citosol e depois isomerizada a frutose pela enzima glicose-oxidase hepática.", "A glicose é fosforilada a glicose-1-fosfato e depois convertida em frutose pela UDP-glicose-epimerase.", "A glicose é clivada diretamente em duas moléculas de sorbitol pela ação da aldolase muscular, sem gasto de NADPH.", "A glicose é reduzida a sorbitol pela aldose-redutase e o sorbitol é oxidado a frutose pela sorbitol-desidrogenase."], "c": 3},
+  f8:{"t": "Bloqueio da Gliconeogênese e Glicogenólise na Intolerância à Frutose", "q": "Um paciente com Intolerância Hereditária à Frutose apresenta crises de hipoglicemia acentuada após ingerir alimentos com frutose. O mecanismo bioquímico dessa hipoglicemia envolve a inibição de vias hepáticas produtoras de glicose. De que maneira a frutose-1-fosfato acumulada provoca esse bloqueio?", "o": ["A frutose-1-fosfato estimula a secreção massiva de glucagon, acelerando o consumo celular de glicose.", "A depleção de fosfato inorgânico (P<sub>i</sub>) inibe a glicogênio-fosforilase e a aldolase, travando a glicose no fígado.", "O excesso de frutose-1-fosfato destrói os transportadores GLUT-2 da membrana dos hepatócitos, impedindo a saída da glicose para o sangue.", "A frutose-1-fosfato converte-se em ácido lático, alcalinizando o citoplasma e inativando a glicocinase."], "c": 1},
+  g1:{"t": "Primeira etapa do metabolismo da galactose (Galactocinase)", "q": "A lactose do leite materno é hidrolisada no intestino em glicose e galactose. Ao chegar ao fígado pela circulação portal, a galactose precisa ser retida dentro do hepatócito para ser metabolizada. Qual enzima catalisa essa etapa inicial e qual o produto formado?", "o": ["UDP-galactose epimerase, que transforma a galactose livre diretamente em glicose-6-fosfato.", "Galactocinase (GALK), que fosforila a galactose utilizando ATP para formar galactose-1-fosfato.", "Lactase hepática, que cliva a galactose em duas moléculas de piruvato no citoplasma celular.", "Fosfoglicomutase, que transfere um grupo fosfato do C6 para o C1 da molécula de galactose."], "c": 1},
+  g2:{"t": "Galactosemia Clássica (Deficiência de GALT)", "q": "Um recém-nascido alimentado com leite materno desenvolve icterícia, hepatomegalia, vômitos e letargia na primeira semana de vida. O rastreio neonatal sugere Galactosemia Clássica, provocada pela deficiência da enzima Galactose-1-fosfato uridiltransferase (GALT). Qual reação bioquímica deixa de ocorrer no fígado desse recém-nascido?", "o": ["A conversão direta da galactose-1-fosfato em frutose-1,6-bisfosfato pela enzima PFK-1 hepática, com consumo de ATP.", "A redução da galactose a galactitol pela enzima aldose-redutase no interior das mitocôndrias dos hepatócitos.", "A oxidação do NADH a NAD<sup>+</sup> no citosol para manter o funcionamento adequado da glicólise anaeróbia.", "A transferência da uridila da UDP-glicose para a galactose-1-fosfato, gerando UDP-galactose e glicose-1-fosfato."], "c": 3},
+  g3:{"t": "Papel da Epimerase (GALE)", "q": "Para que os carbonos originários da galactose possam entrar na via glicolítica ou ser armazenados como glicogênio, a UDP-galactose precisa ser convertida em UDP-glicose no fígado. Qual enzima realiza essa alteração estereoquímica?", "o": ["UDP-galactose 4-epimerase (GALE), que inverte a posição do grupo hidroxila no carbono 4 do açúcar.", "Galactocinase (GALK), que remove o grupo nucleotídeo e adiciona um fosfato de alta energia no C6.", "Glicose-6-fosfatase, que hidrolisa a ligação do nucleotídeo liberando galactose livre no sangue.", "Transcetolase, que transfere uma unidade de dois carbonos da UDP-galactose para a ribose-5-fosfato."], "c": 0},
+  g4:{"t": "Isomerização da Glicose-1-Fosfato (Fosfoglicomutase)", "q": "Após as reações do metabolismo da galactose catalisadas pela GALT e pela GALE, a molécula de glicose-1-fosfato é liberada no citosol do hepatócito. Qual é a enzima responsável por converter a glicose-1-fosfato no intermediário glicolítico glicose-6-fosfato?", "o": ["Glicose-6-fosfato-desidrogenase, que reduz o NADP<sup>+</sup> a NADPH no citoplasma do hepatócito.", "Glucagon-cinase, que fosforila a glicose-1-fosfato no citosol gastando uma molécula de GTP.", "Fosfoglicomutase, que realiza a interconversão reversível entre os isômeros de fosfato.", "Hexocinase IV, que remove o fosfato do carbono 1 e adiciona outro no carbono 3."], "c": 2},
+  g5:{"t": "Formação de Galactitol e Catarata na Galactosemia", "q": "Um bebê portador de deficiência da galactocinase (GALK) desenvolve catarata precoce nos primeiros meses de vida, mas não apresenta disfunção hepática ou renal grave. A formação da catarata ocorre devido ao acúmulo de qual metabólito osmoticamente ativo nos olhos?", "o": ["Acúmulo de galactose-1-fosfato, que inibe a síntese de proteínas estruturais do cristalino.", "Formação de galactitol pela ação da enzima aldose-redutase, atraindo água para o cristalino.", "Deposição de cristais de glicogênio de cadeia curta que desidratam as células da córnea.", "Produção de sorbitol pela sorbitol-desidrogenase, aumentando o pH do humor aquoso."], "c": 1},
+  g6:{"t": "Importância da UDP-Galactose na Biossíntese", "q": "A galactose não é um nutriente estritamente essencial na dieta humana, pois o organismo consegue sintetizar UDP-galactose endogenamente a partir da glicose. Por que a disponibilidade de UDP-galactose é fundamental mesmo em indivíduos submetidos a dietas sem lactose?", "o": ["Porque a UDP-galactose é a principal doadora do grupo fosfato para a regeneração de ATP nas hemácias.", "Porque a UDP-galactose atua como o aceptor final de elétrons no Complexo IV da cadeia respiratória.", "Porque ela inibe a atividade da glicose-6-fosfatase, prevenindo quadros de hipoglicemia no jejum.", "Porque ela serve como doadora de galactose para a síntese de glicoproteínas, glicolipídeos e lactose."], "c": 3},
+  g7:{"t": "Diferença de gravidade entre deficiência de GALK e GALT", "q": "Ao comparar duas doenças inatas do metabolismo dos carboidratos, um professor de bioquímica destaca que a deficiência de GALT (galactosemia clássica) é um quadro clínico muito mais grave e ameaçador à vida do que a deficiência isolada de GALK (galactocinase). Qual é a explicação bioquímica para essa diferença?", "o": ["A deficiência de GALT causa acúmulo de galactose-1-fosfato, sequestrando fosfato e lesando órgãos vitais.", "A GALK é uma enzima mitocondrial, enquanto a GALT atua exclusivamente dentro do núcleo celular.", "A ausência de GALK impede totalmente a absorção intestinal de glicose, levando à desnutrição severa.", "A deficiência de GALT gera excesso de ATP citosólico, inibindo irreversivelmente a via das pentoses."], "c": 0},
+  g8:{"t": "Integração do metabolismo da galactose com a Glicogenogênese", "q": "Após uma refeição contendo laticínios, o fígado capta glicose e galactose da circulação porta. Durante o estado alimentado, parte da galactose absorvida é convertida pelo hepatócito e armazenada na forma de glicogênio. Qual metabólito intermediário da via da galactose é compartilhado diretamente com a síntese de glicogênio?", "o": ["A galactose-6-fosfato, que se une à glicogenina para iniciar a ramificação do polímero.", "O galactitol, que atua como o iniciador proteico necessário para o alongamento das cadeias.", "A UDP-glicose, gerada na via da galactose, que serve de substrato para a glicogênio-sintase.", "O piruvato, que é carboxilado pela piruvato-carboxilase no citosol para formar glicogênio."], "c": 2}};
+// what Malvar says while grading each sheet: right (dry) and wrong (the explanation)
+const LIGA_FB={
+  f1:['Frutocinase, frutose-1-fosfato. O fígado não espera pela hexocinase. Correto.',
+      'No fígado, quem fosforila a frutose é a frutocinase, com ATP, e o produto é a frutose-1-fosfato. Não a frutose-6-fosfato. Anote.'],
+  f2:['Aldolase B. A frutose-1-fosfato se acumula e sequestra o fosfato. Pelo menos esse bebê teria um médico.',
+      'Aldolase B. Sem ela, a frutose-1-fosfato se acumula e prende o fosfato inorgânico. O hepatócito fica sem fosfato e sem ATP. Isso mata, sabia?'],
+  f3:['Depois da PFK-1. A frutose passa direto pela porta que deveria freá-la. Ao menos isso você aprendeu.',
+      'As trioses da frutose entram depois da PFK-1: a via perde o seu principal freio, e o excesso de acetil-CoA vira gordura. Esteatose. Simples.'],
+  f4:['Hexocinase, frutose-6-fosfato. Músculo não é fígado. Correto.',
+      'Fora do fígado, a hexocinase fosforila a frutose a frutose-6-fosfato, que entra direto na glicólise. Galactocinase no músculo? Francamente.'],
+  f5:['Sem frutocinase, a frutose não fica presa na célula e sai na urina. Benigno. Ao contrário da sua caligrafia.',
+      'Sem frutocinase, a frutose não é fosforilada, não fica retida e é eliminada na urina. Nada se acumula, ninguém adoece. Por isso é benigna.'],
+  f6:['Triose-cinase, com ATP. O gliceraldeído vira gliceraldeído-3-fosfato. Hm.',
+      'A triose-cinase fosforila o gliceraldeído a gliceraldeído-3-fosfato, gastando ATP. Só assim ele entra na via. Uma reação. Uma.'],
+  f7:['Aldose-redutase, depois sorbitol-desidrogenase. O cristalino do diabético agradece a sua atenção.',
+      'A aldose-redutase reduz a glicose a sorbitol, e a sorbitol-desidrogenase oxida o sorbitol a frutose. No cristalino, o sorbitol puxa água: catarata.'],
+  f8:['Sem fosfato, a glicogênio-fosforilase para. Sem glicose no sangue, o paciente desmaia. Correto.',
+      'A frutose-1-fosfato acumulada sequestra o fosfato. Sem fosfato inorgânico, a glicogênio-fosforilase para e a gliconeogênese emperra. Resultado: hipoglicemia.'],
+  g1:['Galactocinase, galactose-1-fosfato. O primeiro passo. Seria constrangedor errar.',
+      'A galactocinase fosforila a galactose com ATP e forma galactose-1-fosfato. É isso que prende a galactose no hepatócito. O primeiro passo. O primeiro.'],
+  g2:['A GALT troca a uridila: saem UDP-galactose e glicose-1-fosfato. Correto. Não sorria.',
+      'A GALT passa a uridila da UDP-glicose para a galactose-1-fosfato: saem UDP-galactose e glicose-1-fosfato. Sem ela, o recém-nascido adoece com o leite.'],
+  g3:['Epimerase, carbono 4. Uma única hidroxila muda de lado, e muda tudo.',
+      'A UDP-galactose 4-epimerase inverte a hidroxila do carbono 4: a UDP-galactose vira UDP-glicose. Um carbono. Só um. E você errou.'],
+  g4:['Fosfoglicomutase. Glicose-1-fosfato em glicose-6-fosfato, e de volta, se for preciso.',
+      'A fosfoglicomutase converte a glicose-1-fosfato em glicose-6-fosfato, nos dois sentidos. É a mesma enzima do glicogênio. Deveria saber.'],
+  g5:['Galactitol. A aldose-redutase e o cristalino. Guarde isso: na frutose, você vai reencontrar os dois.',
+      'A galactose acumulada é reduzida a galactitol pela aldose-redutase. O galactitol puxa água para o cristalino: catarata. Igual ao sorbitol. Igual.'],
+  g6:['Doadora de galactose para glicoproteínas, glicolipídeos e lactose. Correto.',
+      'A UDP-galactose doa galactose para glicoproteínas, glicolipídeos e, na mama, para a lactose. Por isso o corpo a fabrica mesmo sem lactose na dieta.'],
+  g7:['Sem GALT, a galactose-1-fosfato se acumula e lesa fígado, rim e cérebro. Sem GALK, só a catarata. Correto.',
+      'Sem GALT, a galactose-1-fosfato se acumula, sequestra fosfato e lesa fígado, rim e cérebro. Sem GALK, a galactose nem é fosforilada: sobra a catarata.'],
+  g8:['UDP-glicose, o substrato da glicogênio-sintase. A galactose do almoço é o glicogênio da tarde.',
+      'A UDP-glicose que a via da galactose forma é o substrato da glicogênio-sintase. É ali que as duas vias se encontram.']};
+for(const k in LIGA_FB){LIGA_Q[k].ok=LIGA_FB[k][0];LIGA_Q[k].bad=LIGA_FB[k][1];}
+const LIGA_SETS={F1:['f1','f2','f3','f4'],F2:['f5','f6','f7','f8'],G1:['g1','g2','g3','g4'],G2:['g5','g6','g7','g8']};
+const LIGA_JAB=['Errado.','Errado. Previsível.','Não. Você leu o caso, ou só olhou para ele?','Errado. Que decepção... embora não seja nenhuma surpresa.','Hm. Não.'];
+const NW='PROF. NETO';
+const ligaVia=k=>k==='F'?'frutose':'galactose';
+// the bundle waiting out there (step 1 or 3), or null
+function ligaOut(k){const s=flags[k==='F'?'lgF':'lgG'];return s===1?k+'1':s===3?k+'2':null;}
+// the answered bundles the player carries, ready for Malvar
+function ligaHeldSets(){const L=[];for(const k of ['F','G']){const s=flags[k==='F'?'lgF':'lgG'];if(s===2)L.push(k+'1');if(s===4)L.push(k+'2');}return L;}
+function ligaSlot(pop){
+  const n=(flags.lgHeld||[]).length,s_=$('slot-ligafolhas');
+  s_.classList.toggle('got',n>0);$('ligafolhas-cnt').textContent=n?n:'';
+  if(pop&&n){s_.classList.add('pop');setTimeout(()=>s_.classList.remove('pop'),600);}
+}
+// a grade out of 10, the Brazilian way ("7,5"); the final one counts the 16 sheets
+const ligaN10=(n,of)=>(n/of*10).toFixed(1).replace('.',',');
+const ligaTot=k=>{const N=flags.lgNota||{};return (N[k+'1']||0)+(N[k+'2']||0);};
+const ligaFinal=()=>(ligaTot('F')+ligaTot('G'))/16*10;
+// the old lab is known once the player went through the candle corridor
+const ligaLabKnown=()=>(flags.alost||0)>=6;
+function ligaNeeds(o){
+  if(!flags||!flags.malvarQ)return false;
+  const F=flags.lgF||0,G=flags.lgG||0;
+  if(o.id==='malvar')return !G||ligaHeldSets().length>0||(F===5&&G===5&&!flags.chapeuPego);
+  if(o.id==='livrosPocoes')return F===1;
+  if(o.id==='bancadaVelha')return F===3;
+  if(o.id==='armario101')return G===1;
+  if(o===aldair)return G===3&&!!flags.profsIn;
+  return false;
+}
+function ligaActive(add_){
+  if(!flags.malvarQ)return;
+  const F=flags.lgF||0,G=flags.lgG||0,ent=' ao Prof. Malvar, na Sala 204. Ele corrige na hora';
+  if(G>=1&&G<=4)add_('ligaG'+G,'Desafio da galactose (Prof. Malvar): '+['',
+    'busque as folhas 1 a 4 no armário trancado da Sala 101 (você está com a chave)',
+    'entregue as folhas 1 a 4'+ent+' (e devolva a chave)',
+    'peça as folhas 5 a 8 ao Prof. Neto'+(flags.profsIn?'':' (ele chega à Sala 101 às 7h47)'),
+    'entregue as folhas 5 a 8'+ent][G]);
+  if(F>=1&&F<=4)add_('ligaF'+F,'Desafio da frutose (Prof. Malvar): '+['',
+    'as folhas 1 a 4 estão dentro do livro "Mil Ervas e Enzimas Mágicas", na Sala 204',
+    'entregue as folhas 1 a 4'+ent,
+    ligaLabKnown()?'busque as folhas 5 a 8 na bancada empoeirada do laboratório antigo'
+      :'as folhas 5 a 8 estão "em algum lugar do laboratório antigo". Onde fica isso? O Prof. Malvar não quis dizer',
+    'entregue as folhas 5 a 8'+ent][F]+'. Prêmio prometido para nota final 7 ou mais');
+  if(F===5&&G===5&&!flags.chapeuPego&&flags.lgSemChapeu)add_('ligaRe'+(flags.lgRe||''),flags.lgRe
+    ?'Refazendo o desafio da '+ligaVia(flags.lgRe)+': responda as 8 folhas na mesa do Prof. Malvar, na Sala 204, na frente dele'
+    :'Chapéu da Liga: nota final '+ligaN10(ligaTot('F')+ligaTot('G'),16)+', abaixo de 7. O Prof. Malvar deixa refazer um dos desafios (Sala 204)');
+}
+function ligaDone(L){
+  if(flags.lgG===5)L.push({k:'ligaG',t:'Desafio da galactose: '+ligaTot('G')+' de 8 (nota '+ligaN10(ligaTot('G'),8)+'), corrigido pelo Prof. Malvar'});
+  if(flags.lgF===5)L.push({k:'ligaF',t:'Desafio da frutose: '+ligaTot('F')+' de 8 (nota '+ligaN10(ligaTot('F'),8)+'), corrigido pelo Prof. Malvar'});
+  if(flags.chapeuPego)L.push({k:'chapeu',t:'Chapéu da Liga: presente do Prof. Malvar ('+(flags.chapeu?'na sua cabeça':'guardado no armário 42')+')'});
+}
+// a bundle of the challenge: the player picks which sheet to answer (answered ones open read-only)
+const LIGA_SURF={
+  bancada:['Sobre a bancada empoeirada, entre os frascos, um maço de folhas amareladas com o selo de cera da Liga: "Desafio da frutose · folhas 5 a 8 · E. M."','Deixar as folhas na bancada'],
+  livro:['Dentro do "Mil Ervas e Enzimas Mágicas", quatro folhas dobradas com o selo de cera da Liga: "Desafio da frutose · folhas 1 a 4 · E. M."','Deixar as folhas dentro do livro'],
+  armario:['No armário, atrás dos rolos de cartazes, um maço de folhas com o selo de cera da Liga: "Desafio da galactose · folhas 1 a 4 · E. M."','Deixar as folhas no armário'],
+  neto:['As quatro folhas do Prof. Malvar, nas mãos do Prof. Neto: "Desafio da galactose · folhas 5 a 8 · E. M."','Deixar com o Prof. Neto por enquanto'],
+  refazerG:['Sobre a mesa do Prof. Malvar, as oito folhas novas do desafio da galactose. Ele não tira os olhos de você.','Deixar as folhas na mesa dele por enquanto'],
+  refazerF:['Sobre a mesa do Prof. Malvar, as oito folhas novas do desafio da frutose. Ele não tira os olhos de você.','Deixar as folhas na mesa dele por enquanto']};
+function ligaPile(list,surf){
+  const left=list.filter(n=>!ansOf(n)).length,seal=t=>(flags.alost||0)>=6?t:t.replace('com o selo de cera da Liga','com um lacre de cera vermelha');
+  say([{t:seal(LIGA_SURF[surf][0])+(left<list.length?' Ainda '+(left>1?'faltam '+left+' em branco.':'falta 1 em branco.'):' Qual você quer responder?'),
+    choices:list.map(n=>({t:'Folha '+n[1]+' · '+(ansOf(n)?'respondida':'em branco'),fn:()=>{openQuiz(n);if(quiz)pileBack={list,surf,liga:true};}}))
+      .concat([{t:LIGA_SURF[surf][1],fn:()=>{}}])}]);
+}
+// the whole bundle answered: it goes with the player, to be handed to Malvar
+function ligaCollect(list,surf){
+  if(/^refazer/.test(surf))return ligaRegrade(surf.slice(-1)); // a redone challenge: graded right there
+  const k=list[0][0]==='f'?'F':'G',key=k==='F'?'lgF':'lgG';
+  flags.lgHeld=(flags.lgHeld||[]).concat(list);flags[key]=flags[key]===1?2:4;
+  ligaSlot(true);sfx.item();
+  const L=[{t:'Você terminou as quatro folhas. '+(surf==='neto'?'O Prof. Neto devolve o maço para você.':'Você junta o maço e guarda com você.')},
+    {t:'Você pegou: FOLHAS DO DESAFIO DA '+ligaVia(k).toUpperCase()+' ('+list[0][1]+' a '+list[3][1]+')'}];
+  if(surf==='armario')L.push({t:'Você tranca o armário de novo. A chave fica com você até devolvê-la ao Prof. Malvar.'});
+  if(surf==='neto')L.push({who:NW,t:'Coragem, '+nome1()+'. O '+(flags.fundador?'Edmundo':'Malvar')+' late mais do que morde. ...Na maior parte das vezes.'});
+  L.push({who:me(),t:'Agora é levar ao Prof. Malvar, na Sala 204. Que ele esteja de bom humor... se é que ele tem um.',run:()=>updatePauseExtra()});
+  say(L);
+}
+// Malvar's verdict on a bundle of 4
+function ligaVerdict(n){
+  const nm=nome1();
+  return [[{who:MW,t:'Nenhuma. Zero.'},{who:MW,t:'Fascinante. É preciso talento para errar todas. Talvez o seu lugar seja o clube de xadrez, não a Liga.'}],
+    [{who:MW,t:'Uma de quatro.'},{who:MW,t:'Se eu tivesse de escolher entre você e o gato para este desafio, escolheria o gato. E o Arsenato nem sabe ler.'}],
+    [{who:MW,t:'Duas de quatro. Metade.'},{who:MW,t:'Metade de um diagnóstico, '+nm+', é um paciente inteiro na UTI.'}],
+    [{who:MW,t:'Três de quatro.'},{who:MW,t:'Suficiente para não envergonhar a Liga. Por pouco.'}],
+    [{who:MW,t:'Quatro de quatro.'},{who:MW,t:'...Não espere aplausos. Não é mais do que a Liga exige.'}]][n]
+    .map((l,i)=>i?Object.assign(l,{run:()=>setMood('malvar',n>=3?'smug':'angry',8)}):l);
+}
+function ligaGrade(set){
+  const list=LIGA_SETS[set],k=set[0],key=k==='F'?'lgF':'lgG',second=set[1]==='2',via=ligaVia(k);
+  const nota=list.filter(n=>ansOf(n)&&ansOf(n).ok).length;
+  (flags.lgNota||(flags.lgNota={}))[set]=nota;
+  flags.lgHeld=(flags.lgHeld||[]).filter(n=>!list.includes(n));ligaSlot();
+  malvar.dir='down';music.duck(.3);setMood('malvar','smug',60);
+  const L=[{who:MW,t:'Dê-me isso.'},
+    {t:'O professor puxa as folhas da sua mão. Molha a pena no tinteiro e lê em pé, em silêncio. Devagar. Muito devagar.'}];
+  if(set==='G1')L.push({who:MW,t:'E a chave do armário. ...Inteira. Surpreendente.',run:()=>{flags.lgChave=false;}});
+  list.forEach(n=>{const q=LIGA_Q[n],a=ansOf(n);
+    L.push({t:'Folha '+n[1]+' · '+q.t+'.',run:()=>setMood('malvar','smug',60)});
+    if(a&&a.ok)L.push({who:MW,t:q.ok,run:()=>{setMood('malvar','smug',60);sfx.blip();}});
+    else L.push({who:MW,t:LIGA_JAB[(flags.lgJab=(flags.lgJab||0)+1)%LIGA_JAB.length],run:()=>{setMood('malvar','angry',60);sfx.bump();}},{who:MW,t:q.bad});
+  });
+  L.push({t:'Ele escreve alguma coisa no canto da última folha. Você não consegue ler. Talvez seja melhor assim.'});
+  L.push(...ligaVerdict(nota));
+  let end=null;
+  if(!second){
+    flags[key]=3;
+    if(k==='F'){
+      L.push({who:me(),t:'E as folhas 5 a 8 da frutose, professor?'});
+      if(ligaLabKnown())L.push({who:MW,t:'No laboratório antigo. Sobre a bancada empoeirada. Você conhece o caminho. Infelizmente.'});
+      else L.push({who:MW,t:'Em algum lugar do laboratório antigo.'},{who:me(),t:'Laboratório antigo? Que laboratório? Onde fica isso?'},
+        {who:MW,t:'Se eu precisasse dizer, você não mereceria o prêmio.'},
+        {who:MW,t:'Há salas neste prédio que não estão lá, '+nome1()+'. Quem procura direito, acha.',run:()=>setMood('malvar','smug',8)});
+      L.push({who:MW,t:'E não pense que vou esperar o dia inteiro.'});
+    }else L.push({who:me(),t:'E as folhas 5 a 8 da galactose, professor?'},
+      {who:MW,t:'Estão com o Prof. Neto. Ele insistiu em ler os casos antes. Diz que gosta de galactosemia. Cada um com as suas fraquezas.'},
+      {who:MW,t:'Peça a ele. Educadamente. O Neto é sentimental com alunos.'+(flags.profsIn?'':' Ele chega à Sala 101 pouco antes das 7h50.')});
+  }else{
+    flags[key]=5;
+    const tot=ligaTot(k);
+    L.push({who:MW,t:'Desafio da '+via+': '+tot+' de 8. Nota '+ligaN10(tot,8)+'.'},
+      {who:MW,t:tot>=6?'Aceitável. Não deixe isso subir à cabeça.':tot>=4?'Mediano. A mediocridade também tem o seu lugar. Longe da Liga, de preferência.'
+        :'Abaixo de qualquer expectativa. E as minhas expectativas já eram baixas.',run:()=>setMood('malvar',tot>=4?'smug':'angry',8)});
+    const o=k==='F'?'G':'F',os=flags[o==='F'?'lgF':'lgG']||0;
+    if(k==='G'&&!os){ // between the two: the prize, then the fructose
+      const need=Math.max(0,12-tot);
+      L.push({t:'Ele fecha o tinteiro. Mas, em vez de dispensar você, cruza os braços e fica olhando. Longamente.'},
+        {who:MW,t:'Ainda não acabou. Agora, a frutose.'},
+        {who:MW,t:'E, já que precisa de incentivo como todo calouro: quem terminar os dois desafios com nota final sete ou mais leva um prêmio.'},
+        {who:me(),t:'Que prêmio, professor?'},
+        {who:MW,t:'Um prêmio... interessante. Muito mais antigo do que você. Talvez mais antigo do que eu.',run:()=>setMood('malvar','smug',10)},
+        {t:'Atrás do caldeirão, a porta de um armário velho range sozinha. Lá de dentro vem um resmungo abafado.',run:()=>sfx.bump()},
+        {who:MW,t:'...Ignore isso.'},
+        {who:MW,t:need>8?'Pelas suas contas, nem acertando as oito da frutose você chega ao sete. Faça assim mesmo. Por dignidade.'
+          :'Sete de nota final. Pelas minhas contas, você precisa de pelo menos '+need+' acertos na frutose. Faça as contas, se não confia nas minhas.'},
+        {who:MW,t:'Frutose: as quatro primeiras folhas estão aqui. Nesta sala. Dentro do livro que nenhum aluno desta escola jamais abriu: o "Mil Ervas e Enzimas Mágicas", na pilha junto à parede.'},
+        {who:MW,t:'Não dobre as páginas.',run:()=>{flags.lgF=1;flags.lgLivro=false;}});
+    }else if(os&&os!==5)L.push({who:MW,t:'Ainda falta a '+ligaVia(o)+'. Não me faça esperar.'});
+    else if(os===5){ // both done: the final grade decides the prize
+      const fin=ligaFinal(),txt=ligaN10(ligaTot('F')+ligaTot('G'),16);
+      L.push({who:MW,t:'Os dois desafios. Dezesseis folhas. Nota final: '+txt+'.'});
+      if(fin>=7)end=ligaHat;
+      else{flags.lgSemChapeu=true;
+        L.push({who:MW,t:'Sete. Eu disse sete. Não "quase sete". Não "sete, se o senhor arredondar".',run:()=>setMood('malvar','angry',10)},
+          {who:MW,t:'O prêmio continua onde está. Ele sabe esperar alguém à altura. Pode esperar mais um pouco.'},
+          {t:'Do armário atrás do caldeirão vem um suspiro longo, abafado, quase humano.'},
+          {who:MW,t:'Não me olhe assim. Regra é regra. Quem quer prêmio, estuda antes. Não depois.'},
+          {who:MW,t:'...Mas quem estuda depois ainda pode refazer um dos desafios. Quando tiver coragem, volte aqui.',run:()=>setMood('malvar','smug',6)});}
+    }
+  }
+  say(L,()=>{music.duck(1);updatePauseExtra();if(end)end();});
+}
+// both challenges done with a final grade of 7 or more: the old hat of the Liga
+function ligaHat(){
+  const N=flags.lgNota,tot=N.F1+N.F2+N.G1+N.G2,liga=(flags.alost||0)>=6;
+  music.duck(.3);setMood('malvar','normal',30);
+  say([{t:'O professor fica em silêncio por um longo tempo. Depois abre o armário atrás do caldeirão e tira de lá um chapéu enorme, velho e remendado. Uma nuvem de poeira sobe.'},
+    {who:MW,t:flags.fundador?'Este chapéu já morava nesta escola muito antes de mim. Quando fundei a Liga de Metabolismo, ele decidiu que seria dela. Ninguém perguntou a minha opinião.'
+      :'Este chapéu já morava nesta escola muito antes de mim. Dizem que pertence à Liga de Metabolismo. Não me pergunte como veio parar no meu armário.'},
+    {who:MW,t:liga?'Ele passa de um membro para outro. Só para quem termina os dois desafios com nota sete ou mais. Pouquíssimos conseguem.'
+      :'Ele passa de um membro da Liga para outro. E, de vez em quando, para alguém que ainda não é. Mas que vai ser.'},
+    {t:'Ele põe o chapéu na sua cabeça, sem a menor cerimônia. A aba escorrega até as suas sobrancelhas.',run:()=>{flags.chapeu=true;flags.chapeuPego=true;hatT=0;setMood('player','surprised',5);}},
+    {who:'CHAPÉU DA LIGA',t:'Hmmm... Frutose, galactose... Uma cabeça cheia de portas laterais. Interessante. Muito interessante...'},
+    {who:me(),t:'O chapéu... falou?!'},
+    {who:MW,t:'Ignore. Ele fala demais. Sempre falou. E sabe coisas que não devia saber.'},
+    {who:'CHAPÉU DA LIGA',t:'Sei mesmo. Fique comigo e eu conto. ...Algumas.'},
+    {who:MW,t:tot===16?'Dezesseis de dezesseis. ...Não confunda isso com um elogio. É só a constatação de que você estudou.'
+      :'E não confunda isso com um elogio. É só a constatação de que você estudou. Quase o suficiente.'},
+    {t:'Você ganhou: CHAPÉU DA LIGA',item:'chapeu'},
+    {who:MW,t:'Se tiver vergonha de usá-lo, guarde no seu armário. ...Eu nunca tive.'}],()=>{music.duck(1);updatePauseExtra();});
+}
+function ligaOffer(again){
+  const ch=[{t:'Aceito o desafio, professor.',fn:ligaAccept},
+    {t:'Agora não.',fn:()=>{flags.lgNo=true;setMood('malvar','angry',5);
+      say([{who:MW,t:'Previsível. Covardia também é uma escolha.'},{who:MW,t:'Quando encontrar a coragem, sabe onde me achar. No lugar mais escuro do prédio.'}]);}}];
+  if(again)return say([{who:MW,t:'Voltou. Encontrou a coragem em algum corredor?',choices:ch}]);
+  setMood('malvar','smug',30);
+  const liga=!!flags.fundador;
+  say([{who:MW,t:'Ainda por aqui, '+nome1()+'? Ótimo. Poupa-me o trabalho de mandar chamar.'},
+    liga?{who:MW,t:'Membro da Liga que só sabe glicólise é como caldeirão sem fogo: decorativo e inútil.'}
+      :{who:MW,t:'Aluno que só sabe glicólise é como caldeirão sem fogo: decorativo e inútil.'},
+    {who:MW,t:'A frutose e a galactose também terminam na glicólise. Só que entram por portas laterais. E é nessas portas que os bebês adoecem.'},
+    liga?{who:MW,t:'Preparei dois desafios. Um da galactose, outro da frutose. Oito folhas cada um. Casos clínicos. Nada de decoreba.'}
+      :{who:MW,t:'Existem dois desafios. Um da galactose, outro da frutose. Oito folhas cada um. Casos clínicos. Nada de decoreba.'},
+    ...(liga?[]:[{t:'Ele bate com a pena num maço de folhas sobre a mesa. Lacre de cera vermelha. E duas iniciais, escritas à mão: E. M.'},
+      {who:me(),t:'E. M.? Quem é E. M., professor?'},
+      {who:MW,t:'Não faça perguntas cujas respostas você ainda não merece.'}]),
+    {who:MW,t:'Um de cada vez. Primeiro, a galactose.'},
+    {who:me(),t:'E onde estão as folhas, professor?'},
+    {who:MW,t:'...Não estão todas comigo.'},
+    {who:MW,t:'Folha de desafio não fica esperando na mesa de ninguém. Quem quer, vai buscar.'},
+    {who:MW,t:'Então? Aceita, ou prefere voltar para o caça-palavras da monitoria?',choices:ch}]);
+}
+function ligaAccept(){
+  flags.lgG=1;flags.lgChave=true;
+  say([{who:MW,t:'Veremos.'},
+    {who:MW,t:'Galactose: as quatro primeiras folhas estão trancadas no armário da Sala 101. Tome a chave.'},
+    {t:'Você pegou: CHAVE DO ARMÁRIO DA SALA 101',run:()=>sfx.item()},
+    {who:MW,t:flags.malvarFolha?'Não a perca. Como perdeu a folha da reação 3.':'Não a perca. Detesto alunos que perdem coisas.'},
+    {who:MW,t:'Responda e traga as folhas para mim. Eu corrijo. Pessoalmente. Só então digo onde está o resto.'},
+    {who:MW,t:'E nada de pedir ajuda aos colegas. Eu sempre fico sabendo. O gato me conta.',run:()=>updatePauseExtra()}]);
+}
+/* Below 7 the player may redo one challenge at a time (flags.lgRe: 'F' / 'G' being redone): Malvar puts a fresh
+   copy of its 8 sheets on his desk and the player answers them there, in front of him (they stay on the desk
+   meanwhile). He keeps the better of the two grades of that challenge, then the final grade decides the hat again. */
+const ligaRe8=k=>LIGA_SETS[k+'1'].concat(LIGA_SETS[k+'2']);
+function ligaRetryOffer(){
+  const fin=ligaN10(ligaTot('F')+ligaTot('G'),16),ch=['G','F'].filter(k=>ligaTot(k)<8)
+    .map(k=>({t:'Refazer o desafio da '+ligaVia(k)+' (hoje: '+ligaTot(k)+' de 8)',fn:()=>ligaRetry(k)}));
+  setMood('malvar','smug',20);
+  say([{who:MW,t:'Nota final '+fin+'. Ainda abaixo de sete. Veio implorar, '+nome1()+'?'},
+    {who:MW,t:'...Pois bem. Refaça um dos desafios. Fico com a melhor das duas notas. Não por bondade: por estatística.',
+      choices:ch.concat([{t:'Agora não.',fn:()=>say([{who:MW,t:'Como quiser. O chapéu não tem pressa. Eu, muito menos.'}])}])}]);
+}
+function ligaRetry(k){
+  flags.lgRe=k;const L=ligaRe8(k),T=flags.lgTent||(flags.lgTent={});T[k]=(T[k]||1)+1;
+  flags.lgPrev={};L.forEach(n=>{flags.lgPrev[n]=!!(ansOf(n)&&ansOf(n).ok);if(flags.lgAns)delete flags.lgAns[n];}); // (to know which ones he had already explained)
+  sfx.item();updatePauseExtra();
+  say([{t:'O professor abre a gaveta, tira oito folhas novas, em branco, e as estala sobre a mesa, uma por uma.'},
+    {who:MW,t:'Aqui. Na minha frente. Sem livro, sem colega, sem gato.'},
+    {who:MW,t:'E lembre-se: eu já expliquei cada resposta. Se errar de novo, não terá sido por falta de aviso.',run:()=>setMood('malvar','smug',10)}],
+    ()=>ligaPile(L,'refazer'+k));
+}
+function ligaRegrade(k){
+  const L8=ligaRe8(k),N=flags.lgNota,old=ligaTot(k);
+  const half=h=>LIGA_SETS[k+h].filter(n=>ansOf(n)&&ansOf(n).ok).length,nova=half('1')+half('2');
+  delete flags.lgRe;music.duck(.3);setMood('malvar','smug',60);malvar.dir='down';
+  const L=[{t:'O professor recolhe as oito folhas antes mesmo de a tinta secar. Lê em pé, em silêncio. Devagar. Mais devagar ainda do que da outra vez.'}];
+  L8.forEach(n=>{const q=LIGA_Q[n],a=ansOf(n);
+    L.push({t:'Folha '+n[1]+' · '+q.t+'.'});
+    if(a&&a.ok)L.push({who:MW,t:q.ok,run:()=>{setMood('malvar','smug',60);sfx.blip();}});
+    else L.push({who:MW,t:(flags.lgPrev||{})[n]?'Esta você tinha acertado. E agora errou. Como se faz isso?':'De novo?! Eu expliquei esta. Palavra por palavra.',run:()=>{setMood('malvar','angry',60);sfx.bump();}},{who:MW,t:q.bad});});
+  L.push({who:MW,t:'Desafio da '+ligaVia(k)+', '+(['','primeira','segunda','terceira','quarta','quinta'][flags.lgTent[k]]||flags.lgTent[k]+'ª')+' tentativa: '+nova+' de 8. Nota '+ligaN10(nova,8)+'.'});
+  if(nova>old){N[k+'1']=half('1');N[k+'2']=half('2');
+    L.push({who:MW,t:'Melhor do que antes. O que, convenhamos, não era difícil.'});}
+  else L.push({who:MW,t:nova===old?'Exatamente a mesma coisa. Admirável consistência. Na direção errada.':'Pior do que antes. Fico com a nota anterior. Por piedade.',
+    run:()=>setMood('malvar','angry',8)});
+  const fin=ligaFinal(),txt=ligaN10(ligaTot('F')+ligaTot('G'),16);
+  L.push({who:MW,t:'Nota final: '+txt+'.'});
+  let end=null;
+  if(fin>=7){flags.lgSemChapeu=false;end=ligaHat;
+    L.push({who:MW,t:'...Sete. Ou mais. Hm.'},{t:'Do armário atrás do caldeirão vem um "finalmente!" abafado.'});}
+  else L.push({who:MW,t:'Ainda não. O chapéu continua no armário.'},
+    {who:MW,t:'Pode tentar de novo, se tiver estômago. Eu tenho todo o tempo do mundo. Você, nem tanto.'});
+  say(L,()=>{music.duck(1);updatePauseExtra();if(end)end();});
+}
+let ligaNag=0;
+const LIGA_NAG=[()=>'As folhas não vão se responder sozinhas, '+nome1()+'.',()=>'Ainda de mãos vazias? Fascinante.',
+  ()=>'Tique-taque. A frutose não espera. Eu, muito menos.',()=>'Se precisar de uma dica, procure um livro. Não a mim.',
+  ()=>'Ficar olhando para mim não responde caso clínico nenhum.'];
+// a bundle of the challenge's parchment sheets fanned out, centred on cx (a blue mark on the answered ones), wax seal on top
+function drawLigaBundle(cx,y,list){
+  const n=list.length,x0=cx-Math.floor((12+(n-1)*2)/2);
+  list.forEach((q,i)=>{const sx=x0+i*2,sy=y-i;
+    r(sx,sy,12,6,'#ece0bf');r(sx,sy+6,12,1,'#a8955f');r(sx,sy,1,6,'#d8c79a');if(ansOf(q))r(sx,sy+1,2,4,'#2d6fb5');});
+  const tx=x0+(n-1)*2,ty=y-(n-1);
+  r(tx+3,ty+2,5,1,'#8a6a42');r(tx+3,ty+4,4,1,'#8a6a42');r(tx+8,ty+2,3,3,'#a12a22');px(tx+9,ty+3,'#7a1e18');
+}
+const ligaKey=list=>list.map(n=>ansOf(n)?1:0).join('');
+{ // fructose 5-8: on the dusty bench of the old lab
+  const o=SCENES.salaOculta.find(q=>q.id==='bancadaVelha'),a0=o.act,d0=o.draw,L=LIGA_SETS.F2;
+  o.key=()=>flags.lgF===3?'lg'+ligaKey(L):'';
+  o.draw=()=>{d0();if(flags.lgF===3)drawLigaBundle(66,144,L);};
+  o.act=function(){return flags.lgF===3?ligaPile(L,'bancada'):a0.call(this);};
+}
+{ // fructose 1-4: inside the oldest book of Malvar's pile, in Sala 204
+  const o=SCENES.sala204.find(q=>q.id==='livrosPocoes'),a0=o.act,d0=o.draw,L=LIGA_SETS.F1;
+  o.key=()=>flags.lgF===1?'lg':'';
+  o.draw=()=>{d0();if(flags.lgF===1){r(21,86,9,3,'#ece0bf');r(21,88,9,1,'#a8955f');r(27,86,2,2,'#a12a22');}}; // folded sheets peeking out
+  o.act=function(){
+    if(flags.lgF!==1)return a0.call(this);
+    if(flags.lgLivro)return ligaPile(L,'livro');
+    flags.lgLivro=true;
+    say([{t:'Você abre o "Mil Ervas e Enzimas Mágicas". As páginas cheiram a mofo e a canela.'}]
+      .concat(SCENES.sala204.includes(malvar)?[{who:MW,t:'Não dobre as páginas.',run:()=>setMood('malvar','angry',4)}]:[]),()=>ligaPile(L,'livro'));
+  };
+}
+{ // galactose 1-4: the locked cabinet of Sala 101 (Malvar lends the key)
+  const o=SCENES.sala101.find(q=>q.id==='armario101'),a0=o.act,L=LIGA_SETS.G1;
+  o.key=()=>flags.lgG===1?'lg':'';
+  o.draw=()=>{drawClassCabinet();if(flags.lgG===1){const x=322;r(x+25,41,14,6,'#86aebb');r(x+26,42,12,5,'#ece0bf');r(x+27,43,7,1,'#8a6a42');r(x+35,43,3,3,'#a12a22');}};
+  o.act=function(){
+    if(flags.lgG!==1)return a0.call(this);
+    if(flags.lgArm)return ligaPile(L,'armario');
+    flags.lgArm=true;
+    say([{t:'Você gira a chave do Prof. Malvar na fechadura. O armário da sala se abre com um rangido.'}],()=>ligaPile(L,'armario'));
+  };
+}
+{ // galactose 5-8: with Prof. Neto
+  const a0=aldair.act;
+  aldair.act=function(){
+    if(flags.lgG!==3)return a0.call(this);
+    if(flags.seated&&!flags.graded)return say([{who:NW,t:'Pois não, '+nome1()+'?',choices:[
+      {t:'Entregar a lição de casa',fn:()=>a0.call(this)},{t:'Pedir as folhas do Prof. Malvar',fn:()=>ligaNeto(this)}]}]);
+    ligaNeto(this);
+  };
+}
+function ligaNeto(o){
+  if(!o.sat){o.wait=Math.max(o.wait||0,8);o.dir=faceTo(o,player);}
+  const L=LIGA_SETS.G2;
+  if(flags.lgNetoTold)return ligaPile(L,'neto');
+  say([{who:me(),t:'Prof. Neto, o Prof. Malvar disse que o senhor está com as folhas do desafio da galactose.'},
+    {who:NW,t:'Ah, '+(flags.fundador?'o Edmundo':'o Malvar')+'! Estão aqui, sim. Ele me deixou ler antes: galactosemia, catarata, glicogênio... Os casos estão ótimos.'},
+    {who:NW,t:'E, cá entre nós: ele falou de você. Quase sorriu. Trabalho com ele há vinte anos e nunca tinha visto isso.'},
+    {who:NW,t:'Pode responder aqui mesmo. E boa sorte na correção, viu? Vai precisar.',run:()=>{flags.lgNetoTold=true;}}],()=>ligaPile(L,'neto'));
+}
+{ // Malvar: the offer, the grading and the pressure. Under this layer come first: the first meeting, his one line about
+  // the legend of the hidden room, the invitation / the revelation of "E. M." and the arc's line about the stolen candles.
+  const a0=malvar.act;
+  malvar.act=function(){
+    if(!flags.malvarQ)return a0.call(this);
+    if(flags.alost>=1&&flags.alost<=5&&!flags.malvarLenda)return a0.call(this);
+    if(flags.alost===6&&!flags.fundador&&(flags.dzDone||!flags.malvarConvite))return a0.call(this);
+    if((flags.td||0)>=3&&tdVelasMin()!=null&&gameMinutes()>=tdVelasMin()+3&&!flags.tdVelas)return a0.call(this);
+    const F=flags.lgF||0,G=flags.lgG||0,H=ligaHeldSets();
+    if(!G)return ligaOffer(!!flags.lgNo);
+    if(H.length>1)return say([{who:MW,t:'Duas pilhas de folhas. Qual delas devo corrigir primeiro?',
+      choices:H.map(s_=>({t:'As da '+ligaVia(s_[0])+' (folhas '+(s_[1]==='1'?'1 a 4':'5 a 8')+')',fn:()=>ligaGrade(s_)}))}]);
+    if(H.length)return ligaGrade(H[0]);
+    if(F===5&&G===5&&!flags.chapeuPego){
+      if(flags.lgRe)return ligaPile(ligaRe8(flags.lgRe),'refazer'+flags.lgRe);
+      if(ligaFinal()>=7)return ligaHat();
+      flags.lgSemChapeu=true;return ligaRetryOffer();}
+    if(F<5||G<5)return say([{who:MW,t:LIGA_NAG[ligaNag++%LIGA_NAG.length]()}]);
+    if(flags.chapeu&&!flags.lgHatLine){flags.lgHatLine=true;return say([{who:MW,t:'Endireite esse chapéu. Está torto. ...Ele sempre fica torto.'}]);}
+    return a0.call(this);
+  };
+}
+{ // locker 42 keeps the hat too: put on / take off, like the lab coat
+  const lk=SCENES.terreo.find(o=>o.id==='locker42'),a0=lk.act;
+  lk.act=function(){
+    if(!flags.chapeuPego||!flags.jalecoPego)return a0.call(this);
+    const dentro=[!flags.jaleco&&'o jaleco dobrado',!flags.chapeu&&'o chapéu da Liga, amassado na prateleira de cima'].filter(Boolean);
+    say([{t:'Seu armário. '+(dentro.length?'Lá dentro: '+dentro.join(' e ')+', ao lado do caderno de Bioquímica.':'Só tem seu caderno de Bioquímica e um guarda-chuva quebrado.'),choices:[
+      flags.jaleco?{t:'Tirar o jaleco e guardar no armário',fn:()=>{flags.jaleco=false;$('slot-jaleco').classList.remove('got');sfx.item();updateObjective();
+          say([{t:'Você tira o jaleco, dobra direitinho e guarda no armário.'},{t:'Lembre-se: no laboratório, só entra quem estiver de jaleco.'}]);}}
+        :{t:'Vestir o jaleco',fn:()=>say([{t:'Você veste o jaleco de novo.'},{t:'Você está de: JALECO',item:'jaleco'}])},
+      flags.chapeu?{t:'Tirar o chapéu da Liga e guardar no armário',fn:()=>{flags.chapeu=false;$('slot-chapeu').classList.remove('got');sfx.item();updatePauseExtra();
+          say([{t:'Você tira o chapéu e o ajeita na prateleira de cima. A ponta dobra por cima do seu caderno.'},{who:'CHAPÉU DA LIGA',t:'Hmpf. Escuro aqui dentro...'}]);}}
+        :{t:'Pôr o chapéu da Liga',fn:()=>say([{t:'Você põe o chapéu da Liga. Ele escorrega um pouco e para, torto, logo acima das sobrancelhas.'},
+          {who:'CHAPÉU DA LIGA',t:'Ah, finalmente. Ar fresco.'},{t:'Você está de: CHAPÉU DA LIGA',item:'chapeu',run:()=>updatePauseExtra()}])},
+      {t:'Fechar o armário',fn:()=>{}}]}]);
+  };
+}
+/* The hat talks: every 5 real minutes of play while it is worn (hatT counts only in 'play'; the line waits for a calm
+   moment, see autoTick). Two lines of gossip, then a secret it is about to tell when some magic shuts it up.
+   flags.hatC / flags.hatM: the next gossip / secret (they go round). A line with an ok() waits until the player knows
+   enough of the story for it not to spoil anything (the Liga, who "E. M." is, the end of Tadeo's arc). */
+const HAT_EVERY=300,HW_='CHAPÉU DA LIGA';
+let hatT=0;
+const HAT_FOFOCA=[
+  ['Psst. A Dona Tati sabe de cor o nome de todos os calouros desde o primeiro dia. Todos.','Ela só finge que confere a foto do crachá. Gosta de ver a cara de alívio de quem chega atrasado.'],
+  ['O Prof. Kiko jura que a sala que não está lá é lenda de veterano.','Hehe. Ele procurou por ela três anos seguidos, quando era aluno. Nunca achou. Até hoje fica emburrado quando alguém pergunta.'],
+  ['O Pedro, o veterano, diz "isso cai em toda prova" sobre qualquer coisa.','Ele errou a piruvato-cinase duas vezes no primeiro ano. Não conte que eu contei.'],
+  ['A Profa. Rosa guarda um pote de balas na gaveta da mesa da Sala 101.','São para os alunos que chegam pálidos na correção. Glicose de emergência, ela diz.'],
+  ['O Neto e o Malvar trabalham juntos há vinte anos. O Neto acha que os dois são amigos.','O Malvar também acha. Só que morreria antes de admitir.'],
+  ['O Seu Antônio, o zelador, tem uma chave para cada porta deste prédio.','Inclusive para algumas que ninguém mais vê. Ele nunca pergunta para que servem. Homem sábio.'],
+  ['A Marina chega todo dia antes de todo mundo. Diz que é para pegar lugar.','Mentira. É para ver o sol entrar pela porta da frente. Cabeça boa, a da Marina. Cheia de luz.'],
+  ['O Lucas comprou o caderno de capa preta no sebo por dois reais. E ainda pechinchou.','O Malvar ficou ofendidíssimo quando soube do preço.',()=>!!flags.fundador],
+  ['A Larissa acende uma vela antes de cada reunião da Liga. Diz que é tradição.','Ninguém lembra mais quem começou essa tradição. Eu lembro. Mas não vou dizer.',()=>flags.alost>=6],
+  ['O Tiago perde as coisas porque pensa em três coisas ao mesmo tempo.','Duas delas costumam ser bioquímica. A terceira, ultimamente, é o seminário.'],
+  ['O Gabriel treina o Duelo Relâmpago sozinho, na frente do espelho do banheiro.','E perde, às vezes. Para o espelho.'],
+  ['A Camila, a monitora, escreveu à mão cada letra daquele caça-palavras do laboratório.','Errou uma letra no meio e recomeçou tudo do zero. Duas vezes.'],
+  ['O Bruno ensaia num rascunho antes de escrever um nome no Livro dos Convites.','A letra dele no livro é a mais caprichada da Liga. No caderno, ninguém entende nada.',()=>flags.alost>=6],
+  ['O Felipe diz que nunca viu parede sem porta nenhuma no 2º andar.','Mentir com cara séria é a matéria em que ele tira a melhor nota.',()=>flags.alost>=4],
+  ['O Arsenato dorme toda tarde em cima do armário do Malvar. Bem em cima de mim, quando eu estava lá dentro.','Ronca. Gato ronca, sabia? Este ronca em latim.']];
+const HAT_SEGREDO=[
+  {t:['O gato preto, o Arsenato... Ninguém nunca se perguntou por que ele não envelhece?','Ele chegou nesta escola no mesmo ano que eu. E eu sou muito velho. Na verdade, aquele gato é o...'],
+   m:[{t:'ZZZT! Uma faísca azul estala na ponta do chapéu. Ele tosse uma nuvem de fumaça.'},{who:HW_,t:'Cof! Cof! ...Eu ia dizer alguma coisa? Não. Não ia. Melhor assim.'}]},
+  {ok:()=>!!flags.fundador,t:['Esse diário de tinta viva... Você acha que ele foi do Malvar primeiro? Hehe.','Não, não. Antes dele, o diário pertenceu a uma pessoa que você conhece muito bem. Essa pessoa é...'],
+   m:[{t:'O diário na sua mochila brilha de repente, quente como uma brasa. O chapéu se cala na mesma hora.'},{who:HW_,t:'...Ele não quer que eu conte. Você ouviu alguma coisa? Não ouviu. Ótimo.'}]},
+  {ok:()=>!!flags.fundador,t:['Todo mundo acha que o Malvar arrancou as páginas das reações 1, 3 e 10 só para criar um desafio.','O verdadeiro motivo foi outro. Naquela noite, ele estava escondendo as páginas de...'],
+   m:[{t:'Um vento gelado, vindo de lugar nenhum, entorta a ponta do chapéu e tapa a boca dele.'},{who:HW_,t:'Mmmf! Mmmmf! ...Hmpf. Proibido. Sempre proibido.'}]},
+  {ok:()=>flags.alost>=6,t:['Existe uma sala neste prédio mais escondida do que o laboratório antigo. Nem o Malvar entrou nela.','A entrada fica bem embaixo do nariz de todo mundo. Atrás do...'],
+   m:[{t:'As costuras da boca do chapéu se fecham sozinhas, ponto por ponto, como se uma agulha invisível as costurasse.'},
+     {t:'Um instante depois, elas se abrem de novo.'},{who:HW_,t:'Ugh. Certas coisas nem um chapéu pode contar. Ainda não.'}]},
+  {ok:()=>(flags.td||0)>=7,t:['O Corniel, do 3º ano... O nome dele esconde mais do que um anagrama.','Aquilo que ele procura nesta escola não é o livro da Liga. Ele quer encontrar o...'],
+   m:[{t:'As luzes piscam. Por um segundo, o chapéu fica frio e duro como pedra.'},{who:HW_,t:'...Brrr. Alguém não quer que eu fale dele. E esse alguém não é o Malvar.'}]},
+  {t:['Sabe por que é "Liga de Metabolismo" e não "Liga de Glicólise"?','Porque no dia em que ela foi fundada, alguém descobriu que a glicólise era só a porta de entrada de um segredo muito maior. O segredo é...'],
+   m:[{t:'PUF! Uma nuvem de pó dourado sai de dentro do chapéu e faz você espirrar.'},{who:HW_,t:'...Atchim! Pronto. Esqueci. Que conveniente.'}]}];
+function hatSpeak(){
+  const n=(flags.hatN=(flags.hatN||0)+1);
+  const next=(A,k,ok)=>{for(let i=0;i<A.length;i++){const j=(flags[k]=(flags[k]||0)+1)%A.length;if(ok(A[j]))return A[j];}return A[0];};
+  if(n%3){const L=next(HAT_FOFOCA,'hatC',l=>!l[2]||l[2]());
+    return say([{who:HW_,t:L[0]},{who:HW_,t:L[1]}]);}
+  const S=next(HAT_SEGREDO,'hatM',l=>!l.ok||l.ok());
+  music.duck(Math.min(.3,tdMusicBase()));
+  say([{who:HW_,t:'Psst. '+nome1()+'. Chegue mais perto. Vou contar uma coisa que ninguém nesta escola sabe.'},
+    {who:HW_,t:S.t[0]},{who:HW_,t:S.t[1]},
+    ...S.m.map((l,i)=>i?l:Object.assign({},l,{run:()=>{sfx.bump();setMood('player','surprised',4);if(l.run)l.run();}}))],()=>music.duck(tdMusicBase()));
+}
+/* The hat itself: a big, old, patched hat in the manner of a sorting hat, drawn over the player's head in the same
+   cut-out paper style (ink outline, card grain). Front / back / side (side faces right; the sprite's left is mirrored).
+   Wide floppy brim with a stitched patch, a crumpled crown whose folds make a face (two squinting eyes and a torn
+   mouth, on the front and in profile), and a tip that bends over and droops backwards. */
+const HAT_W=28,HAT_H=24,hatCache=new Map();
+function hatGrid(view){
+  const G=Array.from({length:HAT_H},()=>Array(HAT_W).fill(null));
+  const put=(x,y,c)=>{x=Math.round(x);y=Math.round(y);if(x>=0&&x<HAT_W&&y>=0&&y<HAT_H)G[y][x]=c;};
+  const ell=(x,y,cx,cy,rx,ry)=>((x+.5-cx)/rx)**2+((y+.5-cy)/ry)**2<=1;
+  const front=view==='front',back=view==='back',side=view==='side';
+  const B='#7a5634',D='#5e3f24',DD='#3e2816',L='#97704a',LL='#b08654',IN='#1d1612',PT='#8f6b3c',ST='#e3d2a4';
+  // brim: wide and floppy, the ends drooping, a darker rim at the front
+  for(let y=16;y<HAT_H;y++)for(let x=0;x<HAT_W;x++)if(ell(x,y,14,20.4,13.6,3.1)){
+    const rim=!ell(x,y,14,20.4,12.4,2.2)&&y>=20;put(x,y,rim?D:x<9&&y<=20?L:B);}
+  for(const [x,y] of [[0,21],[1,22],[27,21],[26,22],[2,22]])put(x,y,D);
+  // the crown, wider at the bottom, crumpled sideways a little
+  const cxAt=y=>14+(y<10?(10-y)*.18:0)+Math.sin(y*1.3)*.35,hwAt=y=>2+(y-5)*.37;
+  for(let y=5;y<=19;y++)for(let x=0;x<HAT_W;x++){const cx=cxAt(y),hw=hwAt(y),dx=x+.5-cx;
+    if(Math.abs(dx)>hw)continue;
+    put(x,y,dx<-hw+1.1?(back?D:L):dx>hw-1.2?(back?L:D):B);}
+  // the tip bends over and droops: to the right seen from the front, towards the back seen from the side
+  const tipX=x=>(back||side)?28-x:x;
+  [[14.5,4.6,1.7,B],[15.9,3.3,1.5,B],[17.7,2.5,1.4,B],[19.6,3,1.2,B],[20.9,4.5,1,D],[21.5,6,.8,D],[21.8,7.1,.6,DD]].forEach(([x,y,rr,c])=>{
+    for(let yy=Math.floor(y-rr-1);yy<=y+rr+1;yy++)for(let xx=Math.floor(x-rr-1);xx<=x+rr+1;xx++)
+      if((xx+.5-x)**2+(yy+.5-y)**2<=rr*rr)put(tipX(xx),yy,yy+.5>y+rr*.4&&c===B?D:c);});
+  put(tipX(17),2,LL);put(tipX(18),2,LL);
+  // folds across the crown (a light ridge over a dark crease)
+  const fold=(yf,x0,x1)=>{for(let x=0;x<HAT_W;x++){const cx=cxAt(yf),hw=hwAt(yf),dx=x+.5-cx;if(Math.abs(dx)>hw-.6)continue;
+    if(x0!=null&&(x<x0||x>x1))continue;const y=yf+Math.round((dx/hw)**2*1.4);put(x,y,DD);if(G[y-1]&&G[y-1][x]===B)put(x,y-1,L);}};
+  fold(8);fold(19-1,null,null);
+  if(front){
+    // two squinting eyes in a crease, a heavy brow over each
+    for(const [x0,s] of [[9,1],[19,-1]]){ // (a grumpy brow slanting down to the middle, a deep dark slit under it)
+      put(x0,10,LL);put(x0+s,10,LL);put(x0+2*s,11,DD);put(x0+3*s,11,DD);put(x0,11,DD);put(x0+s,11,DD);
+      put(x0,12,DD);put(x0+s,12,IN);put(x0+2*s,12,IN);put(x0+3*s,12,DD);put(x0+s,13,DD);put(x0+2*s,13,DD);}
+    // the torn mouth: a wide, crooked rip, open in the middle
+    for(let x=8;x<=20;x++)put(x,15+(x===10||x===17?1:0),DD);
+    for(let x=10;x<=18;x++){put(x,16,IN);if(x>=11&&x<=17)put(x,17,IN);put(x,18,x%3?DD:IN);}
+    put(11,15,LL);put(13,15,L);put(16,15,LL);put(14,16,DD);
+  }else if(side){
+    // in profile: one squinting eye near the front edge and the corner of the mouth
+    put(16,12,DD);put(17,11,DD);put(18,11,DD);put(19,12,DD);put(17,12,IN);put(18,12,IN);put(17,10,LL);put(18,10,L);
+    for(let x=15;x<=20;x++)put(x,x>=18?16:15,DD);put(19,17,IN);put(20,17,IN);put(18,17,DD);put(19,18,DD);
+    fold(13,7,12);
+  }else{
+    // seen from behind: a big stitched patch and a few more folds
+    for(let y=11;y<=15;y++)for(let x=11;x<=16;x++)put(x,y,PT);
+    for(const [x,y] of [[11,11],[13,11],[16,11],[11,13],[16,13],[11,15],[14,15],[16,15]])put(x,y,ST);
+    fold(13,6,10);fold(13,17,22);fold(17);
+  }
+  // a stitched patch on the brim (left side in front, right side behind / in profile)
+  const px0=front?3:22;
+  for(let x=px0;x<=px0+3;x++)for(let y=20;y<=21;y++)put(x,y,PT);
+  put(px0,20,ST);put(px0+3,20,ST);put(px0+1,21,ST);
+  return G;
+}
+function hatCanvas(view,mirror){
+  const key=view+(mirror?'m':'');let c=hatCache.get(key);if(c)return c;
+  const G=hatGrid(view),W_=HAT_W+2,H_=HAT_H+2,C=Array.from({length:H_},()=>Array(W_).fill(null));
+  for(let y=0;y<HAT_H;y++)for(let x=0;x<HAT_W;x++){const v=G[y][mirror?HAT_W-1-x:x];if(v)C[y+1][x+1]=v;}
+  const at=(x,y)=>x>=0&&y>=0&&x<W_&&y<H_?C[y][x]:null,ink=[];
+  for(let y=0;y<H_;y++)for(let x=0;x<W_;x++)if(!C[y][x]&&(at(x-1,y)||at(x+1,y)||at(x,y-1)||at(x,y+1)))ink.push([x,y]);
+  for(const [x,y] of ink)C[y][x]=PAPER_INK;
+  const [cv_,cx]=mk(W_,H_),img=cx.createImageData(W_,H_),D=img.data;
+  for(let y=0;y<H_;y++)for(let x=0;x<W_;x++){const col=C[y][x];if(!col)continue;
+    const [R,G_,B]=rgbOf(col),i=(y*W_+x)*4,n=col!==PAPER_INK?(((x*7+y*13)%3)-1)*2:0; // card grain
+    D[i]=Math.max(0,Math.min(255,R+n));D[i+1]=Math.max(0,Math.min(255,G_+n));D[i+2]=Math.max(0,Math.min(255,B+n));D[i+3]=255;}
+  cx.putImageData(img,0,0);hatCache.set(key,cv_);return cv_;
+}
+// px: the player's x; top: the screen y of the sprite's first grid row
+function drawHat(px,top,dir){
+  const view=dir==='up'?'back':dir==='down'?'front':'side';
+  fctx.drawImage(hatCanvas(view,dir==='left'),Math.round(px)-15,Math.round(top)-20);
+}
+// seen from above (the candle corridors): the round brim, the crown and the tip lying towards the back
+function drawTopHat(x,y,dir){
+  const N=26,key='top'+dir;let c=hatCache.get(key);
+  if(!c){
+    const G=Array.from({length:N},()=>Array(N).fill(null)),put=(x_,y_,col)=>{if(x_>=0&&y_>=0&&x_<N&&y_<N)G[y_][x_]=col;};
+    const ell=(x_,y_,cx,cy,rx,ry)=>((x_+.5-cx)/rx)**2+((y_+.5-cy)/ry)**2<=1;
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+      if(ell(i,j,13,13,10.2,9.2)){const rim=!ell(i,j,13,13,9,8);put(i,j,rim?'#5e3f24':(i+j)%9===0?'#6e4c2e':'#7a5634');}
+      if(ell(i,j,13,12,6.4,6)){const d=Math.hypot(i+.5-13,j+.5-12);put(i,j,Math.abs(d-4.2)<.6?'#3e2816':Math.abs(d-4.2)<1.2&&j<12?'#b08654':'#97704a');}}
+    [[13,8.6,2.6],[13,6,2],[12.2,3.8,1.5],[11.4,2.2,1]].forEach(([cx,cy,rr],k)=>{for(let j=0;j<N;j++)for(let i=0;i<N;i++)
+      if((i+.5-cx)**2+(j+.5-cy)**2<=rr*rr)put(i,j,k===3?'#3e2816':i+.5<cx?'#7a5634':'#5e3f24');});
+    for(let i=4;i<=7;i++)for(let j=17;j<=19;j++)put(i,j,'#8f6b3c');put(4,17,'#e3d2a4');put(7,17,'#e3d2a4');put(5,19,'#e3d2a4');
+    const map=(i,j)=>dir==='down'?[i,j]:dir==='up'?[i,N-1-j]:dir==='right'?[j,i]:[N-1-j,i],M=N+2,C=Array.from({length:M},()=>Array(M).fill(null));
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++)if(G[j][i]){const [X,Y]=map(i,j);C[Y+1][X+1]=G[j][i];}
+    const at=(i,j)=>i>=0&&j>=0&&i<M&&j<M?C[j][i]:null,ink=[];
+    for(let j=0;j<M;j++)for(let i=0;i<M;i++)if(!C[j][i]&&(at(i-1,j)||at(i+1,j)||at(i,j-1)||at(i,j+1)))ink.push([i,j]);
+    for(const [i,j] of ink)C[j][i]=PAPER_INK;
+    const [cv_,cx]=mk(M,M);for(let j=0;j<M;j++)for(let i=0;i<M;i++)if(C[j][i]){cx.fillStyle=C[j][i];cx.fillRect(i,j,1,1);}
+    c={cv:cv_,o:map(13,13).map(v=>v+1)};hatCache.set(key,c);
+  }
+  // the head's centre on the top-view player canvas (see topCanvas): the canonical (12,9.4), turned with the player
+  const T=TOP_N,h=dir==='down'?[12,9.4]:dir==='up'?[12,T-1-9.4]:dir==='right'?[9.4,12]:[T-1-9.4,12];
+  fctx.drawImage(c.cv,Math.round(x-13+1+h[0]-c.o[0]),Math.round(y-21+1+h[1]-c.o[1]));
+}
 /* ---------- music ----------
    One playlist per floor, each with its own combination of tracks: ground floor (and its lab), 1st floor
    (and Salas 101/103), 2nd floor (and Sala 201). Each playlist runs its tracks in order and starts over at the end.
@@ -8944,7 +9700,8 @@ function render(t){
       fctx.globalAlpha=1;
     }
     else if(topV)drawTopPlayer(px_,py_,player.dir,player.anim,player.moving);
-    else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,Math.floor(player.anim),blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
+    else{const f_=Math.floor(player.anim),c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,f_,blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});
+      if(flags.chapeu)drawHat(px_,py_-23-(f_%2),player.dir);}
   }
   g=fctx;
   if(isCor()){drawSpiders(t);drawCorDark();}
@@ -9003,7 +9760,7 @@ reset();state='boot';
    to continue it or to start over with a new character. It saves only at a calm moment (walking around: not in a
    dialog, a sheet or the simulator); if the 5 minutes run out mid-dialog, it saves as soon as the player is free.
    A game over, "jogar de novo"/"reiniciar" and the 100% thank-you erase the save. */
-const SAVE_KEY='uninogwarts-save-v1',SAVE_EVERY=300,SLOTS=['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo'];
+const SAVE_KEY='uninogwarts-save-v1',SAVE_EVERY=300,SLOTS=['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo','chapeu'];
 let saveT=0,saveFlash=0;
 function saveRead(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');return d&&d.v===1&&d.flags?d:null;}catch(e){return null;}}
 function saveClear(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
@@ -9022,7 +9779,7 @@ function loadGame(d){
   if(d.caca&&d.caca.grid)caca={grid:d.caca.grid,found:d.caca.found||{},cur:{r:0,c:0},anchor:null,drag:false};
   SLOTS.forEach(k=>{if(flags[k])$('slot-'+k).classList.add('got');});
   $('slot-folhas').classList.toggle('got',!!(flags.held&&flags.held.length));$('folhas-cnt').textContent=flags.held&&flags.held.length?flags.held.length:'';
-  syncEnigma();
+  syncEnigma();ligaSlot();
   // the world as the flags say it is: professors, classmates already at their desks, Larissa
   if(flags.profsIn){flags.profsIn=false;profsArrive(true);}
   if(flags.seated){flags.seated=false;seatProfs();}
@@ -9044,9 +9801,11 @@ function autoTick(dt){
   if(saveFlash>0)saveFlash-=dt;
   if(!startTime||state==='boot'||state==='intro'||state==='finale'||(flags.finale))return;
   if(state!=='end')saveT+=dt;
+  if((state==='play'||state==='dialog'||state==='quiz')&&flags.chapeu)hatT+=dt; // real time of play (not paused)
   const calm=state==='play'&&!fade&&!dialog&&!tdCut&&scene!=='salaSim'&&scene!=='simGlic';
   if(!calm)return;
-  if(flags.graded&&flags.pass&&!scorePops.length&&allDone())return finale();
+  if(hatT>=HAT_EVERY&&flags.chapeu&&!(flags.graded&&flags.pass&&allDone())){hatT=0;return hatSpeak();}
+  if(flags.graded&&flags.pass&&!scorePops.length&&allDone())return finaleSoft([]);
   if(saveT>=SAVE_EVERY){saveT=0;saveGame();}
 }
 function drawSaveFlash(){
@@ -9054,6 +9813,17 @@ function drawSaveFlash(){
   fctx.globalAlpha=Math.min(1,saveFlash/.5);
   r(x,y,w,11,'#1d1612');r(x+1,y+1,w-2,9,'#1f4a33');r(x+1,y+1,w-2,1,'#5aa865');pxText(txt,x+4,y+4,'#efe3c8');
   fctx.globalAlpha=1;
+}
+// the step into the finale: the game goes slowly dark (lines of story on black), the thank-you screen comes up under it
+function finaleSoft(lines){
+  if(flags.finale||state==='finale')return;
+  state='tdcut';tdCut=true;keys.clear();tGo=null;music.duck(0);
+  const T_=$('transFinal');T_.textContent='';T_.hidden=false;void T_.offsetWidth;T_.classList.add('on');
+  const ps=(lines||[]).map(t=>{const p=document.createElement('p');p.textContent=t;T_.appendChild(p);return p;});
+  ps.forEach((p,i)=>setTimeout(()=>p.classList.add('on'),3000+i*3600));
+  setTimeout(()=>{tdCut=false;finale();music.duck(1);
+    ps.forEach(p=>p.classList.remove('on'));T_.classList.remove('on');setTimeout(()=>{T_.hidden=true;T_.textContent='';},2800);},
+    3000+ps.length*3600+(ps.length?2200:0));
 }
 // 100% of the game (main mission passed and every side quest): the game ends with the author's thank-you
 function finale(){
