@@ -644,6 +644,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="slot opt" id="slot-convite" title="Carta-convite da Liga de Metabolismo"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="3" width="10" height="7" fill="#efe3c8"/><rect x="1" y="3" width="10" height="1" fill="#d8c79a"/><rect x="2" y="4" width="2" height="1" fill="#b3a38a"/><rect x="4" y="5" width="4" height="1" fill="#b3a38a"/><rect x="8" y="4" width="2" height="1" fill="#b3a38a"/><rect x="5" y="6" width="2" height="2" fill="#a12a22"/><rect x="4" y="6" width="1" height="1" fill="#7a2e3e"/></svg></div></div>
       <div class="slot opt" id="slot-distintivo" title="Distintivo de Monitor do Simulador"><div class="box"><svg viewBox="0 0 12 12"><rect x="4" y="0" width="4" height="3" fill="#2d6fb5"/><rect x="3" y="3" width="6" height="1" fill="#a8862a"/><rect x="2" y="4" width="8" height="6" fill="#c99a3c"/><rect x="3" y="10" width="6" height="1" fill="#a8862a"/><rect x="4" y="5" width="4" height="4" fill="#1f4a33"/><rect x="5" y="6" width="2" height="2" fill="#5aa865"/></svg></div></div>
       <div class="slot opt" id="slot-ligafolhas" title="Folhas dos desafios do Prof. Malvar"><div class="box"><svg viewBox="0 0 12 12"><rect x="3" y="1" width="7" height="9" fill="#d8c79a"/><rect x="2" y="2" width="7" height="9" fill="#ece0bf"/><rect x="3" y="4" width="5" height="1" fill="#5a3d24"/><rect x="3" y="6" width="5" height="1" fill="#5a3d24"/><rect x="3" y="8" width="3" height="1" fill="#5a3d24"/><rect x="6" y="8" width="3" height="3" fill="#a12a22"/><rect x="7" y="9" width="1" height="1" fill="#7a1e18"/></svg><b class="cnt" id="ligafolhas-cnt"></b></div></div>
+      <div class="slot opt" id="slot-chave" title="Chave do armário da Sala 101 (do Prof. Malvar)"><div class="box"><svg viewBox="0 0 12 12"><rect x="1" y="2" width="4" height="4" fill="#c99a3c"/><rect x="2" y="3" width="2" height="2" fill="#1d1612"/><rect x="5" y="3" width="6" height="2" fill="#c99a3c"/><rect x="8" y="5" width="1" height="2" fill="#c99a3c"/><rect x="10" y="5" width="1" height="3" fill="#c99a3c"/><rect x="1" y="6" width="4" height="1" fill="#8a6420"/></svg></div></div>
       <div class="slot opt" id="slot-chapeu" title="Chapéu da Liga (presente do Prof. Malvar)"><div class="box"><svg viewBox="0 0 12 12"><rect x="6" y="0" width="2" height="1" fill="#5e3f24"/><rect x="7" y="1" width="2" height="2" fill="#5e3f24"/><rect x="5" y="1" width="2" height="2" fill="#7a5634"/><rect x="4" y="3" width="4" height="2" fill="#7a5634"/><rect x="4" y="5" width="5" height="1" fill="#3e2816"/><rect x="3" y="6" width="6" height="2" fill="#97704a"/><rect x="4" y="6" width="1" height="1" fill="#1d1612"/><rect x="7" y="6" width="1" height="1" fill="#1d1612"/><rect x="0" y="8" width="12" height="2" fill="#7a5634"/><rect x="1" y="10" width="10" height="1" fill="#5e3f24"/></svg></div></div>
       <div class="slot" id="slot-cracha" title="Crachá"><div class="box"><svg viewBox="0 0 12 12"><rect x="5" y="0" width="2" height="3" fill="#2d6fb5"/><rect x="2" y="3" width="8" height="8" fill="#f4f6f4"/><rect x="2" y="3" width="8" height="2" fill="#2d6fb5"/><rect x="3" y="6" width="3" height="3" fill="#d9a37c"/><rect x="7" y="6" width="2" height="1" fill="#555"/><rect x="7" y="8" width="2" height="1" fill="#555"/></svg></div></div>
     </div>
@@ -698,7 +699,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.45 &middot; Última atualização: 17 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.47 &middot; Última atualização: 21 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1083,7 +1084,7 @@ function reset(){
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
   dialog=null;if($('laudo-mini'))$('laudo-mini').hidden=true;labOpen=false;startTime=0;rideSt=null;simPage='main';dz=null;if($('dz'))$('dz').hidden=true;endTime=0;gameMin=0;
-  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo','chapeu','ligafolhas'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';$('ligafolhas-cnt').textContent='';
+  ['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo','chapeu','ligafolhas','chave'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';$('ligafolhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
   if(typeof cat!=='undefined')catReset();
@@ -2797,23 +2798,28 @@ const TABLE_SHEETS=[1,2]; // on a study table in the 2nd-floor corridor (the pla
 // '' not answered, 'done' answered, 'ok'/'err' once the professors have graded it
 function examState(n){const a=provas&&provas[n];return !a?'':(flags.graded&&flags.pass)?(a.ok?'ok':'err'):'done';}
 const pileGone=list=>flags&&(flags.graded||(flags.held||[]).includes(list[0])); // collected into the inventory, or handed in
+// the search only begins after the professors say where the sheets may be (older saves: any sheet answered counts)
+function searchOn(){return !!(flags&&(flags.profs||answered()||flags.graded));}
+// before that a pile is just someone's papers, face down
+function strangePile(surf){say([{t:'Em cima da '+surf+', uma pilha de folhas viradas para baixo. Podem ser de qualquer turma.'},
+  {who:me(),t:'Melhor não mexer no que não é meu. Primeiro vou perguntar aos professores, na Sala 101, se eles viram as minhas folhas.'}]);}
 function examDesk(o,list,x,base){ // (a desk inside a classroom)
   if(!list)return o;
   const act0=o.act;
-  Object.defineProperty(o,'name',{get:()=>pileGone(list)?'Carteira':'Folhas da atividade'});
+  Object.defineProperty(o,'name',{get:()=>pileGone(list)||!searchOn()?'Carteira':'Folhas da atividade'});
   return Object.assign(o,{provas:list,key:()=>pileGone(list)?'gone':list.map(examState).join(','),
-    draw:()=>drawStudentDesk(x,base,pileGone(list)?null:{pile:list.map(examState)}),act:()=>pileGone(list)?act0():sheetPile(list)});
+    draw:()=>drawStudentDesk(x,base,pileGone(list)?null:{pile:list.map(examState)}),act:()=>pileGone(list)?act0():searchOn()?sheetPile(list):strangePile('carteira')});
 }
 // the study table by the library (2nd floor): its own drawing, same pile rules as the desks
 (()=>{
   const o=SCENES.andar2.find(o=>o.id==='mesa2_1'),act0=o.act,x=198,list=TABLE_SHEETS;
-  Object.defineProperty(o,'name',{get:()=>pileGone(list)?'Mesa de estudo':'Folhas da atividade'});
+  Object.defineProperty(o,'name',{get:()=>pileGone(list)||!searchOn()?'Mesa de estudo':'Folhas da atividade'});
   Object.assign(o,{provas:list,key:()=>pileGone(list)?'gone':list.map(examState).join(','),
     draw:()=>{g.save();g.translate(0,30);drawStudyTable(x);
       if(pileGone(list))studyItems1(x);
       else{r(x+5,123,12,8,'#efe3c8');r(x+6,124,10,1,'#9aa2a9');r(x+6,126,8,1,'#9aa2a9');drawSheetPile(x+29,126,list.map(examState));}
       g.restore();},
-    act:()=>pileGone(list)?act0():sheetPile(list,'mesa')});
+    act:()=>pileGone(list)?act0():searchOn()?sheetPile(list,'mesa'):strangePile('mesa')});
 })();
 // all the sheets of a pile answered: the player picks them up (inventory slot with the number of sheets held)
 function collectPile(list,room,surf='carteira'){
@@ -3558,6 +3564,7 @@ add({id:'caldeiraoProf',name:'Caldeirão do professor',cx:192,top:70,base:112,so
     provas:list,
     act:()=>{
       if(pileGone(list))return say([{t:'Uma mesinha de canto com um tinteiro e um bilhete: "Levar aos achados e perdidos." Riscado.'}]);
+      if(!searchOn())return say([{t:'Uma mesinha de canto com um tinteiro em cima de uns papéis. Coisas do Prof. Malvar: melhor não mexer.'}]);
       if(flags.folha3Vista)return sheetPile(list,'mesinha');
       flags.folha3Vista=true;
       say([{t:'Uma mesinha de canto. Debaixo de um tinteiro, uma folha com um bilhete preso por um clipe:'},
@@ -4065,7 +4072,8 @@ wanderer('andar1','tiago','Tiago (1º ano)',24,318,114,walkLook('tiago','shirt',
   'Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
   'A aldolase quebra a frutose-1,6-bisfosfato em duas trioses: DHAP e gliceraldeído-3-fosfato.']);
 wanderer('andar1','camila','Camila (monitora)',392,688,104,coatLook('camila',1.3),[
-  'Sou monitora de Bioquímica. Vi umas pilhas de folhas de lição esquecidas: numa carteira da 103, numa da 201 e numa mesa de estudo do 2º andar, perto da biblioteca. São suas?',
+  ()=>searchOn()?'Sou monitora de Bioquímica. Vi umas pilhas de folhas de lição esquecidas: numa carteira da 103, numa da 201 e numa mesa de estudo do 2º andar, perto da biblioteca. São suas?'
+    :'Sou monitora de Bioquímica. Perdeu alguma coisa? Os professores Neto e Rosa passaram pelas salas ontem, depois das aulas. Pergunte a eles, na Sala 101.',
   'Cada folha só pode ser respondida uma vez. Leia o cartaz da reação na parede antes de confirmar.',
   'Guarde isto: as reações 1, 3 e 10 são as irreversíveis da glicólise. Hexocinase, PFK-1 e piruvato-cinase.']);
 wanderer('andar1','bruna','Bruna (1º ano)',392,688,114,coatLook('bruna',2.9),[
@@ -4098,15 +4106,20 @@ tadeo.sitCool=Infinity; // he never sits: he watches
     'O cianeto nem encosta na glicólise. Ele vai direto na cadeia respiratória, no complexo IV... Mas isso é assunto para outro dia.',
     'Sabia que o meu nome tem exatamente as mesmas letras de outra coisa? Ninguém nunca percebeu. Você também não vai.',
     ()=>'Estude, '+nome1()+'. Quem entende a via sabe onde ela é forte... e onde ela é frágil.'];
-  const folhaPend=()=>!provas[10]&&!flags.graded;
+  const folhaPend=()=>!provas[10]&&!flags.graded&&searchOn();
+  // reaction 3 still missing and its table not seen yet: Tadeo lets slip, as if by chance, that Malvar keeps what he finds
+  const malvarTip=()=>flags.dicaMalvar||provas[3]||flags.folha3Vista||flags.graded||!searchOn()?[]:[
+    {who:TW,t:'O Prof. Malvar também tem mania de recolher papéis do chão. Ontem mesmo, no corredor do 2º andar, ele pegou um.'},
+    {who:TW,t:'Diz que leva tudo aos achados e perdidos. Nunca vi nada chegar lá. Deve ser mais interessante saber o que os outros esquecem.',
+     run:()=>{flags.dicaMalvar=true;setMood('tadeo','smug',5);}}];
   tadeo._folha=function(intro){ // asking about lost sheets: the sheet of reaction 10 (answered right there, or kept by him)
     stopChat(this);this.wait=8;this.dir=faceTo(this,player);setMood('tadeo','smug',6);
     const L=intro||[{who:me(),t:flags.folha10?'Tadeo, sobre aquela folha da reação 10...':'Com licença... Você por acaso viu alguma folha de atividade perdida? De glicólise.'}];
-    say(L.concat(flags.folha10?[{who:TW,t:'Ainda em branco. Que decepção.'}]:[
+    say(L.concat(flags.folha10?[{who:TW,t:'Ainda em branco. Que decepção.'},...malvarTip()]:[
       {who:TW,t:'Folha de glicólise? ...Esta aqui?'},
       {who:TW,t:'Achei ontem no chão da Sala 201, quando fechei as salas do andar. Reação 10: a piruvato-cinase. A última porta da via.'},
       {who:TW,t:'Curioso alguém perder justo a reação que decide se tudo valeu a pena.'},
-      {t:'O Tadeo estende a folha, mas demora um instante para soltar.',run:()=>{flags.folha10=true;}},
+      {t:'O Tadeo estende a folha, mas demora um instante para soltar.',run:()=>{flags.folha10=true;}},...malvarTip(),
       {who:TW,t:'Responda aqui mesmo. Quero ver se você sabe.'}]).concat([{who:TW,t:'E então?',choices:[
         {t:'Responder a folha da reação 10',fn:()=>{openQuiz(10);if(quiz)pileBack={list:TADEO_SHEETS,surf:'tadeo'};}},
         {t:'Agora não',fn:()=>say([{t:'O Tadeo dobra a folha e guarda no bolso do colete.'},{who:TW,t:'Quando quiser, ela está comigo.'}])}]}]));
@@ -4121,6 +4134,7 @@ tadeo.sitCool=Infinity; // he never sits: he watches
         {who:TW,t:'Funcionar é fácil. Controlar é que é interessante. Quem controla a enzima certa controla a célula inteira.'},
         {who:TW,t:'Não me olhe assim. Estou falando de Bioquímica, é claro.',run:()=>setMood('player','worried',3)}]);
       return ask.length?tadeo._folha.call(this,P.concat([{who:TW,t:'Mas você perguntou de uma folha.'}])):say(P);}
+    {const T=flags.folha10?malvarTip():[];if(T.length)return say([{who:TW,t:'Ainda procurando folhas, '+nome1()+'?'}].concat(T));}
     if(flags.alost===6&&!flags.tadeoLiga){flags.tadeoLiga=true;setMood('tadeo','angry',5);
       return say([{who:TW,t:'Esse selo no seu bolso... Então a Liga de Metabolismo mandou um convite para '+gen('um calouro','uma caloura')+'.'},
         {who:TW,t:'A mim, nunca mandaram. Três anos. Eu teria passado pelas dez portas de olhos fechados.'},
@@ -5032,10 +5046,10 @@ function openQuiz(n){
   $('quiz-bar').textContent=lg?'DESAFIO DA LIGA · '+via+' · FOLHA '+n[1]+' DE 8':isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
   $('quiz-head').textContent=lg?'LIGA DE METABOLISMO · DESAFIO DO PROF. E. M.':'UNINOGWARTS · ATIVIDADE DE BIOQUÍMICA';
   $('quiz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
-  $('quiz-title').textContent=lg?'Folha '+n[1]+': '+q.t:isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
+  $('quiz-title').textContent=lg?'Folha '+n[1]+' · Caso clínico':isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
   quizEl.querySelector('.sheet').classList.toggle('bonus',isBonus(n));
   quizEl.querySelector('.sheet').classList.toggle('liga',lg);
-  $('quiz-sub').textContent=lg?'Desafio da '+via.toLowerCase()+' · caso clínico':q.sub;
+  $('quiz-sub').textContent=lg?'Desafio da '+via.toLowerCase():q.sub;
   $('quiz-q').innerHTML=q.q;
   quizOpts.textContent='';
   q.o.forEach((t,i)=>{
@@ -8491,7 +8505,7 @@ function topicMenu(o,who,greet,topics){
     {label:()=>'O caderno do Tiago',ok:()=>flags.tiagoQ===3,run(){return zelObj._tiagoAct.call(this);}},
     {label:()=>'A bolsa de sangue do Prof. Kiko',ok:()=>flags.bolsaQ===4,run(){return zelObj._bolsa.call(this);}}]);
   { // Tadeo: the sheet comes first only when it is the one thing to talk about
-    const a0=tadeo.act,TW2='TADEO (3º ANO)',folha=()=>!!flags.tadeo&&!provas[10]&&!flags.graded;
+    const a0=tadeo.act,TW2='TADEO (3º ANO)',folha=()=>!!flags.tadeo&&!provas[10]&&!flags.graded&&searchOn();
     const others=[
       {label:()=>'O livro que sumiu',ok:()=>flags.td===5&&!flags.tdSlip},
       {label:()=>'Mostrar o convite outra vez',ok:()=>flags.td===6&&!flags.tdTrap},
@@ -8659,6 +8673,7 @@ function ligaSlot(pop){
   const n=(flags.lgHeld||[]).length,s_=$('slot-ligafolhas');
   s_.classList.toggle('got',n>0);$('ligafolhas-cnt').textContent=n?n:'';
   if(pop&&n){s_.classList.add('pop');setTimeout(()=>s_.classList.remove('pop'),600);}
+  $('slot-chave').classList.toggle('got',!!flags.lgChave); // Malvar's cabinet key, from the galactose challenge until it is returned
 }
 // a grade out of 10, the Brazilian way ("7,5"); the final one counts the 16 sheets
 const ligaN10=(n,of)=>(n/of*10).toFixed(1).replace('.',',');
@@ -8744,7 +8759,7 @@ function ligaGrade(set){
   malvar.dir='down';music.duck(.3);setMood('malvar','smug',60);
   const L=[{who:MW,t:'Dê-me isso.'},
     {t:'O professor puxa as folhas da sua mão. Molha a pena no tinteiro e lê em pé, em silêncio. Devagar. Muito devagar.'}];
-  if(set==='G1')L.push({who:MW,t:'E a chave do armário. ...Inteira. Surpreendente.',run:()=>{flags.lgChave=false;}});
+  if(set==='G1')L.push({who:MW,t:'E a chave do armário. ...Inteira. Surpreendente.',run:()=>{flags.lgChave=false;ligaSlot();sfx.item();}});
   list.forEach(n=>{const q=LIGA_Q[n],a=ansOf(n);
     L.push({t:'Folha '+n[1]+' · '+q.t+'.',run:()=>setMood('malvar','smug',60)});
     if(a&&a.ok)L.push({who:MW,t:q.ok,run:()=>{setMood('malvar','smug',60);sfx.blip();}});
@@ -8842,10 +8857,10 @@ function ligaOffer(again){
     {who:MW,t:'Então? Aceita, ou prefere voltar para o caça-palavras da monitoria?',choices:ch}]);
 }
 function ligaAccept(){
-  flags.lgG=1;flags.lgChave=true;
+  flags.lgG=1;flags.lgChave=true;ligaSlot();
   say([{who:MW,t:'Veremos.'},
     {who:MW,t:'Galactose: as quatro primeiras folhas estão trancadas no armário da Sala 101. Tome a chave.'},
-    {t:'Você pegou: CHAVE DO ARMÁRIO DA SALA 101',run:()=>sfx.item()},
+    {t:'Você pegou: CHAVE DO ARMÁRIO DA SALA 101',run:()=>{sfx.item();ligaSlot();const s_=$('slot-chave');s_.classList.add('pop');setTimeout(()=>s_.classList.remove('pop'),600);}},
     {who:MW,t:flags.malvarFolha?'Não a perca. Como perdeu a folha da reação 3.':'Não a perca. Detesto alunos que perdem coisas.'},
     {who:MW,t:'Responda e traga as folhas para mim. Eu corrijo. Pessoalmente. Só então digo onde está o resto.'},
     {who:MW,t:'E nada de pedir ajuda aos colegas. Eu sempre fico sabendo. O gato me conta.',run:()=>updatePauseExtra()}]);
@@ -10495,6 +10510,11 @@ requestAnimationFrame(loop);
       if (e && e.type === 'click') e.stopPropagation();
       feito = true;
       window.removeEventListener('keydown', abrir, true);
+      // o mesmo clique (ou tecla) também põe o jogo em tela cheia; pelo controle o navegador não deixa, e segue sem ela
+      if (e && !(document.fullscreenElement || document.webkitFullscreenElement)){
+        var tc = document.documentElement, pedir = tc.requestFullscreen || tc.webkitRequestFullscreen;
+        if (pedir){ try { var pr = pedir.call(tc); if (pr && pr.catch) pr.catch(function(){}); } catch(err){} }
+      }
       if (p.parentNode) p.parentNode.removeChild(p);
       seguir();
     }

@@ -3159,6 +3159,11 @@ body{
       if (e && e.type === 'click') e.stopPropagation();
       feito = true;
       window.removeEventListener('keydown', abrir, true);
+      // o mesmo clique (ou tecla) também põe o jogo em tela cheia; pelo controle o navegador não deixa, e segue sem ela
+      if (e && !(document.fullscreenElement || document.webkitFullscreenElement)){
+        var tc = document.documentElement, pedir = tc.requestFullscreen || tc.webkitRequestFullscreen;
+        if (pedir){ try { var pr = pedir.call(tc); if (pr && pr.catch) pr.catch(function(){}); } catch(err){} }
+      }
       if (p.parentNode) p.parentNode.removeChild(p);
       seguir();
     }

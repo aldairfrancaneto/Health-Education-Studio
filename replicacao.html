@@ -17,6 +17,7 @@
   --blue:#4F9BD9; --blue-soft:#BEE0F5;
   --coral:#E08A55; --coral-soft:#F5CDB4;
   --jog0:#3E9E5E; --jog0-soft:#9BE0B0; --jog1:#D9791E; --jog1-soft:#F5C089;
+  --jog2:#C9524C; --jog2-soft:#F0A9A4; --jog3:#3E86C4; --jog3-soft:#8FC8F6;
   --ink:#2B1B0E; --paper:#FFF8E7;
   --font-pixel:'Press Start 2P',monospace;
   --font-serif:'Cinzel',serif;
@@ -322,6 +323,13 @@ body{
   background:rgba(30,110,45,.45);
 }
 .rep-slot.errado::after{ content:"✗"; background:rgba(180,30,26,.55); }
+/* Desafio: carta já junto de outra do mesmo trio (trio ainda incompleto) — selo ✓ no canto, carta legível */
+.rep-slot.combina{ border-color:var(--green); box-shadow:0 0 0 3px rgba(76,175,80,.4); }
+.rep-slot.combina::after{
+  content:"✓"; position:absolute; top:3px; left:3px; z-index:4;
+  width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#fff; background:var(--green); box-shadow:0 1px 4px rgba(0,0,0,.6);
+}
 .rep-slot.travado{ pointer-events:none; }
 .rep-slot.travado .rep-lupa{ pointer-events:auto; z-index:5; }
 .rep-slot.marcado{ border-color:var(--ac-soft); box-shadow:0 0 0 3px rgba(190,235,244,.55), 0 8px 20px rgba(0,0,0,.55); }
@@ -399,6 +407,8 @@ body{
 }
 .rep-sorteio-nome.jog0{ border-color:var(--jog0); } .rep-sorteio-nome.jog0 .pino{ background:var(--jog0); }
 .rep-sorteio-nome.jog1{ border-color:var(--jog1); } .rep-sorteio-nome.jog1 .pino{ background:var(--jog1); }
+.rep-sorteio-nome.jog2{ border-color:var(--jog2); } .rep-sorteio-nome.jog2 .pino{ background:var(--jog2); }
+.rep-sorteio-nome.jog3{ border-color:var(--jog3); } .rep-sorteio-nome.jog3 .pino{ background:var(--jog3); }
 .rep-sorteio-nome.aceso{ opacity:1; transform:translateY(-4px) scale(1.06); box-shadow:0 0 0 3px rgba(255,210,63,.4); }
 .rep-sorteio-nome.venceu{
   opacity:1; transform:scale(1.12);
@@ -422,6 +432,8 @@ body{
 .chal-vez-ov.on{ display:flex; animation:repVdFade 3s ease forwards; }
 .chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
 .chal-vez-ov.jog1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+.chal-vez-ov.jog2{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-soft); }
+.chal-vez-ov.jog3{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-soft); }
 .chal-vez-cx{ position:relative; text-align:center; animation:repVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
 .chal-vez-raios{
   position:absolute; left:50%; top:50%; width:min(120vw,900px); height:min(120vw,900px);
@@ -569,7 +581,11 @@ body{
   font-family:var(--font-pixel); font-size:10px; color:#06161C;
   background:var(--ac-soft); border-radius:6px; padding:6px 8px; flex:0 0 auto;
 }
+.rep-chal-nome-campo.j0 .ficha{ background:var(--jog0-soft); }
 .rep-chal-nome-campo.j1 .ficha{ background:var(--jog1-soft); }
+.rep-chal-nome-campo.j2 .ficha{ background:var(--jog2-soft); }
+.rep-chal-nome-campo.j3 .ficha{ background:var(--jog3-soft); }
+.rep-chal-nomes-dica{ text-align:center; font-family:var(--font-book); font-size:14px; color:var(--ac-soft); opacity:.8; margin:-4px 0 0; }
 .rep-chal-nome-campo input{
   flex:1; min-width:0; background:none; border:none; outline:none;
   font-family:var(--font-serif); font-weight:700; font-size:15px; color:#E8EEF7;
@@ -597,14 +613,20 @@ body{
 .rep-chal-jog .pontos{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.04em; color:rgba(232,238,247,.65); }
 .rep-chal-jog.jog0{ border-color:var(--jog0); }
 .rep-chal-jog.jog1{ border-color:var(--jog1); }
+.rep-chal-jog.jog2{ border-color:var(--jog2); }
+.rep-chal-jog.jog3{ border-color:var(--jog3); }
 .rep-chal-jog.ativo.jog0{ box-shadow:0 0 0 3px rgba(62,158,94,.4), 0 0 18px rgba(62,158,94,.35); }
 .rep-chal-jog.ativo.jog1{ box-shadow:0 0 0 3px rgba(217,121,30,.4), 0 0 18px rgba(217,121,30,.35); }
+.rep-chal-jog.ativo.jog2{ box-shadow:0 0 0 3px rgba(201,82,76,.4), 0 0 18px rgba(201,82,76,.35); }
+.rep-chal-jog.ativo.jog3{ box-shadow:0 0 0 3px rgba(62,134,196,.4), 0 0 18px rgba(62,134,196,.35); }
 .rep-chal-jog.ativo .pontos{ color:#fff; }
 
 /* ===== os dois quadros do Desafio pegam a cor do jogador da vez, cada um com
    o próprio contorno (não mais o tabuleiro externo inteiro) ===== */
 #repChalTabuleiro[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
 #repChalTabuleiro[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+#repChalTabuleiro[data-turno="2"]{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-soft); }
+#repChalTabuleiro[data-turno="3"]{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-soft); }
 
 #repChalTabuleiro.chal-ativo .chal-quadro{
   border-color:var(--chal-cor);
@@ -640,9 +662,13 @@ body{
 }
 .rep-chal-dono.jog0{ background:var(--jog0); }
 .rep-chal-dono.jog1{ background:var(--jog1); }
+.rep-chal-dono.jog2{ background:var(--jog2); }
+.rep-chal-dono.jog3{ background:var(--jog3); }
 /* --- estação ganha: pintada com a cor do jogador que a venceu (borda, fundo, brilho e troféu) --- */
 .rep-estacao.rep-chal-vencida.jog0{ --venc:var(--jog0); --venc-claro:var(--jog0-soft); }
 .rep-estacao.rep-chal-vencida.jog1{ --venc:var(--jog1); --venc-claro:var(--jog1-soft); }
+.rep-estacao.rep-chal-vencida.jog2{ --venc:var(--jog2); --venc-claro:var(--jog2-soft); }
+.rep-estacao.rep-chal-vencida.jog3{ --venc:var(--jog3); --venc-claro:var(--jog3-soft); }
 .rep-estacao.rep-chal-vencida{
   position:relative; border-color:var(--venc);
   background:linear-gradient(180deg, color-mix(in srgb, var(--venc) 34%, rgba(10,20,36,.6)), color-mix(in srgb, var(--venc) 14%, rgba(10,20,36,.6)));
@@ -1137,7 +1163,7 @@ body{
         <span class="rep-sel-trilhas">
           <i class="c-c"></i><i class="c-d"></i><i class="c-k"></i> Monte o trio do zero
         </span>
-        <span class="rep-sel-tag">2 jogadores · por turnos</span>
+        <span class="rep-sel-tag">2 a 4 jogadores · por turnos</span>
       </button>
 
     </div>
@@ -1145,12 +1171,15 @@ body{
 
   <div class="rep-selecao" id="repChalNomes">
     <div class="rep-sel-cab">
-      <span class="rep-sel-titulo">Desafio · 2 jogadores</span>
+      <span class="rep-sel-titulo">Desafio · 2 a 4 jogadores</span>
       <span class="rep-sel-sub">Quem vai duelar?</span>
     </div>
     <div class="rep-chal-nomes-cx">
       <div class="rep-chal-nome-campo j0"><span class="ficha">J1</span><input id="repChalNome0" type="text" maxlength="16" placeholder="Jogador 1" value="Jogador 1"></div>
       <div class="rep-chal-nome-campo j1"><span class="ficha">J2</span><input id="repChalNome1" type="text" maxlength="16" placeholder="Jogador 2" value="Jogador 2"></div>
+      <div class="rep-chal-nome-campo j2"><span class="ficha">J3</span><input id="repChalNome2" type="text" maxlength="16" placeholder="Jogador 3 (opcional)" value=""></div>
+      <div class="rep-chal-nome-campo j3"><span class="ficha">J4</span><input id="repChalNome3" type="text" maxlength="16" placeholder="Jogador 4 (opcional)" value=""></div>
+      <p class="rep-chal-nomes-dica">J3 e J4 são opcionais: deixe em branco para jogar em menos.</p>
       <div class="rep-chal-nomes-acoes">
         <button class="btn-board" id="repChalNomesVoltar" type="button">↩ Voltar</button>
         <button class="btn-board principal" id="repChalNomesOk" type="button">Começar duelo ▶</button>
@@ -1246,7 +1275,7 @@ body{
     <!-- área 1: painel do turno (moldura dourada própria) -->
       <!-- botões da partida: fora das áreas, sempre no topo -->
       <div class="hud chal-hud-topo">
-          <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/13</b></span>
+          <span class="hud-item" id="repChalHudPos">TRIOS FECHADOS: <b>0/12</b></span>
           <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
           <button class="btn-board principal" id="repChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
           <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
@@ -1365,7 +1394,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.8 &middot; Última atualização: 30 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.11 &middot; Última atualização: 21 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -2022,12 +2051,13 @@ body{
   });
 
   /* ==============================================================
-     MODO DESAFIO (Challenger) — 2 jogadores, sem cartas especiais.
+     MODO DESAFIO (Challenger) — 2 a 4 jogadores, sem cartas especiais.
      Baralho único com os 39 cartões (categoria + definição + clínica
-     dos 13 trios, tudo por sortear). Vence quem "fechar" mais trios —
+     de 12 dos 13 trios — sem o do licenciamento —, tudo por sortear). Vence quem "fechar" mais trios —
      um trio fecha quando as 3 cartas da estação estão certas, e é
-     creditado a quem encaixou 2 das 3 corretamente (nunca dá empate,
-     porque 13 trios/2 jogadores nunca fecham 50-50).
+     creditado a quem encaixou mais cartas dele (com 3+ jogadores, se as 3
+     cartas são de 3 jogadores diferentes, leva quem fechou o trio). Com 2
+     jogadores o placar pode empatar em 6 a 6 (12 trios), e com 3 ou 4 também.
      ============================================================== */
   const repChalTabuleiro   = document.getElementById('repChalTabuleiro');
   const repChalCampo       = document.getElementById('repChalCampo');
@@ -2042,6 +2072,9 @@ body{
   const repChalRevisarBtn = document.getElementById('repChalRevisar');
   const repChalTrocarModoBtn  = document.getElementById('repChalTrocarModo');
 
+  /* o Desafio joga sem o trio do licenciamento das origens (t2): 12 trios, 36 cartas */
+  const CHAL_REP_FORA = ['t2'];
+  const CHAL_REP_TRIOS = REP_TRIOS.filter(function(t){ return CHAL_REP_FORA.indexOf(t.id) < 0; });
   const CHAL_REP_VAZIO = { conceito:'CATEGORIA', def:'DEFINIÇÃO<br>E FUNÇÃO', clin:'CONEXÃO<br>CLÍNICA' };
 
   const CHAL_REP = {
@@ -2086,11 +2119,11 @@ body{
   }
   function chalRepMontarTabuleiro(){
     repChalCampo.innerHTML = '';
-    REP_TRIOS.forEach(function(t){ repChalCampo.appendChild(chalRepCriarEstacao(t)); });
+    CHAL_REP_TRIOS.forEach(function(t){ repChalCampo.appendChild(chalRepCriarEstacao(t)); });
   }
   function chalRepMontarDeck(){
     const deck = [];
-    REP_TRIOS.forEach(function(t){
+    CHAL_REP_TRIOS.forEach(function(t){
       deck.push({tipo:'conceito', chave:t.id});
       deck.push({tipo:'def', chave:t.id});
       deck.push({tipo:'clin', chave:t.id});
@@ -2258,7 +2291,7 @@ body{
   function chalRepEsvaziarSlot(slot){
     const tipo = slot.dataset.tipo;
     slot.dataset.posto = '';
-    slot.classList.remove('cheio','certo','errado','marcado');
+    slot.classList.remove('cheio','certo','errado','marcado','combina');
     slot.innerHTML = chalRepVazioHTML(tipo);
   }
   function chalRepPreencherSlot(slot, chave){
@@ -2267,7 +2300,7 @@ body{
     slot.dataset.posto = chave;
     slot.dataset.autor = String(CHAL_REP.turno);     /* quem posicionou (conta na maioria do trio) */
     CHAL_REP.movidos.add(slot);
-    slot.classList.remove('certo','errado','marcado');
+    slot.classList.remove('certo','errado','marcado','combina');
     slot.classList.add('cheio');
     slot.innerHTML = '';
     slot.appendChild(repMontarMini(tipo, trio));
@@ -2314,15 +2347,17 @@ body{
 
   function chalRepAtualizarHud(){
     const feitos = repChalCampo.querySelectorAll('.rep-estacao.rep-chal-vencida').length;
-    repChalHudPos.innerHTML = 'TRIOS FECHADOS: <b>' + feitos + '/' + REP_TRIOS.length + '</b>';
+    repChalHudPos.innerHTML = 'TRIOS FECHADOS: <b>' + feitos + '/' + CHAL_REP_TRIOS.length + '</b>';
   }
   /* trio recém-fechado: a estação (1 ponto) é de quem acertou mais cartas dela — maioria de 2 das 3;
      cada carta fica registrada com quem a posicionou (selo numerado) */
   function chalRepChecarTrio(est){
     const slots = est.querySelectorAll('.rep-slot');
-    const contagem = [0, 0];
+    const contagem = CHAL_REP.jogadores.map(function(){ return 0; });
     Array.prototype.forEach.call(slots, function(s){ contagem[Number(s.dataset.dono)]++; });
-    const vencedor = contagem[0] >= contagem[1] ? 0 : 1;
+    const max = Math.max.apply(null, contagem);
+    /* 1-1-1 (3 jogadores diferentes): fica com quem fechou o trio — ele sempre tem uma carta nele */
+    const vencedor = contagem[CHAL_REP.turno] === max ? CHAL_REP.turno : contagem.indexOf(max);
     CHAL_REP.jogadores[vencedor].pontos++;
     est.classList.add('rep-chal-vencida', 'jog' + vencedor);
     chalRepAtualizarHud();
@@ -2393,15 +2428,18 @@ body{
     const ov = document.getElementById('repChalVeredito');
     if (!ov){ if (cb) cb(); return; }
     ov.classList.remove('acerto','erro','neutro');
-    ov.classList.add(tipo);
-    document.getElementById('repVdIco').textContent = tipo === 'acerto' ? '✅' : tipo === 'erro' ? '❌' : '📌';
+    ov.classList.add(tipo === 'par' ? 'acerto' : tipo);   /* 'par': carta junto do seu trio, ainda incompleto */
+    document.getElementById('repVdIco').textContent = tipo === 'acerto' || tipo === 'par' ? '✅' : tipo === 'erro' ? '❌' : '📌';
     document.getElementById('repVdTit').innerHTML = tipo === 'acerto'
       ? '<b>' + repChalEsc(nome) + '</b> FECHOU ' + trios + (trios === 1 ? ' TRIO!' : ' TRIOS!')
+      : tipo === 'par'
+        ? '<b>' + repChalEsc(nome) + '</b> ACERTOU! A CARTA É DESTE TRIO'
       : tipo === 'erro'
         ? '<b>' + repChalEsc(nome) + '</b> ERROU O TRIO!'
         : '<b>' + repChalEsc(nome) + '</b> POSICIONOU A CARTA';
     document.getElementById('repVdSub').textContent = erradas > 0
       ? erradas + (erradas === 1 ? ' carta ainda fora do lugar.' : ' cartas ainda fora do lugar.')
+      : tipo === 'par' ? 'Falta uma carta para fechar o trio.'
       : (tipo === 'acerto' ? 'Nenhuma carta fora do lugar até aqui.'
         : tipo === 'neutro' ? 'Ainda não há trio para conferir nessa estação.' : '');
     ov.classList.remove('on'); void ov.offsetWidth; ov.classList.add('on');
@@ -2428,12 +2466,12 @@ body{
        porque um reposicionamento também pode ter formado um trio que estava
        errado desde um turno anterior. O que vale é o TRIO na mesma estação
        (conceito + definição + clínica do mesmo tema), em qualquer posição do campo. */
-    let fechados = 0, erradas = 0, erradasMov = 0;
+    let fechados = 0, erradas = 0, erradasMov = 0, acertosMov = 0;
     const novos = [];
     repChalCampo.querySelectorAll('.rep-estacao').forEach(function(est){
       const slots = [].slice.call(est.querySelectorAll('.rep-slot'));
       if (slots.every(function(sl){ return sl.classList.contains('travado'); })) return;
-      slots.forEach(function(sl){ sl.classList.remove('errado'); });
+      slots.forEach(function(sl){ sl.classList.remove('errado', 'combina'); });
       const cheios = slots.filter(function(sl){ return sl.dataset.posto; });
       const cont = {};
       cheios.forEach(function(sl){ cont[sl.dataset.posto] = (cont[sl.dataset.posto] || 0) + 1; });
@@ -2441,6 +2479,7 @@ body{
       if (cheios.length === slots.length && chaves.length === 1){
         fechados++;
         cheios.forEach(function(sl){
+          sl.classList.remove('combina');
           /* cada carta fica com quem a posicionou; a pré-posicionada (sem autor) fica com quem fecha o trio */
           const a = sl.dataset.autor ? parseInt(sl.dataset.autor, 10) : CHAL_REP.turno;
           sl.dataset.dono = a;
@@ -2463,13 +2502,17 @@ body{
           sl.classList.add('errado');
           erradas++;
           if (CHAL_REP.movidos.has(sl)) erradasMov++;
+        } else if (maj !== null){
+          /* junto de outra carta do mesmo trio: acerto parcial, avisado já neste turno */
+          sl.classList.add('combina');
+          if (CHAL_REP.movidos.has(sl)) acertosMov++;
         }
       });
     });
-    const tipoVd = fechados > 0 ? 'acerto'
+    const tipoVd = fechados > 0 ? 'acerto' : acertosMov > 0 ? 'par'
       : ((erradasMov > 0 || (!CHAL_REP.movidos.size && erradas > 0)) ? 'erro' : 'neutro');
     CHAL_REP.movidos.clear();
-    if (fechados > 0) somEncaixe(); else if (tipoVd === 'erro') somErro();
+    if (fechados > 0 || tipoVd === 'par') somEncaixe(); else if (tipoVd === 'erro') somErro();
     novos.forEach(chalRepChecarTrio);
 
     /* veredito (5 s) só então dá lugar ao aviso de vez do próximo jogador (3 s) —
@@ -2497,9 +2540,12 @@ body{
     chalRepAtualizarResto();
     repChalEncerrarBtn.disabled = true;
     const jogadores = CHAL_REP.jogadores;
-    const vencedor = jogadores[0].pontos >= jogadores[1].pontos ? jogadores[0] : jogadores[1];
+    const max = Math.max.apply(null, jogadores.map(function(j){ return j.pontos; }));
+    const lideres = jogadores.filter(function(j){ return j.pontos === max; });
+    const titulo = lideres.length === 1 ? '🏆 ' + repChalEsc(lideres[0].nome) + ' venceu!'
+      : '🤝 Empate entre ' + lideres.map(function(j){ return repChalEsc(j.nome); }).join(lideres.length === 2 ? ' e ' : ', ').replace(/, ([^,]*)$/, ' e $1') + '!';
     repChalResultado.className = 'on vitoria';
-    repChalResultado.innerHTML = '<span class="grande">🏆 ' + repChalEsc(vencedor.nome) + ' venceu!</span>' +
+    repChalResultado.innerHTML = '<span class="grande">' + titulo + '</span>' +
       jogadores.map(function(j){ return repChalEsc(j.nome) + ': ' + j.pontos + ' trio' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
     chalRepRenderVez('🏁 Fim de jogo!');
     chalRepRenderPlacar();
@@ -2963,13 +3009,16 @@ body{
   }
 
   document.getElementById('repChalNomesOk').addEventListener('click', function(){
-    const n0 = document.getElementById('repChalNome0').value.trim() || 'Jogador 1';
-    const n1 = document.getElementById('repChalNome1').value.trim() || 'Jogador 2';
+    /* J1 e J2 sempre jogam (nome padrão se em branco); J3 e J4 só entram se tiverem nome */
+    const nomes = [0, 1, 2, 3].map(function(i){
+      const v = document.getElementById('repChalNome' + i).value.trim();
+      return v || (i < 2 ? 'Jogador ' + (i + 1) : '');
+    }).filter(Boolean);
     repEsconderTudo();
     repChalTabuleiro.style.display = '';
     /* posiciona a página no tabuleiro ANTES de abrir as animações (instantâneo) */
     repChalTabuleiro.scrollIntoView({behavior:'instant', block:'start'});
-    chalRepIniciar([n0, n1]);
+    chalRepIniciar(nomes);
     somClique();
   });
   repChalReiniciarBtn.addEventListener('click', function(){
@@ -3168,6 +3217,11 @@ body{
       if (e && e.type === 'click') e.stopPropagation();
       feito = true;
       window.removeEventListener('keydown', abrir, true);
+      // o mesmo clique (ou tecla) também põe o jogo em tela cheia; pelo controle o navegador não deixa, e segue sem ela
+      if (e && !(document.fullscreenElement || document.webkitFullscreenElement)){
+        var tc = document.documentElement, pedir = tc.requestFullscreen || tc.webkitRequestFullscreen;
+        if (pedir){ try { var pr = pedir.call(tc); if (pr && pr.catch) pr.catch(function(){}); } catch(err){} }
+      }
       if (p.parentNode) p.parentNode.removeChild(p);
       seguir();
     }
