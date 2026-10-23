@@ -23,6 +23,7 @@
   --card-w-mao:calc(var(--card-w) * 1.15);
   /* cores dos jogadores no modo Desafio */
   --jog0:#3E86C4; --jog0-soft:#8FC8F6; --jog1:#C9524C; --jog1-soft:#F0A9A4;
+  --jog2:#3E9E5E; --jog2-soft:#8FD7AB; --jog3:#E0982E; --jog3-soft:#F2C88C;
 }
 *{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -545,6 +546,8 @@ body{
     background:var(--jog0-soft); border-radius:6px; padding:6px 8px; flex:0 0 auto;
   }
   .chal-nome-campo.j1 .ficha{ background:var(--jog1-soft); }
+  .chal-nome-campo.j2 .ficha{ background:var(--jog2-soft); }
+  .chal-nome-campo.j3 .ficha{ background:var(--jog3-soft); }
   .chal-nome-campo input{
     flex:1; min-width:0; background:none; border:none; outline:none;
     font-family:var(--font-serif); font-weight:700; font-size:15px; color:#E8EEF7;
@@ -573,8 +576,12 @@ body{
   .les-chal-jog .pontos{ font-family:var(--font-pixel); font-size:10px; letter-spacing:.04em; color:rgba(232,238,247,.65); }
   .les-chal-jog.jog0{ border-color:var(--jog0); }
   .les-chal-jog.jog1{ border-color:var(--jog1); }
+  .les-chal-jog.jog2{ border-color:var(--jog2); }
+  .les-chal-jog.jog3{ border-color:var(--jog3); }
   .les-chal-jog.ativo.jog0{ box-shadow:0 0 0 3px rgba(62,134,196,.4), 0 0 18px rgba(62,134,196,.35); }
   .les-chal-jog.ativo.jog1{ box-shadow:0 0 0 3px rgba(201,82,76,.4), 0 0 18px rgba(201,82,76,.35); }
+  .les-chal-jog.ativo.jog2{ box-shadow:0 0 0 3px rgba(62,158,94,.4), 0 0 18px rgba(62,158,94,.35); }
+  .les-chal-jog.ativo.jog3{ box-shadow:0 0 0 3px rgba(224,152,46,.4), 0 0 18px rgba(224,152,46,.35); }
   .les-chal-jog.ativo .pontos{ color:#fff; }
 
   /* tabuleiro do Desafio define a cor do jogador da vez (herdada pelos dois
@@ -582,6 +589,8 @@ body{
      externo inteiro) */
   #lesChalTabuleiro[data-turno="0"]{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
   #lesChalTabuleiro[data-turno="1"]{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+  #lesChalTabuleiro[data-turno="2"]{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-soft); }
+  #lesChalTabuleiro[data-turno="3"]{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-soft); }
   #lesChalTabuleiro.chal-ativo .les-chal-vez{
     border-left:6px solid var(--chal-cor); padding-left:10px;
     background:linear-gradient(90deg, color-mix(in srgb, var(--chal-cor) 26%, rgba(10,20,36,.7)), rgba(10,20,36,.7) 60%);
@@ -613,9 +622,13 @@ body{
   }
   .les-chal-dono.jog0{ background:var(--jog0); }
   .les-chal-dono.jog1{ background:var(--jog1); }
+  .les-chal-dono.jog2{ background:var(--jog2); }
+  .les-chal-dono.jog3{ background:var(--jog3); }
   /* --- estação ganha: pintada com a cor do jogador que a venceu (borda, fundo, brilho e troféu) --- */
   .estacao.les-chal-vencida.jog0{ --venc:var(--jog0); --venc-claro:var(--jog0-soft); }
   .estacao.les-chal-vencida.jog1{ --venc:var(--jog1); --venc-claro:var(--jog1-soft); }
+  .estacao.les-chal-vencida.jog2{ --venc:var(--jog2); --venc-claro:var(--jog2-soft); }
+  .estacao.les-chal-vencida.jog3{ --venc:var(--jog3); --venc-claro:var(--jog3-soft); }
   .estacao.les-chal-vencida{
     position:relative; border-color:var(--venc);
     background:linear-gradient(180deg, color-mix(in srgb, var(--venc) 34%, rgba(10,20,36,.6)), color-mix(in srgb, var(--venc) 14%, rgba(10,20,36,.6)));
@@ -769,6 +782,8 @@ body{
   }
   .les-sorteio-nome.jog0{ border-color:var(--jog0); } .les-sorteio-nome.jog0 .pino{ background:var(--jog0); }
   .les-sorteio-nome.jog1{ border-color:var(--jog1); } .les-sorteio-nome.jog1 .pino{ background:var(--jog1); }
+  .les-sorteio-nome.jog2{ border-color:var(--jog2); } .les-sorteio-nome.jog2 .pino{ background:var(--jog2); }
+  .les-sorteio-nome.jog3{ border-color:var(--jog3); } .les-sorteio-nome.jog3 .pino{ background:var(--jog3); }
   .les-sorteio-nome.aceso{ opacity:1; transform:translateY(-4px) scale(1.06); box-shadow:0 0 0 3px rgba(255,210,63,.4); }
   .les-sorteio-nome.venceu{
     opacity:1; transform:scale(1.12);
@@ -793,6 +808,8 @@ body{
      cor por jogador em vez de herdar o --chal-cor do tabuleiro */
   .chal-vez-ov.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
   .chal-vez-ov.jog1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+  .chal-vez-ov.jog2{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-soft); }
+  .chal-vez-ov.jog3{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-soft); }
   .chal-vez-ov.on{ display:flex; animation:lesVdFade 3s ease forwards; }
   .chal-vez-cx{ position:relative; text-align:center; animation:lesVdPop .55s cubic-bezier(.16,1.2,.3,1) both; }
   .chal-vez-raios{
@@ -1032,6 +1049,8 @@ body{
   @keyframes pulezPisca{ 50%{ opacity:.45; } }
   .les-chal-jog.jog0{ --chal-cor:var(--jog0); --chal-cor-claro:var(--jog0-soft); }
   .les-chal-jog.jog1{ --chal-cor:var(--jog1); --chal-cor-claro:var(--jog1-soft); }
+  .les-chal-jog.jog2{ --chal-cor:var(--jog2); --chal-cor-claro:var(--jog2-soft); }
+  .les-chal-jog.jog3{ --chal-cor:var(--jog3); --chal-cor-claro:var(--jog3-soft); }
   .chal-jog-esp{
     display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:flex-start;
     margin:8px 0 0; padding-top:8px; border-top:1px dashed rgba(232,168,160,.28); width:100%;
@@ -1142,7 +1161,7 @@ body{
   .chal-sup-op img{ width:78px; aspect-ratio:3/4; object-fit:cover; border-radius:5px; display:block; }
   .chal-sup-op span{ font-family:var(--font-serif); font-weight:700; font-size:11px; color:#fff; max-width:84px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .chal-sup-op.p0{ border-color:var(--jog0); } .chal-sup-op.p1{ border-color:var(--jog1); }
+  .chal-sup-op.p0{ border-color:var(--jog0); } .chal-sup-op.p1{ border-color:var(--jog1); } .chal-sup-op.p2{ border-color:var(--jog2); } .chal-sup-op.p3{ border-color:var(--jog3); }
 
   .chal-modal{
     position:fixed; inset:0; z-index:140; display:none; overflow:auto;
@@ -1245,6 +1264,8 @@ body{
   .chal-emb-nome{ font-family:var(--font-serif); font-weight:900; font-size:14px; letter-spacing:.04em; color:#E8EEF7; }
   .chal-emb-item.jog0 .chal-emb-nome{ color:var(--jog0-soft); }
   .chal-emb-item.jog1 .chal-emb-nome{ color:var(--jog1-soft); }
+  .chal-emb-item.jog2 .chal-emb-nome{ color:var(--jog2-soft); }
+  .chal-emb-item.jog3 .chal-emb-nome{ color:var(--jog3-soft); }
   .chal-emb-pilha.esp .chal-emb-c{ background:linear-gradient(145deg,#8B4FC4,#2A0E44); }
   .chal-emb-pilhas.duas .chal-emb-pilha{ width:clamp(80px,22vw,112px); margin:0 clamp(18px,6vw,40px); }
 
@@ -1334,6 +1355,13 @@ body{
   .chal-pilha .chal-pilha-carta.topo{ border:0; padding:0; background:#0B0B14;
     box-shadow:0 0 0 1.5px var(--pl-topo, #E8C766), 0 6px 14px rgba(0,0,0,.6); }
   .chal-pilha .chal-pilha-carta.topo::before{ display:none; }
+  /* instrução da fase (sacar / pegar a carta) na barra da vez: faixa amarela chamativa */
+  .chal-dica{
+    display:inline-block; margin:6px 0 0 8px; background:#FFD23F; color:#1A1030; font-weight:700; line-height:1.45;
+    border-radius:7px; padding:5px 10px; box-shadow:0 0 0 2px #fff3, 0 0 14px rgba(255,210,63,.55);
+    animation:chalDicaPulsa 1.6s ease-in-out infinite;
+  }
+  @keyframes chalDicaPulsa{ 50%{ box-shadow:0 0 0 2px #fff6, 0 0 22px rgba(255,210,63,.9); } }
   .chal-pilha-carta.topo .jc-dorso{ position:absolute; inset:0; display:block; width:100%; height:100%; border-radius:inherit; }
   .chal-esp-monte .verso{ border:0; padding:0; background:#1C0306;
     box-shadow:0 0 0 2px var(--chal-cor, #E8C766), 0 4px 12px rgba(0,0,0,.5); }
@@ -1348,6 +1376,42 @@ body{
     100%{ box-shadow:0 0 0 0 rgba(255,210,63,0); }
   }
   @media (prefers-reduced-motion: reduce){ .jc-chegou > *{ animation:none; } }
+  /* --- Desafio online --- */
+  .mor-sel-online{ border-color:#2FA3A0; }
+  .mor-sel-online:hover{ box-shadow:0 0 0 2px rgba(47,163,160,.30), inset 0 0 40px rgba(47,163,160,.18); }
+  .mor-sel-online .mor-sel-nome{ color:#9EE6E2; }
+  .mor-sel-online .mor-sel-tag{ background:linear-gradient(180deg,#9EE6E2,#1E7C79); border-color:#CDF3F1; color:#04211F; }
+  .onl-tela .oculto{ display:none !important; }
+  .onl-tela .mor-sel-opcoes{ max-width:760px; margin:0 auto 18px; }
+  #onlCodigo{ text-transform:uppercase; letter-spacing:.25em; }
+  .onl-codigo{
+    font-family:var(--font-pixel); font-size:clamp(34px, 9vw, 64px); letter-spacing:.18em;
+    color:var(--gold-soft); text-shadow:0 0 18px rgba(212,175,55,.45); margin:6px 0 4px;
+  }
+  .onl-info{ text-align:center; font-family:var(--font-serif); font-size:15px; color:#E8EEF7; margin:0 auto 16px; max-width:620px; line-height:1.5; }
+  .onl-info b{ color:#D6BCF5; }
+  #onlEndereco{ word-break:break-all; }
+  .onl-equipes{ display:grid; gap:10px; max-width:620px; margin:0 auto 18px; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); }
+  .onl-eq{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    border:2px solid var(--chal-cor, #8B5CF6); background:rgba(14,6,26,.55);
+    font-family:var(--font-serif); font-weight:700; font-size:16px; color:#E8EEF7;
+  }
+  .onl-eq.p0{ --chal-cor:var(--jog0); } .onl-eq.p1{ --chal-cor:var(--jog1); }
+  .onl-eq.p2{ --chal-cor:var(--jog2); } .onl-eq.p3{ --chal-cor:var(--jog3); }
+  .onl-eq .pino{ width:12px; height:12px; border-radius:50%; background:var(--chal-cor, #8B5CF6); flex:0 0 auto; }
+  .onl-eq.off{ opacity:.5; border-style:dashed; }
+  .onl-eq-nome{ flex:1; min-width:0; overflow-wrap:anywhere; }
+  .onl-eq-nome i{ font-weight:400; color:#D6BCF5; }
+  .onl-remover{ border:0; background:transparent; color:#F5B4B0; font-size:16px; cursor:pointer; padding:2px 6px; }
+  .onl-vazio{ text-align:center; color:rgba(232,238,247,.6); font-family:var(--font-serif); grid-column:1/-1; }
+  .onl-msg{ text-align:center; min-height:1.4em; margin-top:12px; font-family:var(--font-serif); font-size:14px; color:#F5DC8A; }
+  .onl-barra{ display:none; flex:1 1 100%; font-family:var(--font-serif); font-size:13px; color:rgba(232,238,247,.85); }
+  .onl-barra.on{ display:block; }
+  .onl-barra b{ color:var(--gold-soft); }
+  .onl-pto{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#3E9E5E; }
+  .onl-pto.nao{ background:#C9524C; }
+  .onl-off{ color:#F5B4B0; }
 </style>
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
@@ -1417,21 +1481,97 @@ body{
 
         <button class="mor-sel-card mor-sel-chal" type="button" id="lesModoChal">
           <span class="mor-sel-nome">Desafio</span>
-          <span class="mor-sel-tag">2 jogadores · cartas especiais</span>
+          <span class="mor-sel-tag">2 a 4 jogadores · cartas especiais</span>
+        </button>
+
+        <button class="mor-sel-card mor-sel-online" type="button" id="onlModo">
+          <span class="mor-sel-nome">Desafio online</span>
+          <span class="mor-sel-tag">2 a 4 equipes · cada uma no seu aparelho</span>
         </button>
 
       </div>
     </div>
 
     <!-- ---------- ENTRADA DE NOMES (Desafio) ---------- -->
+    <!-- ---------- DESAFIO ONLINE: papel, senha, sala e sala de espera ---------- -->
+    <div class="chal-nomes onl-tela" id="onlTela">
+      <div id="onlPapel">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Desafio online</span>
+          <span class="mor-sel-sub">Cada equipe joga no seu aparelho; o projetor mostra o mesmo tabuleiro</span>
+        </div>
+        <div class="mor-sel-opcoes">
+          <button class="mor-sel-card mor-sel-solo" type="button" id="onlSouProf">
+            <span class="mor-sel-nome">Sou o professor</span>
+            <span class="mor-sel-tag">criar a sala · projetor</span>
+          </button>
+          <button class="mor-sel-card mor-sel-chal" type="button" id="onlSouAluno">
+            <span class="mor-sel-nome">Sou uma equipe</span>
+            <span class="mor-sel-tag">entrar com o código</span>
+          </button>
+        </div>
+        <div class="chal-nomes-acoes">
+          <button class="btn-board principal oculto" type="button" id="onlVoltar">↻ Voltar à sala</button>
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+        </div>
+      </div>
+
+      <div id="onlSenhaProf" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Acesso do professor</span>
+          <span class="mor-sel-sub">Digite a senha para criar a sala</span>
+        </div>
+        <div class="chal-nomes-cx">
+          <div class="chal-nome-campo j0"><span class="ficha">🔑</span><input id="onlSenha" type="password" maxlength="40" autocomplete="off" placeholder="senha do professor"></div>
+          <div class="chal-nomes-acoes">
+            <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+            <button class="btn-board principal" type="button" id="onlSenhaOk">Entrar ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="onlAluno" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Entrar na sala</span>
+          <span class="mor-sel-sub">O código está no projetor</span>
+        </div>
+        <div class="chal-nomes-cx">
+          <div class="chal-nome-campo j0"><span class="ficha">#</span><input id="onlCodigo" type="text" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="código da sala (ex.: 4K7P)"></div>
+          <div class="chal-nome-campo j1"><span class="ficha">👥</span><input id="onlNome" type="text" maxlength="22" autocomplete="off" placeholder="nome da equipe (ex.: Equipe Néfron)"></div>
+          <div class="chal-nomes-acoes">
+            <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+            <button class="btn-board principal" type="button" id="onlEntrar">Entrar ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="onlLobby" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-sub">Código da sala</span>
+          <span class="onl-codigo" id="onlCodigoGrande">----</span>
+          <span class="mor-sel-sub" id="onlPercurso"></span>
+        </div>
+        <div class="onl-info" id="onlProfInfo">As equipes abrem <b id="onlEndereco"></b>, escolhem <b>Desafio online → Sou uma equipe</b> e digitam o código.</div>
+        <div class="onl-info oculto" id="onlAlunoInfo">Aguardando o professor iniciar a partida…</div>
+        <div class="onl-equipes" id="onlEquipes"></div>
+        <div class="chal-nomes-acoes">
+          <button class="btn-board onl-sair" type="button">✕ Sair da sala</button>
+          <button class="btn-board principal" type="button" id="onlIniciar" disabled>▶ Iniciar partida</button>
+        </div>
+      </div>
+
+      <div class="onl-msg" id="onlMsg" role="status"></div>
+    </div>
     <div class="chal-nomes" id="lesChalNomes">
       <div class="mor-sel-cab">
-        <span class="mor-sel-titulo">Desafio · 2 jogadores</span>
+        <span class="mor-sel-titulo">Desafio · 2 a 4 jogadores</span>
         <span class="mor-sel-sub">Quem vai duelar?</span>
       </div>
       <div class="chal-nomes-cx">
         <div class="chal-nome-campo j0"><span class="ficha">J1</span><input id="lesChalNome0" type="text" maxlength="16" placeholder="Jogador 1" value="Jogador 1"></div>
         <div class="chal-nome-campo j1"><span class="ficha">J2</span><input id="lesChalNome1" type="text" maxlength="16" placeholder="Jogador 2" value="Jogador 2"></div>
+        <div class="chal-nome-campo j2"><span class="ficha">J3</span><input id="lesChalNome2" type="text" maxlength="16" placeholder="Jogador 3 (opcional)"></div>
+        <div class="chal-nome-campo j3"><span class="ficha">J4</span><input id="lesChalNome3" type="text" maxlength="16" placeholder="Jogador 4 (opcional)"></div>
         <div class="chal-nomes-acoes">
           <button class="btn-board" id="lesChalNomesVoltar" type="button">↩ Voltar</button>
           <button class="btn-board principal" id="lesChalNomesOk" type="button">Começar duelo ▶</button>
@@ -1612,6 +1752,7 @@ body{
           <button class="btn-board" id="lesChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
           <button class="btn-board principal" id="lesChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
           <button class="btn-board" id="lesChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+          <div class="onl-barra" id="onlBarra"></div>
         </div>
 
       <!-- linha do jogador da vez: área do jogador + carta em jogo, lado a lado.
@@ -1756,7 +1897,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.6 &middot; Última atualização: 30 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.7 &middot; Última atualização: 23 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1793,6 +1934,7 @@ body{
     amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
   };
   function nota(freq, inicio, dur, tipo, vol){
+    if (typeof onlSilencio !== 'undefined' && onlSilencio) return;
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
     o.type = tipo || 'triangle';
@@ -2176,7 +2318,7 @@ body{
   function lesEmbaralhar(a){
     const c2 = a.slice();
     for (let i = c2.length-1; i > 0; i--){
-      const j = Math.floor(Math.random()*(i+1));
+      const j = Math.floor(chalRand()*(i+1));
       const t = c2[i]; c2[i] = c2[j]; c2[j] = t;
     }
     return c2;
@@ -2379,6 +2521,7 @@ body{
     lesMusica.parar();                         /* voltar aos menus para a trilha */
     lesModoJogo.classList.remove('on');
     lesChalNomesEl.classList.remove('on');
+    document.getElementById('onlTela').classList.remove('on');
     lesSelecao.classList.remove('on');
     lesTabuleiro.classList.add('oculto');
     lesChalTabuleiro.style.display = 'none';
@@ -2449,6 +2592,7 @@ body{
   const lesChalTrocarModoBtn  = document.getElementById('lesChalTrocarModo');
 
   const CHAL_LES = {
+    transicao: false,   /* abertura, veredito e aviso de vez em andamento (online: ponto instável) */
     ativo: false,
     jogadores: [],   /* [{nome, pontos}] */
     turno: 0,
@@ -2460,8 +2604,24 @@ body{
     fase: 'sacar',   /* 'sacar' | 'jogar' */
     bloqueado: false,     /* animação/efeito de carta especial em andamento */
     pulez: {},            /* {idx: quantas vezes vai perder a vez} — Colapso do Fluxo */
-    avisoPulo: null       /* quem acabou de perder a vez (entra no aviso de vez) */
+    avisoPulo: null,      /* quem acabou de perder a vez (entra no aviso de vez) */
+    espera: null          /* decisão pendente de outro jogador: {tipo:'desobstrucao', atk, alvo} */
   };
+
+  /* Desafio online — estado (o resto do módulo fica perto da tela de nomes) */
+  const ONL_URL = 'https://jogos-multiplayer-server.onrender.com';
+  const ONL_LIB = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
+  const ONL_CHAVE = 'pielonefrite-online';
+  const ONL = {
+    ativo:false,       /* partida online em andamento neste aparelho */
+    rapido:false,      /* refazendo a partida (sem animações nem sons) */
+    sock:null, papel:null, seat:null, codigo:null, token:null, nome:null,
+    sala:null, seed:null, rng:null,
+    prox:0,            /* próxima jogada (seq) esperada do servidor */
+    fila:[], drenando:false, sincronizando:false
+  };
+  let onlSilencio = false;   /* ao refazer a partida depois de reconectar, sem bipes */
+  function chalRand(){ return (ONL.ativo && ONL.rng) ? ONL.rng() : Math.random(); }
 
   function chalLesEsc(s){
     const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
@@ -2489,7 +2649,7 @@ body{
     s.dataset.tipo = tipo;
     s.dataset.posto = '';
     s.innerHTML = chalLesVazioHTML(tipo);
-    s.addEventListener('click', function(){ chalLesClicarSlot(s); });
+    s.addEventListener('click', function(){ chalAcao('slot', { i: [].indexOf.call(lesChalCampo.querySelectorAll('.slot'), s) }); });
     return s;
   }
   function chalLesCriarEstacao(par){
@@ -2547,7 +2707,7 @@ body{
   }
   /* atualiza contagem, "vazio" e se dá pra sacar: só na fase de sacar, e de monte com carta */
   function chalLesAtualizarResto(){
-    const podeSacar = CHAL_LES.ativo && !CHAL_LES.bloqueado && CHAL_LES.fase === 'sacar';
+    const podeSacar = CHAL_LES.ativo && !CHAL_LES.transicao && onlPodeAgir(CHAL_LES.turno) && !CHAL_LES.bloqueado && CHAL_LES.fase === 'sacar';
     Array.prototype.forEach.call(lesChalMontesEl.querySelectorAll('.les-chal-monte'), function(b){
       const n = (CHAL_LES.montes[b.dataset.tipo] || []).length;
       chalDesenharPilha(b.querySelector('.chal-pilha'), n);
@@ -2560,11 +2720,17 @@ body{
   chalMontarMontes();
   function chalLesRenderVez(msg){
     const j = CHAL_LES.jogadores[CHAL_LES.turno];
-    lesChalVez.innerHTML = msg || ('▶ Vez de <b>' + chalLesEsc(j.nome) + '</b>');
+    if (!msg && CHAL_LES.espera) msg = chalTextoEspera();
+    if (!msg && CHAL_LES.ativo && !onlPodeAgir(CHAL_LES.turno))
+      msg = '⏳ Vez de <b>' + chalLesEsc(j.nome) + '</b> — acompanhe a jogada no tabuleiro.';
+    lesChalVez.innerHTML = msg || ('▶ Vez de <b>' + chalLesEsc(j.nome) + '</b>' +
+      ((ONL.ativo && ONL.papel === 'prof') ? ' (desconectada — o professor joga por ela)' : ''));
+    lesChalVez.dataset.dica = msg ? '' : '1';
+    chalDicaVez();
   }
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
   function chalLesAnunciarVez(cb){
-    if (!CHAL_LES.ativo){ if (cb) cb(); return; }
+    if (!CHAL_LES.ativo || ONL.rapido){ if (cb) cb(); return; }
     const el = document.getElementById('lesChalAviso');
     const j  = CHAL_LES.jogadores[CHAL_LES.turno];
     el.className = 'chal-vez-ov jog' + CHAL_LES.turno;
@@ -2572,7 +2738,8 @@ body{
     CHAL_LES.avisoPulo = null;
     document.getElementById('lesVezTit').innerHTML = (pulou != null
       ? '⏭️ <b>' + chalLesEsc(CHAL_LES.jogadores[pulou].nome) + '</b> perdeu a vez!<br><br>' : '') +
-      'Vez de <b>' + chalLesEsc(j.nome) + '</b>';
+      ((ONL.ativo && ONL.papel === 'equipe' && ONL.seat === CHAL_LES.turno)
+        ? 'Sua vez, <b>' + chalLesEsc(j.nome) + '</b>!' : 'Vez de <b>' + chalLesEsc(j.nome) + '</b>');
     void el.offsetWidth;                                    /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
@@ -2587,6 +2754,7 @@ body{
      a contagem fica no texto logo abaixo). */
   function chalDesenharPilha(el, n){
     if (!el) return;
+    const dorso = CHAL_LES.ativo ? ('j' + CHAL_LES.turno) : 'comum';   /* dorso na cor do jogador da vez; contorno segue a cor do monte */
     const PASSO = 4;
     el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
     el.classList.toggle('vazia', n === 0);
@@ -2597,7 +2765,7 @@ body{
       const rot = (((i * 5) % 7) - 3) * 0.6;
       h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
         'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
-        (topo ? jcDorsoSvg('comum') : '') + '</span>';
+        (topo ? jcDorsoSvg(dorso) : '') + '</span>';
     }
     if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
     el.innerHTML = h;
@@ -2660,7 +2828,22 @@ body{
       b.addEventListener('click', function(){ chalVerCartaEsp(b.dataset.k, Number(b.dataset.dono)); });
     });
   }
+  /* instrução da fase em destaque (faixa amarela) na barra da vez: sacar / pegar a carta */
+  function chalDicaVez(){
+    let el = lesChalVez.querySelector('.chal-dica');
+    let txt = '';
+    if (CHAL_LES.ativo && lesChalVez.dataset.dica === '1'){
+      if (CHAL_LES.cartaSacada && !CHAL_LES.cartaMao)
+        txt = '👉 Toque na carta sacada e depois na estação do tabuleiro onde ela forma o par.';
+      else if (!CHAL_LES.cartaMao && CHAL_LES.fase === 'sacar' && chalTotalMonte())
+        txt = '👉 Escolha um dos montes, saque uma carta e coloque-a numa estação do tabuleiro.';
+    }
+    if (!txt){ if (el) el.remove(); return; }
+    if (!el){ el = document.createElement('span'); el.className = 'chal-dica'; lesChalVez.appendChild(el); }
+    el.textContent = txt;
+  }
   function chalLesMostrarCarta(){
+    chalDicaVez();
     lesChalCartaAtual.classList.remove('aguardando');
     lesChalCartaAtual.innerHTML = '';
     if (CHAL_LES.cartaSacada && !CHAL_LES.cartaMao){
@@ -2676,7 +2859,7 @@ body{
       } else if (!chalTotalMonte()){
         p.textContent = 'O monte acabou — corrija as cartas erradas ou encerre o turno.';
       } else {
-        p.textContent = 'Escolha um dos montes e saque uma carta para continuar o turno.';
+        p.textContent = 'Escolha um dos montes, saque uma carta e coloque-a numa estação do tabuleiro.';
       }
       lesChalCartaAtual.appendChild(p);
     }
@@ -2684,7 +2867,7 @@ body{
   function chalLesAtualizarBotoes(){
     const semCartaNaMao = !CHAL_LES.cartaSacada && !CHAL_LES.cartaMao;
     chalLesAtualizarResto();
-    lesChalEncerrarBtn.disabled = !CHAL_LES.ativo || CHAL_LES.bloqueado || !semCartaNaMao ||
+    lesChalEncerrarBtn.disabled = !CHAL_LES.ativo || CHAL_LES.transicao || !onlPodeAgir(CHAL_LES.turno) || CHAL_LES.bloqueado || !semCartaNaMao ||
       (CHAL_LES.fase === 'sacar' && chalTotalMonte() > 0);
   }
 
@@ -2715,7 +2898,7 @@ body{
   }
 
   function chalLesSacarCarta(tipo){
-    if (!CHAL_LES.ativo || CHAL_LES.bloqueado || CHAL_LES.fase !== 'sacar' || !CHAL_LES.montes[tipo] || !CHAL_LES.montes[tipo].length) return;
+    if (!CHAL_LES.ativo || CHAL_LES.transicao || CHAL_LES.bloqueado || CHAL_LES.fase !== 'sacar' || !CHAL_LES.montes[tipo] || !CHAL_LES.montes[tipo].length) return;
     chalLesDesmarcarSlot();
     CHAL_LES.cartaSacada = CHAL_LES.montes[tipo].pop();
     CHAL_LES.fase = 'jogar';
@@ -2724,15 +2907,16 @@ body{
     chalLesMostrarCarta();
     chalLesRenderVez();
     chalLesAtualizarBotoes();
-    jcRolarParaCartaEmJogo();
+    if (!ONL.rapido) jcRolarParaCartaEmJogo();
   }
   lesChalMontesEl.addEventListener('click', function(e){
     const b = e.target.closest('.les-chal-monte');
-    if (b && !b.disabled) chalLesSacarCarta(b.dataset.tipo);
+    if (b && !b.disabled) chalAcao('sacar', { tipo: b.dataset.tipo });
   });
 
-  lesChalCartaAtual.addEventListener('click', function(){
-    if (!CHAL_LES.ativo || CHAL_LES.bloqueado) return;
+  lesChalCartaAtual.addEventListener('click', function(){ chalAcao('carta'); });
+  function chalLesTocarCarta(){
+    if (!CHAL_LES.ativo || CHAL_LES.transicao || CHAL_LES.bloqueado) return;
     if (CHAL_LES.cartaSacada && !CHAL_LES.cartaMao){
       chalLesDesmarcarSlot();   /* descarta marcação de reposição pendente, como ao sacar */
       CHAL_LES.cartaMao = CHAL_LES.cartaSacada;
@@ -2747,7 +2931,7 @@ body{
       somClique();
       chalLesMostrarCarta();
     }
-  });
+  }
 
   function chalLesAtualizarHud(){
     let fechados = 0;
@@ -2761,7 +2945,7 @@ body{
 
   function chalLesClicarSlot(slot){
     if (lesRevAtiva) return;
-    if (!CHAL_LES.ativo || CHAL_LES.bloqueado || slot.classList.contains('travado')) return;
+    if (!CHAL_LES.ativo || CHAL_LES.transicao || CHAL_LES.bloqueado || slot.classList.contains('travado')) return;
 
     /* obs.: uma carta sacada e ainda não pega NÃO bloqueia mais o tabuleiro —
        o jogador pode reposicionar cartas erradas antes de pegá-la (ou depois,
@@ -2821,6 +3005,7 @@ body{
   /* tipo: 'acerto' (fechou par), 'erro' (posicionou carta que não forma par) ou
      'neutro' (carta posicionada numa estação que ainda não tem com o que comparar) */
   function chalLesVeredito(nome, tipo, pares, erradas, cb){
+    if (ONL.rapido){ if (cb) cb(); return; }
     const ov = document.getElementById('lesChalVeredito');
     if (!ov){ if (cb) cb(); return; }
     ov.classList.remove('acerto','erro','neutro');
@@ -2845,8 +3030,9 @@ body{
   }
 
   function chalLesEncerrarTurno(){
-    if (!CHAL_LES.ativo || CHAL_LES.bloqueado || CHAL_LES.cartaSacada || CHAL_LES.cartaMao) return;
+    if (!CHAL_LES.ativo || CHAL_LES.transicao || CHAL_LES.bloqueado || CHAL_LES.cartaSacada || CHAL_LES.cartaMao) return;
     if (CHAL_LES.fase === 'sacar' && chalTotalMonte() > 0) return;
+    CHAL_LES.transicao = true;            /* até o aviso de vez do próximo jogador */
     chalLesDesmarcarSlot();
     const j = CHAL_LES.jogadores[CHAL_LES.turno];
 
@@ -2916,10 +3102,10 @@ body{
       chalLesRenderVez();
       chalLesMostrarCarta();
       chalLesAtualizarBotoes();
-      chalLesAnunciarVez(chalTentarSorteEspecial);
+      chalLesAnunciarVez(function(){ CHAL_LES.transicao = false; chalLesRenderVez(); chalLesMostrarCarta(); chalLesAtualizarBotoes(); chalTentarSorteEspecial(); });
     });
   }
-  lesChalEncerrarBtn.addEventListener('click', chalLesEncerrarTurno);
+  lesChalEncerrarBtn.addEventListener('click', function(){ chalAcao('encerrar'); });
 
 
   /* ==============================================================
@@ -2989,7 +3175,18 @@ body{
     const p = arr.indexOf(k);
     if (p >= 0) arr.splice(p, 1);
   }
-  function chalAdversario(i){ return (i + 1) % CHAL_LES.jogadores.length; }
+  /* escolha do alvo de um ataque (com um só adversário, vai direto) */
+  function chalEscolherAlvo(ico, titulo, pergunta, cb){
+    const eu = CHAL_LES.turno;
+    const outros = CHAL_LES.jogadores.map(function(_, i){ return i; }).filter(function(i){ return i !== eu; });
+    if (outros.length === 1){ cb(outros[0]); return; }
+    const botoes = outros.map(function(i){
+      return { txt: CHAL_LES.jogadores[i].nome + ' (' + CHAL_LES.jogadores[i].pontos + ' pts)', tipo:'principal',
+               fn:function(){ chalModalFechar(); cb(i); } };
+    });
+    botoes.push({ txt:'Cancelar', tipo:'', fn: chalModalFechar });
+    chalModalMsgHTML(ico, titulo, '<div>' + pergunta + '</div>', botoes);
+  }
 
   /* área de especiais de um jogador, no placar: monte pessoal (virado) + cartas já sacadas */
   function chalLesAreaEsp(j, i){
@@ -3041,7 +3238,7 @@ body{
     const eu = CHAL_LES.turno;
     if (dono == null) dono = eu;
     if (!CHAL_LES.ativo) return 'A partida não está em andamento.';
-    if (k === 'desobstrucao') return 'Defesa: aparece sozinha quando o adversário jogar o Colapso do Fluxo contra você.';
+    if (k === 'desobstrucao') return 'Defesa: aparece sozinha quando alguém jogar o Colapso do Fluxo contra você.';
     if (dono !== eu) return 'Esta carta é de ' + CHAL_LES.jogadores[dono].nome + ' — só pode ser usada na vez de ' + CHAL_LES.jogadores[dono].nome + '.';
     if (!chalTemEsp(eu, k)) return 'Esta carta não pode ser usada agora.';
     if (CHAL_LES.bloqueado) return 'Aguarde a jogada em andamento terminar.';
@@ -3049,7 +3246,7 @@ body{
       if (CHAL_LES.fase !== 'jogar' || CHAL_LES.cartaSacada || CHAL_LES.cartaMao) return 'Use depois de sacar e posicionar a carta deste turno.';
       if (!chalTotalMonte()) return 'Os montes de compra estão vazios.';
     }
-    if (k === 'supressao' && !chalLesCartasDoAdv(eu).length) return 'O adversário ainda não tem cartas acertadas no tabuleiro.';
+    if (k === 'supressao' && !chalLesCartasDoAdv(eu).length) return 'Nenhum adversário tem cartas acertadas no tabuleiro ainda.';
     if (k === 'reinfeccao' && !lesChalCampo.querySelector('.slot.travado')) return 'Ainda não há cartas acertadas no tabuleiro.';
     return '';
   }
@@ -3059,7 +3256,7 @@ body{
   function chalVerCartaEsp(k, dono){
     const e = CHAL_ESP[k];
     const motivo = chalEspMotivo(k, dono);
-    const podeUsar = (e.quando === 'turno' && !motivo);
+    const podeUsar = (e.quando === 'turno' && !motivo && onlPodeAgir(CHAL_LES.turno));
     let html = '<img class="chal-esp-grande" src="' + CHAL_ESP_IMG[k] + '" alt="' + e.nome + '">';
     if (motivo) html += '<div class="chal-esp-aviso">' + chalLesEsc(motivo) + '</div>';
     const botoes = [];
@@ -3078,16 +3275,34 @@ body{
     if (ev.key === 'Escape' && chalModalEl.classList.contains('esp-grande')) chalModalFechar();
   });
 
+  /* escolha feita neste aparelho (alvo, carta) → vira uma jogada; a execução é chalEspExec */
   function chalUsarEsp(k){
-    if (chalEspMotivo(k)) return;
-    if (k === 'colapso') chalLancarColapso();
-    else if (k === 'invasao') chalUsarInvasao();
+    if (chalEspMotivo(k) || !onlPodeAgir(CHAL_LES.turno)) return;
+    if (k === 'colapso')
+      chalEscolherAlvo('⛔', 'Colapso do Fluxo', 'Contra quem você lança o Colapso do Fluxo?',
+        function(alvo){ chalAcao('esp', { k:k, alvo:alvo }); });
+    else if (k === 'reinfeccao')
+      chalEscolherAlvo('🔀', 'Reinfecção Devastadora', 'Com quem você troca pontos e cartas acertadas?',
+        function(alvo){ chalAcao('esp', { k:k, alvo:alvo }); });
     else if (k === 'supressao') chalUsarSupressao();
-    else if (k === 'reinfeccao') chalUsarReinfeccao();
+    else chalAcao('esp', { k:k });
+  }
+  function chalEspExec(k, d){
+    if (!CHAL_ESP[k] || chalEspMotivo(k)) return;
+    const eu = CHAL_LES.turno, alvo = d.alvo | 0;
+    const alvoOk = (alvo >= 0 && alvo < CHAL_LES.jogadores.length && alvo !== eu);
+    if (k === 'colapso'){ if (alvoOk) chalLancarColapso(alvo); }
+    else if (k === 'reinfeccao'){ if (alvoOk) chalUsarReinfeccao(alvo); }
+    else if (k === 'invasao') chalUsarInvasao();
+    else if (k === 'supressao'){
+      const sl = lesChalCampo.querySelectorAll('.slot')[d.i | 0];
+      if (sl && d.i >= 0 && chalLesCartasDoAdv(eu).indexOf(sl) >= 0) chalSupressaoExecutar(sl);
+    }
   }
 
   /* ---------- flip da carta jogada + tremida no placar ---------- */
   function chalFlipCarta(k, txt){
+    if (ONL.rapido) return;
     const ov = document.getElementById('chalFlip');
     document.getElementById('chalFlipImg').src = CHAL_ESP_IMG[k];
     document.getElementById('chalFlipTxt').innerHTML = txt || '';
@@ -3109,33 +3324,61 @@ body{
   }
 
   /* --- Colapso do Fluxo (ataque): o adversário perde a próxima vez, salvo se tiver Desobstrução --- */
-  function chalLancarColapso(){
-    const eu = CHAL_LES.turno, alvo = chalAdversario(eu);
+  function chalLancarColapso(alvo){
+    const eu = CHAL_LES.turno;
     CHAL_LES.bloqueado = true;
     chalRemoverEsp(eu, 'colapso');
     somErro();
     chalLesRenderPlacar(); chalLesAtualizarBotoes();
     chalFlipCarta('colapso', chalLesEsc(CHAL_LES.jogadores[eu].nome) + ' lança o Colapso do Fluxo contra ' + chalLesEsc(CHAL_LES.jogadores[alvo].nome));
-    setTimeout(function(){ chalResolverColapso(alvo); }, 1700);
+    chalDepois(function(){ chalResolverColapso(eu, alvo); }, 1700);
   }
-  function chalResolverColapso(alvo){
-    const nome = chalLesEsc(CHAL_LES.jogadores[alvo].nome);
+  function chalResolverColapso(atk, alvo){
     if (!chalTemEsp(alvo, 'desobstrucao')){ chalColapsoAtinge(alvo); return; }
+    CHAL_LES.espera = { tipo:'desobstrucao', atk:atk, alvo:alvo };
+    chalMostrarEspera();
+  }
+  /* decisão pendente (Desobstrução): abre o quadro para o alvo;
+     no online, os demais aparelhos só veem o aviso de espera */
+  function chalQuemDecide(){ return CHAL_LES.espera ? CHAL_LES.espera.alvo : -1; }
+  function chalTextoEspera(){
+    const quem = chalQuemDecide();
+    if (onlPodeAgir(quem)) return '⚔️ <b>' + chalLesEsc(CHAL_LES.jogadores[quem].nome) + '</b>, decida no quadro aberto.';
+    return '⏳ Aguardando <b>' + chalLesEsc(CHAL_LES.jogadores[quem].nome) + '</b> decidir se usa a Desobstrução…';
+  }
+  function chalMostrarEspera(){
+    const e = CHAL_LES.espera;
+    if (!e) return;
+    chalLesRenderVez();
+    if (!onlPodeAgir(chalQuemDecide())) return;
+    const nome = chalLesEsc(CHAL_LES.jogadores[e.alvo].nome);
     const html = '<div class="chal-modal-cartas"><img src="' + CHAL_ESP_IMG.desobstrucao + '" alt="Desobstrução"></div>' +
       '<div><b>' + nome + '</b>, você foi alvo do <b>Colapso do Fluxo</b> e perderia a próxima vez. ' +
       'Usar a <b>Desobstrução</b> para anulá-lo?</div>';
     chalModalMsgHTML('⚔️', 'Você foi atacado!', html, [
-      { txt:'🔑 Anular com a Desobstrução', tipo:'principal', fn:function(){
-          chalModalFechar();
-          chalRemoverEsp(alvo, 'desobstrucao');
-          chalFlipCarta('desobstrucao', nome + ' desobstruiu o fluxo: Colapso anulado!');
-          somVitoria();
-          chalLesRenderPlacar();
-          setTimeout(chalEspConcluir, 1700);
-      }},
-      { txt:'😞 Aceitar o ataque', tipo:'', fn:function(){ chalModalFechar(); chalColapsoAtinge(alvo); } }
+      { txt:'🔑 Anular com a Desobstrução', tipo:'principal', fn:function(){ chalModalTravar(); chalAcao('desobstrucao', { sim:true }); } },
+      { txt:'😞 Aceitar o ataque', tipo:'', fn:function(){ chalModalTravar(); chalAcao('desobstrucao', { sim:false }); } }
     ]);
   }
+  function chalDesobstrucaoExec(sim){
+    const e = CHAL_LES.espera;
+    if (!e || e.tipo !== 'desobstrucao') return;
+    CHAL_LES.espera = null;
+    chalModalFechar();
+    const alvo = e.alvo;
+    chalLesRenderVez();
+    if (!sim){ chalColapsoAtinge(alvo); return; }
+    const nome = chalLesEsc(CHAL_LES.jogadores[alvo].nome);
+    chalRemoverEsp(alvo, 'desobstrucao');
+    chalFlipCarta('desobstrucao', nome + ' desobstruiu o fluxo: Colapso anulado!');
+    somVitoria();
+    chalLesRenderPlacar();
+    chalDepois(chalEspConcluir, 1700);
+  }
+  function chalModalTravar(){ chalModalAcoes.querySelectorAll('button').forEach(function(b){ b.disabled = true; }); }
+  function chalModalDestravar(){ chalModalAcoes.querySelectorAll('button').forEach(function(b){ b.disabled = false; }); }
+  /* espera das animações das cartas especiais; no refazer rápido roda na hora */
+  function chalDepois(fn, ms){ if (ONL.rapido) fn(); else setTimeout(fn, ms); }
   function chalColapsoAtinge(alvo){
     CHAL_LES.pulez[alvo] = (CHAL_LES.pulez[alvo] || 0) + 1;
     somErro();
@@ -3152,7 +3395,7 @@ body{
     somVitoria();
     chalLesRenderPlacar(); chalLesAtualizarBotoes();
     chalFlipCarta('invasao', chalLesEsc(CHAL_LES.jogadores[eu].nome) + ' saca +1 carta!');
-    setTimeout(function(){
+    chalDepois(function(){
       CHAL_LES.fase = 'sacar';            /* volta a poder escolher um monte e sacar */
       chalEspConcluir();
     }, 1700);
@@ -3165,7 +3408,7 @@ body{
     const eu = CHAL_LES.turno;
     const alvos = chalLesCartasDoAdv(eu);
     if (!alvos.length) return;
-    let html = '<div>Escolha 1 carta acertada pelo adversário: ela sai do tabuleiro, ' +
+    let html = '<div>Escolha 1 carta acertada por um adversário: ela sai do tabuleiro, ' +
       'o ponto dela é descontado e ela vai para o <b>fundo do monte</b>.</div><div class="chal-sup-grade">';
     alvos.forEach(function(s, n){
       const dono = Number(s.dataset.dono);
@@ -3176,7 +3419,10 @@ body{
     html += '</div>';
     chalModalMsgHTML('🎯', 'Supressão do Foco', html, [{ txt:'Cancelar', tipo:'', fn: chalModalFechar }]);
     chalModalTxt.querySelectorAll('.chal-sup-op').forEach(function(b){
-      b.addEventListener('click', function(){ chalModalFechar(); chalSupressaoExecutar(alvos[Number(b.dataset.n)]); });
+      b.addEventListener('click', function(){
+        chalModalFechar();
+        chalAcao('esp', { k:'supressao', i: [].indexOf.call(lesChalCampo.querySelectorAll('.slot'), alvos[Number(b.dataset.n)]) });
+      });
     });
   }
   function chalSupressaoExecutar(slot){
@@ -3187,8 +3433,8 @@ body{
     const jd = CHAL_LES.jogadores[dono];
     jd.pontos = Math.max(0, jd.pontos - 1);
     const est = slot.closest('.estacao');
-    if (est) est.classList.remove('les-chal-vencida', 'jog0', 'jog1');
-    slot.classList.remove('travado', 'dono0', 'dono1');
+    if (est) est.classList.remove('les-chal-vencida', 'jog0', 'jog1', 'jog2', 'jog3');
+    slot.classList.remove('travado', 'dono0', 'dono1', 'dono2', 'dono3');
     delete slot.dataset.dono;
     delete slot.dataset.alvo;
     chalLesEsvaziarSlot(slot);
@@ -3197,12 +3443,12 @@ body{
     chalLesRenderPlacar(); chalLesAtualizarBotoes(); chalLesAtualizarHud();
     chalTremerJog(dono);
     chalFlipCarta('supressao', 'A carta de ' + chalLesEsc(jd.nome) + ' volta para o fundo do monte');
-    setTimeout(chalEspConcluir, 1700);
+    chalDepois(chalEspConcluir, 1700);
   }
 
-  /* --- Reinfecção Devastadora (ataque): pontos e posse das cartas acertadas trocam entre os dois --- */
-  function chalUsarReinfeccao(){
-    const eu = CHAL_LES.turno, alvo = chalAdversario(eu);
+  /* --- Reinfecção Devastadora (ataque): pontos e posse das cartas acertadas trocam entre você e o alvo --- */
+  function chalUsarReinfeccao(alvo){
+    const eu = CHAL_LES.turno;
     CHAL_LES.bloqueado = true;
     chalRemoverEsp(eu, 'reinfeccao');
     const a = CHAL_LES.jogadores[eu], b = CHAL_LES.jogadores[alvo];
@@ -3212,20 +3458,21 @@ body{
       const d = Number(s.dataset.dono);
       const n = d === eu ? alvo : (d === alvo ? eu : d);
       s.dataset.dono = n;
-      s.classList.remove('dono0', 'dono1'); s.classList.add('dono' + n);
+      s.classList.remove('dono0', 'dono1', 'dono2', 'dono3'); s.classList.add('dono' + n);
       const selo = s.querySelector('.les-chal-dono');
       if (selo){ selo.className = 'les-chal-dono jog' + n; selo.textContent = n + 1; }
     });
     lesChalCampo.querySelectorAll('.estacao.les-chal-vencida').forEach(function(est){
-      const era0 = est.classList.contains('jog0');
-      est.classList.toggle('jog0', !era0);
-      est.classList.toggle('jog1', era0);
+      const n = [eu, alvo].find(function(i){ return est.classList.contains('jog' + i); });
+      if (n === undefined) return;
+      est.classList.remove('jog' + n);
+      est.classList.add('jog' + (n === eu ? alvo : eu));
     });
     somErro();
     chalLesRenderPlacar(); chalLesAtualizarBotoes();
     chalTremerJog(eu); chalTremerJog(alvo);
     chalFlipCarta('reinfeccao', chalLesEsc(a.nome) + ' e ' + chalLesEsc(b.nome) + ' trocaram pontos e cartas!');
-    setTimeout(chalEspConcluir, 1700);
+    chalDepois(chalEspConcluir, 1700);
   }
 
   /* ---------- sorteio de carta especial, a cada turno (25% de chance) ---------- */
@@ -3234,6 +3481,7 @@ body{
     const ov   = document.getElementById('lesChalSorteioEsp');
     const resE = document.getElementById('lesChalSorteioEspRes');
     const meu  = ++chalSorteioEspTok;
+    if (ONL.rapido){ cb(); return; }
     document.getElementById('lesChalSorteioEspTit').innerHTML = 'Sorteando carta especial de<br>' + chalLesEsc(nome) + '…';
     ov.classList.remove('parou');
     resE.textContent = '';
@@ -3267,7 +3515,7 @@ body{
     if (!j.especiaisDeck.length) return;           /* nada a sortear */
     CHAL_LES.bloqueado = true;
     chalLesAtualizarBotoes();
-    const sucesso = Math.random() < CHAL_ESP_CHANCE;
+    const sucesso = chalRand() < CHAL_ESP_CHANCE;
     const k = sucesso ? j.especiaisDeck.shift() : null;
     if (sucesso) j.especiais.push(k);
     chalAnimarSorteioEsp(j.nome, sucesso, sucesso ? CHAL_ESP[k] : null, function(){
@@ -3278,6 +3526,7 @@ body{
   }
   let chalBoomTok = 0;
   function chalBoomEsp(k, nome){
+    if (ONL.rapido) return;
     const ov = document.getElementById('chalBoom');
     document.getElementById('chalBoomTit').textContent = nome + ' sacou uma CARTA ESPECIAL!';
     document.getElementById('chalBoomCartas').innerHTML = '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">';
@@ -3463,20 +3712,25 @@ body{
   function chalLesFim(){
     lesMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_LES.ativo = false;
+    CHAL_LES.transicao = false;
     lesChalReiniciarBtn.disabled = false;
     lesChalRevisarBtn.disabled = false;
     lesChalTrocarModoBtn.disabled = false;
     chalLesAtualizarResto();
     lesChalEncerrarBtn.disabled = true;
     const jogadores = CHAL_LES.jogadores;
-    const p0 = jogadores[0].pontos, p1 = jogadores[1].pontos;
+    const max = Math.max.apply(null, jogadores.map(function(j){ return j.pontos; }));
+    const lideres = jogadores.filter(function(j){ return j.pontos === max; });
     let ico, tit;
-    if (p0 === p1){ ico = '🤝'; tit = 'Empate!'; }
-    else { const v = p0 > p1 ? 0 : 1; ico = '🏆'; tit = jogadores[v].nome + ' venceu!'; }
+    if (lideres.length === 1){ ico = '🏆'; tit = lideres[0].nome + ' venceu!'; }
+    else if (lideres.length === jogadores.length){ ico = '🤝'; tit = 'Empate!'; }
+    else { ico = '🤝'; tit = 'Empate entre ' + lideres.map(function(j){ return j.nome; }).join(', ').replace(/, ([^,]*)$/, ' e $1') + '!'; }
     lesChalResultado.className = 'on vitoria';
     lesChalResultado.innerHTML = '<span class="grande">' + ico + ' ' + chalLesEsc(tit) + '</span>' +
       jogadores.map(function(j){ return chalLesEsc(j.nome) + ': ' + j.pontos + ' carta' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
     chalLesRenderVez('🏁 Fim de jogo!');
+    if (ONL.ativo && ONL.papel !== 'prof') lesChalReiniciarBtn.disabled = true;   /* online: só o professor recomeça */
+    onlFimPartida();
     chalLesRenderPlacar();
     somVitoria();
     lesChalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -3489,6 +3743,7 @@ body{
     const cxN  = document.getElementById('lesSorteioNomes');
     const resE = document.getElementById('lesSorteioRes');
     const meu  = ++lesSorteioToken;
+    if (ONL.rapido){ cb(); return; }
 
     ov.classList.remove('parou');
     resE.textContent = '';
@@ -3562,6 +3817,11 @@ body{
   const JC_DORSO = {
     faixa:'fluxo',
     paletas:{
+      /* monte de compra no Desafio: dorso na cor do jogador da vez (--jog0..) */
+      j0:   { f0:'#04101E', f1:'#12345A', f2:'#2F6EA8', ac:'#8FC8F6', ac2:'#D6ECFF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0A2440' },
+      j1:   { f0:'#1A0807', f1:'#5A1E1A', f2:'#B04C45', ac:'#F0A9A4', ac2:'#FFE0DC', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A100E' },
+      j2:   { f0:'#04160B', f1:'#14472A', f2:'#2F8550', ac:'#8FD7AB', ac2:'#D8F5E3', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0B2D18' },
+      j3:   { f0:'#1E1003', f1:'#5C3410', f2:'#B8741F', ac:'#F2C88C', ac2:'#FFEBCF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3D2108' },
       comum:{ f0:'#1A0F02', f1:'#5A3A08', f2:'#96660F', ac:'#E7B84A', ac2:'#FFF0C4', ou:'#E8C766', ou2:'#FFF6D8', nu:'#3A2404' },
       esp:  { f0:'#1C0306', f1:'#5E0F18', f2:'#A0222E', ac:'#F27A7A', ac2:'#FFD9D2', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A060C' }
     },
@@ -3697,7 +3957,7 @@ body{
   function jcDorsoSvg(tipo){
     jcDorsoGarantir();
     return '<svg class="jc-dorso" viewBox="0 0 90 126" aria-hidden="true"><use href="#jcDorso-' +
-      (tipo === 'esp' ? 'esp' : 'comum') + '"/></svg>';
+      (JC_DORSO.paletas[tipo] ? tipo : 'comum') + '"/></svg>';
   }
   /* ---------- vulto encapuzado do aviso "Vez de …" ----------
      Figura misteriosa de capuz, de frente, encarando quem está na tela: rosto em
@@ -3793,6 +4053,7 @@ body{
     const ov = document.getElementById('lesChalEmbaralho');
     const resE = document.getElementById('lesChalEmbaralhoRes');
     const meu = ++chalEmbTok;
+    if (ONL.rapido){ if (op.antes) op.antes(); cb(); return; }
     document.getElementById('lesChalEmbaralhoTit').textContent = op.titulo;
     resE.textContent = '';
     ov.classList.remove('parou');
@@ -3857,8 +4118,10 @@ body{
     lesMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     if (lesRevAtiva) lesRevReset();
     CHAL_LES.ativo = true;
+    CHAL_LES.transicao = true;            /* a abertura (embaralhar, sorteio, distribuição) vai até o 1º aviso de vez */
     CHAL_LES.jogadores = nomes.map(function(n){ return {nome:n, pontos:0, especiais:[], especiaisDeck:[]}; });
     CHAL_LES.bloqueado = false;
+    CHAL_LES.espera = null;
     CHAL_LES.pulez = {};
     CHAL_LES.avisoPulo = null;
     chalModalFechar();
@@ -3881,14 +4144,14 @@ body{
        começa (5 s) → aviso de vez → sorteio de carta especial do 1º turno */
     chalEmbaralharEspeciais(function(){
       chalEmbaralharDeck(function(){
-        CHAL_LES.turno = Math.floor(Math.random() * CHAL_LES.jogadores.length);
+        CHAL_LES.turno = Math.floor(chalRand() * CHAL_LES.jogadores.length);
         chalLesAnimarSorteio(CHAL_LES.turno, function(){
           chalLesRenderPlacar();
           chalLesRenderVez();
           chalLesMostrarCarta();
           chalLesAtualizarBotoes();
           /* ~25% das cartas já começam no tabuleiro (sorteadas a cada partida) */
-          chalDistribuirIniciais(function(){ chalLesAnunciarVez(chalTentarSorteEspecial); });
+          chalDistribuirIniciais(function(){ chalLesAnunciarVez(function(){ CHAL_LES.transicao = false; chalLesRenderVez(); chalLesMostrarCarta(); chalLesAtualizarBotoes(); chalTentarSorteEspecial(); }); });
         });
       });
     });
@@ -3910,6 +4173,12 @@ body{
     escolhidas.forEach(function(c){ const m = CHAL_LES.montes[c.tipo]; m.splice(m.indexOf(c), 1); });
     const ests = lesEmbaralhar([].slice.call(lesChalCampo.querySelectorAll('.estacao'))).slice(0, escolhidas.length);
     const plano = escolhidas.map(function(c, k){ return { carta:c, slot:ests[k].querySelector('.slot.tipo-' + c.tipo) }; });
+    if (ONL.rapido){                               /* refazer rápido: todas caem na hora */
+      plano.forEach(function(item){ chalLesPreencherSlot(item.slot, item.carta.chave); });
+      CHAL_LES.movidos.clear();
+      chalLesAtualizarResto(); chalLesAtualizarBotoes(); chalLesAtualizarHud();
+      cb(); return;
+    }
 
     CHAL_LES.bloqueado = true;
     chalLesAtualizarResto(); chalLesAtualizarBotoes();
@@ -3967,23 +4236,386 @@ body{
     setTimeout(function(){ img.remove(); cb(); }, 560);   /* casa com a duração da animação chalVoo */
   }
 
+  /* ============================================================
+     ===============  DESAFIO ONLINE (cada equipe no seu aparelho)
+     O servidor (Render) só guarda a ordem das jogadas. Todos os
+     aparelhos rodam este mesmo motor com a mesma semente e aplicam
+     as mesmas jogadas na mesma ordem — por isso os tabuleiros ficam
+     iguais. Quem reconecta refaz a partida rapidinho, sem animações.
+     ============================================================ */
+  function onlSemente(a){                     /* mulberry32: mesmo número → mesma sequência */
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- jogadas: no Desafio local executam direto; no online vão ao servidor ---------- */
+  function chalAcao(tipo, dados){
+    dados = dados || {};
+    if (!ONL.ativo){ chalExecutar(tipo, dados); return; }
+    if (ONL.fila.length || !onlEstavel()) return;            /* ainda aplicando jogadas recebidas */
+    if (onlEhDecisao(tipo) !== !!CHAL_LES.espera) return;
+    if (!onlPodeAgir(onlResponsavel(tipo))) return;           /* não é a sua vez */
+    onlEnviar(tipo, dados);
+  }
+  function onlEhDecisao(tipo){ return tipo === 'desobstrucao'; }
+  function onlResponsavel(tipo){
+    if (onlEhDecisao(tipo)) return CHAL_LES.espera ? chalQuemDecide() : -2;
+    return CHAL_LES.turno;
+  }
+  function chalExecutar(tipo, d){
+    switch (tipo){
+      case 'sacar':    chalLesSacarCarta(String(d.tipo)); break;
+      case 'carta':    chalLesTocarCarta(); break;
+      case 'slot':     { const sl = lesChalCampo.querySelectorAll('.slot')[d.i | 0]; if (sl && d.i >= 0) chalLesClicarSlot(sl); break; }
+      case 'encerrar': chalLesEncerrarTurno(); break;
+      case 'esp':      chalEspExec(String(d.k), d); break;
+      case 'desobstrucao': chalDesobstrucaoExec(!!d.sim); break;
+    }
+  }
+  function onlOnline(seat){
+    const e = ONL.sala && ONL.sala.equipes.find(function(x){ return x.seat === seat; });
+    return !!(e && e.online);
+  }
+  /* este aparelho pode jogar pelo jogador `seat`? (a equipe dona; o professor só se ela caiu) */
+  function onlPodeAgir(seat){
+    if (!ONL.ativo) return true;
+    if (seat < 0) return false;
+    if (ONL.papel === 'equipe') return ONL.seat === seat;
+    return !onlOnline(seat);
+  }
+  /* ponto estável do motor: nenhuma animação de transição rodando */
+  function onlEstavel(){ return !!CHAL_LES.espera || (!CHAL_LES.transicao && !CHAL_LES.bloqueado); }
+
+  /* aplica as jogadas recebidas, uma a uma, sempre num ponto estável do motor
+     (durante a abertura o motor fica instável; jogadas só são descartadas com a partida encerrada) */
+  function onlDrenar(){
+    if (ONL.drenando) return;
+    ONL.drenando = true;
+    try {
+      while (ONL.fila.length){
+        const a = ONL.fila[0];
+        if (!onlEstavel()) break;
+        if (CHAL_LES.espera && !onlEhDecisao(a.tipo)) break;      /* jogada comum espera a decisão pendente */
+        ONL.fila.shift();
+        if (!CHAL_LES.ativo) continue;                             /* partida acabou: sobras são ignoradas */
+        if (onlEhDecisao(a.tipo) !== !!CHAL_LES.espera) continue;   /* decisão fora de hora: ignorada por todos */
+        const resp = onlResponsavel(a.tipo);
+        if (a.seat !== -1 && a.seat !== resp) continue;           /* só a equipe responsável (ou o professor) */
+        chalExecutar(a.tipo, a.dados || {});
+      }
+    } finally { ONL.drenando = false; }
+  }
+  setInterval(function(){ if (ONL.ativo && ONL.fila.length) onlDrenar(); }, 120);
+
+  function onlReceber(a){
+    if (!ONL.ativo || !a || a.seq < ONL.prox) return;
+    if (a.seq > ONL.prox){ onlPedirFaltantes(); return; }
+    ONL.fila.push(a); ONL.prox++;
+    onlDrenar();
+  }
+  function onlPedirFaltantes(){
+    if (ONL.sincronizando || !ONL.sock) return;
+    ONL.sincronizando = true;
+    ONL.sock.emit('sync', { desde: ONL.prox }, function(r){
+      ONL.sincronizando = false;
+      if (!r || !r.ok || !r.log) return;
+      if (r.seed !== ONL.seed){ onlRetomar(); return; }
+      r.log.forEach(onlReceber);
+    });
+  }
+  function onlEnviar(tipo, dados){
+    if (!ONL.sock || !ONL.sock.connected){ onlAviso('Sem conexão — reconectando…'); chalModalDestravar(); return; }
+    ONL.sock.emit('acao', { tipo:tipo, dados:dados }, function(r){
+      if (!r || !r.ok){ onlAviso((r && r.erro) || 'A jogada não chegou ao servidor.'); chalModalDestravar(); }
+    });
+  }
+
+  /* ---------- começar / refazer a partida ---------- */
+  function onlComecar(p, refazer){
+    ONL.ativo = true;
+    ONL.seed = p.seed; ONL.rng = onlSemente(p.seed);
+    ONL.prox = 0; ONL.fila = [];
+    lesEsconderTudo();
+    lesChalTabuleiro.style.display = '';
+    lesChalTabuleiro.scrollIntoView({ behavior:'instant', block:'start' });
+    if (refazer){ ONL.rapido = true; onlSilencio = true; }
+    try {
+      chalLesIniciar(p.jogadores.slice());
+      if (refazer){
+        (p.log || []).forEach(function(a){ if (a.seq === ONL.prox){ ONL.fila.push(a); ONL.prox++; } });
+        onlDrenar();
+      }
+    } finally { ONL.rapido = false; onlSilencio = false; }
+    if (CHAL_LES.ativo && !CHAL_LES.transicao){ chalLesRenderPlacar(); chalLesRenderVez(); chalLesMostrarCarta(); chalLesAtualizarBotoes(); chalMostrarEspera(); }
+    onlRenderBarra();
+  }
+  function onlFimPartida(){
+    if (!ONL.ativo || ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('placar', { jogadores: CHAL_LES.jogadores.map(function(j){ return { nome:j.nome, pontos:j.pontos }; }) });
+    ONL.sock.emit('prof:encerrar', {});
+  }
+  function onlNovaPartida(){
+    if (ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlAviso((r && r.erro) || 'Não consegui recomeçar.'); });
+  }
+
+  /* ---------- conexão ---------- */
+  function onlGuardar(){
+    try { localStorage.setItem(ONL_CHAVE, JSON.stringify({ papel:ONL.papel, codigo:ONL.codigo, token:ONL.token, nome:ONL.nome })); } catch(e){}
+  }
+  function onlLerGuardado(){ try { return JSON.parse(localStorage.getItem(ONL_CHAVE)); } catch(e){ return null; } }
+  function onlEsquecer(){ try { localStorage.removeItem(ONL_CHAVE); } catch(e){} }
+
+  function onlConectar(cb){
+    function pronto(){
+      if (ONL.sock){ cb(); return; }
+      const sk = ONL.sock = window.io(ONL_URL, { reconnectionDelayMax: 4000 });
+      sk.on('connect', function(){ onlMsg(''); onlRenderBarra(); if (ONL.codigo) onlRetomar(); });
+      sk.on('disconnect', function(){ onlRenderBarra(); });
+      sk.on('connect_error', function(){
+        onlMsg('Conectando ao servidor… se ele estava dormindo, pode levar até 1 minuto.');
+      });
+      sk.on('sala', function(v){
+        ONL.sala = v;
+        onlRenderLobby(); onlRenderBarra();
+        if (ONL.ativo && CHAL_LES.ativo && !CHAL_LES.transicao){
+          chalLesRenderVez(); chalLesMostrarCarta(); chalLesAtualizarBotoes();
+          /* a equipe que decide caiu → o professor recebe o quadro de decisão */
+          if (CHAL_LES.espera && onlPodeAgir(chalQuemDecide()) && !chalModalEl.classList.contains('on')) chalMostrarEspera();
+        }
+      });
+      sk.on('seu-lugar', function(d){ ONL.seat = d.seat; });
+      sk.on('inicio', function(p){ onlComecar(p, false); });
+      sk.on('acao', onlReceber);
+      sk.on('lobby', function(){ onlVoltarLobby(); });
+      sk.on('removido', function(){ onlSair('O professor removeu a sua equipe da sala.'); });
+      sk.on('substituido', function(){ onlSair('Esta equipe entrou na sala por outro aparelho.'); });
+      sk.on('sala-fechada', function(){ onlSair('O professor fechou a sala.'); });
+      cb();
+    }
+    if (window.io){ pronto(); return; }
+    onlMsg('Carregando…');
+    const sc = document.createElement('script');
+    sc.src = ONL_LIB;
+    sc.onload = pronto;
+    sc.onerror = function(){ onlMsg('Sem internet? Não consegui carregar a conexão online.'); };
+    document.head.appendChild(sc);
+  }
+
+  /* volta à sala guardada (recarregou a página, a internet caiu…) */
+  function onlRetomar(){
+    if (!ONL.sock || !ONL.codigo) return;
+    const fim = function(r){
+      if (!r || !r.ok){
+        onlEsquecer(); ONL.codigo = null;
+        if (ONL.ativo) onlSair((r && r.erro) || 'A sala não existe mais.');
+        else { onlMsg((r && r.erro) || 'A sala não existe mais.'); onlTelaPapel(); }
+        return;
+      }
+      if (r.seat != null) ONL.seat = r.seat;
+      if (r.token) ONL.token = r.token;
+      ONL.sala = r.sala;
+      onlGuardar();
+      if (!r.partida){ onlVoltarLobby(); return; }
+      if (ONL.ativo && ONL.seed === r.partida.seed){ (r.partida.log || []).forEach(onlReceber); onlRenderBarra(); return; }
+      onlComecar(r.partida, true);
+    };
+    if (ONL.papel === 'prof') ONL.sock.emit('prof:retomar', { codigo:ONL.codigo, token:ONL.token }, fim);
+    else ONL.sock.emit('aluno:entrar', { codigo:ONL.codigo, nome:ONL.nome, token:ONL.token }, fim);
+  }
+
+  function onlSair(msg){
+    const sk = ONL.sock;
+    if (sk){
+      if (ONL.papel === 'prof' && ONL.codigo && !msg) sk.emit('prof:fechar', {});
+      setTimeout(function(){ sk.disconnect(); }, 150);
+    }
+    onlEsquecer();
+    Object.assign(ONL, { ativo:false, rapido:false, sock:null, papel:null, seat:null, codigo:null, token:null,
+                         sala:null, seed:null, rng:null, prox:0, fila:[] });
+    CHAL_LES.ativo = false; CHAL_LES.transicao = false; CHAL_LES.espera = null;
+    chalModalFechar();
+    onlRenderBarra();
+    if (msg){ onlTelaPapel(); onlMsg(msg); }
+    else lesMostrarModo();
+  }
+
+  /* ---------- telas: papel → (professor: senha) / (equipe: código + nome) → sala de espera ---------- */
+  const onlTelaEl = document.getElementById('onlTela');
+  function onlMostrar(parte){
+    lesEsconderTudo();
+    onlTelaEl.classList.add('on');
+    ['onlPapel','onlSenhaProf','onlAluno','onlLobby'].forEach(function(id){
+      document.getElementById(id).classList.toggle('oculto', id !== parte);
+    });
+    onlTelaEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function onlMsg(t){ document.getElementById('onlMsg').textContent = t || ''; }
+  function onlAviso(t){
+    if (ONL.ativo && CHAL_LES.ativo) chalLesRenderVez('📡 ' + chalLesEsc(t));
+    else onlMsg(t);
+  }
+  function onlTelaPapel(){
+    const g = onlLerGuardado();
+    const volta = document.getElementById('onlVoltar');
+    volta.classList.toggle('oculto', !(g && g.codigo));
+    if (g && g.codigo) volta.textContent = '↻ Voltar à sala ' + g.codigo + (g.papel === 'prof' ? ' (professor)' : ' — ' + g.nome);
+    onlMostrar('onlPapel');
+  }
+  function onlAbrir(){ onlMsg(''); onlTelaPapel(); }
+  document.getElementById('onlModo').addEventListener('click', function(){ somClique(); onlAbrir(); });
+
+  /* acesso do professor protegido por senha (uma vez por aba, vale para todos os jogos) */
+  const ONL_SENHA_PROF = 'aldair';
+  function onlProfLiberado(){ try { return sessionStorage.getItem('onlProfLiberado') === '1'; } catch(e){ return false; } }
+  document.getElementById('onlSouProf').addEventListener('click', function(){
+    somClique(); onlMsg('');
+    if (onlProfLiberado()){ onlCriarSala(); return; }
+    const inp = document.getElementById('onlSenha');
+    inp.value = '';
+    onlMostrar('onlSenhaProf');
+    setTimeout(function(){ inp.focus(); }, 250);
+  });
+  function onlConferirSenha(){
+    const inp = document.getElementById('onlSenha');
+    if (inp.value.trim().toLowerCase() !== ONL_SENHA_PROF){
+      somErro(); onlMsg('Senha incorreta.'); inp.select(); return;
+    }
+    try { sessionStorage.setItem('onlProfLiberado', '1'); } catch(e){}
+    somClique(); onlMsg(''); onlCriarSala();
+  }
+  document.getElementById('onlSenhaOk').addEventListener('click', onlConferirSenha);
+  document.getElementById('onlSenha').addEventListener('keydown', function(e){ if (e.key === 'Enter') onlConferirSenha(); });
+  document.getElementById('onlSouAluno').addEventListener('click', function(){
+    somClique(); onlMsg(''); onlMostrar('onlAluno');
+    setTimeout(function(){ document.getElementById('onlCodigo').focus(); }, 250);
+  });
+  document.getElementById('onlVoltar').addEventListener('click', function(){
+    const g = onlLerGuardado(); if (!g) return;
+    somClique();
+    Object.assign(ONL, { papel:g.papel, codigo:g.codigo, token:g.token, nome:g.nome });
+    onlConectar(function(){ if (ONL.sock.connected) onlRetomar(); });
+  });
+  document.querySelectorAll('#onlTela .onl-sair').forEach(function(b){
+    b.addEventListener('click', function(){ somClique(); if (ONL.codigo) onlSair(); else lesMostrarModo(); });
+  });
+
+  /* professor: cria a sala (2 a 4 equipes) */
+  function onlCriarSala(){
+    onlConectar(function(){
+      ONL.sock.emit('prof:criar', { jogo:'pielonefrite', max:4, config:{} }, function(r){
+        if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui criar a sala.'); onlTelaPapel(); return; }
+        Object.assign(ONL, { papel:'prof', codigo:r.codigo, token:r.token, nome:null, seat:null, sala:r.sala });
+        onlGuardar();
+        onlVoltarLobby();
+      });
+    });
+  }
+
+  /* equipe: entra com o código */
+  function onlEntrarEquipe(){
+    const codigo = document.getElementById('onlCodigo').value.trim().toUpperCase();
+    const nome = document.getElementById('onlNome').value.trim();
+    if (codigo.length !== 4){ onlMsg('O código da sala tem 4 caracteres.'); return; }
+    if (!nome){ onlMsg('Digite o nome da equipe.'); return; }
+    somClique();
+    onlConectar(function(){
+      ONL.sock.emit('aluno:entrar', { codigo:codigo, nome:nome }, function(r){
+        if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui entrar.'); return; }
+        Object.assign(ONL, { papel:'equipe', codigo:r.sala.codigo, token:r.token, nome:r.nome, seat:r.seat, sala:r.sala });
+        onlGuardar();
+        if (r.partida) onlComecar(r.partida, true); else onlVoltarLobby();
+      });
+    });
+  }
+  document.getElementById('onlEntrar').addEventListener('click', onlEntrarEquipe);
+  ['onlCodigo','onlNome'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){ if (e.key === 'Enter') onlEntrarEquipe(); });
+  });
+  document.getElementById('onlIniciar').addEventListener('click', function(){
+    somClique();
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlMsg((r && r.erro) || 'Não consegui iniciar.'); });
+  });
+
+  function onlVoltarLobby(){
+    if (ONL.ativo){ ONL.ativo = false; ONL.fila = []; CHAL_LES.ativo = false; CHAL_LES.transicao = false; }
+    onlMostrar('onlLobby');
+    onlRenderLobby();
+    onlRenderBarra();
+  }
+  function onlRenderLobby(){
+    const v = ONL.sala;
+    if (!v || document.getElementById('onlLobby').classList.contains('oculto')) return;
+    document.getElementById('onlCodigoGrande').textContent = v.codigo;
+    document.getElementById('onlEndereco').textContent = location.host + location.pathname;
+    document.getElementById('onlPercurso').textContent = 'Pielonefrite · ' + v.equipes.length + ' de ' + v.max + ' equipes';
+    const lista = document.getElementById('onlEquipes');
+    lista.innerHTML = '';
+    if (!v.equipes.length) lista.innerHTML = '<div class="onl-vazio">Nenhuma equipe ainda…</div>';
+    v.equipes.forEach(function(e){
+      const d = document.createElement('div');
+      d.className = 'onl-eq p' + e.seat + (e.online ? '' : ' off');
+      d.innerHTML = '<span class="pino"></span><span class="onl-eq-nome">' + chalLesEsc(e.nome) +
+        (ONL.papel === 'equipe' && e.seat === ONL.seat ? ' <i>(vocês)</i>' : '') + '</span>';
+      if (ONL.papel === 'prof' && v.status === 'lobby'){
+        const x = document.createElement('button');
+        x.type = 'button'; x.className = 'onl-remover'; x.textContent = '✕'; x.title = 'Remover equipe';
+        x.addEventListener('click', function(){ ONL.sock.emit('prof:remover', { seat:e.seat }, function(){}); });
+        d.appendChild(x);
+      }
+      lista.appendChild(d);
+    });
+    const prof = ONL.papel === 'prof';
+    document.getElementById('onlProfInfo').classList.toggle('oculto', !prof);
+    document.getElementById('onlAlunoInfo').classList.toggle('oculto', prof);
+    const ini = document.getElementById('onlIniciar');
+    ini.classList.toggle('oculto', !prof);
+    ini.disabled = v.equipes.length < 2;
+    ini.textContent = v.status === 'fim' ? '▶ Nova partida' : '▶ Iniciar partida';
+  }
+
+  /* faixa no topo do tabuleiro: sala, quem é este aparelho e quem caiu */
+  function onlRenderBarra(){
+    const el = document.getElementById('onlBarra');
+    if (!el) return;
+    if (!ONL.ativo){ el.classList.remove('on'); el.innerHTML = ''; return; }
+    const con = ONL.sock && ONL.sock.connected;
+    const eu = (ONL.papel === 'prof') ? 'Projetor do professor' : ('Você: <b>' + chalLesEsc(ONL.nome || '') + '</b>');
+    let caidas = '';
+    if (ONL.sala){
+      const off = ONL.sala.equipes.filter(function(e){ return !e.online; }).map(function(e){ return chalLesEsc(e.nome); });
+      if (off.length) caidas = ' · <span class="onl-off">⚠ desconectada: ' + off.join(', ') + '</span>';
+    }
+    el.innerHTML = '<span class="onl-pto ' + (con ? 'ok' : 'nao') + '"></span>Sala <b>' + chalLesEsc(ONL.codigo || '') +
+      '</b> · ' + eu + (con ? '' : ' · <span class="onl-off">reconectando…</span>') + caidas;
+    el.classList.add('on');
+  }
+
   document.getElementById('lesChalNomesOk').addEventListener('click', function(){
     const n0 = document.getElementById('lesChalNome0').value.trim() || 'Jogador 1';
     const n1 = document.getElementById('lesChalNome1').value.trim() || 'Jogador 2';
+    const nomes = [n0, n1];                    /* J3 e J4 são opcionais: em branco, não jogam */
+    [2, 3].forEach(function(k){ const v = document.getElementById('lesChalNome' + k).value.trim(); if (v) nomes.push(v); });
     lesEsconderTudo();
     lesChalTabuleiro.style.display = '';
     /* posiciona a página no tabuleiro ANTES de abrir as animações (instantâneo) */
     lesChalTabuleiro.scrollIntoView({behavior:'instant', block:'start'});
-    chalLesIniciar([n0, n1]);
+    chalLesIniciar(nomes);
     somClique();
   });
   lesChalReiniciarBtn.addEventListener('click', function(){
     if (CHAL_LES.ativo) return;
+    if (ONL.ativo){ somClique(); onlNovaPartida(); return; }
     chalLesIniciar(CHAL_LES.jogadores.map(function(j){ return j.nome; }));
     somClique();
   });
   lesChalTrocarModoBtn.addEventListener('click', function(){
     if (CHAL_LES.ativo) return;
+    if (ONL.ativo){ somClique(); onlSair(); return; }
     lesMostrarModo();
     somClique();
   });

@@ -1075,6 +1075,13 @@ body{
   .chal-pilha .chal-pilha-carta.topo{ border:0; padding:0; background:#0B0B14;
     box-shadow:0 0 0 1.5px var(--pl-topo, #E8C766), 0 6px 14px rgba(0,0,0,.6); }
   .chal-pilha .chal-pilha-carta.topo::before{ display:none; }
+  /* instrução da fase (sacar / pegar a carta) na barra da vez: faixa amarela chamativa */
+  .chal-dica{
+    display:inline-block; margin:6px 0 0 8px; background:#FFD23F; color:#1A1030; font-weight:700; line-height:1.45;
+    border-radius:7px; padding:5px 10px; box-shadow:0 0 0 2px #fff3, 0 0 14px rgba(255,210,63,.55);
+    animation:chalDicaPulsa 1.6s ease-in-out infinite;
+  }
+  @keyframes chalDicaPulsa{ 50%{ box-shadow:0 0 0 2px #fff6, 0 0 22px rgba(255,210,63,.9); } }
   .chal-pilha-carta.topo .jc-dorso{ position:absolute; inset:0; display:block; width:100%; height:100%; border-radius:inherit; }
   .chal-esp-monte .verso{ border:0; padding:0; background:#1C0306;
     box-shadow:0 0 0 2px var(--chal-cor, #E8C766), 0 4px 12px rgba(0,0,0,.5); }
@@ -2177,6 +2184,8 @@ body{
   function chalRepRenderVez(msg){
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
     repChalVez.innerHTML = msg || ('▶ Vez de <b>' + repChalEsc(j.nome) + '</b>');
+    repChalVez.dataset.dica = msg ? '' : '1';
+    chalDicaVez();
   }
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
   function chalRepAnunciarVez(cb){
@@ -2199,6 +2208,7 @@ body{
      a contagem fica no texto logo abaixo). */
   function chalDesenharPilha(el, n){
     if (!el) return;
+    const dorso = CHAL_REP.ativo ? ('j' + CHAL_REP.turno) : 'comum';   /* dorso na cor do jogador da vez; contorno segue a cor do monte */
     const PASSO = 4;
     el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
     el.classList.toggle('vazia', n === 0);
@@ -2209,7 +2219,7 @@ body{
       const rot = (((i * 5) % 7) - 3) * 0.6;
       h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
         'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
-        (topo ? jcDorsoSvg('comum') : '') + '</span>';
+        (topo ? jcDorsoSvg(dorso) : '') + '</span>';
     }
     if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
     el.innerHTML = h;
@@ -2258,7 +2268,22 @@ body{
       '</div>';
     }).join('');
   }
+  /* instrução da fase em destaque (faixa amarela) na barra da vez: sacar / pegar a carta */
+  function chalDicaVez(){
+    let el = repChalVez.querySelector('.chal-dica');
+    let txt = '';
+    if (CHAL_REP.ativo && repChalVez.dataset.dica === '1'){
+      if (CHAL_REP.cartaSacada && !CHAL_REP.cartaMao)
+        txt = '👉 Toque na carta sacada e depois na estação do tabuleiro onde ela completa o trio.';
+      else if (!CHAL_REP.cartaMao && CHAL_REP.fase === 'sacar' && chalTotalMonte())
+        txt = '👉 Escolha um dos montes, saque uma carta e coloque-a numa estação do tabuleiro.';
+    }
+    if (!txt){ if (el) el.remove(); return; }
+    if (!el){ el = document.createElement('span'); el.className = 'chal-dica'; repChalVez.appendChild(el); }
+    el.textContent = txt;
+  }
   function chalRepMostrarCarta(){
+    chalDicaVez();
     repChalCartaAtual.classList.remove('aguardando');
     repChalCartaAtual.innerHTML = '';
     if (CHAL_REP.cartaSacada && !CHAL_REP.cartaMao){
@@ -2276,7 +2301,7 @@ body{
       } else if (!chalTotalMonte()){
         p.textContent = 'O monte acabou — corrija as cartas erradas ou encerre a vez.';
       } else {
-        p.textContent = 'Escolha um dos montes e saque uma carta para continuar o turno.';
+        p.textContent = 'Escolha um dos montes, saque uma carta e coloque-a numa estação do tabuleiro.';
       }
       repChalCartaAtual.appendChild(p);
     }
@@ -2633,6 +2658,11 @@ body{
   const JC_DORSO = {
     faixa:'dna',
     paletas:{
+      /* monte de compra no Desafio: dorso na cor do jogador da vez (--jog0..) */
+      j0:   { f0:'#04160B', f1:'#14472A', f2:'#2F8550', ac:'#9BE0B0', ac2:'#D8F5E3', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0B2D18' },
+      j1:   { f0:'#1E0F03', f1:'#5E300C', f2:'#C06A1A', ac:'#F5C089', ac2:'#FFEAD2', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3D1E06' },
+      j2:   { f0:'#1A0807', f1:'#5A1E1A', f2:'#B04C45', ac:'#F0A9A4', ac2:'#FFE0DC', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A100E' },
+      j3:   { f0:'#04101E', f1:'#12345A', f2:'#2F6EA8', ac:'#8FC8F6', ac2:'#D6ECFF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0A2440' },
       comum:{ f0:'#03101E', f1:'#0B3A5E', f2:'#16659C', ac:'#5FB8EC', ac2:'#D0EDFF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#06223A' }
     },
     emblema:function(p, id, n){
@@ -2774,7 +2804,7 @@ body{
   function jcDorsoSvg(tipo){
     jcDorsoGarantir();
     return '<svg class="jc-dorso" viewBox="0 0 90 126" aria-hidden="true"><use href="#jcDorso-' +
-      (tipo === 'esp' ? 'esp' : 'comum') + '"/></svg>';
+      (JC_DORSO.paletas[tipo] ? tipo : 'comum') + '"/></svg>';
   }
   /* ---------- vulto encapuzado do aviso "Vez de …" ----------
      Figura misteriosa de capuz, de frente, encarando quem está na tela: rosto em

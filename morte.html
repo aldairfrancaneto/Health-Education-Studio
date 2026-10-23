@@ -674,7 +674,8 @@ body{
     color:var(--gold-soft); text-shadow:0 0 18px rgba(212,175,55,.45); margin:6px 0 4px;
   }
   .onl-info{ text-align:center; font-family:var(--font-serif); font-size:15px; color:#E8EEF7; margin:0 auto 16px; max-width:620px; line-height:1.5; }
-  .onl-info b{ color:#D6BCF5; word-break:break-all; }
+  .onl-info b{ color:#D6BCF5; }
+  #onlEndereco{ word-break:break-all; }
   .onl-equipes{ display:grid; gap:10px; max-width:620px; margin:0 auto 18px; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); }
   .onl-eq{
     display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
@@ -709,6 +710,14 @@ body{
   }
   .chal-vez.on{ display:flex; }
   .chal-vez b{ color:#FFD23F; }
+  /* instrução da fase (sacar / pegar a carta): faixa amarela chamativa */
+  .chal-vez .chal-dica{
+    display:inline-block; background:#FFD23F; color:#1A1030; font-weight:700;
+    border-radius:7px; padding:5px 10px; box-shadow:0 0 0 2px #fff3, 0 0 14px rgba(255,210,63,.55);
+    animation:chalDicaPulsa 1.6s ease-in-out infinite;
+  }
+  .chal-vez .chal-dica b{ color:#7A1FA2; }
+  @keyframes chalDicaPulsa{ 50%{ box-shadow:0 0 0 2px #fff6, 0 0 22px rgba(255,210,63,.9); } }
 
   /* vez + Encerrar turno na mesma linha, no topo do painel (canto superior direito) */
   .chal-cab{ display:none; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 0 16px; }
@@ -1531,6 +1540,13 @@ body{
   .chal-pilha .chal-pilha-carta.topo{ border:0; padding:0; background:#0B0B14;
     box-shadow:0 0 0 1.5px var(--pl-topo, #E8C766), 0 6px 14px rgba(0,0,0,.6); }
   .chal-pilha .chal-pilha-carta.topo::before{ display:none; }
+  /* no Desafio, o monte inteiro (lombadas + contorno do topo) assume a cor do jogador da vez */
+  .tabuleiro.chal-ativo .chal-pilha{ --pl-topo:var(--chal-cor-claro); }
+  .tabuleiro.chal-ativo .chal-pilha-carta{
+    border-color:var(--chal-cor);
+    background:linear-gradient(90deg, color-mix(in srgb, var(--chal-cor) 35%, #0B0B14),
+      color-mix(in srgb, var(--chal-cor) 60%, #0B0B14) 50%, color-mix(in srgb, var(--chal-cor) 35%, #0B0B14));
+  }
   .chal-pilha-carta.topo .jc-dorso{ position:absolute; inset:0; display:block; width:100%; height:100%; border-radius:inherit; }
   .chal-esp-monte .verso{ border:0; padding:0; background:#1C0306;
     box-shadow:0 0 0 2px var(--chal-cor, #E8C766), 0 4px 12px rgba(0,0,0,.5); }
@@ -1658,6 +1674,21 @@ body{
         <div class="chal-nomes-acoes onl-acoes">
           <button class="btn-board principal oculto" type="button" id="onlVoltar">↻ Voltar à sala</button>
           <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+        </div>
+      </div>
+
+      <div id="onlSenhaProf" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Acesso do professor</span>
+          <span class="mor-sel-sub">Digite a senha para criar a sala</span>
+        </div>
+        <div class="chal-nomes-campos onl-campos">
+          <div class="chal-campo"><label for="onlSenha">Senha</label>
+            <input type="password" id="onlSenha" maxlength="40" autocomplete="off" placeholder="senha do professor"></div>
+        </div>
+        <div class="chal-nomes-acoes">
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+          <button class="btn-board principal" type="button" id="onlSenhaOk">Entrar ▶</button>
         </div>
       </div>
 
@@ -3132,7 +3163,12 @@ body{
     faixa:'dna',
     paletas:{
       comum:{ f0:'#0E0620', f1:'#3D1C66', f2:'#6A3BA8', ac:'#B58CF0', ac2:'#E4D2F5', ou:'#E8C766', ou2:'#F7E7B0', nu:'#2A1048' },
-      esp:  { f0:'#1C0306', f1:'#5E0F18', f2:'#A0222E', ac:'#F27A7A', ac2:'#FFD9D2', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A060C' }
+      esp:  { f0:'#1C0306', f1:'#5E0F18', f2:'#A0222E', ac:'#F27A7A', ac2:'#FFD9D2', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A060C' },
+      /* monte de compra no Desafio: dorso na cor do jogador da vez (--jog0..3) */
+      j0:   { f0:'#04101E', f1:'#12345A', f2:'#2F6EA8', ac:'#8FC8F6', ac2:'#D6ECFF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0A2440' },
+      j1:   { f0:'#1A0807', f1:'#5A1E1A', f2:'#B04C45', ac:'#F0A9A4', ac2:'#FFE0DC', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3A100E' },
+      j2:   { f0:'#04160B', f1:'#14472A', f2:'#2F8550', ac:'#8FD7AB', ac2:'#D8F5E3', ou:'#E8C766', ou2:'#F7E7B0', nu:'#0B2D18' },
+      j3:   { f0:'#1E1003', f1:'#5C3410', f2:'#B8741F', ac:'#F2C88C', ac2:'#FFEBCF', ou:'#E8C766', ou2:'#F7E7B0', nu:'#3D2108' }
     },
     emblema:function(p, id, n){
       /* célula em apoptose: membrana com bolhas, retículo e ribossomos, mitocôndrias e núcleo picnótico com a cromatina fragmentada */
@@ -3272,7 +3308,7 @@ body{
   function jcDorsoSvg(tipo){
     jcDorsoGarantir();
     return '<svg class="jc-dorso" viewBox="0 0 90 126" aria-hidden="true"><use href="#jcDorso-' +
-      (tipo === 'esp' ? 'esp' : 'comum') + '"/></svg>';
+      (JC_DORSO.paletas[tipo] ? tipo : 'comum') + '"/></svg>';
   }
   /* ---------- vulto encapuzado do aviso "Vez de …" ----------
      Figura misteriosa de capuz, de frente, encarando quem está na tela: rosto em
@@ -3447,6 +3483,7 @@ body{
   function chalDesenharPilha(n){
     const el = document.getElementById('chalPilha');
     if (!el) return;
+    const dorso = CHAL.ativo ? ('j' + CHAL.turno) : 'comum';   /* dorso na cor do jogador da vez */
     const PASSO = 4;
     el.style.setProperty('--pilha-h', (Math.max(n, 1) - 1) * PASSO + 'px');
     el.classList.toggle('vazia', n === 0);
@@ -3457,7 +3494,7 @@ body{
       const rot = (((i * 5) % 7) - 3) * 0.6;
       h += '<span class="chal-pilha-carta' + (topo ? ' topo' : '') + '" style="bottom:' + (i * PASSO) +
         'px;transform:translateX(calc(-50% + ' + dx + 'px)) rotate(' + (topo ? 0 : rot) + 'deg)">' +
-        (topo ? jcDorsoSvg('comum') : '') + '</span>';
+        (topo ? jcDorsoSvg(dorso) : '') + '</span>';
     }
     if (n === 0) h = '<span class="chal-pilha-vazio">vazio</span>';
     el.innerHTML = h;
@@ -3643,12 +3680,22 @@ body{
     let txt = (ONL.ativo && ONL.papel === 'prof')
       ? '▶ Vez de <b>' + chalEsc(j.nome) + '</b> (desconectada — o professor joga por ela)'
       : '▶ Vez de <b>' + chalEsc(j.nome) + '</b>';
-    if (CHAL.fase === 'sacar') txt += ' — saque a carta nova ou reposicione as cartas fora do lugar.';
-    else if (CHAL.cartaSacada) txt += ' — toque na carta sacada para pegá-la, ou reposicione outras cartas erradas antes.';
+    const temFora = chalTemCartasFora();
+    if (CHAL.fase === 'sacar') txt += ' <span class="chal-dica">' + (temFora
+      ? '👉 Clique em <b>Sacar carta</b>. Se quiser, antes mova as cartas marcadas com <b>FORA</b>.'
+      : '👉 Clique em <b>Sacar carta</b> e coloque a carta no tabuleiro.') + '</span>';
+    else if (CHAL.cartaSacada) txt += ' <span class="chal-dica">' + (temFora
+      ? '👉 Toque na carta sacada e depois no espaço onde ela se encaixa. Se quiser, antes mova as cartas marcadas com <b>FORA</b>.'
+      : '👉 Toque na carta sacada e depois no espaço do tabuleiro onde ela se encaixa.') + '</span>';
     else if (CHAL.cartaMao) txt += ' — escolha o espaço em que a carta se encaixa.';
     else if (CHAL.deck.length === 0) txt += ' — reposicione as cartas erradas e encerre o turno.';
     else txt += ' — posicione a carta e encerre o turno.';
     chalVezEl.innerHTML = txt;
+  }
+
+  /* há carta de turnos anteriores ainda fora do lugar (não travada) no tabuleiro? */
+  function chalTemCartasFora(){
+    return Array.prototype.some.call(morSlots(), function(s){ return s.dataset.posto && !s.classList.contains('travado'); });
   }
 
   /* ---------- carta em jogo ---------- */
@@ -3665,7 +3712,9 @@ body{
            (CHAL.fase === 'jogar' ? ', <b>aqui na área de espera</b> para trazê-la de volta,' : '') +
            ' ou nela de novo para desmarcar.')
         : (CHAL.fase === 'sacar'
-            ? 'Saque a carta nova para começar — ou primeiro reposicione as cartas fora do lugar do turno anterior.'
+            ? (chalTemCartasFora()
+                ? 'Clique em <b>Sacar carta</b>. Se quiser, antes mova as cartas marcadas com <b>FORA</b>.'
+                : 'Clique em <b>Sacar carta</b> e coloque a carta no tabuleiro.')
             : 'Toque numa carta fora do lugar para movê-la, ou encerre o turno.');
       chalCartaEl.appendChild(d);
       return;
@@ -3690,7 +3739,9 @@ body{
     const instr = document.createElement('div'); instr.className = 'instr';
     instr.innerHTML = pego
       ? 'Toque no <b>espaço vazio</b> da posição em que ela se encaixa — ou toque na carta de novo para soltá-la.'
-      : 'Toque na carta para <b>pegá-la</b>, ou primeiro reposicione outras cartas erradas no tabuleiro.';
+      : (chalTemCartasFora()
+          ? 'Toque na carta para <b>pegá-la</b> e depois no espaço onde ela se encaixa. Se quiser, antes mova as cartas marcadas com <b>FORA</b>.'
+          : 'Toque na carta para <b>pegá-la</b> e depois no espaço do tabuleiro onde ela se encaixa.');
     chalCartaEl.appendChild(instr);
   }
 
@@ -4241,6 +4292,7 @@ body{
     CHAL.ativo = false;
     chalAtualizarBotoesPartida();
     onlFimPartida();
+    chalRenderVez('🏁 Partida encerrada — veja o resultado no tabuleiro.');
     const permitidas = MOR_MODOS[morModo];
 
     /* bônus por via dominada (vale para 2, 3 ou 4 jogadores) */
@@ -4576,7 +4628,7 @@ body{
   function onlMostrar(parte){
     morEsconderTudo();
     onlTelaEl.classList.add('on');
-    ['onlPapel','onlProf','onlAluno','onlLobby'].forEach(function(id){
+    ['onlPapel','onlSenhaProf','onlProf','onlAluno','onlLobby'].forEach(function(id){
       document.getElementById(id).classList.toggle('oculto', id !== parte);
     });
     onlTelaEl.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -4595,7 +4647,27 @@ body{
   }
   function onlAbrir(){ onlMsg(''); onlTelaPapel(); }
 
-  document.getElementById('onlSouProf').addEventListener('click', function(){ somClique(); onlMsg(''); onlMostrar('onlProf'); });
+  /* acesso do professor protegido por senha (uma vez por aba) */
+  const ONL_SENHA_PROF = 'aldair';
+  function onlProfLiberado(){ try { return sessionStorage.getItem('onlProfLiberado') === '1'; } catch(e){ return false; } }
+  document.getElementById('onlSouProf').addEventListener('click', function(){
+    somClique(); onlMsg('');
+    if (onlProfLiberado()){ onlMostrar('onlProf'); return; }
+    const inp = document.getElementById('onlSenha');
+    inp.value = '';
+    onlMostrar('onlSenhaProf');
+    setTimeout(function(){ inp.focus(); }, 250);
+  });
+  function onlConferirSenha(){
+    const inp = document.getElementById('onlSenha');
+    if (inp.value.trim().toLowerCase() !== ONL_SENHA_PROF){
+      somErro(); onlMsg('Senha incorreta.'); inp.select(); return;
+    }
+    try { sessionStorage.setItem('onlProfLiberado', '1'); } catch(e){}
+    somClique(); onlMsg(''); onlMostrar('onlProf');
+  }
+  document.getElementById('onlSenhaOk').addEventListener('click', onlConferirSenha);
+  document.getElementById('onlSenha').addEventListener('keydown', function(e){ if (e.key === 'Enter') onlConferirSenha(); });
   document.getElementById('onlSouAluno').addEventListener('click', function(){
     somClique(); onlMsg(''); onlMostrar('onlAluno');
     setTimeout(function(){ document.getElementById('onlCodigo').focus(); }, 250);
