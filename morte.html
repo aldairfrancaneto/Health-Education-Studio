@@ -658,6 +658,45 @@ body{
   .chal-campo input:focus{ border-color:#8B5CF6; box-shadow:0 0 0 3px rgba(139,92,246,.28); }
   .chal-nomes-acoes{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
+  /* --- Desafio online --- */
+  .mor-sel-online{ border-color:#2FA3A0; }
+  .mor-sel-online:hover{ box-shadow:0 0 0 2px rgba(47,163,160,.30), inset 0 0 40px rgba(47,163,160,.18); }
+  .mor-sel-online .mor-sel-nome{ color:#9EE6E2; }
+  .mor-sel-online .mor-sel-tag{ background:linear-gradient(180deg,#9EE6E2,#1E7C79); border-color:#CDF3F1; color:#04211F; }
+  .onl-tela .oculto{ display:none !important; }
+  .onl-tela .mor-sel-opcoes{ max-width:760px; margin:0 auto 18px; }
+  .onl-acoes{ margin-top:6px; }
+  .onl-campos{ max-width:620px; grid-template-columns:1fr 1fr; }
+  @media (max-width:520px){ .onl-campos{ grid-template-columns:1fr; } }
+  #onlCodigo{ text-transform:uppercase; letter-spacing:.25em; }
+  .onl-codigo{
+    font-family:var(--font-pixel); font-size:clamp(34px, 9vw, 64px); letter-spacing:.18em;
+    color:var(--gold-soft); text-shadow:0 0 18px rgba(212,175,55,.45); margin:6px 0 4px;
+  }
+  .onl-info{ text-align:center; font-family:var(--font-serif); font-size:15px; color:#E8EEF7; margin:0 auto 16px; max-width:620px; line-height:1.5; }
+  .onl-info b{ color:#D6BCF5; word-break:break-all; }
+  .onl-equipes{ display:grid; gap:10px; max-width:620px; margin:0 auto 18px; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); }
+  .onl-eq{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    border:2px solid var(--chal-cor, #8B5CF6); background:rgba(14,6,26,.55);
+    font-family:var(--font-serif); font-weight:700; font-size:16px; color:#E8EEF7;
+  }
+  .onl-eq.p0{ --chal-cor:var(--jog0); } .onl-eq.p1{ --chal-cor:var(--jog1); }
+  .onl-eq.p2{ --chal-cor:var(--jog2); } .onl-eq.p3{ --chal-cor:var(--jog3); }
+  .onl-eq .pino{ width:12px; height:12px; border-radius:50%; background:var(--chal-cor, #8B5CF6); flex:0 0 auto; }
+  .onl-eq.off{ opacity:.5; border-style:dashed; }
+  .onl-eq-nome{ flex:1; min-width:0; overflow-wrap:anywhere; }
+  .onl-eq-nome i{ font-weight:400; color:#D6BCF5; }
+  .onl-remover{ border:0; background:transparent; color:#F5B4B0; font-size:16px; cursor:pointer; padding:2px 6px; }
+  .onl-vazio{ text-align:center; color:rgba(232,238,247,.6); font-family:var(--font-serif); grid-column:1/-1; }
+  .onl-msg{ text-align:center; min-height:1.4em; margin-top:12px; font-family:var(--font-serif); font-size:14px; color:#F5DC8A; }
+  .onl-barra{ display:none; flex:1 1 100%; font-family:var(--font-serif); font-size:13px; color:rgba(232,238,247,.85); }
+  .onl-barra.on{ display:block; }
+  .onl-barra b{ color:var(--gold-soft); }
+  .onl-pto{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#3E9E5E; }
+  .onl-pto.nao{ background:#C9524C; }
+  .onl-off{ color:#F5B4B0; }
+
   /* --- HUD de turno + placar --- */
   .chal-hud{ display:none; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 18px; }
   .chal-hud.on{ display:flex; }
@@ -1578,6 +1617,11 @@ body{
           <span class="mor-sel-tag">2 a 4 jogadores · por turnos</span>
         </button>
 
+        <button class="mor-sel-card mor-sel-online" type="button" data-fluxo="online">
+          <span class="mor-sel-nome">Desafio online</span>
+          <span class="mor-sel-tag">2 a 4 equipes · cada uma no seu aparelho</span>
+        </button>
+
       </div>
     </div>
 
@@ -1592,6 +1636,88 @@ body{
         <button class="btn-board" type="button" id="chalNomesVoltar">↩ Voltar</button>
         <button class="btn-board principal" type="button" id="chalNomesOk">Continuar ▶</button>
       </div>
+    </div>
+
+    <!-- ---------- DESAFIO ONLINE: papel, sala e sala de espera ---------- -->
+    <div class="chal-nomes onl-tela" id="onlTela">
+      <div id="onlPapel">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Desafio online</span>
+          <span class="mor-sel-sub">Cada equipe joga no seu aparelho; o projetor mostra o mesmo tabuleiro</span>
+        </div>
+        <div class="mor-sel-opcoes">
+          <button class="mor-sel-card mor-sel-solo" type="button" id="onlSouProf">
+            <span class="mor-sel-nome">Sou o professor</span>
+            <span class="mor-sel-tag">criar a sala · projetor</span>
+          </button>
+          <button class="mor-sel-card mor-sel-chal" type="button" id="onlSouAluno">
+            <span class="mor-sel-nome">Sou uma equipe</span>
+            <span class="mor-sel-tag">entrar com o código</span>
+          </button>
+        </div>
+        <div class="chal-nomes-acoes onl-acoes">
+          <button class="btn-board principal oculto" type="button" id="onlVoltar">↻ Voltar à sala</button>
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+        </div>
+      </div>
+
+      <div id="onlProf" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Nova sala</span>
+          <span class="mor-sel-sub">Escolha o percurso da partida</span>
+        </div>
+        <div class="mor-sel-opcoes">
+          <button class="mor-sel-card mor-sel-apo" type="button" data-modo="apoptose">
+            <span class="mor-sel-nome">Só a Apoptose</span>
+            <span class="mor-sel-tag">2 equipes · 14 cartas</span>
+          </button>
+          <button class="mor-sel-card mor-sel-nec" type="button" data-modo="necrose">
+            <span class="mor-sel-nome">Só a Necrose</span>
+            <span class="mor-sel-tag">2 equipes · 6 cartas</span>
+          </button>
+          <button class="mor-sel-card mor-sel-ambas" type="button" data-modo="ambas">
+            <span class="mor-sel-nome">Os Dois Destinos</span>
+            <span class="mor-sel-tag">2 a 4 equipes · 20 cartas</span>
+          </button>
+        </div>
+        <div class="chal-nomes-acoes onl-acoes">
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+        </div>
+      </div>
+
+      <div id="onlAluno" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-titulo">Entrar na sala</span>
+          <span class="mor-sel-sub">O código está no projetor</span>
+        </div>
+        <div class="chal-nomes-campos onl-campos">
+          <div class="chal-campo"><label for="onlCodigo">Código da sala</label>
+            <input type="text" id="onlCodigo" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="ex.: 4K7P"></div>
+          <div class="chal-campo"><label for="onlNome">Nome da equipe</label>
+            <input type="text" id="onlNome" maxlength="22" autocomplete="off" placeholder="ex.: Equipe Caspase"></div>
+        </div>
+        <div class="chal-nomes-acoes">
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+          <button class="btn-board principal" type="button" id="onlEntrar">Entrar ▶</button>
+        </div>
+      </div>
+
+      <div id="onlLobby" class="oculto">
+        <div class="mor-sel-cab">
+          <span class="mor-sel-sub">Código da sala</span>
+          <span class="onl-codigo" id="onlCodigoGrande">----</span>
+          <span class="mor-sel-sub" id="onlPercurso"></span>
+        </div>
+        <div class="onl-info" id="onlProfInfo">As equipes abrem <b id="onlEndereco"></b>, escolhem <b>Desafio online → Sou uma equipe</b> e digitam o código.</div>
+        <div class="onl-info oculto" id="onlAlunoInfo">Aguardando o professor iniciar a partida…</div>
+        <div class="onl-equipes" id="onlEquipes"></div>
+        <div class="chal-nomes-acoes">
+          <button class="btn-board onl-sair" type="button">✕ Sair da sala</button>
+          <button class="btn-board principal" type="button" id="onlIniciar" disabled>▶ Iniciar partida</button>
+        </div>
+      </div>
+
+      <div class="onl-msg" id="onlMsg" role="status"></div>
     </div>
 
     <!-- ---------- TELA DE SELEÇÃO DE PERCURSO ---------- -->
@@ -1641,6 +1767,7 @@ body{
         <button class="btn-board" id="chalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
         <button class="btn-board" id="chalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
         <button class="btn-board principal" id="chalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
+        <div class="onl-barra" id="onlBarra"></div>
       </div>
 
       <!-- ---------- QUADRO 1: placar, monte único e cartas especiais (Challenger) ---------- -->
@@ -1907,7 +2034,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.3 &middot; Última atualização: 30 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 2.4 &middot; Última atualização: 22 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1943,7 +2070,9 @@ body{
     definir: function(v){ efeitosVol = v; if (efeitosMestre) efeitosMestre.gain.value = v; },
     amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
   };
+  let morSilencio = false;   /* Desafio online: ao refazer a partida depois de reconectar, sem bipes */
   function nota(freq, inicio, dur, tipo, vol){
+    if (morSilencio) return;
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
     o.type = tipo || 'triangle';
@@ -2213,7 +2342,7 @@ body{
     /* revisão guiada ligada (fim de jogo): o clique navega até a carta */
     if (morRevAtiva) return;
     /* nos modos por turnos, o clique no slot é tratado pelo motor Challenger */
-    if (morFluxo !== 'classico'){ chalClicarSlot(slot); return; }
+    if (morFluxo !== 'classico'){ chalAcao('slot', { i: [].indexOf.call(morSlots(), slot) }); return; }
 
     /* slot já conferido como errado → devolve a carta ao acervo (não pode mais ser movida direto) */
     if (slot.dataset.posto && slot.classList.contains('errado')){
@@ -2366,7 +2495,7 @@ body{
   function morEmbaralhar(a){
     const c2 = a.slice();
     for (let i = c2.length-1; i > 0; i--){
-      const j = Math.floor(Math.random()*(i+1));
+      const j = Math.floor(chalRand()*(i+1));
       const t = c2[i]; c2[i] = c2[j]; c2[j] = t;
     }
     return c2;
@@ -2592,6 +2721,7 @@ body{
     morModoJogo.classList.remove('on');
     morSelecao.classList.remove('on');
     chalNomesEl.classList.remove('on');
+    document.getElementById('onlTela').classList.remove('on');
     morTabuleiro.classList.add('oculto');
   }
 
@@ -2604,6 +2734,7 @@ body{
   }
   document.querySelectorAll('#morModoJogo .mor-sel-card').forEach(function(b){
     b.addEventListener('click', function(){
+      if (b.dataset.fluxo === 'online'){ somClique(); onlAbrir(); return; }
       morFluxo = b.dataset.fluxo;
       somClique();
       /* nos dois fluxos o próximo passo é o percurso;
@@ -2785,7 +2916,9 @@ body{
     ativo:false, jogadores:[], turno:0, deck:[], cartaMao:null, cartaSacada:null, bloqueado:false,
     fase:'sacar', registro:{}, encerrando:false,
     slotMarcado:null, semProgresso:0,
-    pulez:{}, iniciativaPara:null
+    pulez:{}, iniciativaPara:null,
+    transicao:false,   /* entre o fim de uma vez e o início da próxima (veredito, "Vez de…") */
+    espera:null        /* decisão pendente de outro jogador: {tipo:'amplificar'|'defesa', atk, alvo, dano} */
   };
 
   const chalPainelEl    = document.getElementById('chalPainel');
@@ -2805,7 +2938,7 @@ body{
   /* "Nova partida" e "Trocar modo" só ficam disponíveis com a partida encerrada */
   function chalAtualizarBotoesPartida(){
     const encerrada = !CHAL.ativo;
-    chalReiniciarBtn.disabled  = !encerrada;
+    chalReiniciarBtn.disabled  = !encerrada || (ONL.ativo && ONL.papel !== 'prof');   /* online: só o professor recomeça */
     chalTrocarModoBtn.disabled = !encerrada;
     chalRevisarBtn.disabled    = !encerrada;
   }
@@ -2841,6 +2974,7 @@ body{
     const cxN  = document.getElementById('chalSorteioNomes');
     const resE = document.getElementById('chalSorteioRes');
     const meu  = ++chalSorteioToken;
+    if (ONL.rapido){ cb(); return; }
 
     ov.classList.remove('parou');
     resE.textContent = '';
@@ -2889,10 +3023,13 @@ body{
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
   function chalAnunciarVez(cb){
     if (!CHAL.ativo || CHAL.jogadores.length < 2){ if (cb) cb(); return; }
+    if (ONL.rapido){ if (cb) cb(); return; }
     const el = document.getElementById('chalAviso');
     const j  = chalJogAtual();
     el.className = 'chal-vez-ov p' + CHAL.turno;
-    document.getElementById('chalVezTit').innerHTML = 'Vez de <b>' + chalEsc(j.nome) + '</b>';
+    document.getElementById('chalVezTit').innerHTML = (ONL.ativo && ONL.papel === 'equipe' && ONL.seat === CHAL.turno)
+      ? 'Sua vez, <b>' + chalEsc(j.nome) + '</b>!'
+      : 'Vez de <b>' + chalEsc(j.nome) + '</b>';
     void el.offsetWidth;                                  /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
@@ -2934,6 +3071,8 @@ body{
     CHAL.semProgresso = 0;
     CHAL.pulez = {};
     CHAL.iniciativaPara = null;
+    CHAL.transicao = true;            /* a abertura (embaralhar + sorteio) vai até o 1º "Vez de…" */
+    CHAL.espera = null;
     CHAL.turno = 0;
     CHAL.ativo = true;
 
@@ -2966,7 +3105,7 @@ body{
        → sorteia quem começa (5 s) → primeira vez */
     chalEmbaralharEspeciais(function(){
       chalEmbaralharDeck(conteudo, function(){
-        CHAL.turno = Math.floor(Math.random() * nP);
+        CHAL.turno = Math.floor(chalRand() * nP);
         chalAnimarSorteio(CHAL.turno, chalNovoTurno);
       });
     });
@@ -3229,6 +3368,7 @@ body{
   function chalAnimarEmbaralho(op, cb){
     const ov = document.getElementById('chalEmbaralho');
     const meu = ++chalEmbTok;
+    if (ONL.rapido){ if (op.antes) op.antes(); cb(); return; }
     document.getElementById('chalEmbTit').textContent = op.titulo;
     const resE = document.getElementById('chalEmbRes');
     resE.textContent = '';
@@ -3454,7 +3594,7 @@ body{
   }
   function chalVerCartaEsp(k){
     const e = CHAL_ESP[k];
-    const podeUsar = (k === 'sentenca' && chalSentencaDisponivel());
+    const podeUsar = (k === 'sentenca' && chalSentencaDisponivel() && onlPodeAgir(CHAL.turno));
     const html = '<img class="chal-esp-grande" src="' + CHAL_ESP_IMG[k] +
       '" alt="' + e.nome + '">';
     const botoes = [];
@@ -3476,6 +3616,7 @@ body{
 
   /* ---------- flip da carta jogada + tremida no alvo ---------- */
   function chalFlipCarta(k, txt){
+    if (ONL.rapido) return;
     const ov = document.getElementById('chalFlip');
     document.getElementById('chalFlipImg').src = CHAL_ESP_IMG[k];
     document.getElementById('chalFlipTxt').innerHTML = txt || '';
@@ -3494,7 +3635,14 @@ body{
   function chalRenderVez(msg){
     if (msg){ chalVezEl.innerHTML = msg; return; }
     const j = chalJogAtual();
-    let txt = '▶ Vez de <b>' + chalEsc(j.nome) + '</b>';
+    if (CHAL.espera){ chalVezEl.innerHTML = chalTextoEspera(); return; }
+    if (!onlPodeAgir(CHAL.turno)){
+      chalVezEl.innerHTML = '⏳ Vez de <b>' + chalEsc(j.nome) + '</b> — acompanhe a jogada no tabuleiro.';
+      return;
+    }
+    let txt = (ONL.ativo && ONL.papel === 'prof')
+      ? '▶ Vez de <b>' + chalEsc(j.nome) + '</b> (desconectada — o professor joga por ela)'
+      : '▶ Vez de <b>' + chalEsc(j.nome) + '</b>';
     if (CHAL.fase === 'sacar') txt += ' — saque a carta nova ou reposicione as cartas fora do lugar.';
     else if (CHAL.cartaSacada) txt += ' — toque na carta sacada para pegá-la, ou reposicione outras cartas erradas antes.';
     else if (CHAL.cartaMao) txt += ' — escolha o espaço em que a carta se encaixa.';
@@ -3560,6 +3708,7 @@ body{
     chalEncerrarBtn.title = CHAL.bloqueado ? 'Aguarde o sorteio da carta especial…'
       : (CHAL.cartaMao || CHAL.cartaSacada) ? 'Pegue e posicione a carta sacada antes de encerrar.' : '';
     chalSacarBtn.disabled = (CHAL.fase !== 'sacar' || CHAL.deck.length === 0);
+    if (!onlPodeAgir(CHAL.turno)){ chalEncerrarBtn.disabled = true; chalSacarBtn.disabled = true; }
   }
 
   /* ==========  CARTAS ESPECIAIS: uso  ========== */
@@ -3571,24 +3720,27 @@ body{
        3) só então o alvo pode se defender — a defesa absorve o que ela cobre e o alvo
           recebe apenas o dano que ultrapassar a defesa. */
   function chalLancarSentenca(){
+    if (!chalSentencaDisponivel() || !onlPodeAgir(CHAL.turno)) return;
+    chalEscolherAlvo(function(alvoIdx){ chalAcao('sentenca', { alvo: alvoIdx }); });
+  }
+  function chalSentencaExec(alvoIdx){
     const eu = CHAL.turno;
     if (!chalSentencaDisponivel()) return;
-    chalEscolherAlvo(function(alvoIdx){
-      CHAL.bloqueado = true;                 /* trava o tabuleiro até a resolução terminar */
-      chalRemoverEsp(eu, 'sentenca');
-      chalLog('💀 <b>' + chalEsc(CHAL.jogadores[eu].nome) + '</b> lançou a <b>Sentença de Apoptose</b> contra <b>' +
-        chalEsc(CHAL.jogadores[alvoIdx].nome) + '</b>.', 'vermelho');
-      somErro();
-      chalRenderPlacar(); chalRenderAcoes();
-      chalFlipCarta('sentenca', chalEsc(CHAL.jogadores[eu].nome) + ' lança a Sentença contra ' + chalEsc(CHAL.jogadores[alvoIdx].nome));
-      /* espera o flip (1,6 s) terminar antes de abrir os modais, que ficam por cima dele */
-      setTimeout(function(){ chalOferecerAmplificacao(eu, alvoIdx); }, 1700);
-    });
+    if (!(alvoIdx >= 0 && alvoIdx < CHAL.jogadores.length) || alvoIdx === eu) return;
+    CHAL.bloqueado = true;                 /* trava o tabuleiro até a resolução terminar */
+    chalRemoverEsp(eu, 'sentenca');
+    chalLog('💀 <b>' + chalEsc(CHAL.jogadores[eu].nome) + '</b> lançou a <b>Sentença de Apoptose</b> contra <b>' +
+      chalEsc(CHAL.jogadores[alvoIdx].nome) + '</b>.', 'vermelho');
+    somErro();
+    chalRenderPlacar(); chalRenderAcoes();
+    chalFlipCarta('sentenca', chalEsc(CHAL.jogadores[eu].nome) + ' lança a Sentença contra ' + chalEsc(CHAL.jogadores[alvoIdx].nome));
+    /* espera o flip (1,6 s) terminar antes de abrir os modais, que ficam por cima dele */
+    chalDepois(function(){ chalOferecerAmplificacao(eu, alvoIdx); }, 1700);
   }
 
   function chalSentencaConcluir(){
     CHAL.bloqueado = false;
-    chalRenderPlacar(); chalRenderAcoes();
+    chalRenderPlacar(); chalRenderAcoes(); chalRenderVez();
   }
 
   function chalEscolherAlvo(cb){
@@ -3602,77 +3754,114 @@ body{
     chalModalMsg('🎯', 'Sentença de Apoptose', 'Contra quem você lança a Sentença?', botoes);
   }
 
-  /* passo 2: o atacante, com a Amplificação na mão, decide antes da defesa */
-  function chalOferecerAmplificacao(atkIdx, alvoIdx){
-    if (!chalTemEsp(atkIdx, 'amplificacao')){ chalResolverSentenca(atkIdx, alvoIdx, 1); return; }
-    const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
-    const html = '<div class="chal-modal-cartas"><img src="' + CHAL_ESP_IMG.amplificacao + '" alt="Amplificação da Cascata"></div>' +
-      '<div class="chal-modal-txt" style="font-size:13px;">Antes de <b>' + alvoNome + '</b> poder se defender: ' +
-      'potencializar a Sentença? Ele passará a perder <b>2 vezes</b> em vez de 1 — e a defesa dele só absorve o que ela cobre.</div>';
-    chalModalMsgHTML('⚡', 'Amplificação da Cascata', html, [
-      { txt:'⚡ Potencializar', tipo:'principal', fn:function(){
-          chalModalFechar();
-          chalRemoverEsp(atkIdx, 'amplificacao');
-          chalFlipCarta('amplificacao', 'Ataque amplificado: 2 vezes!');
-          chalLog('⚡ <b>Amplificação da Cascata</b>: a Sentença contra <b>' + alvoNome + '</b> agora vale 2 vezes.', 'vermelho');
-          somErro();
-          chalRenderPlacar();
-          setTimeout(function(){ chalResolverSentenca(atkIdx, alvoIdx, 2); }, 1700);
-      }},
-      { txt:'Guardar a carta', tipo:'', fn:function(){ chalModalFechar(); chalResolverSentenca(atkIdx, alvoIdx, 1); } }
-    ]);
-  }
-
-  /* passo 3: defesa do alvo, contra `dano` vezes perdidas (pode reabrir se ainda sobrar dano) */
-  function chalResolverSentenca(atkIdx, alvoIdx, dano){
-    const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
-    const defesas = ['inibidor','sobrevivencia'].filter(function(k){ return chalTemEsp(alvoIdx, k); });
-
-    if (!defesas.length){ chalSentencaAtinge(atkIdx, alvoIdx, dano); return; }
-
+  /* decisão pendente (Amplificação ou defesa): abre o modal para quem decide;
+     no online, os demais aparelhos só veem o aviso de espera */
+  function chalMostrarEspera(){
+    const e = CHAL.espera;
+    if (!e) return;
+    chalRenderVez(chalTextoEspera());
+    if (!onlPodeAgir(chalQuemDecide())) return;
+    if (e.tipo === 'amplificar'){
+      const alvoNome = chalEsc(CHAL.jogadores[e.alvo].nome);
+      const html = '<div class="chal-modal-cartas"><img src="' + CHAL_ESP_IMG.amplificacao + '" alt="Amplificação da Cascata"></div>' +
+        '<div class="chal-modal-txt" style="font-size:13px;">Antes de <b>' + alvoNome + '</b> poder se defender: ' +
+        'potencializar a Sentença? Ele passará a perder <b>2 vezes</b> em vez de 1 — e a defesa dele só absorve o que ela cobre.</div>';
+      chalModalMsgHTML('⚡', 'Amplificação da Cascata', html, [
+        { txt:'⚡ Potencializar', tipo:'principal', fn:function(){ chalModalTravar(); chalAcao('amplificar', { sim:true }); } },
+        { txt:'Guardar a carta', tipo:'', fn:function(){ chalModalTravar(); chalAcao('amplificar', { sim:false }); } }
+      ]);
+      return;
+    }
+    const alvoNome = chalEsc(CHAL.jogadores[e.alvo].nome);
+    const defesas = e.defesas;
     let cartasHtml = '<div class="chal-modal-cartas">';
     defesas.forEach(function(k){ cartasHtml += '<img src="' + CHAL_ESP_IMG[k] + '" alt="' + CHAL_ESP[k].nome + '">'; });
     cartasHtml += '</div><div class="chal-modal-txt" style="font-size:13px;"><b>' + alvoNome +
       '</b>, você foi alvo da Sentença de Apoptose' +
-      (dano > 1 ? ' <b>amplificada</b> (' + dano + ' vezes perdidas)' : '') + '. Como quer reagir?</div>';
+      (e.dano > 1 ? ' <b>amplificada</b> (' + e.dano + ' vezes perdidas)' : '') + '. Como quer reagir?</div>';
     cartasHtml += '<div class="chal-esp-lista">';
     defesas.forEach(function(k){
-      const e = CHAL_ESP[k];
-      cartasHtml += '<div class="chal-esp-lista-item"><b>' + e.ico + ' ' + e.nome + '</b><span>' + e.efeito + '</span></div>';
+      const c = CHAL_ESP[k];
+      cartasHtml += '<div class="chal-esp-lista-item"><b>' + c.ico + ' ' + c.nome + '</b><span>' + c.efeito + '</span></div>';
     });
     cartasHtml += '</div>';
-
     const botoes = defesas.map(function(k){
       const rotulo = (k === 'inibidor')
         ? '🛡️ Bloquear 1 (Inibidor de Apoptose)'
         : '🧬 Anular tudo e assumir a vez (Sobrevivência Celular)';
-      return { txt: rotulo, tipo:'principal', fn:function(){
-        chalModalFechar();
-        chalRemoverEsp(alvoIdx, k);
-        chalFlipCarta(k, alvoNome + ' se defendeu!');
-        somVitoria();
-        if (k === 'sobrevivencia'){
-          CHAL.iniciativaPara = alvoIdx;
-          chalLog('🧬 <b>' + alvoNome + '</b> usou a <b>Sobrevivência Celular</b>: ataque anulado e a iniciativa passa para ' + alvoNome + '.', 'verde');
-          chalRenderPlacar();
-          setTimeout(chalSentencaConcluir, 1700);
-          return;
-        }
-        /* Inibidor: absorve 1 vez perdida; o que passar disso ainda atinge o alvo */
-        const resta = dano - 1;
-        chalLog('🛡️ <b>' + alvoNome + '</b> gastou o <b>Inibidor de Apoptose</b> e bloqueou 1 vez perdida.', 'verde');
-        chalRenderPlacar();
-        setTimeout(function(){
-          if (resta <= 0){ chalSentencaConcluir(); return; }
-          chalResolverSentenca(atkIdx, alvoIdx, resta);
-        }, 1700);
-      }};
+      return { txt: rotulo, tipo:'principal', fn:function(){ chalModalTravar(); chalAcao('defesa', { k:k }); } };
     });
-    botoes.push({ txt:'😞 Aceitar o ataque', tipo:'', fn:function(){
-      chalModalFechar(); chalSentencaAtinge(atkIdx, alvoIdx, dano);
-    }});
-
+    botoes.push({ txt:'😞 Aceitar o ataque', tipo:'', fn:function(){ chalModalTravar(); chalAcao('defesa', { k:'aceitar' }); } });
     chalModalMsgHTML('⚔️', 'Você foi atacado!', cartasHtml, botoes);
+  }
+
+  function chalQuemDecide(){
+    const e = CHAL.espera;
+    return !e ? -1 : (e.tipo === 'amplificar' ? e.atk : e.alvo);
+  }
+  function chalTextoEspera(){
+    const e = CHAL.espera, quem = chalQuemDecide();
+    if (onlPodeAgir(quem)) return '⚔️ <b>' + chalEsc(CHAL.jogadores[quem].nome) + '</b>, decida no quadro aberto.';
+    return '⏳ Aguardando <b>' + chalEsc(CHAL.jogadores[quem].nome) + '</b> ' +
+      (e.tipo === 'amplificar' ? 'decidir se amplifica a Sentença…' : 'decidir como se defender…');
+  }
+
+  /* passo 2: o atacante, com a Amplificação na mão, decide antes da defesa */
+  function chalOferecerAmplificacao(atkIdx, alvoIdx){
+    if (!chalTemEsp(atkIdx, 'amplificacao')){ chalResolverSentenca(atkIdx, alvoIdx, 1); return; }
+    CHAL.espera = { tipo:'amplificar', atk:atkIdx, alvo:alvoIdx };
+    chalMostrarEspera();
+  }
+  function chalAmplificarExec(sim){
+    const e = CHAL.espera;
+    if (!e || e.tipo !== 'amplificar') return;
+    CHAL.espera = null;
+    chalModalFechar();
+    chalRenderVez();
+    if (!sim){ chalResolverSentenca(e.atk, e.alvo, 1); return; }
+    chalRemoverEsp(e.atk, 'amplificacao');
+    chalFlipCarta('amplificacao', 'Ataque amplificado: 2 vezes!');
+    chalLog('⚡ <b>Amplificação da Cascata</b>: a Sentença contra <b>' + chalEsc(CHAL.jogadores[e.alvo].nome) + '</b> agora vale 2 vezes.', 'vermelho');
+    somErro();
+    chalRenderPlacar();
+    chalDepois(function(){ chalResolverSentenca(e.atk, e.alvo, 2); }, 1700);
+  }
+
+  /* passo 3: defesa do alvo, contra `dano` vezes perdidas (pode reabrir se ainda sobrar dano) */
+  function chalResolverSentenca(atkIdx, alvoIdx, dano){
+    const defesas = ['inibidor','sobrevivencia'].filter(function(k){ return chalTemEsp(alvoIdx, k); });
+    if (!defesas.length){ chalSentencaAtinge(atkIdx, alvoIdx, dano); return; }
+    CHAL.espera = { tipo:'defesa', atk:atkIdx, alvo:alvoIdx, dano:dano, defesas:defesas };
+    chalMostrarEspera();
+  }
+  function chalDefesaExec(k){
+    const e = CHAL.espera;
+    if (!e || e.tipo !== 'defesa') return;
+    if (k !== 'aceitar' && e.defesas.indexOf(k) < 0) return;
+    CHAL.espera = null;
+    chalModalFechar();
+    chalRenderVez();
+    const atkIdx = e.atk, alvoIdx = e.alvo, dano = e.dano;
+    if (k === 'aceitar'){ chalSentencaAtinge(atkIdx, alvoIdx, dano); return; }
+    const alvoNome = chalEsc(CHAL.jogadores[alvoIdx].nome);
+    chalRemoverEsp(alvoIdx, k);
+    chalFlipCarta(k, alvoNome + ' se defendeu!');
+    somVitoria();
+    if (k === 'sobrevivencia'){
+      CHAL.iniciativaPara = alvoIdx;
+      chalLog('🧬 <b>' + alvoNome + '</b> usou a <b>Sobrevivência Celular</b>: ataque anulado e a iniciativa passa para ' + alvoNome + '.', 'verde');
+      chalRenderPlacar();
+      chalDepois(chalSentencaConcluir, 1700);
+      return;
+    }
+    /* Inibidor: absorve 1 vez perdida; o que passar disso ainda atinge o alvo */
+    const resta = dano - 1;
+    chalLog('🛡️ <b>' + alvoNome + '</b> gastou o <b>Inibidor de Apoptose</b> e bloqueou 1 vez perdida.', 'verde');
+    chalRenderPlacar();
+    chalDepois(function(){
+      if (resta <= 0){ chalSentencaConcluir(); return; }
+      chalResolverSentenca(atkIdx, alvoIdx, resta);
+    }, 1700);
   }
 
   /* o que sobrou do ataque atinge o alvo: perde `dano` vezes */
@@ -3711,7 +3900,7 @@ body{
     chalAtualizarRest();
 
     /* só depois do "Vez de…" (3 s) é que entra o sorteio da carta especial */
-    chalAnunciarVez(chalTentarSorteEspecial);
+    chalAnunciarVez(function(){ CHAL.transicao = false; chalTentarSorteEspecial(); });
   }
 
   /* ---------- sorteio de carta especial, a cada rodada (25% de chance) ----------
@@ -3722,6 +3911,7 @@ body{
     const ov   = document.getElementById('chalSorteioEsp');
     const resE = document.getElementById('chalSorteioEspRes');
     const meu  = ++chalSorteioEspTok;
+    if (ONL.rapido){ cb(); return; }
 
     ov.classList.remove('parou');
     resE.textContent = '';
@@ -3762,7 +3952,7 @@ body{
     CHAL.bloqueado = true;
     chalRenderAcoes();
 
-    const sucesso = Math.random() < CHAL_ESP_CHANCE;
+    const sucesso = chalRand() < CHAL_ESP_CHANCE;
     const k = sucesso ? j.especiaisDeck.shift() : null;
     if (sucesso) j.especiais.push(k);
 
@@ -3783,6 +3973,7 @@ body{
   /* ---------- explosão de destaque ao sacar carta(s) especial(is) ---------- */
   let chalBoomTok = 0;
   function chalBoomEsp(keys, nome){
+    if (ONL.rapido) return;
     const ov = document.getElementById('chalBoom');
     const n  = keys.length;
     document.getElementById('chalBoomNum').textContent = String(n);
@@ -3805,7 +3996,7 @@ body{
   let chalVdTok = 0;
   function chalVeredito(nome, ganhos, erradas, cb){
     const ov = document.getElementById('chalVeredito');
-    if (!ov){ if (cb) cb(); return; }
+    if (!ov || ONL.rapido){ if (cb) cb(); return; }
     const acerto = ganhos > 0;
     ov.classList.remove('acerto','erro');
     ov.classList.add(acerto ? 'acerto' : 'erro');
@@ -3826,8 +4017,8 @@ body{
     }, 3000);
   }
 
-  chalSacarBtn.addEventListener('click', chalSacar);
-  chalEncerrarBtn.addEventListener('click', chalEncerrarTurno);
+  chalSacarBtn.addEventListener('click', function(){ chalAcao('sacar'); });
+  chalEncerrarBtn.addEventListener('click', function(){ chalAcao('encerrar'); });
   function chalSacar(){
     if (!CHAL.ativo || CHAL.fase !== 'sacar' || CHAL.bloqueado || CHAL.deck.length === 0) return;
     chalDesmarcarSlot();
@@ -3902,7 +4093,8 @@ body{
   }
 
   /* toques na área de espera (a lupa amplia e não conta — ela faz stopPropagation) */
-  chalCartaEl.addEventListener('click', function(){
+  chalCartaEl.addEventListener('click', function(){ chalAcao('carta'); });
+  function chalTocarCarta(){
     if (!CHAL.ativo || CHAL.fase !== 'jogar' || CHAL.bloqueado) return;
 
     /* a) carta recém-sacada, ainda não pega → este toque a seleciona
@@ -3936,7 +4128,7 @@ body{
       somClique();
       chalMostrarCarta(); chalRenderAcoes(); chalRenderVez();
     }
-  });
+  }
 
   function chalEsvaziarSlot(slot){
     slot.dataset.posto = '';
@@ -3957,6 +4149,7 @@ body{
   function chalEncerrarTurno(){
     if (!CHAL.ativo || CHAL.fase !== 'jogar' || CHAL.bloqueado ||
         CHAL.cartaMao !== null || CHAL.cartaSacada !== null) return;
+    CHAL.transicao = true;            /* até o "Vez de…" do próximo jogador */
     chalDesmarcarSlot();
     const j = chalJogAtual();
     let ganhos = 0;
@@ -4047,6 +4240,7 @@ body{
     morMusica.encerrar();                      /* fim da partida do Challenger */
     CHAL.ativo = false;
     chalAtualizarBotoesPartida();
+    onlFimPartida();
     const permitidas = MOR_MODOS[morModo];
 
     /* bônus por via dominada (vale para 2, 3 ou 4 jogadores) */
@@ -4103,11 +4297,14 @@ body{
   chalReiniciarBtn.addEventListener('click', function(){
     if (CHAL.ativo) return;   /* só disponível com a partida encerrada */
     somClique();
+    if (ONL.ativo){ onlNovaPartida(); return; }
     chalIniciar();
   });
   chalTrocarModoBtn.addEventListener('click', function(){
     if (CHAL.ativo) return;   /* só disponível com a partida encerrada */
-    somClique(); morMostrarModo();
+    somClique();
+    if (ONL.ativo){ onlSair(); return; }
+    morMostrarModo();
   });
 
   /* ---------- modal utilitário ---------- */
@@ -4138,6 +4335,379 @@ body{
     chalModalEl.classList.add('on');
   }
   function chalModalFechar(){ chalModalEl.classList.remove('on'); }
+  function chalModalTravar(){ chalModalAcoes.querySelectorAll('button').forEach(function(b){ b.disabled = true; }); }
+  function chalModalDestravar(){ chalModalAcoes.querySelectorAll('button').forEach(function(b){ b.disabled = false; }); }
+
+  /* ============================================================
+     ===============  DESAFIO ONLINE (cada equipe no seu aparelho)
+     O servidor (Render) só guarda a ordem das jogadas. Todos os
+     aparelhos rodam este mesmo motor com a mesma semente e aplicam
+     as mesmas jogadas na mesma ordem — por isso os tabuleiros ficam
+     iguais. Quem reconecta refaz a partida rapidinho, sem animações.
+     ============================================================ */
+  const ONL_URL = 'https://jogos-multiplayer-server.onrender.com';
+  const ONL_LIB = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
+  const ONL_CHAVE = 'morte-online';
+  const ONL = {
+    ativo:false,       /* partida online em andamento neste aparelho */
+    rapido:false,      /* refazendo a partida (sem animações nem sons) */
+    sock:null, papel:null, seat:null, codigo:null, token:null, nome:null,
+    sala:null, seed:null, rng:null,
+    prox:0,            /* próxima jogada (seq) esperada do servidor */
+    fila:[], drenando:false, sincronizando:false
+  };
+
+  function chalRand(){ return (ONL.ativo && ONL.rng) ? ONL.rng() : Math.random(); }
+  function onlSemente(a){                     /* mulberry32: mesmo número → mesma sequência */
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  /* espera das animações do duelo de cartas; no refazer rápido roda na hora */
+  function chalDepois(fn, ms){ if (ONL.rapido) fn(); else setTimeout(fn, ms); }
+
+  /* ---------- jogadas: no Desafio local executam direto; no online vão ao servidor ---------- */
+  function chalAcao(tipo, dados){
+    dados = dados || {};
+    if (!ONL.ativo){ chalExecutar(tipo, dados); return; }
+    if (ONL.fila.length || !onlEstavel()) return;            /* ainda aplicando jogadas recebidas */
+    if (onlEhDecisao(tipo) !== !!CHAL.espera) return;
+    if (!onlPodeAgir(onlResponsavel(tipo))) return;           /* não é a sua vez */
+    onlEnviar(tipo, dados);
+  }
+  function chalExecutar(tipo, d){
+    switch (tipo){
+      case 'sacar':      chalSacar(); break;
+      case 'encerrar':   chalEncerrarTurno(); break;
+      case 'carta':      chalTocarCarta(); break;
+      case 'slot':       { const sl = morSlots()[d.i | 0]; if (sl && d.i >= 0) chalClicarSlot(sl); break; }
+      case 'sentenca':   chalSentencaExec(d.alvo | 0); break;
+      case 'amplificar': chalAmplificarExec(!!d.sim); break;
+      case 'defesa':     chalDefesaExec(String(d.k)); break;
+    }
+  }
+
+  function onlEhDecisao(tipo){ return tipo === 'amplificar' || tipo === 'defesa'; }
+  function onlResponsavel(tipo){
+    if (onlEhDecisao(tipo)) return CHAL.espera ? chalQuemDecide() : -2;
+    return CHAL.turno;
+  }
+  function onlOnline(seat){
+    const e = ONL.sala && ONL.sala.equipes.find(function(x){ return x.seat === seat; });
+    return !!(e && e.online);
+  }
+  /* este aparelho pode jogar pelo jogador `seat`? (a equipe dona; o professor só se ela caiu) */
+  function onlPodeAgir(seat){
+    if (!ONL.ativo) return true;
+    if (seat < 0) return false;
+    if (ONL.papel === 'equipe') return ONL.seat === seat;
+    return !onlOnline(seat);
+  }
+  /* ponto estável do motor: nenhuma animação de transição rodando */
+  function onlEstavel(){ return !!CHAL.espera || (!CHAL.bloqueado && !CHAL.transicao); }
+
+  /* aplica as jogadas recebidas, uma a uma, sempre num ponto estável do motor
+     (assim um aparelho mais lento nunca aplica uma jogada no meio de uma animação) */
+  function onlDrenar(){
+    if (ONL.drenando) return;
+    ONL.drenando = true;
+    try {
+      while (ONL.fila.length){
+        const a = ONL.fila[0];
+        if (!CHAL.ativo){ ONL.fila.shift(); continue; }      /* partida acabou: sobras são ignoradas */
+        if (!onlEstavel()) break;
+        if (CHAL.espera && !onlEhDecisao(a.tipo)) break;      /* jogada comum espera a decisão pendente */
+        ONL.fila.shift();
+        if (onlEhDecisao(a.tipo) !== !!CHAL.espera) continue; /* decisão fora de hora: ignorada por todos */
+        if (CHAL.espera && a.tipo !== CHAL.espera.tipo) continue;
+        const resp = onlResponsavel(a.tipo);
+        if (a.seat !== -1 && a.seat !== resp) continue;       /* só a equipe responsável (ou o professor) */
+        chalExecutar(a.tipo, a.dados || {});
+      }
+    } finally { ONL.drenando = false; }
+  }
+  setInterval(function(){ if (ONL.ativo && ONL.fila.length) onlDrenar(); }, 120);
+
+  function onlReceber(a){
+    if (!ONL.ativo || !a || a.seq < ONL.prox) return;
+    if (a.seq > ONL.prox){ onlPedirFaltantes(); return; }
+    ONL.fila.push(a); ONL.prox++;
+    onlDrenar();
+  }
+  function onlPedirFaltantes(){
+    if (ONL.sincronizando || !ONL.sock) return;
+    ONL.sincronizando = true;
+    ONL.sock.emit('sync', { desde: ONL.prox }, function(r){
+      ONL.sincronizando = false;
+      if (!r || !r.ok || !r.log) return;
+      if (r.seed !== ONL.seed){ onlRetomar(); return; }
+      r.log.forEach(onlReceber);
+    });
+  }
+
+  function onlEnviar(tipo, dados){
+    if (!ONL.sock || !ONL.sock.connected){
+      onlAviso('Sem conexão — reconectando…'); chalModalDestravar(); return;
+    }
+    ONL.sock.emit('acao', { tipo:tipo, dados:dados }, function(r){
+      if (!r || !r.ok){ onlAviso((r && r.erro) || 'A jogada não chegou ao servidor.'); chalModalDestravar(); }
+    });
+  }
+
+  /* ---------- começar / refazer a partida ---------- */
+  function onlComecar(p, refazer){
+    chalModalFechar();
+    ONL.ativo = true;
+    ONL.seed = p.seed; ONL.rng = onlSemente(p.seed);
+    ONL.prox = 0; ONL.fila = [];
+    morFluxo = 'challenger';
+    morModo = (p.config && p.config.modo) || 'ambas';
+    chalNomes = p.jogadores.slice();
+    morEsconderTudo();
+    morTabuleiro.classList.remove('oculto');
+    morAplicarLayout();
+    morTabuleiro.scrollIntoView({ behavior:'instant', block:'start' });
+    if (refazer){ ONL.rapido = true; morSilencio = true; }
+    try {
+      chalIniciar();
+      if (refazer){
+        (p.log || []).forEach(function(a){ if (a.seq === ONL.prox){ ONL.fila.push(a); ONL.prox++; } });
+        onlDrenar();
+      }
+    } finally { ONL.rapido = false; morSilencio = false; }
+    if (CHAL.ativo){ chalRenderVez(); chalRenderAcoes(); chalMostrarEspera(); }
+    onlRenderBarra();
+  }
+  function onlFimPartida(){
+    if (!ONL.ativo || ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('placar', { jogadores: CHAL.jogadores.map(function(j){ return { nome:j.nome, pontos:j.pontos }; }) });
+    ONL.sock.emit('prof:encerrar', {});
+  }
+  function onlNovaPartida(){
+    if (ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlAviso((r && r.erro) || 'Não consegui recomeçar.'); });
+  }
+
+  /* ---------- conexão ---------- */
+  function onlGuardar(){
+    try { localStorage.setItem(ONL_CHAVE, JSON.stringify({ papel:ONL.papel, codigo:ONL.codigo, token:ONL.token, nome:ONL.nome })); } catch(e){}
+  }
+  function onlLerGuardado(){ try { return JSON.parse(localStorage.getItem(ONL_CHAVE)); } catch(e){ return null; } }
+  function onlEsquecer(){ try { localStorage.removeItem(ONL_CHAVE); } catch(e){} }
+
+  function onlConectar(cb){
+    function pronto(){
+      if (ONL.sock){ cb(); return; }
+      const sk = ONL.sock = window.io(ONL_URL, { reconnectionDelayMax: 4000 });
+      sk.on('connect', function(){ onlMsg(''); onlRenderBarra(); if (ONL.codigo) onlRetomar(); });
+      sk.on('disconnect', function(){ onlRenderBarra(); });
+      sk.on('connect_error', function(){
+        onlMsg('Conectando ao servidor… se ele estava dormindo, pode levar até 1 minuto.');
+      });
+      sk.on('sala', function(v){
+        ONL.sala = v;
+        onlRenderLobby(); onlRenderBarra();
+        if (ONL.ativo && CHAL.ativo){
+          chalRenderAcoes(); chalRenderVez();
+          /* a equipe que decide caiu → o professor recebe o quadro de decisão */
+          if (CHAL.espera && onlPodeAgir(chalQuemDecide()) && !chalModalEl.classList.contains('on')) chalMostrarEspera();
+        }
+      });
+      sk.on('seu-lugar', function(d){ ONL.seat = d.seat; });
+      sk.on('inicio', function(p){ onlComecar(p, false); });
+      sk.on('acao', onlReceber);
+      sk.on('lobby', function(){ onlVoltarLobby(); });
+      sk.on('removido', function(){ onlSair('O professor removeu a sua equipe da sala.'); });
+      sk.on('substituido', function(){ onlSair('Esta equipe entrou na sala por outro aparelho.'); });
+      sk.on('sala-fechada', function(){ onlSair('O professor fechou a sala.'); });
+      cb();
+    }
+    if (window.io){ pronto(); return; }
+    onlMsg('Carregando…');
+    const sc = document.createElement('script');
+    sc.src = ONL_LIB;
+    sc.onload = pronto;
+    sc.onerror = function(){ onlMsg('Sem internet? Não consegui carregar a conexão online.'); };
+    document.head.appendChild(sc);
+  }
+
+  /* volta à sala guardada (recarregou a página, a internet caiu…) */
+  function onlRetomar(){
+    if (!ONL.sock || !ONL.codigo) return;
+    const fim = function(r){
+      if (!r || !r.ok){
+        onlEsquecer(); ONL.codigo = null;
+        if (ONL.ativo) onlSair((r && r.erro) || 'A sala não existe mais.');
+        else { onlMsg((r && r.erro) || 'A sala não existe mais.'); onlTelaPapel(); }
+        return;
+      }
+      if (r.seat != null) ONL.seat = r.seat;
+      if (r.token) ONL.token = r.token;
+      ONL.sala = r.sala;
+      onlGuardar();
+      if (!r.partida){ onlVoltarLobby(); return; }
+      if (ONL.ativo && ONL.seed === r.partida.seed){ (r.partida.log || []).forEach(onlReceber); onlRenderBarra(); return; }
+      onlComecar(r.partida, true);
+    };
+    if (ONL.papel === 'prof') ONL.sock.emit('prof:retomar', { codigo:ONL.codigo, token:ONL.token }, fim);
+    else ONL.sock.emit('aluno:entrar', { codigo:ONL.codigo, nome:ONL.nome, token:ONL.token }, fim);
+  }
+
+  function onlSair(msg){
+    const sk = ONL.sock;
+    if (sk){
+      if (ONL.papel === 'prof' && ONL.codigo && !msg) sk.emit('prof:fechar', {});
+      setTimeout(function(){ sk.disconnect(); }, 150);
+    }
+    onlEsquecer();
+    Object.assign(ONL, { ativo:false, rapido:false, sock:null, papel:null, seat:null, codigo:null, token:null,
+                         sala:null, seed:null, rng:null, prox:0, fila:[] });
+    chalDesligar();
+    onlRenderBarra();
+    morMostrarModo();
+    if (msg) chalModalMsg('📡', 'Desafio online', chalEsc(msg), [{ txt:'OK', tipo:'principal', fn: chalModalFechar }]);
+  }
+
+  /* ---------- telas: papel → (professor: percurso) / (equipe: código + nome) → sala de espera ---------- */
+  const onlTelaEl = document.getElementById('onlTela');
+  function onlMostrar(parte){
+    morEsconderTudo();
+    onlTelaEl.classList.add('on');
+    ['onlPapel','onlProf','onlAluno','onlLobby'].forEach(function(id){
+      document.getElementById(id).classList.toggle('oculto', id !== parte);
+    });
+    onlTelaEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function onlMsg(t){ document.getElementById('onlMsg').textContent = t || ''; }
+  function onlAviso(t){
+    if (ONL.ativo && CHAL.ativo) chalRenderVez('📡 ' + chalEsc(t));
+    else onlMsg(t);
+  }
+  function onlTelaPapel(){
+    const g = onlLerGuardado();
+    const volta = document.getElementById('onlVoltar');
+    volta.classList.toggle('oculto', !(g && g.codigo));
+    if (g && g.codigo) volta.textContent = '↻ Voltar à sala ' + g.codigo + (g.papel === 'prof' ? ' (professor)' : ' — ' + g.nome);
+    onlMostrar('onlPapel');
+  }
+  function onlAbrir(){ onlMsg(''); onlTelaPapel(); }
+
+  document.getElementById('onlSouProf').addEventListener('click', function(){ somClique(); onlMsg(''); onlMostrar('onlProf'); });
+  document.getElementById('onlSouAluno').addEventListener('click', function(){
+    somClique(); onlMsg(''); onlMostrar('onlAluno');
+    setTimeout(function(){ document.getElementById('onlCodigo').focus(); }, 250);
+  });
+  document.getElementById('onlVoltar').addEventListener('click', function(){
+    const g = onlLerGuardado(); if (!g) return;
+    somClique();
+    Object.assign(ONL, { papel:g.papel, codigo:g.codigo, token:g.token, nome:g.nome });
+    onlConectar(function(){ if (ONL.sock.connected) onlRetomar(); });
+  });
+  document.querySelectorAll('#onlTela .onl-sair').forEach(function(b){
+    b.addEventListener('click', function(){ somClique(); if (ONL.codigo) onlSair(); else morMostrarModo(); });
+  });
+
+  /* professor: escolhe o percurso e cria a sala */
+  document.querySelectorAll('#onlProf [data-modo]').forEach(function(b){
+    b.addEventListener('click', function(){
+      somClique();
+      const modo = b.dataset.modo;
+      onlConectar(function(){
+        ONL.sock.emit('prof:criar', { jogo:'morte', max:(modo === 'ambas' ? 4 : 2), config:{ modo:modo } }, function(r){
+          if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui criar a sala.'); return; }
+          Object.assign(ONL, { papel:'prof', codigo:r.codigo, token:r.token, nome:null, seat:null, sala:r.sala });
+          onlGuardar();
+          onlVoltarLobby();
+        });
+      });
+    });
+  });
+
+  /* equipe: entra com o código */
+  function onlEntrarEquipe(){
+    const codigo = document.getElementById('onlCodigo').value.trim().toUpperCase();
+    const nome = document.getElementById('onlNome').value.trim();
+    if (codigo.length !== 4){ onlMsg('O código da sala tem 4 caracteres.'); return; }
+    if (!nome){ onlMsg('Digite o nome da equipe.'); return; }
+    somClique();
+    onlConectar(function(){
+      ONL.sock.emit('aluno:entrar', { codigo:codigo, nome:nome }, function(r){
+        if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui entrar.'); return; }
+        Object.assign(ONL, { papel:'equipe', codigo:r.sala.codigo, token:r.token, nome:r.nome, seat:r.seat, sala:r.sala });
+        onlGuardar();
+        if (r.partida) onlComecar(r.partida, true); else onlVoltarLobby();
+      });
+    });
+  }
+  document.getElementById('onlEntrar').addEventListener('click', onlEntrarEquipe);
+  ['onlCodigo','onlNome'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){ if (e.key === 'Enter') onlEntrarEquipe(); });
+  });
+
+  document.getElementById('onlIniciar').addEventListener('click', function(){
+    somClique();
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlMsg((r && r.erro) || 'Não consegui iniciar.'); });
+  });
+
+  function onlVoltarLobby(){
+    if (ONL.ativo){ ONL.ativo = false; ONL.fila = []; chalDesligar(); morMusica.parar(); }
+    onlMostrar('onlLobby');
+    onlRenderLobby();
+  }
+
+  const ONL_MODO_NOME = { apoptose:'Só a Apoptose', necrose:'Só a Necrose', ambas:'Os Dois Destinos' };
+  function onlRenderLobby(){
+    const v = ONL.sala;
+    if (!v || document.getElementById('onlLobby').classList.contains('oculto')) return;
+    document.getElementById('onlCodigoGrande').textContent = v.codigo;
+    document.getElementById('onlEndereco').textContent = location.host + location.pathname;
+    document.getElementById('onlPercurso').textContent =
+      (ONL_MODO_NOME[v.config && v.config.modo] || '') + ' · ' + v.equipes.length + ' de ' + v.max + ' equipes';
+    const lista = document.getElementById('onlEquipes');
+    lista.innerHTML = '';
+    if (!v.equipes.length) lista.innerHTML = '<div class="onl-vazio">Nenhuma equipe ainda…</div>';
+    v.equipes.forEach(function(e){
+      const d = document.createElement('div');
+      d.className = 'onl-eq p' + e.seat + (e.online ? '' : ' off');
+      d.innerHTML = '<span class="pino"></span><span class="onl-eq-nome">' + chalEsc(e.nome) +
+        (ONL.papel === 'equipe' && e.seat === ONL.seat ? ' <i>(vocês)</i>' : '') + '</span>';
+      if (ONL.papel === 'prof' && v.status === 'lobby'){
+        const x = document.createElement('button');
+        x.type = 'button'; x.className = 'onl-remover'; x.textContent = '✕'; x.title = 'Remover equipe';
+        x.addEventListener('click', function(){ ONL.sock.emit('prof:remover', { seat:e.seat }, function(){}); });
+        d.appendChild(x);
+      }
+      lista.appendChild(d);
+    });
+    const prof = ONL.papel === 'prof';
+    document.getElementById('onlProfInfo').classList.toggle('oculto', !prof);
+    document.getElementById('onlAlunoInfo').classList.toggle('oculto', prof);
+    const ini = document.getElementById('onlIniciar');
+    ini.classList.toggle('oculto', !prof);
+    ini.disabled = v.equipes.length < 2;
+    ini.textContent = v.status === 'fim' ? '▶ Nova partida' : '▶ Iniciar partida';
+  }
+
+  /* faixa no topo do tabuleiro: sala, quem é este aparelho e quem caiu */
+  function onlRenderBarra(){
+    const el = document.getElementById('onlBarra');
+    if (!el) return;
+    if (!ONL.ativo){ el.classList.remove('on'); el.innerHTML = ''; return; }
+    const con = ONL.sock && ONL.sock.connected;
+    let eu = (ONL.papel === 'prof') ? 'Projetor do professor' : ('Você: <b>' + chalEsc(ONL.nome || '') + '</b>');
+    let caidas = '';
+    if (ONL.sala){
+      const off = ONL.sala.equipes.filter(function(e){ return !e.online; }).map(function(e){ return chalEsc(e.nome); });
+      if (off.length) caidas = ' · <span class="onl-off">⚠ desconectada: ' + off.join(', ') + '</span>';
+    }
+    el.innerHTML = '<span class="onl-pto ' + (con ? 'ok' : 'nao') + '"></span>Sala <b>' + chalEsc(ONL.codigo || '') +
+      '</b> · ' + eu + (con ? '' : ' · <span class="onl-off">reconectando…</span>') + caidas;
+    el.classList.add('on');
+  }
+
 
   /* =====================================================================
      REVISAO GUIADA DO TABULEIRO  —  serve para Single Player e Challenger.
