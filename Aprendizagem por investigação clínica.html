@@ -445,6 +445,53 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .al-sum b.ok { color: var(--ok); }
 
 /* ---------- Códigos do professor ---------- */
+/* ---------- Aula online ---------- */
+.grp-body { flex: 1; min-height: 0; overflow: auto; }
+.grp-col { display: grid; gap: 1.2rem; max-width: 66rem; margin-inline: auto; width: 100%; padding-bottom: 1rem; }
+.grp-sub { font-size: 1.05rem; margin: 0 0 .5rem; }
+.grp-aviso { background: var(--warn-soft); color: var(--ink); border-radius: var(--radius); padding: .6rem 1rem; text-align: center; font-weight: 700; max-width: 66rem; margin: .4rem auto 0; }
+.grp-cards { display: grid; gap: .5rem; }
+.grp-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+.grp-card summary { cursor: pointer; padding: .7rem 1rem; font-weight: 700; display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+.grp-card summary .cat { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-family: var(--mono); }
+.grp-card-corpo { padding: 0 1rem 1rem; display: grid; gap: .5rem; }
+.grp-card-corpo .gcs button { pointer-events: none; }
+.grp-vazio, .grp-espera { text-align: center; }
+.grp-espera { background: var(--paper); border: 2px dashed var(--line); border-radius: var(--radius); padding: 1.2rem; color: var(--ink-2); }
+.grp-form { background: var(--paper); border: 2px solid var(--accent); border-radius: var(--radius); padding: 1rem 1.2rem; display: grid; gap: .9rem; }
+.grp-form .al-q label { text-align: left; hyphens: none; }
+.grp-figs { grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); }
+.grp-envio { display: flex; gap: .8rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+.grp-st { font-size: .9rem; color: var(--muted); }
+.grp-st.ok { color: var(--ok); font-weight: 700; }
+.grp-st.pendente { color: var(--warn); }
+.onl-olho { min-width: 2.2rem; }
+.onl-olho.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.onl-resps { display: grid; gap: 1.2rem; align-content: start; overflow: auto; }
+.onl-resp-q h3 { font-size: 1.15rem; margin-bottom: .6rem; }
+.onl-resp-grade { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); }
+.onl-resp { background: var(--paper); border: 1px solid var(--line); border-left: 5px solid var(--accent); border-radius: var(--radius); padding: .8rem 1rem; display: grid; gap: .35rem; }
+.onl-resp b { font-size: 1rem; }
+.onl-resp p { font-size: 1.1rem; white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; hyphens: none; }
+.onl-resp.vazia { opacity: .55; border-left-color: var(--line); }
+.onl-box { display: grid; gap: .8rem; max-width: 36rem; margin-inline: auto; width: 100%; justify-items: center; }
+.onl-msg { text-align: center; color: var(--warn); font-weight: 700; font-size: .95rem; margin: .4rem 0 0; }
+.onl-cod-in { text-transform: uppercase; letter-spacing: .3em; font-family: var(--mono); font-weight: 800; }
+.onl-modos { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 56rem; margin-inline: auto; height: auto; }
+.onl-lobby { display: grid; gap: 1rem; align-content: center; justify-items: center; }
+.onl-cont { text-align: center; }
+.onl-dica { max-width: 60rem; text-align: center; }
+.onl-equipes { display: grid; gap: .6rem; width: 100%; max-width: 60rem; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
+.onl-eq { display: flex; align-items: center; gap: .6rem; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: .6rem .9rem; font-weight: 700; }
+.onl-eq.off { opacity: .55; border-style: dashed; }
+.onl-eq-nome { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.onl-eq-nome i { font-weight: 400; color: var(--muted); }
+.onl-pino { width: .7rem; height: .7rem; border-radius: 50%; background: var(--ok); flex: none; }
+.onl-eq.off .onl-pino { background: var(--muted); }
+.onl-x { border: 0; background: transparent; color: var(--bad); font-size: 1rem; cursor: pointer; padding: 0 .3rem; }
+.onl-chip { cursor: default; }
+.onl-chip.off { color: #F5B4B0; }
+@media (max-width: 760px) { .onl-modos { grid-template-columns: 1fr; } }
 .code-big { font-family: var(--mono); font-size: 7rem; font-weight: 800; letter-spacing: .15em; text-align: center; color: var(--accent); line-height: 1; }
 .code-view { display: grid; gap: 1.6rem; align-content: center; justify-items: center; height: 100%; }
 .code-view p { font-size: 1.3rem; text-align: center; max-width: 50rem; }
@@ -491,7 +538,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.0 &middot; Última atualização: 19 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.0 &middot; Última atualização: 23 de outubro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -695,37 +742,33 @@ const ORGAOS = {
 const ORDEM_ORGAOS = ["cerebro", "pulmoes", "baco", "rins", "intestino"];
 
 /* ---------------- Modo aluno: seções liberadas por código ---------------- */
-/* Cada seção é liberada pelo código que o modo professor mostra na tela correspondente (tela ou pausa) */
+/* Etapas com pergunta para os grupos: abrem no aparelho do grupo quando o projetor chega à tela (ou pausa) correspondente */
 const SECOES = [
-  { id: "palpite", tela: "abertura-r", c: "TE9SQUY=", quando: "Primeiro palpite, logo depois da abertura", eyebrow: "20 de novembro de 2000 · Óbito", titulo: "Primeiro palpite",
+  { id: "palpite", tela: "abertura-r", quando: "Primeiro palpite, logo depois da abertura", eyebrow: "20 de novembro de 2000 · Óbito", titulo: "Primeiro palpite",
     qs: [["palpite", "Uma mulher de 82 anos ficou 4 dias internada e morreu. Por que ela morreu? Escreva o seu primeiro palpite."]] },
-  { id: "b1", tela: "b1-r", c: "T1ZFUlQ=", quando: "Bloco 1 · Rebobinar", eyebrow: "Bloco 1 · 17 a 19 de novembro de 2000", titulo: "Os últimos dias",
+  { id: "b1", tela: "b1-r", quando: "Bloco 1 · Rebobinar", eyebrow: "Bloco 1 · 17 a 19 de novembro de 2000", titulo: "Os últimos dias",
     qs: [["prev", BLOCOS.b1.rebobinar]] },
-  { id: "p1", pausa: "p1", c: "QUNPUElQ", quando: "Pausa didática 1 (no Bloco 2)", eyebrow: "Pausa didática 1", titulo: "O que aconteceu no cérebro",
+  { id: "p1", pausa: "p1", quando: "Pausa didática 1 (no Bloco 2)", eyebrow: "Pausa didática 1", titulo: "O que aconteceu no cérebro",
     qs: [["tc", "Por que a primeira tomografia computadorizada (TC) da paciente veio normal?"], ["lado", "Nestes dois exemplos de tomografia (os mesmos da pausa), que lado do corpo ficaria fraco em cada paciente? Por quê?",
       () => `${ct(IMG.tcHem2, "Exemplo 1: hemorrágico.", 190)}${ct(IMG.tcIsq2, "Exemplo 2: isquêmico.", 190)}`]] },
-  { id: "b2", tela: "b2-r", c: "QUxFTkFK", quando: "Bloco 2 · Rebobinar", eyebrow: "Bloco 2 · 16 de novembro de 2000", titulo: "A chegada ao hospital",
+  { id: "b2", tela: "b2-r", quando: "Bloco 2 · Rebobinar", eyebrow: "Bloco 2 · 16 de novembro de 2000", titulo: "A chegada ao hospital",
     qs: [["prev", BLOCOS.b2.rebobinar]] },
-  { id: "b3", tela: "b3-r", c: "QVRFTkFD", quando: "Bloco 3 · Rebobinar", eyebrow: "Bloco 3 · Abril a junho de 2000", titulo: "Os meses anteriores",
+  { id: "b3", tela: "b3-r", quando: "Bloco 3 · Rebobinar", eyebrow: "Bloco 3 · Abril a junho de 2000", titulo: "Os meses anteriores",
     qs: [["prev", BLOCOS.b3.rebobinar]] },
-  { id: "p2", pausa: "p2", c: "QUxPSVY=", quando: "Pausa didática 2 (no Bloco 4)", eyebrow: "Pausa didática 2", titulo: "Do coração ao cérebro",
+  { id: "p2", pausa: "p2", quando: "Pausa didática 2 (no Bloco 4)", eyebrow: "Pausa didática 2", titulo: "Do coração ao cérebro",
     qs: [["ecg", "A tira de ritmo da paciente se parece mais com a fibrilação atrial (FA) ou com o ritmo sinusal? Que detalhe do traçado mostra isso?"], ["inr", "Com a Razão Normalizada Internacional (INR) em 6,2, que tipo de acidente vascular encefálico (AVE) você esperaria? Por quê?"]] },
-  { id: "b4", tela: "b4-r", c: "QUlBUlA=", quando: "Bloco 4 · Rebobinar", eyebrow: "Bloco 4 · Abril de 1999", titulo: "O começo",
+  { id: "b4", tela: "b4-r", quando: "Bloco 4 · Rebobinar", eyebrow: "Bloco 4 · Abril de 1999", titulo: "O começo",
     qs: [["prev", BLOCOS.b4.rebobinar]] },
-  { id: "fita", tela: "fita", c: "QUpVUk9D", quando: "Rodar a fita para frente", eyebrow: "Fechamento", titulo: "Rodar a fita para frente",
+  { id: "fita", tela: "fita", quando: "Rodar a fita para frente", eyebrow: "Fechamento", titulo: "Rodar a fita para frente",
     qs: [["hist", "Reconte a história da paciente na ordem certa, do começo até a morte."]] },
-  { id: "necro", tela: "necro-0", c: "SVhBQ0FCQQ==", quando: "Necropsia, antes de abrir o laudo", eyebrow: "Necropsia", titulo: "Antes de abrir o laudo",
+  { id: "necro", tela: "necro-0", quando: "Necropsia, antes de abrir o laudo", eyebrow: "Necropsia", titulo: "Antes de abrir o laudo",
     qs: [["coracao", "O que você acha que havia dentro do coração dela?"], ["orgaos", "Além do cérebro, algum outro órgão foi atingido? Qual?"]] },
-  { id: "final", tela: "final-0", c: "TE9TU0FSSUc=", quando: "Pergunta final", eyebrow: "Pergunta final", titulo: "Causa ou consequência?",
+  { id: "final", tela: "final-0", quando: "Pergunta final", eyebrow: "Pergunta final", titulo: "Causa ou consequência?",
     qs: [["final", "O acidente vascular encefálico foi a causa da morte ou uma das consequências? Justifique."], ["aprendi", "O que você aprendeu de mais importante nesta aula?"]] }
 ];
-const codigo = (s) => atob(s.c).split("").reverse().join("");
-/* Etapa já alcançada na aula: a tela correspondente (ou a pausa) já foi aberta */
-const alcancada = (s) => !!(s.tela ? S.visto[s.tela] : S.visto["pausa-" + s.pausa]);
-const normCod = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "").toUpperCase();
 
 /* Cada item é uma tela que cabe inteira no palco */
-const TELAS = ["config", "abertura", "abertura-r", "b1", "b1-r", "b2", "b2-r", "b3", "b3-r", "b4", "b4-r",
+const TELAS = ["abertura", "abertura-r", "b1", "b1-r", "b2", "b2-r", "b3", "b3-r", "b4", "b4-r",
   "fita", "necro-0", "necro-1", "necro-2", "final-0", "sintese", "fontes"];
 const NODES = [
   { tela: "b4", when: "abr 1999", what: "O começo" },
@@ -739,27 +782,50 @@ const base = (t) => t.split("-")[0];
 /* ---------------- Estado ---------------- */
 const KEY = "rebobinar-ave-v1";
 const fresh = () => ({
-  tela: "config",
+  tela: "abertura",
   abertos: {}, termo: {}, gcs: { a: {}, b: {} }, gcsTab: "a", gcsCheck: { a: false, b: false },
-  visto: { config: true }, fita: 0, fitaAberta: false, necro: { acesos: [], sel: "coracao" }, finalRev: false, pausa2Rev: false,
+  visto: {}, fita: 0, fitaAberta: false, necro: { acesos: [], sel: "coracao" }, finalRev: false, pausa2Rev: false,
   prof: false, modo: "",
   aluno: { grupo: "", integrantes: ["", "", "", "", "", ""], resp: {}, lib: {}, at: 0 }
 });
 let S = fresh();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(fresh(), JSON.parse(raw)); } catch (e) {}
-if (!TELAS.includes(S.tela)) S.tela = base(S.tela) === "necropsia" ? "necro-0" : TELAS.includes(base(S.tela)) ? base(S.tela) : "config";
+if (!TELAS.includes(S.tela)) S.tela = base(S.tela) === "necropsia" ? "necro-0" : TELAS.includes(base(S.tela)) ? base(S.tela) : "abertura";
 const hot = window.claude && window.claude.hot;
 if (hot && hot.data && hot.data.S) S = Object.assign(fresh(), hot.data.S);
 if (hot && hot.snapshot) try { hot.snapshot(() => ({ S })); } catch (e) {}
-/* Ao abrir o arquivo, sempre começa pela escolha do modo; o modo professor exige a senha de novo */
+/* Ao abrir o arquivo, sempre começa pela entrada da aula online (professor ou grupo) */
 S.modo = ""; S.prof = false;
 S.aluno = Object.assign(fresh().aluno, S.aluno);
 if (S.aluno.nome && !S.aluno.integrantes.some(Boolean)) S.aluno.integrantes[0] = S.aluno.nome;
 delete S.aluno.nome;
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
+/* ---------------- Aula online (o professor conduz; cada grupo no seu aparelho) ----------------
+   O servidor (Render) guarda a ordem das jogadas da sala. O professor publica o "retrato" do que
+   está no projetor (jogada "est"); os grupos aplicam sempre o retrato mais recente. As respostas
+   dos grupos (jogada "resp") são privadas: o servidor só as entrega ao professor e ao próprio grupo. */
+const ONL_URL = "https://jogos-multiplayer-server.onrender.com";
+const ONL_LIB = "https://cdn.socket.io/4.8.1/socket.io.min.js";
+const ONL_CHAVE = "investigacao-online";
+const ONL_SENHA = "aldair";
+const ONL = {
+  ativo: false,          /* aula em andamento neste aparelho */
+  sock: null, papel: null, seat: null, codigo: null, token: null, nome: null, sala: null,
+  prox: 0, sincronizando: false,
+  tela: "entrada",       /* antes da aula: entrada | senha | grupo | lobby */
+  msg: "",
+  est: null,             /* último retrato publicado pelo professor */
+  resp: {},              /* (professor) respostas recebidas: { seat: { secao: { pergunta: texto } } } */
+  verResp: false,        /* (professor) respostas visíveis no projetor? sempre ocultas por padrão */
+  verRespSec: null,      /* etapa em que o professor abriu as respostas (ao trocar de etapa, ocultam de novo) */
+  ultimoPub: "",         /* último retrato enviado/aplicado (evita reenviar o mesmo) */
+  grpVer: "aula",        /* (grupo) aula | relatorio */
+  encerrada: false,      /* (grupo) o professor encerrou a sala: fica o minirrelatório */
+  envio: {}              /* (grupo) estado do envio por seção: { secao: "enviando" | "ok" | "pendente" } */
+};
+
 const $ = (s, el = document) => el.querySelector(s);
-const apres = () => S.modo === "apresentacao";     // os códigos do modo aluno só aparecem no modo apresentação
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 /* ---------------- Palco: escala para caber na tela ---------------- */
@@ -798,10 +864,9 @@ function renderTape() {
     </nav>
     <div class="tools">
       ${S.prof ? `<span class="chip-on" role="status">● Professor</span>` : ""}
-      ${apres() ? (() => { const sc = SECOES.find((s) => s.tela === S.tela); return sc ? `<button class="chip-on" data-act="show-code" data-sec="${sc.id}" title="Mostrar em tela cheia o código dos alunos">🔑 Ver código</button>` : ""; })() : ""}
-      ${apres() ? `<button class="chip-btn" data-act="codes">Códigos</button>` : ""}
       <button class="chip-btn" data-act="gloss">Glossário</button>
-      <button class="chip-btn" data-act="trocar-modo">Trocar modo</button>
+      ${onlChip()}${onlChipResp()}
+      ${ONL.ativo && ONL.papel === "prof" ? `<button class="chip-btn" data-act="onl-encerrar">Encerrar aula</button>` : ""}
     </div>
   </div>`;
 }
@@ -817,153 +882,189 @@ function navRow(nextLabel, mid, bloqueado) {
 }
 const head = (eyebrow, title, lede) => `<div class="head"><span class="eyebrow">${eyebrow}</span><h1>${title}</h1>${lede ? `<p class="lede">${lede}</p>` : ""}</div>`;
 
-const SENHA = "professor";
-let loginMsg = "", modoLogin = false, alMsg = "";
-function accessHTML(where) {
-  if (S.prof) return `<div class="access"><div class="access-row"><span class="msg ok">Modo professor ativo.</span><button class="btn" data-act="prof-off">Sair do modo professor</button></div></div>`;
-  return `<div class="access">
-    <label for="prof-pass-${where}"><strong>Senha do professor</strong></label>
-    <div class="access-row"><input type="password" id="prof-pass-${where}" data-pass autocomplete="off" placeholder="Digite a senha">
-    <button class="btn primary" data-act="prof-login">Entrar</button></div>
-    ${loginMsg ? `<span class="msg bad">${loginMsg}</span>` : ""}
-  </div>`;
-}
-function tryLogin(input) {
-  if (input && input.value.trim().toLowerCase() === SENHA) {
-    S.prof = true; S.modo = "professor"; loginMsg = ""; modoLogin = false;
-    if (overlay === "login") overlay = null;
-    renderOverlay(); render(true);
-  } else {
-    loginMsg = "Senha incorreta. Tente novamente.";
-    if (overlay === "login") renderOverlay(); else render(true);
-    const el = document.querySelector("[data-pass]"); if (el) el.focus();
-  }
-}
 
-function telaConfig() {
-  return `<section class="screen">
-    ${head("Preparação da aula", NOME, "Começamos pelo óbito e voltamos no tempo até descobrir onde tudo começou.")}
-    <div class="body"><div class="panel setup">
-      <div class="setup-col" style="align-content:center">
-        <h3>Identificação dos grupos</h3>
-        <div class="reveal-box" style="text-align:center;justify-items:center"><span class="big-wait" aria-hidden="true">⏳</span><strong>Aguardando o preenchimento da identificação dos grupos.</strong><span class="note" style="text-align:center">Cada grupo informa o nome do grupo e o nome completo dos integrantes no modo aluno.</span></div>
-      </div>
-      <div class="setup-col">
-        <h3>Acesso do professor</h3>
-        ${accessHTML("cfg")}
-        <div class="teacher-note"><strong>Como usar:</strong> os grupos fazem perguntas em voz alta e você clica no cartão quando a pergunta for boa; no modo professor, o verso de cada cartão mostra a pergunta que o libera. Nas telas “Rebobinar”, os grupos escrevem no modo aluno. No modo apresentação, “Ver código” (faixa superior) e “Mostrar código dos alunos” (pausas) exibem o código da seção; “Códigos” lista todos. Teclas: ← e → mudam de tela; P liga ou desliga o modo professor; G abre o glossário.</div>
-        <div id="reset-area"><button class="btn ghost" data-act="ask-reset">Apagar dados e reiniciar a aula</button></div>
-      </div>
+
+function onlCodigoForm() { return esc((ONL.form && ONL.form.codigo) || ""); }
+function telaOnline() {
+  const msg = ONL.msg ? `<p class="msg onl-msg" role="status">${esc(ONL.msg)}</p>` : "";
+  if (ONL.tela === "senha") return `<section class="screen">
+    ${head("Aula online", "Acesso do professor", "Digite a senha para criar a sala da turma.")}
+    <div class="body" style="display:grid;align-content:center"><div class="panel onl-box">
+      <div class="access-row" style="justify-content:center"><input type="password" data-onl="senha" autocomplete="off" placeholder="Senha do professor" aria-label="Senha do professor">
+      <button class="btn primary" data-act="onl-senha">Criar a sala</button></div>${msg}
     </div></div>
-    ${navRow("Começar a aula")}
+    <div class="navrow"><button class="btn ghost" data-act="onl-volta">← Voltar</button><span></span><span></span></div>
   </section>`;
-}
-
-function telaModos() {
-  return `<section class="screen">
-    ${head("Antes de começar", NOME, "Escolha como este computador ou celular vai ser usado.")}
-    <div class="body"><div class="modes">
-      <div class="mode-card"><span class="ico" aria-hidden="true">🎓</span><h2>Modo professor</h2>
-        ${modoLogin ? accessHTML("modo") : `<button class="btn primary" data-modo="professor">Entrar como professor</button>`}</div>
-      <div class="mode-card"><span class="ico" aria-hidden="true">📽️</span><h2>Modo apresentação</h2>
-        <button class="btn primary" data-modo="apresentacao">Abrir a apresentação</button></div>
-      <div class="mode-card"><span class="ico" aria-hidden="true">✏️</span><h2>Modo aluno</h2>
-        <button class="btn primary" data-modo="aluno">Entrar como aluno</button></div>
-    </div></div>
-  </section>`;
-}
-
-const alTotal = () => SECOES.length + 2;           // identificação + seções + relatório
-const alLiberada = (i) => i === 0 || (i <= SECOES.length ? (i === 1 || !!S.aluno.lib[SECOES[i - 2].id]) : !!S.aluno.lib[SECOES[SECOES.length - 1].id]);
-const alMembros = () => S.aluno.integrantes.map((n) => n.trim()).filter(Boolean);
-const alIdOk = () => !!S.aluno.grupo.trim() && alMembros().length > 0;
-function alResp(sid, q) { return ((S.aluno.resp[sid] || {})[q]) || ""; }
-function alNav(nextLabel, canNext) {
-  const i = S.aluno.at;
-  return `<div class="navrow">
-    ${i > 0 ? `<button class="btn ghost" data-act="al-prev">← Voltar</button>` : "<span></span>"}<span></span>
-    ${i < alTotal() - 1 ? `<button class="btn primary" data-act="al-next" ${canNext ? "" : "disabled"}>${nextLabel || "Avançar"} →</button>` : "<span></span>"}
-  </div>`;
-}
-function telaAluno() {
-  const A = S.aluno, i = A.at;
-  if (i === 0) return `<section class="screen">
-    ${head("Modo aluno", "Identificação do grupo", "O nome do grupo e dos integrantes aparecem no minirrelatório. As respostas ficam guardadas neste navegador.")}
+  if (ONL.tela === "grupo") return `<section class="screen">
+    ${head("Aula online", "Entrar na sala", "O código está no projetor. O nome do grupo e dos integrantes vão para o minirrelatório.")}
     <div class="body" style="display:grid;align-content:center"><div class="panel al-id">
-      <label for="al-grupo">Nome do grupo<input id="al-grupo" data-al="grupo" value="${esc(A.grupo)}" autocomplete="off"></label>
+      <label for="onl-codigo">Código da sala<input id="onl-codigo" data-onl="codigo" value="${onlCodigoForm()}" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ex.: 4K7P" class="onl-cod-in"></label>
+      <label for="al-grupo">Nome do grupo<input id="al-grupo" data-al="grupo" value="${esc(S.aluno.grupo)}" maxlength="22" autocomplete="off"></label>
       <fieldset class="al-members"><legend>Integrantes (nome completo)</legend>
-        ${A.integrantes.map((n, k) => `<input id="al-int-${k}" data-int="${k}" value="${esc(n)}" autocomplete="off" aria-label="Integrante ${k + 1}" placeholder="Integrante ${k + 1}">`).join("")}
-      </fieldset>
+        ${S.aluno.integrantes.map((n, k) => `<input id="al-int-${k}" data-int="${k}" value="${esc(n)}" autocomplete="off" aria-label="Integrante ${k + 1}" placeholder="Integrante ${k + 1}">`).join("")}
+      </fieldset>${msg}
     </div></div>
-    ${alNav("Começar", true)}
+    <div class="navrow"><button class="btn ghost" data-act="onl-volta">← Voltar</button><span></span><button class="btn primary" data-act="onl-entrar">Entrar na sala →</button></div>
   </section>`;
-  if (i === alTotal() - 1) {
-    const qs = SECOES.flatMap((s) => s.qs.map((q) => alResp(s.id, q[0]).trim()));
-    const feitas = qs.filter(Boolean).length;
+  if (ONL.tela === "lobby") {
+    const v = ONL.sala || { codigo: ONL.codigo, equipes: [], max: 12, status: "lobby" };
+    const prof = ONL.papel === "prof";
+    const lista = v.equipes.length ? v.equipes.map((e) => `<div class="onl-eq ${e.online ? "" : "off"}"><span class="onl-pino" aria-hidden="true"></span>
+        <span class="onl-eq-nome">${esc(e.nome)}${!prof && e.seat === ONL.seat ? " <i>(vocês)</i>" : ""}${e.online ? "" : " <i>(desconectado)</i>"}</span>
+        ${prof && v.status === "lobby" ? `<button class="onl-x" data-act="onl-remover" data-seat="${e.seat}" title="Remover grupo" aria-label="Remover ${esc(e.nome)}">✕</button>` : ""}</div>`).join("")
+      : `<p class="note" style="text-align:center">Nenhum grupo entrou ainda…</p>`;
     return `<section class="screen">
-      ${head("Fim da atividade", "Meu minirrelatório", `Você respondeu ${feitas} de ${qs.length} perguntas. Volte às seções se quiser completar alguma resposta.`)}
-      <div class="body" style="display:grid;gap:1.2rem;align-content:center;max-width:62rem;margin-inline:auto;width:100%">
-        <div class="al-sum">${SECOES.map((s) => { const n = s.qs.filter((q) => alResp(s.id, q[0]).trim()).length; return `<div><span>${s.titulo}</span><b class="${n === s.qs.length ? "ok" : ""}">${n} de ${s.qs.length}</b></div>`; }).join("")}</div>
-        ${alIdOk() ? "" : `<p class="msg" style="color:var(--bad);text-align:center">Falta a identificação do grupo. Volte à primeira tela antes de salvar.</p>`}
-        <div class="btn-row c"><button class="btn primary" data-act="al-pdf" style="font-size:1.15rem;padding:.7rem 1.6rem">Salvar em PDF</button></div>
-        <p class="note" style="text-align:center">Na janela de impressão que vai abrir, escolha <strong>“Salvar como PDF”</strong> no campo de destino ou impressora.</p>
+      ${head("Aula online · sala de espera", prof ? "Código da sala" : "Vocês estão na sala " + esc(v.codigo), prof
+        ? "Os grupos abrem esta página, escolhem “Sou um grupo” e digitam o código."
+        : "Aguardando o professor começar a aula.")}
+      <div class="body onl-lobby">
+        ${prof ? `<div class="code-big">${esc(v.codigo)}</div><p class="note" style="text-align:center">${esc(location.host + location.pathname)}</p>` : ""}
+        <h3 class="onl-cont">${v.equipes.length} ${v.equipes.length === 1 ? "grupo" : "grupos"} de até ${v.max}</h3>
+        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> os grupos perguntam em voz alta e você clica no cartão quando a pergunta for boa. A tecla <kbd>P</kbd> mostra (só para você) no verso de cada cartão a pergunta que o libera — aperte de novo antes de projetar. O 👁 na faixa de cima mostra as respostas dos grupos quando você quiser.</p>` : ""}
+        <div class="onl-equipes">${lista}</div>${msg}
       </div>
-      ${alNav()}
+      <div class="navrow"><button class="btn ghost" data-act="onl-sair">✕ Sair da sala</button><span></span>
+        ${prof ? `<button class="btn primary" data-act="onl-iniciar" ${v.equipes.length ? "" : "disabled"}>Começar a aula →</button>` : "<span></span>"}</div>
     </section>`;
   }
-  const s = SECOES[i - 1], lib = !!A.lib[s.id];
-  if (!lib) return `<section class="screen">
-    ${head(s.eyebrow, s.titulo)}
-    <div class="body" style="display:grid"><div class="al-lock">
-      <span class="big" aria-hidden="true">🔒</span>
-      <p>Esta seção ainda está fechada. Quando a turma chegar a esta parte, o professor vai passar um código. Digite-o abaixo.</p>
-      <div class="access-row" style="justify-content:center"><input data-code aria-label="Código da seção" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Código">
-      <button class="btn primary" data-act="al-code">Liberar</button></div>
-      ${alMsg ? `<span class="msg">${alMsg}</span>` : ""}
-    </div></div>
-    ${alNav("Avançar", false)}
-  </section>`;
-  const rows = s.qs.length > 1 ? 6 : 10;
+  const g = onlLerGuardado();
   return `<section class="screen">
-    ${head(s.eyebrow, s.titulo)}
-    <div class="body"><div class="al-body">
-      ${s.qs.map(([q, txt, fig]) => {
-        const caixa = `<textarea id="r-${s.id}-${q}" data-resp="${s.id}:${q}" rows="${rows}">${esc(alResp(s.id, q))}</textarea>`;
-        return `<div class="al-q"><label for="r-${s.id}-${q}">${txt}</label>
-        ${fig ? `<div class="al-fig"><div class="al-figs">${fig()}</div>${caixa}</div>` : caixa}</div>`;
-      }).join("")}
-    </div></div>
-    ${alNav(i === alTotal() - 2 ? "Ver o minirrelatório" : "Próxima seção", true)}
+    ${head("Aula online", NOME, "Cada grupo usa o próprio celular ou computador; o projetor do professor conduz a aula.")}
+    <div class="body"><div class="modes onl-modos">
+      <div class="mode-card"><span class="ico" aria-hidden="true">🎓</span><h2>Sou o professor</h2>
+        <p>Cria a sala e conduz a aula no projetor.</p>
+        <button class="btn primary" data-act="onl-prof">Criar a sala</button></div>
+      <div class="mode-card"><span class="ico" aria-hidden="true">✏️</span><h2>Sou um grupo</h2>
+        <p>Entra com o código mostrado no projetor.</p>
+        <button class="btn primary" data-act="onl-grupo">Entrar na sala</button></div>
+    </div>
+    ${g && g.codigo ? `<div class="btn-row c" style="margin-top:1rem"><button class="btn" data-act="onl-voltar">↻ Voltar à sala ${esc(g.codigo)}${g.papel === "prof" ? " (professor)" : " · " + esc(g.nome)}</button></div>` : ""}
+    ${msg}</div>
   </section>`;
 }
-function renderAluno() {
-  const A = S.aluno;
-  const steps = S.modo === "aluno" ? `<nav class="al-steps" aria-label="Seções do modo aluno">${Array.from({ length: alTotal() }, (_, i) => {
-    const ok = i === 0 ? alIdOk() : i === alTotal() - 1 ? false : !!A.lib[SECOES[i - 1].id];
-    const lbl = i === 0 ? "Grupo" : i === alTotal() - 1 ? "Relatório" : String(i);
-    return `<button class="${ok ? "ok" : ""} ${A.at === i ? "here" : ""}" data-al-go="${i}" ${alLiberada(i) ? "" : "disabled"} aria-label="${i === 0 ? "Identificação" : i === alTotal() - 1 ? "Minirrelatório" : SECOES[i - 1].titulo}">${lbl}</button>`;
-  }).join("")}</nav>` : `<div style="flex:1"></div>`;
-  $("#tape").innerHTML = `<div class="tape-inner">
-    <div class="brand"><span class="rw" aria-hidden="true">◀◀</span> ${NOME}</div>${steps}
-    <div class="tools">${S.modo ? `<button class="chip-btn" data-act="trocar-modo">Trocar modo</button>` : ""}</div>
+/* ---------------- Aparelho do grupo durante a aula ---------------- */
+/* seções com pergunta já alcançadas no projetor (pelo último retrato) */
+const grpAlcancou = (sc) => { const v = (ONL.est && ONL.est.visto) || {}; return !!(sc.tela ? v[sc.tela] : v["pausa-" + sc.pausa]); };
+/* a pergunta em aberto é a da etapa alcançada mais recente: continua aqui até a próxima chegar */
+function grpSecAtual() { let at = null; SECOES.forEach((sc) => { if (grpAlcancou(sc)) at = sc; }); return at; }
+/* nome da etapa que está no projetor agora */
+function grpEtapa() {
+  const e = ONL.est; if (!e) return { eyebrow: "Aula online", titulo: "Aguardando o professor" };
+  const t = e.tela, b = BLOCOS[base(t)];
+  if (t === "abertura") return { eyebrow: "20 de novembro de 2000", titulo: "Óbito" };
+  if (t === "abertura-r") return { eyebrow: "20 de novembro de 2000", titulo: "Primeiro palpite" };
+  if (b && t.endsWith("-r")) return { eyebrow: `Bloco ${b.n} · Rebobinar`, titulo: b.rebobinar };
+  if (b) return { eyebrow: `Bloco ${b.n} · ${b.quando}`, titulo: b.titulo };
+  if (t === "fita") return { eyebrow: "Fechamento", titulo: "Rodar a fita para frente" };
+  if (t.startsWith("necro")) return { eyebrow: "Necropsia", titulo: t === "necro-0" ? "Antes de abrir o laudo" : "O laudo da necropsia" };
+  if (t.startsWith("final")) return { eyebrow: "Pergunta final", titulo: "Causa ou consequência?" };
+  if (t === "sintese") return { eyebrow: "Síntese", titulo: "Isquêmico × hemorrágico" };
+  return { eyebrow: "Fim da aula", titulo: "Fontes e créditos" };
+}
+/* cartões já abertos no projetor, do bloco atual (para consulta; os botões do Glasgow não mexem em nada aqui) */
+function grpCartoesHTML() {
+  const e = ONL.est; if (!e) return "";
+  const b = BLOCOS[base(e.tela)]; if (!b) return "";
+  const ab = b.cartoes.filter((c) => (e.abertos || []).includes(c.id));
+  if (!ab.length) return `<p class="note grp-vazio">Os cartões que o professor abrir no projetor aparecem aqui.</p>`;
+  const gS = S.gcs, gC = S.gcsCheck; S.gcs = e.gcs || {}; S.gcsCheck = e.gcsCheck || {};
+  const html = ab.map((c) => `<details class="grp-card" ${ONL.cardAberto === c.id ? "open" : ""} data-grp-card="${c.id}"><summary><span class="cat">${c.cat}</span>${c.titulo}</summary>
+      <div class="grp-card-corpo">${c.html()}</div></details>`).join("");
+  S.gcs = gS; S.gcsCheck = gC;
+  return `<h3 class="grp-sub">Cartões abertos · Bloco ${b.n}</h3><div class="grp-cards">${html}</div>`;
+}
+function grpTopoHTML() {
+  const et = grpEtapa(), p = ONL.est && ONL.est.pausa;
+  return `${head(et.eyebrow, et.titulo)}
+    ${p ? `<div class="grp-aviso">📘 ${esc(PAUSAS[p.k] ? PAUSAS[p.k].nome : "Pausa didática")} no projetor — acompanhem a explicação.</div>` : ""}
+    ${ONL.est && ["sintese", "fontes"].includes(ONL.est.tela) ? `<div class="grp-aviso">🏁 A aula está terminando. Salvem o minirrelatório em PDF pelo botão “📄 Minirrelatório”.</div>` : ""}`;
+}
+function grpFormHTML() {
+  const sc = grpSecAtual();
+  if (!sc) return `<div class="grp-espera">✏️ Quando a aula chegar a uma pergunta, o espaço para a resposta do grupo aparece aqui.</div>`;
+  const st = ONL.envio[sc.id];
+  const rows = sc.qs.length > 1 ? 5 : 7;
+  return `<div class="grp-form" data-grp-sec="${sc.id}">
+    <h3 class="grp-sub">${esc(sc.eyebrow)} · ${esc(sc.titulo)}</h3>
+    ${sc.qs.map(([q, txt, fig]) => `<div class="al-q"><label for="r-${sc.id}-${q}">${txt}</label>
+      ${fig ? `<div class="al-figs grp-figs">${fig()}</div>` : ""}
+      <textarea id="r-${sc.id}-${q}" data-resp="${sc.id}:${q}" rows="${rows}">${esc(alResp(sc.id, q))}</textarea></div>`).join("")}
+    <div class="grp-envio"><span class="grp-st" id="grp-st">${st === "ok" ? "✓ Resposta enviada ao professor" : st === "enviando" ? "Enviando…" : st === "pendente" ? "Alterações ainda não enviadas" : ""}</span>
+      <button class="btn primary" data-act="grp-enviar">Enviar resposta</button></div>
   </div>`;
-  $("#main").innerHTML = S.modo === "aluno" ? telaAluno() : telaModos();
+}
+function grpRelatorioHTML() {
+  const qs = SECOES.filter((s) => S.aluno.lib[s.id]).flatMap((s) => s.qs.map((q) => alResp(s.id, q[0]).trim()));
+  const feitas = qs.filter(Boolean).length;
+  return `<section class="screen">
+    ${head(ONL.encerrada ? "Aula encerrada" : "Aula online", "Minirrelatório do grupo", `${esc(S.aluno.grupo)} · ${feitas} de ${qs.length} respostas das etapas já alcançadas.`)}
+    <div class="grp-body"><div class="al-sum">${SECOES.filter((s) => S.aluno.lib[s.id]).map((s) => { const n = s.qs.filter((q) => alResp(s.id, q[0]).trim()).length; return `<div><span>${s.titulo}</span><b class="${n === s.qs.length ? "ok" : ""}">${n} de ${s.qs.length}</b></div>`; }).join("") || `<p class="note">Nenhuma etapa com pergunta foi alcançada ainda.</p>`}</div>
+      <div class="btn-row c" style="margin-top:1rem"><button class="btn primary" data-act="al-pdf" style="font-size:1.15rem;padding:.7rem 1.6rem">Salvar em PDF</button></div>
+      <p class="note" style="text-align:center">Na janela de impressão que vai abrir, escolham <strong>“Salvar como PDF”</strong> no campo de destino ou impressora.</p>
+    </div>
+    <div class="navrow">${ONL.encerrada ? `<button class="btn ghost" data-act="grp-sair">Sair</button>` : `<button class="btn ghost" data-act="grp-aula">← Voltar à aula</button>`}<span></span><span></span></div>
+  </section>`;
+}
+function telaGrupo() {
+  if (ONL.grpVer === "relatorio" || ONL.encerrada) return grpRelatorioHTML();
+  return `<section class="screen grp">
+    <div id="grp-topo">${grpTopoHTML()}</div>
+    <div class="grp-body"><div class="grp-col">
+      <div id="grp-cartoes">${grpCartoesHTML()}</div>
+      <div id="grp-form">${grpFormHTML()}</div>
+    </div></div>
+  </section>`;
+}
+/* novo retrato: só redesenha o topo e os cartões; o formulário só muda se a pergunta em aberto mudou
+   (assim quem está digitando não perde o cursor) */
+function grpAtualizar() {
+  SECOES.forEach((sc) => { if (grpAlcancou(sc)) S.aluno.lib[sc.id] = true; });
+  if (S.modo !== "grupo" || ONL.grpVer !== "aula" || ONL.encerrada || !$("#grp-form")) { render(true); return; }
+  $("#grp-topo").innerHTML = grpTopoHTML();
+  $("#grp-cartoes").innerHTML = grpCartoesHTML();
+  const sc = grpSecAtual(), atual = $("#grp-form [data-grp-sec]");
+  if ((sc ? sc.id : null) !== (atual ? atual.dataset.grpSec : null)) $("#grp-form").innerHTML = grpFormHTML();
+  fitTitles($("#main")); markZoom($("#main"));
+}
+/* envio das respostas: sozinho, 1,5 s depois de parar de digitar, e pelo botão */
+let grpTimer = null;
+function grpMarcar(sid) {
+  ONL.envio[sid] = "pendente"; grpStatus(sid);
+  clearTimeout(grpTimer); grpTimer = setTimeout(() => grpEnviar(sid), 1500);
+}
+function grpEnviar(sid) {
+  clearTimeout(grpTimer);
+  const sc = SECOES.find((x) => x.id === sid); if (!sc || !ONL.ativo || !ONL.sock) return;
+  ONL.envio[sid] = "enviando"; grpStatus(sid);
+  let falta = sc.qs.length, erro = false;
+  sc.qs.forEach(([q]) => {
+    ONL.sock.emit("acao", { tipo: "resp", dados: { sec: sid, q: q, texto: alResp(sid, q) } }, (r) => {
+      if (!r || !r.ok) erro = true;
+      if (--falta === 0) { ONL.envio[sid] = erro ? "pendente" : "ok"; grpStatus(sid); }
+    });
+  });
+}
+function grpStatus(sid) {
+  const el = $("#grp-st"); if (!el || !$(`#grp-form [data-grp-sec="${sid}"]`)) return;
+  const st = ONL.envio[sid];
+  el.textContent = st === "ok" ? "✓ Resposta enviada ao professor" : st === "enviando" ? "Enviando…" : st === "pendente" ? (ONL.sock && ONL.sock.connected ? "Alterações ainda não enviadas" : "Sem conexão — será enviada ao reconectar") : "";
+  el.className = "grp-st " + (st || "");
+}
+
+
+const alMembros = () => S.aluno.integrantes.map((n) => n.trim()).filter(Boolean);
+function alResp(sid, q) { return ((S.aluno.resp[sid] || {})[q]) || ""; }
+function renderAluno() {
+  $("#tape").innerHTML = `<div class="tape-inner">
+    <div class="brand"><span class="rw" aria-hidden="true">◀◀</span> ${NOME}</div><div style="flex:1"></div>
+    <div class="tools">${onlChip()}${S.modo === "grupo" && !ONL.encerrada ? `<button class="chip-btn" data-act="${ONL.grpVer === "relatorio" ? "grp-aula" : "grp-rel"}">${ONL.grpVer === "relatorio" ? "← Voltar à aula" : "📄 Minirrelatório"}</button>` : ""}</div>
+  </div>`;
+  $("#main").innerHTML = S.modo === "grupo" ? telaGrupo() : telaOnline();
   fitTitles($("#main"));
   markZoom($("#main"));
   window.scrollTo(0, 0);
-  const f = document.querySelector("#main [data-pass], #main [data-code]");
-  if (f) f.focus();
-}
-function alGo(i) {
-  if (i < 0 || i >= alTotal() || !alLiberada(i)) return;
-  S.aluno.at = i; alMsg = ""; save(); renderAluno();
-}
-function alCode(input) {
-  const s = SECOES[S.aluno.at - 1];
-  if (!s || !input) return;
-  if (normCod(input.value) === codigo(s)) { S.aluno.lib[s.id] = true; alMsg = ""; }
-  else alMsg = "Código incorreto. Confira com o professor e tente de novo.";
-  save(); renderAluno();
+  const f = document.querySelector("#main [data-onl]");
+  if (f && !(f.dataset.onl === "codigo" && f.value)) f.focus();
 }
 function alPdf() {
   const A = S.aluno, hoje = new Date().toLocaleDateString("pt-BR");
@@ -1063,7 +1164,7 @@ function aguardoPanel(m) {
   return `<div class="aguardo">
     <span class="big" aria-hidden="true">⏳</span>
     <h2>Tempo de resposta</h2>
-    <p>Aguardando os grupos escreverem ${m === "m0" ? "o palpite" : "a previsão"} no modo aluno.</p>
+    <p>Aguardando os grupos escreverem ${m === "m0" ? "o palpite" : "a previsão"} nos seus aparelhos.</p>
   </div>`;
 }
 
@@ -1076,11 +1177,11 @@ function telaFita() {
     ["17 a 20 de novembro de 2000", "E o resto?", "Febre, barriga inchada, pouca urina, respiração rápida, parada do coração. O cérebro explica tudo isso?"]
   ];
   if (!S.fitaAberta) return `<section class="screen">
-    ${head("Fechamento", "Rodar a fita para frente", "Agora que chegamos ao começo, cada grupo reconta a história na ordem certa, no modo aluno.")}
+    ${head("Fechamento", "Rodar a fita para frente", "Agora que chegamos ao começo, cada grupo reconta a história na ordem certa, no seu aparelho.")}
     <div class="body" style="display:grid"><div class="aguardo">
       <span class="big" aria-hidden="true">⏳</span>
       <h2>Tempo de resposta</h2>
-      <p>Aguardando os grupos escreverem a história no modo aluno. Depois, a fita é revelada passo a passo para conferir.</p>
+      <p>Aguardando os grupos escreverem a história nos seus aparelhos. Depois, a fita é revelada passo a passo para conferir.</p>
     </div></div>
     ${navRow("Necropsia", `<button class="btn primary" data-act="fita-start">Os grupos terminaram: revelar a história</button>`, "Revele a história antes de seguir para a necropsia.")}
   </section>`;
@@ -1147,12 +1248,12 @@ function bodySVG() {
 function telaNecro(step) {
   if (step === 0) {
     return `<section class="screen">
-      ${head("Necropsia", "O laudo da necropsia", "Antes de abrir o laudo, cada grupo responde no modo aluno:")}
+      ${head("Necropsia", "O laudo da necropsia", "Antes de abrir o laudo, cada grupo responde no seu aparelho:")}
       <div class="body" style="display:grid;place-items:center;align-content:center;gap:2rem"><ol class="necro-q">
         <li>O que vocês acham que havia dentro do coração dela?</li>
         <li>Além do cérebro, algum outro órgão foi atingido? Qual?</li>
       </ol>
-      <p class="tempo-resp"><span aria-hidden="true">⏳</span> Tempo de resposta: aguardando os grupos escreverem no modo aluno.</p></div>
+      <p class="tempo-resp"><span aria-hidden="true">⏳</span> Tempo de resposta: aguardando os grupos escreverem nos seus aparelhos.</p></div>
       ${navRow("Abrir o laudo")}
     </section>`;
   }
@@ -1322,7 +1423,7 @@ const PAUSAS = {
   ] }
 };
 
-let overlay = null, ovPage = 0, zoom = null, codeView = null;
+let overlay = null, ovPage = 0, zoom = null;
 function openZoom(img) {
   const fig = img.closest("figure"), cap = fig && fig.querySelector("figcaption");
   zoom = { src: img.src, alt: img.alt, cap: cap ? cap.textContent : img.alt, ct: !!img.closest(".ct"), back: overlay, page: ovPage };
@@ -1333,8 +1434,8 @@ const pausaPendente = () => { const b = BLOCOS[S.tela]; return b && b.pausa && !
 function closeOverlay() {
   const era = overlay;
   if (overlay === "zoom" && zoom) { overlay = zoom.back; ovPage = zoom.page; zoom = null; }
-  else if (overlay === "codigo" && codeView) { overlay = codeView.back; ovPage = codeView.page; codeView = null; }
-  else { overlay = null; loginMsg = ""; }
+  else if (overlay === "respostas") { ONL.verResp = false; ONL.verRespSec = null; overlay = ONL.voltaOv || null; ovPage = ONL.voltaPg || 0; renderTape(); }
+  else { overlay = null; }
   renderOverlay();
   if (PAUSAS[era] && !overlay) render(true);         // atualiza o botão da pausa e o "Rebobinar"
 }
@@ -1353,13 +1454,12 @@ function ovTop(eyebrow, pg) {
 }
 function renderOverlay() {
   const ov = $("#overlay");
-  if (!overlay) { ov.hidden = true; ov.innerHTML = ""; return; }
+  if (!overlay) { ov.hidden = true; ov.innerHTML = ""; onlPublicar(); if (ONL.ativo && ONL.papel === "prof" && S.modo === "apresentacao") renderTape(); return; }
   let html;
   if (PAUSAS[overlay]) {
     const p = PAUSAS[overlay], n = p.paginas.length;
     if (ovPage === n - 1 && !pausaFeita(overlay)) { S.visto["pausaFim-" + overlay] = true; save(); }
-    const sc = apres() && SECOES.find((s) => s.pausa === overlay);
-    html = `<div class="ov">${ovTop(p.nome, `${ovPage + 1} de ${n}${sc ? ` · <button class="btn" data-act="show-code" data-sec="${sc.id}" style="font-size:.8rem;padding:.2rem .7rem;color:var(--accent)">🔑 Mostrar código dos alunos</button>` : ""}`)}${p.paginas[ovPage]()}
+    html = `<div class="ov">${ovTop(p.nome, `${ovPage + 1} de ${n}`)}${p.paginas[ovPage]()}
       <div class="navrow">${ovPage > 0 ? `<button class="btn ghost" data-act="ov-prev">← Anterior</button>` : "<span></span>"}<span></span>
       ${ovPage < n - 1 ? `<button class="btn primary" data-act="ov-next">Próxima →</button>` : `<button class="btn primary" data-act="close-ov">Voltar ao caso</button>`}</div></div>`;
   } else if (overlay === "zoom") {
@@ -1369,33 +1469,23 @@ function renderOverlay() {
         : `<img src="${zoom.src}" alt="${esc(zoom.alt)}">`}
       ${zoom.cap ? `<p>${esc(zoom.cap)}</p>` : ""}
       <p class="note">Clique na imagem ou aperte Esc para voltar.</p></div></div>`;
-  } else if (overlay === "codigo" && codeView && apres()) {
-    const s = SECOES.find((x) => x.id === codeView.sec);
-    html = `<div class="ov"><div class="ov-top"><span class="eyebrow" style="text-align:left">Código para os alunos</span><span></span><button class="btn x" data-act="close-ov">Fechar</button></div>
-      <div class="body"><div class="code-view">
-        <span class="eyebrow">${s.eyebrow}</span>
-        <div class="code-big">${codigo(s)}</div>
-        <p>No modo aluno, digitem este código para liberar a seção <strong>“${s.titulo}”</strong>.</p>
-      </div></div></div>`;
-  } else if (overlay === "codigos" && apres()) {
-    html = `<div class="ov">${ovTop("Modo apresentação")}${head("", "Códigos do modo aluno", "Aparecem só os códigos das etapas que a turma já alcançou. Maiúsculas, minúsculas e acentos não fazem diferença.")}
-      <div class="body" style="display:grid;align-content:center"><table class="codes-table"><thead><tr><th>Nº</th><th>Momento da aula</th><th>Seção do aluno</th><th>Código</th></tr></thead>
-      <tbody>${SECOES.map((s, i) => alcancada(s)
-        ? `<tr><td>${i + 1}</td><td>${s.quando}</td><td>${s.titulo}</td><td class="c">${codigo(s)}</td></tr>`
-        : `<tr class="futura"><td>${i + 1}</td><td>${s.quando}</td><td>—</td><td>🔒 Ainda não alcançada</td></tr>`).join("")}</tbody></table></div></div>`;
-  } else if (overlay === "login") {
-    html = `<div class="ov">${ovTop("Acesso do professor")}<div class="body" style="display:grid"><div class="panel login-box" style="display:grid;gap:.8rem">
-      <h2>Modo professor</h2>
-      <p>Mostra no verso de cada cartão a pergunta que o libera e permite fechar cartões já abertos.</p>
-      ${accessHTML("ov")}</div></div></div>`;
+  } else if (overlay === "respostas" && ONL.ativo && ONL.papel === "prof") {
+    html = onlRespostasHTML();
+  } else if (overlay === "encerrar" && ONL.ativo && ONL.papel === "prof") {
+    html = `<div class="ov">${ovTop("Aula online")}<div class="body" style="display:grid"><div class="panel onl-box" style="max-width:44rem">
+      <h2>Encerrar a aula?</h2>
+      <p>A sala é fechada para todos os grupos. Antes, confirme que os grupos já salvaram o minirrelatório em PDF.</p>
+      <div class="btn-row c"><button class="btn primary" data-act="onl-fechar">Sim, encerrar a aula</button><button class="btn ghost" data-act="close-ov">Continuar a aula</button></div>
+    </div></div></div>`;
   } else {
     html = `<div class="ov">${ovTop("Consulta rápida")}${head("", "Glossário")}<div class="body"><dl class="gloss">${GLOSS.map(([t, d]) => `<div><dt>${t}</dt><dd>${d}</dd></div>`).join("")}</dl></div></div>`;
   }
   ov.innerHTML = html; ov.hidden = false;
+  onlPublicar();
+  if (ONL.ativo && ONL.papel === "prof" && S.modo === "apresentacao") renderTape();   /* selo de respostas da pausa */
   initInr(ov);
   fitTitles(ov);
   markZoom(ov);
-  if (overlay === "login") { const el = ov.querySelector("[data-pass]"); if (el) el.focus(); }
 }
 
 /* ---------------- Render ---------------- */
@@ -1406,14 +1496,13 @@ function render(keep) {
   renderTape();
   const t = S.tela;
   const html =
-    t === "config" ? telaConfig() :
     t === "abertura" ? telaAbertura() :
-    t === "abertura-r" ? telaRewind("m0", "20 de novembro de 2000 · Primeiro palpite", "Qual foi a causa da morte?", "Cada grupo escreve o palpite no modo aluno.", "Rebobinar para os últimos dias") :
+    t === "abertura-r" ? telaRewind("m0", "20 de novembro de 2000 · Primeiro palpite", "Qual foi a causa da morte?", "Cada grupo escreve o palpite no seu aparelho.", "Rebobinar para os últimos dias") :
     BLOCOS[t] ? telaBloco(t) :
     t.endsWith("-r") && BLOCOS[base(t)] ? (() => {
       const b = BLOCOS[base(t)];
       const nx = { b1: "Rebobinar para a chegada", b2: "Rebobinar para os meses anteriores", b3: "Rebobinar para o começo", b4: "Rodar a fita para frente" }[base(t)];
-      return telaRewind("m" + b.n, `Bloco ${b.n} · Rebobinar`, b.rebobinar, "Antes de voltar no tempo, cada grupo escreve a previsão no modo aluno.", nx,
+      return telaRewind("m" + b.n, `Bloco ${b.n} · Rebobinar`, b.rebobinar, "Antes de voltar no tempo, cada grupo escreve a previsão no seu aparelho.", nx,
         b.guardar ? `<div class="reveal-box" style="flex:none;text-align:center;padding:.4rem 1rem"><strong>${b.guardar}</strong></div>` : "");
     })() :
     t === "fita" ? telaFita() :
@@ -1427,6 +1516,7 @@ function render(keep) {
   markZoom($("#main"));
   const nb = $("#main .body");
   if (keep) { if (nb) nb.scrollTop = y; window.scrollTo(0, wy); } else window.scrollTo(0, 0);
+  onlPublicar();
 }
 
 /* Títulos longos: reduz a letra até caber numa linha usando toda a largura (mínimo 1,55rem) */
@@ -1467,7 +1557,9 @@ function step(d) {
   if (d > 0 && S.tela === "fita" && !S.fitaAberta) return;                  // a fita é revelada antes de seguir
   const i = TELAS.indexOf(S.tela) + d; if (i >= 0 && i < TELAS.length) go(TELAS[i]);
 }
-function profKey() { if (S.prof) { S.prof = false; S.modo = "apresentacao"; render(true); } else { loginMsg = ""; openOverlay("login"); } }
+function profKey() {   /* tecla P: mostra/oculta no verso dos cartões a pergunta que libera cada um (só no projetor) */
+  if (ONL.ativo && ONL.papel === "prof") { S.prof = !S.prof; render(true); }
+}
 
 /* ---------------- Eventos ---------------- */
 document.addEventListener("click", (e) => {
@@ -1476,11 +1568,6 @@ document.addEventListener("click", (e) => {
   const b = e.target.closest("button, [data-org], .zoom-view");
   if (!b) return;
   const d = b.dataset;
-  if (d.modo) {
-    if (d.modo === "professor") { modoLogin = true; loginMsg = ""; render(); return; }
-    S.modo = d.modo; S.prof = false; modoLogin = false; render(); return;
-  }
-  if (d.alGo !== undefined) { alGo(Number(d.alGo)); return; }
   if (d.go !== undefined) { if (d.go) go(d.go); return; }
   if (d.open) {
     if (S.abertos[d.open]) return;
@@ -1497,18 +1584,18 @@ document.addEventListener("click", (e) => {
     if (d.org === "coracao" || S.necro.acesos.includes(d.org)) { S.necro.sel = d.org; render(true); }
     return;
   }
+  if (d.act && d.act.startsWith("onl-")) { onlClique(d.act, d); return; }
+  if (S.modo === "grupo") {
+    if (d.gcs !== undefined || d.act === "gcs-check") return;
+    if (d.act === "grp-enviar") { const f = $("#grp-form [data-grp-sec]"); if (f) grpEnviar(f.dataset.grpSec); return; }
+    if (d.act === "grp-rel") { ONL.grpVer = "relatorio"; render(); return; }
+    if (d.act === "grp-aula") { ONL.grpVer = "aula"; render(); return; }
+    if (d.act === "grp-sair") { ONL.encerrada = false; ONL.grpVer = "aula"; onlSair(); return; }
+  }
   switch (d.act) {
     case "next": step(1); break;
     case "prev": step(-1); break;
-    case "prof-off": S.prof = false; S.modo = "apresentacao"; render(true); break;
-    case "trocar-modo": S.modo = ""; S.prof = false; modoLogin = false; loginMsg = ""; overlay = null; zoom = codeView = null; renderOverlay(); render(); break;
-    case "show-code": if (apres()) { codeView = { sec: d.sec, back: overlay, page: ovPage }; overlay = "codigo"; renderOverlay(); } break;
-    case "codes": if (apres()) openOverlay("codigos"); break;
-    case "al-prev": alGo(S.aluno.at - 1); break;
-    case "al-next": alGo(S.aluno.at + 1); break;
-    case "al-code": alCode(b.parentElement.querySelector("[data-code]")); break;
     case "al-pdf": alPdf(); break;
-    case "prof-login": tryLogin(b.parentElement.querySelector("[data-pass]")); break;
     case "gloss": openOverlay("gloss"); break;
     case "close-ov": closeOverlay(); break;
     case "ov-next": ovPage++; renderOverlay(); break;
@@ -1520,24 +1607,26 @@ document.addEventListener("click", (e) => {
     case "organ-next": { const nx = ORDEM_ORGAOS.find((k) => !S.necro.acesos.includes(k)); if (nx) { S.necro.acesos.push(nx); S.necro.sel = nx; } render(true); break; }
     case "final-rev": S.finalRev = true; render(true); break;
     case "p2-rev": S.pausa2Rev = true; renderOverlay(); save(); break;
-    case "ask-reset": $("#reset-area").innerHTML = `<div class="confirm"><span>Apagar todos os registros dos grupos e voltar ao início?</span><button class="btn" data-act="do-reset">Sim, apagar</button><button class="btn ghost" data-act="cancel-reset">Cancelar</button></div>`; break;
-    case "cancel-reset": render(true); break;
-    case "do-reset": { const p = S.prof, md = S.modo, al = S.aluno; S = fresh(); S.prof = p; S.modo = md; S.aluno = al; render(); break; }
   }
 });
 
 document.addEventListener("input", (e) => {
   const el = e.target, d = el.dataset;
-  if (d.gname !== undefined) { S.grupos[Number(d.gname)] = el.value; save(); return; }
+  if (d.onl === "codigo") { ONL.form = ONL.form || {}; ONL.form.codigo = el.value; return; }
   if (d.al) { S.aluno[d.al] = el.value; save(); return; }
   if (d.int !== undefined) { S.aluno.integrantes[Number(d.int)] = el.value; save(); return; }
-  if (d.resp) { const [sid, q] = d.resp.split(":"); (S.aluno.resp[sid] = S.aluno.resp[sid] || {})[q] = el.value; save(); return; }
+  if (d.resp) { const [sid, q] = d.resp.split(":"); (S.aluno.resp[sid] = S.aluno.resp[sid] || {})[q] = el.value; save(); if (S.modo === "grupo") grpMarcar(sid); return; }
 });
+
+document.addEventListener("toggle", (e) => {
+  const c = e.target; if (!c.dataset || !c.dataset.grpCard) return;
+  if (c.open) ONL.cardAberto = c.dataset.grpCard; else if (ONL.cardAberto === c.dataset.grpCard) ONL.cardAberto = null;
+}, true);
 
 document.addEventListener("keydown", (e) => {
   const tg = e.target instanceof Element ? e.target : document.body;
-  if (tg.matches("[data-pass]") && e.key === "Enter") { e.preventDefault(); tryLogin(tg); return; }
-  if (tg.matches("[data-code]") && e.key === "Enter") { e.preventDefault(); alCode(tg); return; }
+  if (tg.matches("[data-onl]") && e.key === "Enter") { e.preventDefault(); if (ONL.tela === "senha") onlSenha(); else onlEntrar(); return; }
+  if (tg.matches("#al-grupo, [data-int]") && e.key === "Enter" && ONL.tela === "grupo" && !S.modo) { e.preventDefault(); onlEntrar(); return; }
   if (e.key === "Escape" && overlay) { closeOverlay(); return; }
   if (tg.matches("input, textarea")) return;
   if (overlay && PAUSAS[overlay]) {
@@ -1552,6 +1641,287 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "p" || e.key === "P") profKey();
   else if (e.key === "g" || e.key === "G") openOverlay("gloss");
 });
+
+/* ---------------- Aula online: conexão e telas de entrada ---------------- */
+function onlGuardar() { try { localStorage.setItem(ONL_CHAVE, JSON.stringify({ papel: ONL.papel, codigo: ONL.codigo, token: ONL.token, nome: ONL.nome })); } catch (e) {} }
+function onlLerGuardado() { try { return JSON.parse(localStorage.getItem(ONL_CHAVE)); } catch (e) { return null; } }
+function onlEsquecer() { try { localStorage.removeItem(ONL_CHAVE); } catch (e) {} }
+function onlProfLiberado() { try { return sessionStorage.getItem("onlProfLiberado") === "1"; } catch (e) { return false; } }
+function onlMsg(t) { if (ONL.msg === (t || "")) return; ONL.msg = t || ""; if (!ONL.ativo) render(true); }
+/* selo na faixa de cima: sala, quem é este aparelho e o estado da conexão */
+function onlChip() {
+  if (!ONL.ativo) return "";
+  const con = ONL.sock && ONL.sock.connected;
+  const quem = ONL.papel === "prof" ? `${(ONL.sala ? ONL.sala.equipes.filter((e) => e.online).length : 0)} grupos conectados` : esc(ONL.nome || "");
+  return `<span class="chip-btn onl-chip ${con ? "" : "off"}" role="status">${con ? "●" : "○"} Sala ${esc(ONL.codigo || "")} · ${quem}${con ? "" : " · reconectando…"}</span>`;
+}
+function onlRedesenhar() { if (S.modo === "apresentacao" || S.modo === "professor") renderTape(); else render(true); }
+
+function onlConectar(cb) {
+  function pronto() {
+    if (ONL.sock) { cb(); return; }
+    const sk = ONL.sock = window.io(ONL_URL, { reconnectionDelayMax: 4000 });
+    sk.on("connect", () => {
+      onlMsg(""); if (ONL.ativo) onlRedesenhar(); if (ONL.codigo) onlRetomar();
+      if (ONL.ativo && ONL.papel === "equipe") Object.keys(ONL.envio).forEach((sid) => { if (ONL.envio[sid] !== "ok") setTimeout(() => grpEnviar(sid), 800); });
+    });
+    sk.on("disconnect", () => { if (ONL.ativo) onlRedesenhar(); });
+    sk.on("connect_error", () => onlMsg("Conectando ao servidor… se ele estava dormindo, pode levar até 1 minuto."));
+    sk.on("sala", (v) => { ONL.sala = v; if (ONL.ativo) onlRedesenhar(); else if (ONL.tela === "lobby") render(true); });
+    sk.on("seu-lugar", (d) => { ONL.seat = d.seat; });
+    sk.on("inicio", (p) => onlComecar(p));
+    sk.on("acao", onlReceber);
+    sk.on("lobby", () => onlVoltarLobby());
+    sk.on("removido", () => onlSair("O professor removeu o seu grupo da sala."));
+    sk.on("substituido", () => onlSair("Este grupo entrou na sala por outro aparelho."));
+    sk.on("sala-fechada", () => {
+      if (ONL.papel === "equipe") { onlEncerrarGrupo(); return; }   /* o grupo fica no minirrelatório para salvar o PDF */
+      onlSair("O professor encerrou a sala.");
+    });
+    cb();
+  }
+  if (window.io) { pronto(); return; }
+  onlMsg("Carregando…");
+  const sc = document.createElement("script");
+  sc.src = ONL_LIB; sc.onload = pronto;
+  sc.onerror = () => onlMsg("Sem internet? Não consegui carregar a conexão online.");
+  document.head.appendChild(sc);
+}
+
+function onlClique(act, d) {
+  switch (act) {
+    case "onl-prof":
+      ONL.msg = "";
+      if (onlProfLiberado()) { onlCriarSala(); return; }
+      ONL.tela = "senha"; render(); break;
+    case "onl-grupo": ONL.msg = ""; ONL.tela = "grupo"; render(); break;
+    case "onl-volta": ONL.msg = ""; ONL.tela = "entrada"; render(); break;
+    case "onl-senha": onlSenha(); break;
+    case "onl-entrar": onlEntrar(); break;
+    case "onl-voltar": {
+      const g = onlLerGuardado(); if (!g) return;
+      Object.assign(ONL, { papel: g.papel, codigo: g.codigo, token: g.token, nome: g.nome });
+      onlConectar(() => { if (ONL.sock.connected) onlRetomar(); });
+      break;
+    }
+    case "onl-iniciar":
+      if (ONL.sock) ONL.sock.emit("prof:iniciar", {}, (r) => { if (!r || !r.ok) onlMsg((r && r.erro) || "Não consegui começar a aula."); });
+      break;
+    case "onl-remover":
+      if (ONL.sock) ONL.sock.emit("prof:remover", { seat: Number(d.seat) }, () => {});
+      break;
+    case "onl-sair": onlSair(); break;
+    case "onl-ver": onlVerRespostas(); break;
+    case "onl-encerrar": overlay = "encerrar"; renderOverlay(); break;
+    case "onl-fechar": onlSair(); break;
+  }
+}
+function onlSenha() {
+  const inp = document.querySelector('[data-onl="senha"]');
+  if (!inp || inp.value.trim().toLowerCase() !== ONL_SENHA) { onlMsg("Senha incorreta. Tente novamente."); return; }
+  try { sessionStorage.setItem("onlProfLiberado", "1"); } catch (e) {}
+  onlCriarSala();
+}
+function onlCriarSala() {
+  onlConectar(() => {
+    ONL.sock.emit("prof:criar", { jogo: "investigacao", max: 12, config: {} }, (r) => {
+      if (!r || !r.ok) { ONL.tela = "entrada"; onlMsg((r && r.erro) || "Não consegui criar a sala."); return; }
+      Object.assign(ONL, { papel: "prof", codigo: r.codigo, token: r.token, nome: null, seat: null, sala: r.sala, msg: "" });
+      onlGuardar();
+      ONL.tela = "lobby"; render();
+    });
+  });
+}
+function onlEntrar() {
+  const codigo = String((ONL.form && ONL.form.codigo) || "").trim().toUpperCase();
+  const nome = S.aluno.grupo.trim();
+  if (codigo.length !== 4) { onlMsg("O código da sala tem 4 caracteres."); return; }
+  if (!nome) { onlMsg("Digite o nome do grupo."); return; }
+  if (!alMembros().length) { onlMsg("Digite o nome de pelo menos um integrante."); return; }
+  onlConectar(() => {
+    ONL.sock.emit("aluno:entrar", { codigo, nome }, (r) => {
+      if (!r || !r.ok) { onlMsg((r && r.erro) || "Não consegui entrar."); return; }
+      Object.assign(ONL, { papel: "equipe", codigo: r.sala.codigo, token: r.token, nome: r.nome, seat: r.seat, sala: r.sala, msg: "" });
+      onlGuardar();
+      if (r.partida) onlComecar(r.partida); else { ONL.tela = "lobby"; render(); }
+    });
+  });
+}
+/* volta à sala guardada (recarregou a página, a internet caiu…) */
+function onlRetomar() {
+  if (!ONL.sock || !ONL.codigo) return;
+  const fim = (r) => {
+    if (!r || !r.ok) {
+      onlEsquecer(); ONL.codigo = null;
+      if (ONL.ativo) onlSair((r && r.erro) || "A sala não existe mais.");
+      else { ONL.tela = "entrada"; onlMsg((r && r.erro) || "A sala não existe mais."); }
+      return;
+    }
+    if (r.seat != null) ONL.seat = r.seat;
+    if (r.token) ONL.token = r.token;
+    ONL.sala = r.sala;
+    onlGuardar();
+    if (!r.partida) { onlVoltarLobby(); return; }
+    if (ONL.ativo) { (r.partida.log || []).forEach(onlReceber); onlRedesenhar(); return; }
+    onlComecar(r.partida);
+  };
+  if (ONL.papel === "prof") ONL.sock.emit("prof:retomar", { codigo: ONL.codigo, token: ONL.token }, fim);
+  else ONL.sock.emit("aluno:entrar", { codigo: ONL.codigo, nome: ONL.nome, token: ONL.token }, fim);
+}
+
+/* começo da aula (ou volta a uma aula em andamento): aplica todo o registro da sala */
+function onlComecar(p) {
+  ONL.ativo = true; ONL.prox = 0; ONL.est = null; ONL.resp = {};
+  overlay = null; zoom = null; renderOverlay();
+  if (ONL.papel === "prof") {
+    if (S.onlSala !== ONL.codigo) {                       /* aula nova: começa do zero, na abertura */
+      const al = S.aluno; S = fresh(); S.aluno = al; S.onlSala = ONL.codigo; S.tela = "abertura";
+    }
+    S.modo = "apresentacao"; S.prof = false;
+  } else {
+    if (S.aluno.sala !== ONL.codigo) { S.aluno.resp = {}; S.aluno.lib = {}; S.aluno.sala = ONL.codigo; }
+    S.modo = "grupo"; ONL.grpVer = "aula"; ONL.encerrada = false; ONL.envio = {};
+  }
+  ONL.refazendo = true;
+  try { (p.log || []).forEach(onlReceber); } finally { ONL.refazendo = false; }
+  if (ONL.papel === "equipe") SECOES.forEach((sc) => { if (grpAlcancou(sc)) S.aluno.lib[sc.id] = true; });
+  ONL.verResp = false; ONL.verRespSec = null;
+  save();
+  render();
+  if (ONL.papel === "prof" && ONL.pausaRestaurar) { overlay = ONL.pausaRestaurar.k; ovPage = ONL.pausaRestaurar.pg | 0; renderOverlay(); }
+  ONL.pausaRestaurar = null;
+}
+/* uma jogada do servidor, na ordem; se pulou alguma, pede o que falta */
+function onlReceber(j) {
+  if (!ONL.ativo || !j || j.seq < ONL.prox) return;
+  if (j.seq > ONL.prox) { onlPedirFaltantes(); return; }
+  ONL.prox++;
+  if (j.tipo === "est" && j.seat === -1) {
+    ONL.est = j.dados;
+    /* o projetor recebe de volta os próprios retratos: ao vivo, ignora (o estado local já é mais novo);
+       só os aplica ao refazer a aula num aparelho novo */
+    if (ONL.papel !== "prof" || ONL.refazendo) onlAplicarEst(j.dados);
+  }
+  else if (j.tipo === "resp" && !j.oculto && j.dados) onlGuardarResp(j.seat, j.dados);
+}
+function onlPedirFaltantes() {
+  if (ONL.sincronizando || !ONL.sock) return;
+  ONL.sincronizando = true;
+  ONL.sock.emit("sync", { desde: ONL.prox }, (r) => {
+    ONL.sincronizando = false;
+    if (r && r.ok && r.log) r.log.forEach(onlReceber);
+  });
+}
+/* ---------------- Retrato do projetor (o que os grupos acompanham) ---------------- */
+function onlEstAtual() {
+  const ov = overlay === "respostas" ? ONL.voltaOv : overlay, pg = overlay === "respostas" ? ONL.voltaPg : ovPage;
+  const pausa = PAUSAS[ov] ? { k: ov, pg: pg }
+    : (ov === "zoom" && zoom && PAUSAS[zoom.back]) ? { k: zoom.back, pg: zoom.page } : null;
+  return { tela: S.tela, abertos: Object.keys(S.abertos).filter((k) => S.abertos[k]), visto: S.visto,
+    gcs: S.gcs, gcsCheck: S.gcsCheck, fita: S.fita, fitaAberta: S.fitaAberta,
+    necro: S.necro, finalRev: S.finalRev, pausa2Rev: S.pausa2Rev, pausa: pausa };
+}
+function onlPublicar() {
+  if (!ONL.ativo || ONL.papel !== "prof" || !ONL.sock) return;
+  const est = onlEstAtual(), txt = JSON.stringify(est);
+  if (txt === ONL.ultimoPub) return;
+  ONL.ultimoPub = txt;
+  if (ONL.verResp && onlSecAtual() !== ONL.verRespSec) { ONL.verResp = false; ONL.verRespSec = null; }   /* trocou de etapa: oculta */
+  ONL.sock.emit("acao", { tipo: "est", dados: est }, (r) => { if (!r || !r.ok) ONL.ultimoPub = ""; });
+}
+/* retrato recebido: nos grupos vira a tela deles; no professor (outro aparelho) restaura onde a aula estava */
+function onlAplicarEst(est) {
+  if (!est) return;
+  if (ONL.papel === "prof") {
+    ONL.ultimoPub = JSON.stringify(est);
+    S.tela = TELAS.includes(est.tela) ? est.tela : S.tela;
+    S.abertos = {}; (est.abertos || []).forEach((k) => { S.abertos[k] = true; });
+    Object.assign(S, { visto: est.visto || S.visto, gcs: est.gcs || S.gcs, gcsCheck: est.gcsCheck || S.gcsCheck,
+      fita: est.fita | 0, fitaAberta: !!est.fitaAberta, necro: est.necro || S.necro, finalRev: !!est.finalRev, pausa2Rev: !!est.pausa2Rev });
+    ONL.pausaRestaurar = est.pausa && PAUSAS[est.pausa.k] ? est.pausa : null;   /* reabre a pausa que estava no projetor */
+    return;
+  }
+  if (S.modo === "grupo" && ONL.ativo) grpAtualizar();
+}
+
+/* ---------------- Respostas dos grupos (professor) ---------------- */
+/* etapa com pergunta que está no projetor agora (tela ou pausa didática aberta) */
+function onlSecAtual() {
+  if (overlay === "respostas") return ONL.verRespSec;
+  const k = PAUSAS[overlay] ? overlay : (overlay === "zoom" && zoom && PAUSAS[zoom.back]) ? zoom.back : null;
+  const sc = k ? SECOES.find((x) => x.pausa === k) : SECOES.find((x) => x.tela === S.tela);
+  return sc ? sc.id : null;
+}
+function onlGuardarResp(seat, d) {
+  if (!d || !d.sec || !d.q) return;
+  if (ONL.papel === "equipe") {                         /* as do próprio grupo: recupera em outro aparelho, sem apagar o que já está aqui */
+    if (seat === ONL.seat && !alResp(d.sec, d.q)) { (S.aluno.resp[d.sec] = S.aluno.resp[d.sec] || {})[d.q] = String(d.texto || ""); ONL.envio[d.sec] = "ok"; }
+    return;
+  }
+  if (ONL.papel !== "prof") return;
+  const g = (ONL.resp[seat] = ONL.resp[seat] || {});
+  (g[d.sec] = g[d.sec] || {})[d.q] = String(d.texto || "");
+  if (!ONL.ativo) return;
+  if (overlay === "respostas") renderOverlay();
+  if (S.modo === "apresentacao" || S.modo === "professor") renderTape();
+}
+const onlRespondeu = (seat, sid) => { const r = (ONL.resp[seat] || {})[sid] || {}; return Object.keys(r).some((q) => r[q].trim()); };
+/* selo discreto na faixa: quantos grupos já responderam + 👁 para mostrar/ocultar */
+function onlChipResp() {
+  if (!ONL.ativo || ONL.papel !== "prof") return "";
+  const sid = onlSecAtual();
+  if (!sid) return "";
+  const eq = (ONL.sala && ONL.sala.equipes) || [];
+  const n = eq.filter((e) => onlRespondeu(e.seat, sid)).length;
+  const ver = overlay === "respostas";
+  return `<span class="chip-btn onl-chip" role="status" title="Grupos que já responderam a esta etapa">📝 ${n} de ${eq.length}</span>
+    <button class="chip-btn onl-olho ${ver ? "on" : ""}" data-act="onl-ver" title="${ver ? "Ocultar" : "Mostrar"} as respostas dos grupos no projetor" aria-pressed="${ver}">${ver ? "🙈" : "👁"}</button>`;
+}
+function onlRespostasHTML() {
+  const sid = ONL.verRespSec, sc = SECOES.find((x) => x.id === sid);
+  const topo = `<div class="ov-top"><span class="eyebrow" style="text-align:left">Respostas dos grupos</span><span class="pg"></span><button class="btn x" data-act="onl-ver">🙈 Ocultar respostas e voltar ao caso</button></div>`;
+  if (!sc) return `<div class="ov">${topo}<div class="body"></div></div>`;
+  const eq = (ONL.sala && ONL.sala.equipes) || [];
+  return `<div class="ov">${topo}
+    ${head(sc.eyebrow, sc.titulo)}
+    <div class="body onl-resps">${sc.qs.map(([q, txt]) => `<section class="onl-resp-q"><h3>${txt}</h3>
+      <div class="onl-resp-grade">${eq.map((e) => {
+        const t = (((ONL.resp[e.seat] || {})[sid]) || {})[q] || "";
+        return `<div class="onl-resp ${t.trim() ? "" : "vazia"}"><b>${esc(e.nome)}</b><p>${t.trim() ? esc(t) : "Ainda sem resposta."}</p></div>`;
+      }).join("")}</div></section>`).join("")}</div></div>`;
+}
+function onlVerRespostas() {
+  if (overlay === "respostas") { ONL.verResp = false; ONL.verRespSec = null; overlay = ONL.voltaOv || null; ovPage = ONL.voltaPg || 0; renderOverlay(); renderTape(); return; }
+  const sid = onlSecAtual(); if (!sid) return;
+  ONL.verResp = true; ONL.verRespSec = sid; ONL.voltaOv = overlay; ONL.voltaPg = ovPage;
+  overlay = "respostas"; renderOverlay(); renderTape();
+}
+
+function onlEncerrarGrupo() {
+  const sk = ONL.sock; if (sk) setTimeout(() => sk.disconnect(), 150);
+  onlEsquecer();
+  Object.assign(ONL, { ativo: false, sock: null, codigo: null, token: null, sala: null, encerrada: true, grpVer: "relatorio" });
+  S.modo = "grupo"; save(); render();
+}
+function onlVoltarLobby() {
+  ONL.ativo = false; S.modo = ""; ONL.tela = "lobby";
+  overlay = null; renderOverlay(); render();
+}
+function onlSair(msg) {
+  const sk = ONL.sock;
+  if (sk) {
+    if (ONL.papel === "prof" && ONL.codigo && !msg) {
+      /* só desconecta depois que o servidor confirmar que fechou a sala (ou em 2 s, se não responder) */
+      let feito = false; const sai = () => { if (!feito) { feito = true; sk.disconnect(); } };
+      sk.emit("prof:fechar", {}, sai); setTimeout(sai, 2000);
+    } else setTimeout(() => sk.disconnect(), 150);
+  }
+  onlEsquecer();
+  Object.assign(ONL, { ativo: false, sock: null, papel: null, seat: null, codigo: null, token: null, nome: null, sala: null,
+                       prox: 0, est: null, resp: {}, tela: "entrada", msg: msg || "" });
+  S.modo = ""; S.prof = false;
+  overlay = null; renderOverlay(); render();
+}
 
 fit();
 render();

@@ -1096,6 +1096,42 @@ body{
     100%{ box-shadow:0 0 0 0 rgba(255,210,63,0); }
   }
   @media (prefers-reduced-motion: reduce){ .jc-chegou > *{ animation:none; } }
+  /* --- Desafio online --- */
+  .rep-sel-online{ border-color:#2FA3A0; }
+  .rep-sel-online:hover{ box-shadow:0 0 0 2px rgba(47,163,160,.30), inset 0 0 40px rgba(47,163,160,.18); }
+  .rep-sel-online .rep-sel-nome{ color:#9EE6E2; }
+  .rep-sel-online .rep-sel-tag{ background:linear-gradient(180deg,#9EE6E2,#1E7C79); border-color:#CDF3F1; color:#04211F; }
+  .onl-tela .oculto{ display:none !important; }
+  .onl-tela .rep-sel-opcoes{ max-width:760px; margin:0 auto 18px; }
+  #onlCodigo{ text-transform:uppercase; letter-spacing:.25em; }
+  .onl-codigo{
+    font-family:var(--font-pixel); font-size:clamp(34px, 9vw, 64px); letter-spacing:.18em;
+    color:var(--gold-soft); text-shadow:0 0 18px rgba(212,175,55,.45); margin:6px 0 4px;
+  }
+  .onl-info{ text-align:center; font-family:var(--font-serif); font-size:15px; color:#E8EEF7; margin:0 auto 16px; max-width:620px; line-height:1.5; }
+  .onl-info b{ color:#D6BCF5; }
+  #onlEndereco{ word-break:break-all; }
+  .onl-equipes{ display:grid; gap:10px; max-width:620px; margin:0 auto 18px; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); }
+  .onl-eq{
+    display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px;
+    border:2px solid var(--chal-cor, #8B5CF6); background:rgba(14,6,26,.55);
+    font-family:var(--font-serif); font-weight:700; font-size:16px; color:#E8EEF7;
+  }
+  .onl-eq.p0{ --chal-cor:var(--jog0); } .onl-eq.p1{ --chal-cor:var(--jog1); }
+  .onl-eq.p2{ --chal-cor:var(--jog2); } .onl-eq.p3{ --chal-cor:var(--jog3); }
+  .onl-eq .pino{ width:12px; height:12px; border-radius:50%; background:var(--chal-cor, #8B5CF6); flex:0 0 auto; }
+  .onl-eq.off{ opacity:.5; border-style:dashed; }
+  .onl-eq-nome{ flex:1; min-width:0; overflow-wrap:anywhere; }
+  .onl-eq-nome i{ font-weight:400; color:#D6BCF5; }
+  .onl-remover{ border:0; background:transparent; color:#F5B4B0; font-size:16px; cursor:pointer; padding:2px 6px; }
+  .onl-vazio{ text-align:center; color:rgba(232,238,247,.6); font-family:var(--font-serif); grid-column:1/-1; }
+  .onl-msg{ text-align:center; min-height:1.4em; margin-top:12px; font-family:var(--font-serif); font-size:14px; color:#F5DC8A; }
+  .onl-barra{ display:none; flex:1 1 100%; font-family:var(--font-serif); font-size:13px; color:rgba(232,238,247,.85); }
+  .onl-barra.on{ display:block; }
+  .onl-barra b{ color:var(--gold-soft); }
+  .onl-pto{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#3E9E5E; }
+  .onl-pto.nao{ background:#C9524C; }
+  .onl-off{ color:#F5B4B0; }
 </style>
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
@@ -1173,9 +1209,83 @@ body{
         <span class="rep-sel-tag">2 a 4 jogadores · por turnos</span>
       </button>
 
+      <button class="rep-sel-card rep-sel-online" type="button" id="onlModo">
+        <span class="rep-sel-nome">Desafio online</span>
+        <span class="rep-sel-tag">2 a 4 equipes · cada uma no seu aparelho</span>
+      </button>
+
     </div>
   </div>
 
+    <!-- ---------- DESAFIO ONLINE: papel, senha, sala e sala de espera ---------- -->
+    <div class="rep-selecao onl-tela" id="onlTela">
+      <div id="onlPapel">
+        <div class="rep-sel-cab">
+          <span class="rep-sel-titulo">Desafio online</span>
+          <span class="rep-sel-sub">Cada equipe joga no seu aparelho; o projetor mostra o mesmo tabuleiro</span>
+        </div>
+        <div class="rep-sel-opcoes">
+          <button class="rep-sel-card rep-sel-solo" type="button" id="onlSouProf">
+            <span class="rep-sel-nome">Sou o professor</span>
+            <span class="rep-sel-tag">criar a sala · projetor</span>
+          </button>
+          <button class="rep-sel-card rep-sel-chal" type="button" id="onlSouAluno">
+            <span class="rep-sel-nome">Sou uma equipe</span>
+            <span class="rep-sel-tag">entrar com o código</span>
+          </button>
+        </div>
+        <div class="rep-chal-nomes-acoes">
+          <button class="btn-board principal oculto" type="button" id="onlVoltar">↻ Voltar à sala</button>
+          <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+        </div>
+      </div>
+
+      <div id="onlSenhaProf" class="oculto">
+        <div class="rep-sel-cab">
+          <span class="rep-sel-titulo">Acesso do professor</span>
+          <span class="rep-sel-sub">Digite a senha para criar a sala</span>
+        </div>
+        <div class="rep-chal-nomes-cx">
+          <div class="rep-chal-nome-campo j0"><span class="ficha">🔑</span><input id="onlSenha" type="password" maxlength="40" autocomplete="off" placeholder="senha do professor"></div>
+          <div class="rep-chal-nomes-acoes">
+            <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+            <button class="btn-board principal" type="button" id="onlSenhaOk">Entrar ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="onlAluno" class="oculto">
+        <div class="rep-sel-cab">
+          <span class="rep-sel-titulo">Entrar na sala</span>
+          <span class="rep-sel-sub">O código está no projetor</span>
+        </div>
+        <div class="rep-chal-nomes-cx">
+          <div class="rep-chal-nome-campo j0"><span class="ficha">#</span><input id="onlCodigo" type="text" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="código da sala (ex.: 4K7P)"></div>
+          <div class="rep-chal-nome-campo j1"><span class="ficha">👥</span><input id="onlNome" type="text" maxlength="22" autocomplete="off" placeholder="nome da equipe (ex.: Equipe Helicase)"></div>
+          <div class="rep-chal-nomes-acoes">
+            <button class="btn-board onl-sair" type="button">↩ Voltar</button>
+            <button class="btn-board principal" type="button" id="onlEntrar">Entrar ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="onlLobby" class="oculto">
+        <div class="rep-sel-cab">
+          <span class="rep-sel-sub">Código da sala</span>
+          <span class="onl-codigo" id="onlCodigoGrande">----</span>
+          <span class="rep-sel-sub" id="onlPercurso"></span>
+        </div>
+        <div class="onl-info" id="onlProfInfo">As equipes abrem <b id="onlEndereco"></b>, escolhem <b>Desafio online → Sou uma equipe</b> e digitam o código.</div>
+        <div class="onl-info oculto" id="onlAlunoInfo">Aguardando o professor iniciar a partida…</div>
+        <div class="onl-equipes" id="onlEquipes"></div>
+        <div class="rep-chal-nomes-acoes">
+          <button class="btn-board onl-sair" type="button">✕ Sair da sala</button>
+          <button class="btn-board principal" type="button" id="onlIniciar" disabled>▶ Iniciar partida</button>
+        </div>
+      </div>
+
+      <div class="onl-msg" id="onlMsg" role="status"></div>
+    </div>
   <div class="rep-selecao" id="repChalNomes">
     <div class="rep-sel-cab">
       <span class="rep-sel-titulo">Desafio · 2 a 4 jogadores</span>
@@ -1286,6 +1396,7 @@ body{
           <button class="btn-board" id="repChalReiniciar" type="button" disabled title="Disponível ao concluir a partida">↻ Embaralhar e recomeçar</button>
           <button class="btn-board principal" id="repChalRevisar" type="button" disabled title="Disponível ao concluir a partida">🔍 Revisar a atividade com a turma</button>
           <button class="btn-board" id="repChalTrocarModo" type="button" disabled>⇄ Trocar modo</button>
+          <div class="onl-barra" id="onlBarra"></div>
         </div>
 
       <!-- linha do jogador da vez: área do jogador + carta em jogo, lado a lado.
@@ -1401,7 +1512,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.11 &middot; Última atualização: 21 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 1.12 &middot; Última atualização: 23 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1436,6 +1547,7 @@ body{
     amostra: function(){ nota(440, 0, 0.07, 'triangle', 0.12); nota(660, 0.06, 0.10, 'triangle', 0.10); }   /* bip de "encaixe" */
   };
   function nota(freq, inicio, dur, tipo, vol){
+    if (typeof onlSilencio !== 'undefined' && onlSilencio) return;
     const ac = audio(); if (!ac) return;
     const o = ac.createOscillator(), g = ac.createGain();
     o.type = tipo || 'triangle';
@@ -1819,7 +1931,7 @@ body{
   function repEmbaralhar(a){
     const c = a.slice();
     for (let i = c.length-1; i > 0; i--){
-      const j = Math.floor(Math.random()*(i+1));
+      const j = Math.floor(chalRand()*(i+1));
       const t = c[i]; c[i] = c[j]; c[j] = t;
     }
     return c;
@@ -2010,6 +2122,7 @@ body{
   })();
 
   function repEsconderTudo(){
+    document.getElementById('onlTela').classList.remove('on');
     repMusica.parar();                         /* voltar aos menus para a trilha */
     repModoJogo.classList.remove('on');
     repChalNomes.classList.remove('on');
@@ -2085,6 +2198,7 @@ body{
   const CHAL_REP_VAZIO = { conceito:'CATEGORIA', def:'DEFINIÇÃO<br>E FUNÇÃO', clin:'CONEXÃO<br>CLÍNICA' };
 
   const CHAL_REP = {
+    transicao: false,   /* abertura, veredito e aviso de vez em andamento (online: ponto instável) */
     ativo: false,
     jogadores: [],   /* [{nome, pontos}] */
     turno: 0,
@@ -2095,6 +2209,21 @@ body{
     movidos: new Set(),   /* encaixes preenchidos/movidos neste turno */
     fase: 'sacar'    /* 'sacar' | 'jogar' */
   };
+
+  /* Desafio online — estado (o resto do módulo fica perto da tela de nomes) */
+  const ONL_URL = 'https://jogos-multiplayer-server.onrender.com';
+  const ONL_LIB = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
+  const ONL_CHAVE = 'replicacao-online';
+  const ONL = {
+    ativo:false,       /* partida online em andamento neste aparelho */
+    rapido:false,      /* refazendo a partida (sem animações nem sons) */
+    sock:null, papel:null, seat:null, codigo:null, token:null, nome:null,
+    sala:null, seed:null, rng:null,
+    prox:0,            /* próxima jogada (seq) esperada do servidor */
+    fila:[], drenando:false, sincronizando:false
+  };
+  let onlSilencio = false;   /* ao refazer a partida depois de reconectar, sem bipes */
+  function chalRand(){ return (ONL.ativo && ONL.rng) ? ONL.rng() : Math.random(); }
 
   function repChalEsc(s){
     const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
@@ -2108,7 +2237,7 @@ body{
     s.dataset.tipo = tipo;
     s.dataset.posto = '';
     s.innerHTML = chalRepVazioHTML(tipo);
-    s.addEventListener('click', function(){ chalRepClicarSlot(s); });
+    s.addEventListener('click', function(){ chalAcao('slot', { i: [].indexOf.call(repChalCampo.querySelectorAll('.rep-slot'), s) }); });
     return s;
   }
   function chalRepCriarEstacao(trio){
@@ -2170,7 +2299,7 @@ body{
   }
   /* atualiza contagem, "vazio" e se dá pra sacar: só na fase de sacar, e de monte com carta */
   function chalRepAtualizarResto(){
-    const podeSacar = CHAL_REP.ativo && CHAL_REP.fase === 'sacar';
+    const podeSacar = CHAL_REP.ativo && !CHAL_REP.transicao && onlPodeAgir(CHAL_REP.turno) && CHAL_REP.fase === 'sacar';
     Array.prototype.forEach.call(repChalMontesEl.querySelectorAll('.rep-chal-monte'), function(b){
       const n = (CHAL_REP.montes[b.dataset.tipo] || []).length;
       chalDesenharPilha(b.querySelector('.chal-pilha'), n);
@@ -2183,17 +2312,21 @@ body{
   chalMontarMontes();
   function chalRepRenderVez(msg){
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
-    repChalVez.innerHTML = msg || ('▶ Vez de <b>' + repChalEsc(j.nome) + '</b>');
+    if (!msg && CHAL_REP.ativo && !onlPodeAgir(CHAL_REP.turno))
+      msg = '⏳ Vez de <b>' + repChalEsc(j.nome) + '</b> — acompanhe a jogada no tabuleiro.';
+    repChalVez.innerHTML = msg || ('▶ Vez de <b>' + repChalEsc(j.nome) + '</b>' +
+      ((ONL.ativo && ONL.papel === 'prof') ? ' (desconectada — o professor joga por ela)' : ''));
     repChalVez.dataset.dica = msg ? '' : '1';
     chalDicaVez();
   }
   /* ---------- aviso animado de vez (3 s, bem evidente) ---------- */
   function chalRepAnunciarVez(cb){
-    if (!CHAL_REP.ativo){ if (cb) cb(); return; }
+    if (!CHAL_REP.ativo || ONL.rapido){ if (cb) cb(); return; }
     const el = document.getElementById('repChalAviso');
     const j  = CHAL_REP.jogadores[CHAL_REP.turno];
     el.className = 'chal-vez-ov jog' + CHAL_REP.turno;
-    document.getElementById('repVezTit').innerHTML = 'Vez de <b>' + repChalEsc(j.nome) + '</b>';
+    document.getElementById('repVezTit').innerHTML = ((ONL.ativo && ONL.papel === 'equipe' && ONL.seat === CHAL_REP.turno)
+        ? 'Sua vez, <b>' + repChalEsc(j.nome) + '</b>!' : 'Vez de <b>' + repChalEsc(j.nome) + '</b>');
     void el.offsetWidth;                                    /* reinicia a animação */
     el.classList.add('on');
     somEncaixe();
@@ -2309,7 +2442,7 @@ body{
   function chalRepAtualizarBotoes(){
     const semCartaNaMao = !CHAL_REP.cartaSacada && !CHAL_REP.cartaMao;
     chalRepAtualizarResto();
-    repChalEncerrarBtn.disabled = !CHAL_REP.ativo || !semCartaNaMao ||
+    repChalEncerrarBtn.disabled = !CHAL_REP.ativo || CHAL_REP.transicao || !onlPodeAgir(CHAL_REP.turno) || !semCartaNaMao ||
       (CHAL_REP.fase === 'sacar' && chalTotalMonte() > 0);
   }
 
@@ -2336,7 +2469,7 @@ body{
   }
 
   function chalRepSacar(tipo){
-    if (!CHAL_REP.ativo || CHAL_REP.fase !== 'sacar' || !CHAL_REP.montes[tipo] || !CHAL_REP.montes[tipo].length) return;
+    if (!CHAL_REP.ativo || CHAL_REP.transicao || CHAL_REP.fase !== 'sacar' || !CHAL_REP.montes[tipo] || !CHAL_REP.montes[tipo].length) return;
     chalRepDesmarcarSlot();
     CHAL_REP.cartaSacada = CHAL_REP.montes[tipo].pop();
     CHAL_REP.fase = 'jogar';
@@ -2345,15 +2478,16 @@ body{
     chalRepMostrarCarta();
     chalRepRenderVez();
     chalRepAtualizarBotoes();
-    jcRolarParaCartaEmJogo();
+    if (!ONL.rapido) jcRolarParaCartaEmJogo();
   }
   repChalMontesEl.addEventListener('click', function(e){
     const b = e.target.closest('.rep-chal-monte');
-    if (b && !b.disabled) chalRepSacar(b.dataset.tipo);
+    if (b && !b.disabled) chalAcao('sacar', { tipo: b.dataset.tipo });
   });
 
-  repChalCartaAtual.addEventListener('click', function(){
-    if (!CHAL_REP.ativo) return;
+  repChalCartaAtual.addEventListener('click', function(){ chalAcao('carta'); });
+  function chalRepTocarCarta(){
+    if (!CHAL_REP.ativo || CHAL_REP.transicao) return;
     if (CHAL_REP.cartaSacada && !CHAL_REP.cartaMao){
       chalRepDesmarcarSlot();   /* descarta marcação pendente de reposicionar, se houver */
       CHAL_REP.cartaMao = CHAL_REP.cartaSacada;
@@ -2368,7 +2502,7 @@ body{
       somClique();
       chalRepMostrarCarta();
     }
-  });
+  }
 
   function chalRepAtualizarHud(){
     const feitos = repChalCampo.querySelectorAll('.rep-estacao.rep-chal-vencida').length;
@@ -2391,7 +2525,7 @@ body{
 
   function chalRepClicarSlot(slot){
     if (repRevAtiva) return;
-    if (!CHAL_REP.ativo || slot.classList.contains('travado')) return;
+    if (!CHAL_REP.ativo || CHAL_REP.transicao || slot.classList.contains('travado')) return;
 
     /* obs.: uma carta sacada e ainda não pega NÃO bloqueia o tabuleiro — o
        jogador pode reposicionar cartas erradas antes de pegá-la (ou depois,
@@ -2450,6 +2584,7 @@ body{
   /* tipo: 'acerto' (fechou trio), 'erro' (posicionou carta que não combina) ou
      'neutro' (carta posicionada numa estação que ainda não tem com o que comparar) */
   function chalRepVeredito(nome, tipo, trios, erradas, cb){
+    if (ONL.rapido){ if (cb) cb(); return; }
     const ov = document.getElementById('repChalVeredito');
     if (!ov){ if (cb) cb(); return; }
     ov.classList.remove('acerto','erro','neutro');
@@ -2477,8 +2612,9 @@ body{
   }
 
   function chalRepEncerrarTurno(){
-    if (!CHAL_REP.ativo || CHAL_REP.cartaSacada || CHAL_REP.cartaMao) return;
+    if (!CHAL_REP.ativo || CHAL_REP.transicao || CHAL_REP.cartaSacada || CHAL_REP.cartaMao) return;
     if (CHAL_REP.fase === 'sacar' && chalTotalMonte() > 0) return;
+    CHAL_REP.transicao = true;            /* até o aviso de vez do próximo jogador */
     chalRepDesmarcarSlot();
     const j = CHAL_REP.jogadores[CHAL_REP.turno];
 
@@ -2551,14 +2687,15 @@ body{
       chalRepRenderVez();
       chalRepMostrarCarta();
       chalRepAtualizarBotoes();
-      chalRepAnunciarVez();
+      chalRepAnunciarVez(function(){ CHAL_REP.transicao = false; chalRepRenderVez(); chalRepMostrarCarta(); chalRepAtualizarBotoes(); });
     });
   }
-  repChalEncerrarBtn.addEventListener('click', chalRepEncerrarTurno);
+  repChalEncerrarBtn.addEventListener('click', function(){ chalAcao('encerrar'); });
 
   function chalRepFim(){
     repMusica.encerrar();                      /* fim da partida do Desafio */
     CHAL_REP.ativo = false;
+    CHAL_REP.transicao = false;
     repChalReiniciarBtn.disabled = false;
     repChalRevisarBtn.disabled = false;
     repChalTrocarModoBtn.disabled = false;
@@ -2573,6 +2710,8 @@ body{
     repChalResultado.innerHTML = '<span class="grande">' + titulo + '</span>' +
       jogadores.map(function(j){ return repChalEsc(j.nome) + ': ' + j.pontos + ' trio' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
     chalRepRenderVez('🏁 Fim de jogo!');
+    if (ONL.ativo && ONL.papel !== 'prof') repChalReiniciarBtn.disabled = true;   /* online: só o professor recomeça */
+    onlFimPartida();
     chalRepRenderPlacar();
     somVitoria();
     repChalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -2585,6 +2724,7 @@ body{
     const cxN  = document.getElementById('repSorteioNomes');
     const resE = document.getElementById('repSorteioRes');
     const meu  = ++repSorteioToken;
+    if (ONL.rapido){ cb(); return; }
 
     ov.classList.remove('parou');
     resE.textContent = '';
@@ -2900,6 +3040,10 @@ body{
     const ov = document.getElementById('repChalEmbaralho');
     const resE = document.getElementById('repChalEmbaralhoRes');
     const meu = ++chalEmbTok;
+    if (ONL.rapido){
+      Object.keys(CHAL_REP.montes).forEach(function(t){ CHAL_REP.montes[t] = repEmbaralhar(CHAL_REP.montes[t].slice()); });
+      chalRepAtualizarResto(); cb(); return;
+    }
     resE.textContent = '';
     ov.classList.remove('parou');
     let cartas = '';
@@ -2949,6 +3093,12 @@ body{
     escolhidas.forEach(function(c){ const m = CHAL_REP.montes[c.tipo]; m.splice(m.indexOf(c), 1); });
     const ests = repEmbaralhar([].slice.call(repChalCampo.querySelectorAll('.rep-estacao'))).slice(0, escolhidas.length);
     const plano = escolhidas.map(function(c, k){ return { carta:c, slot:ests[k].querySelector('.rep-slot[data-tipo="' + c.tipo + '"]') }; });
+    if (ONL.rapido){                               /* refazer rápido: todas caem na hora */
+      plano.forEach(function(item){ chalRepPreencherSlot(item.slot, item.carta.chave); delete item.slot.dataset.autor; });
+      CHAL_REP.movidos.clear();
+      chalRepAtualizarResto(); chalRepAtualizarBotoes(); chalRepAtualizarHud();
+      cb(); return;
+    }
 
     CHAL_REP.ativo = false;                            /* ninguém mexe no tabuleiro durante a animação */
     chalRepAtualizarResto(); chalRepAtualizarBotoes();
@@ -3007,6 +3157,7 @@ body{
     repMusica.iniciar();                       /* começou a partida do Desafio (também ao recomeçar) */
     if (repRevAtiva) repRevReset();
     CHAL_REP.ativo = true;
+    CHAL_REP.transicao = true;            /* a abertura (embaralhar, sorteio, distribuição) vai até o 1º aviso de vez */
     CHAL_REP.jogadores = nomes.map(function(n){ return {nome:n, pontos:0}; });
     CHAL_REP.montes = chalRepMontarDeck();
     CHAL_REP.cartaSacada = null;
@@ -3026,16 +3177,359 @@ body{
     /* abertura: embaralha o baralho (5 s) → sorteia quem começa (5 s) → 1ª vez */
     chalEmbaralharDeck(function(){
     /* sorteio animado de quem começa */
-    CHAL_REP.turno = Math.floor(Math.random() * CHAL_REP.jogadores.length);
+    CHAL_REP.turno = Math.floor(chalRand() * CHAL_REP.jogadores.length);
     chalRepAnimarSorteio(CHAL_REP.turno, function(){
       chalRepRenderPlacar();
       chalRepRenderVez();
       chalRepMostrarCarta();
       chalRepAtualizarBotoes();
       /* ~25% das cartas já começam no tabuleiro (sorteadas a cada partida) */
-      chalDistribuirIniciais(function(){ chalRepAnunciarVez(); });
+      chalDistribuirIniciais(function(){ chalRepAnunciarVez(function(){ CHAL_REP.transicao = false; chalRepRenderVez(); chalRepMostrarCarta(); chalRepAtualizarBotoes(); }); });
     });
     });
+  }
+
+  /* ============================================================
+     ===============  DESAFIO ONLINE (cada equipe no seu aparelho)
+     O servidor (Render) só guarda a ordem das jogadas. Todos os
+     aparelhos rodam este mesmo motor com a mesma semente e aplicam
+     as mesmas jogadas na mesma ordem — por isso os tabuleiros ficam
+     iguais. Quem reconecta refaz a partida rapidinho, sem animações.
+     ============================================================ */
+  function onlSemente(a){                     /* mulberry32: mesmo número → mesma sequência */
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- jogadas: no Desafio local executam direto; no online vão ao servidor ---------- */
+  function chalAcao(tipo, dados){
+    dados = dados || {};
+    if (!ONL.ativo){ chalExecutar(tipo, dados); return; }
+    if (ONL.fila.length || !onlEstavel()) return;            /* ainda aplicando jogadas recebidas */
+    if (!onlPodeAgir(CHAL_REP.turno)) return;                      /* não é a sua vez */
+    onlEnviar(tipo, dados);
+  }
+  function chalExecutar(tipo, d){
+    switch (tipo){
+      case 'sacar':    chalRepSacar(String(d.tipo)); break;
+      case 'carta':    chalRepTocarCarta(); break;
+      case 'slot':     { const sl = repChalCampo.querySelectorAll('.rep-slot')[d.i | 0]; if (sl && d.i >= 0) chalRepClicarSlot(sl); break; }
+      case 'encerrar': chalRepEncerrarTurno(); break;
+    }
+  }
+  function onlOnline(seat){
+    const e = ONL.sala && ONL.sala.equipes.find(function(x){ return x.seat === seat; });
+    return !!(e && e.online);
+  }
+  /* este aparelho pode jogar pelo jogador `seat`? (a equipe dona; o professor só se ela caiu) */
+  function onlPodeAgir(seat){
+    if (!ONL.ativo) return true;
+    if (seat < 0) return false;
+    if (ONL.papel === 'equipe') return ONL.seat === seat;
+    return !onlOnline(seat);
+  }
+  /* ponto estável do motor: nenhuma animação de transição rodando */
+  function onlEstavel(){ return !CHAL_REP.transicao; }
+
+  /* aplica as jogadas recebidas, uma a uma, sempre num ponto estável do motor
+     (durante a abertura o motor fica instável; jogadas só são descartadas com a partida encerrada) */
+  function onlDrenar(){
+    if (ONL.drenando) return;
+    ONL.drenando = true;
+    try {
+      while (ONL.fila.length){
+        const a = ONL.fila[0];
+        if (!onlEstavel()) break;
+        ONL.fila.shift();
+        if (!CHAL_REP.ativo) continue;                             /* partida acabou: sobras são ignoradas */
+        if (a.seat !== -1 && a.seat !== CHAL_REP.turno) continue;  /* só a equipe da vez (ou o professor) */
+        chalExecutar(a.tipo, a.dados || {});
+      }
+    } finally { ONL.drenando = false; }
+  }
+  setInterval(function(){ if (ONL.ativo && ONL.fila.length) onlDrenar(); }, 120);
+
+  function onlReceber(a){
+    if (!ONL.ativo || !a || a.seq < ONL.prox) return;
+    if (a.seq > ONL.prox){ onlPedirFaltantes(); return; }
+    ONL.fila.push(a); ONL.prox++;
+    onlDrenar();
+  }
+  function onlPedirFaltantes(){
+    if (ONL.sincronizando || !ONL.sock) return;
+    ONL.sincronizando = true;
+    ONL.sock.emit('sync', { desde: ONL.prox }, function(r){
+      ONL.sincronizando = false;
+      if (!r || !r.ok || !r.log) return;
+      if (r.seed !== ONL.seed){ onlRetomar(); return; }
+      r.log.forEach(onlReceber);
+    });
+  }
+  function onlEnviar(tipo, dados){
+    if (!ONL.sock || !ONL.sock.connected){ onlAviso('Sem conexão — reconectando…'); return; }
+    ONL.sock.emit('acao', { tipo:tipo, dados:dados }, function(r){
+      if (!r || !r.ok) onlAviso((r && r.erro) || 'A jogada não chegou ao servidor.');
+    });
+  }
+
+  /* ---------- começar / refazer a partida ---------- */
+  function onlComecar(p, refazer){
+    ONL.ativo = true;
+    ONL.seed = p.seed; ONL.rng = onlSemente(p.seed);
+    ONL.prox = 0; ONL.fila = [];
+    repEsconderTudo();
+    repChalTabuleiro.style.display = '';
+    repChalTabuleiro.scrollIntoView({ behavior:'instant', block:'start' });
+    if (refazer){ ONL.rapido = true; onlSilencio = true; }
+    try {
+      chalRepIniciar(p.jogadores.slice());
+      if (refazer){
+        (p.log || []).forEach(function(a){ if (a.seq === ONL.prox){ ONL.fila.push(a); ONL.prox++; } });
+        onlDrenar();
+      }
+    } finally { ONL.rapido = false; onlSilencio = false; }
+    if (CHAL_REP.ativo && !CHAL_REP.transicao){ chalRepRenderPlacar(); chalRepRenderVez(); chalRepMostrarCarta(); chalRepAtualizarBotoes(); }
+    onlRenderBarra();
+  }
+  function onlFimPartida(){
+    if (!ONL.ativo || ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('placar', { jogadores: CHAL_REP.jogadores.map(function(j){ return { nome:j.nome, pontos:j.pontos }; }) });
+    ONL.sock.emit('prof:encerrar', {});
+  }
+  function onlNovaPartida(){
+    if (ONL.papel !== 'prof' || !ONL.sock) return;
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlAviso((r && r.erro) || 'Não consegui recomeçar.'); });
+  }
+
+  /* ---------- conexão ---------- */
+  function onlGuardar(){
+    try { localStorage.setItem(ONL_CHAVE, JSON.stringify({ papel:ONL.papel, codigo:ONL.codigo, token:ONL.token, nome:ONL.nome })); } catch(e){}
+  }
+  function onlLerGuardado(){ try { return JSON.parse(localStorage.getItem(ONL_CHAVE)); } catch(e){ return null; } }
+  function onlEsquecer(){ try { localStorage.removeItem(ONL_CHAVE); } catch(e){} }
+
+  function onlConectar(cb){
+    function pronto(){
+      if (ONL.sock){ cb(); return; }
+      const sk = ONL.sock = window.io(ONL_URL, { reconnectionDelayMax: 4000 });
+      sk.on('connect', function(){ onlMsg(''); onlRenderBarra(); if (ONL.codigo) onlRetomar(); });
+      sk.on('disconnect', function(){ onlRenderBarra(); });
+      sk.on('connect_error', function(){
+        onlMsg('Conectando ao servidor… se ele estava dormindo, pode levar até 1 minuto.');
+      });
+      sk.on('sala', function(v){
+        ONL.sala = v;
+        onlRenderLobby(); onlRenderBarra();
+        if (ONL.ativo && CHAL_REP.ativo && !CHAL_REP.transicao){ chalRepRenderVez(); chalRepMostrarCarta(); chalRepAtualizarBotoes(); }
+      });
+      sk.on('seu-lugar', function(d){ ONL.seat = d.seat; });
+      sk.on('inicio', function(p){ onlComecar(p, false); });
+      sk.on('acao', onlReceber);
+      sk.on('lobby', function(){ onlVoltarLobby(); });
+      sk.on('removido', function(){ onlSair('O professor removeu a sua equipe da sala.'); });
+      sk.on('substituido', function(){ onlSair('Esta equipe entrou na sala por outro aparelho.'); });
+      sk.on('sala-fechada', function(){ onlSair('O professor fechou a sala.'); });
+      cb();
+    }
+    if (window.io){ pronto(); return; }
+    onlMsg('Carregando…');
+    const sc = document.createElement('script');
+    sc.src = ONL_LIB;
+    sc.onload = pronto;
+    sc.onerror = function(){ onlMsg('Sem internet? Não consegui carregar a conexão online.'); };
+    document.head.appendChild(sc);
+  }
+
+  /* volta à sala guardada (recarregou a página, a internet caiu…) */
+  function onlRetomar(){
+    if (!ONL.sock || !ONL.codigo) return;
+    const fim = function(r){
+      if (!r || !r.ok){
+        onlEsquecer(); ONL.codigo = null;
+        if (ONL.ativo) onlSair((r && r.erro) || 'A sala não existe mais.');
+        else { onlMsg((r && r.erro) || 'A sala não existe mais.'); onlTelaPapel(); }
+        return;
+      }
+      if (r.seat != null) ONL.seat = r.seat;
+      if (r.token) ONL.token = r.token;
+      ONL.sala = r.sala;
+      onlGuardar();
+      if (!r.partida){ onlVoltarLobby(); return; }
+      if (ONL.ativo && ONL.seed === r.partida.seed){ (r.partida.log || []).forEach(onlReceber); onlRenderBarra(); return; }
+      onlComecar(r.partida, true);
+    };
+    if (ONL.papel === 'prof') ONL.sock.emit('prof:retomar', { codigo:ONL.codigo, token:ONL.token }, fim);
+    else ONL.sock.emit('aluno:entrar', { codigo:ONL.codigo, nome:ONL.nome, token:ONL.token }, fim);
+  }
+
+  function onlSair(msg){
+    const sk = ONL.sock;
+    if (sk){
+      if (ONL.papel === 'prof' && ONL.codigo && !msg) sk.emit('prof:fechar', {});
+      setTimeout(function(){ sk.disconnect(); }, 150);
+    }
+    onlEsquecer();
+    Object.assign(ONL, { ativo:false, rapido:false, sock:null, papel:null, seat:null, codigo:null, token:null,
+                         sala:null, seed:null, rng:null, prox:0, fila:[] });
+    CHAL_REP.ativo = false; CHAL_REP.transicao = false;
+    onlRenderBarra();
+    if (msg){ onlTelaPapel(); onlMsg(msg); }
+    else repMostrarModo();
+  }
+
+  /* ---------- telas: papel → (professor: senha) / (equipe: código + nome) → sala de espera ---------- */
+  const onlTelaEl = document.getElementById('onlTela');
+  function onlMostrar(parte){
+    repEsconderTudo();
+    onlTelaEl.classList.add('on');
+    ['onlPapel','onlSenhaProf','onlAluno','onlLobby'].forEach(function(id){
+      document.getElementById(id).classList.toggle('oculto', id !== parte);
+    });
+    onlTelaEl.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function onlMsg(t){ document.getElementById('onlMsg').textContent = t || ''; }
+  function onlAviso(t){
+    if (ONL.ativo && CHAL_REP.ativo) chalRepRenderVez('📡 ' + repChalEsc(t));
+    else onlMsg(t);
+  }
+  function onlTelaPapel(){
+    const g = onlLerGuardado();
+    const volta = document.getElementById('onlVoltar');
+    volta.classList.toggle('oculto', !(g && g.codigo));
+    if (g && g.codigo) volta.textContent = '↻ Voltar à sala ' + g.codigo + (g.papel === 'prof' ? ' (professor)' : ' — ' + g.nome);
+    onlMostrar('onlPapel');
+  }
+  function onlAbrir(){ onlMsg(''); onlTelaPapel(); }
+  document.getElementById('onlModo').addEventListener('click', function(){ somClique(); onlAbrir(); });
+
+  /* acesso do professor protegido por senha (uma vez por aba, vale para todos os jogos) */
+  const ONL_SENHA_PROF = 'aldair';
+  function onlProfLiberado(){ try { return sessionStorage.getItem('onlProfLiberado') === '1'; } catch(e){ return false; } }
+  document.getElementById('onlSouProf').addEventListener('click', function(){
+    somClique(); onlMsg('');
+    if (onlProfLiberado()){ onlCriarSala(); return; }
+    const inp = document.getElementById('onlSenha');
+    inp.value = '';
+    onlMostrar('onlSenhaProf');
+    setTimeout(function(){ inp.focus(); }, 250);
+  });
+  function onlConferirSenha(){
+    const inp = document.getElementById('onlSenha');
+    if (inp.value.trim().toLowerCase() !== ONL_SENHA_PROF){
+      somErro(); onlMsg('Senha incorreta.'); inp.select(); return;
+    }
+    try { sessionStorage.setItem('onlProfLiberado', '1'); } catch(e){}
+    somClique(); onlMsg(''); onlCriarSala();
+  }
+  document.getElementById('onlSenhaOk').addEventListener('click', onlConferirSenha);
+  document.getElementById('onlSenha').addEventListener('keydown', function(e){ if (e.key === 'Enter') onlConferirSenha(); });
+  document.getElementById('onlSouAluno').addEventListener('click', function(){
+    somClique(); onlMsg(''); onlMostrar('onlAluno');
+    setTimeout(function(){ document.getElementById('onlCodigo').focus(); }, 250);
+  });
+  document.getElementById('onlVoltar').addEventListener('click', function(){
+    const g = onlLerGuardado(); if (!g) return;
+    somClique();
+    Object.assign(ONL, { papel:g.papel, codigo:g.codigo, token:g.token, nome:g.nome });
+    onlConectar(function(){ if (ONL.sock.connected) onlRetomar(); });
+  });
+  document.querySelectorAll('#onlTela .onl-sair').forEach(function(b){
+    b.addEventListener('click', function(){ somClique(); if (ONL.codigo) onlSair(); else repMostrarModo(); });
+  });
+
+  /* professor: cria a sala (2 a 4 equipes) */
+  function onlCriarSala(){
+    onlConectar(function(){
+      ONL.sock.emit('prof:criar', { jogo:'replicacao', max:4, config:{} }, function(r){
+        if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui criar a sala.'); onlTelaPapel(); return; }
+        Object.assign(ONL, { papel:'prof', codigo:r.codigo, token:r.token, nome:null, seat:null, sala:r.sala });
+        onlGuardar();
+        onlVoltarLobby();
+      });
+    });
+  }
+
+  /* equipe: entra com o código */
+  function onlEntrarEquipe(){
+    const codigo = document.getElementById('onlCodigo').value.trim().toUpperCase();
+    const nome = document.getElementById('onlNome').value.trim();
+    if (codigo.length !== 4){ onlMsg('O código da sala tem 4 caracteres.'); return; }
+    if (!nome){ onlMsg('Digite o nome da equipe.'); return; }
+    somClique();
+    onlConectar(function(){
+      ONL.sock.emit('aluno:entrar', { codigo:codigo, nome:nome }, function(r){
+        if (!r || !r.ok){ onlMsg((r && r.erro) || 'Não consegui entrar.'); return; }
+        Object.assign(ONL, { papel:'equipe', codigo:r.sala.codigo, token:r.token, nome:r.nome, seat:r.seat, sala:r.sala });
+        onlGuardar();
+        if (r.partida) onlComecar(r.partida, true); else onlVoltarLobby();
+      });
+    });
+  }
+  document.getElementById('onlEntrar').addEventListener('click', onlEntrarEquipe);
+  ['onlCodigo','onlNome'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){ if (e.key === 'Enter') onlEntrarEquipe(); });
+  });
+  document.getElementById('onlIniciar').addEventListener('click', function(){
+    somClique();
+    ONL.sock.emit('prof:iniciar', {}, function(r){ if (!r || !r.ok) onlMsg((r && r.erro) || 'Não consegui iniciar.'); });
+  });
+
+  function onlVoltarLobby(){
+    if (ONL.ativo){ ONL.ativo = false; ONL.fila = []; CHAL_REP.ativo = false; CHAL_REP.transicao = false; }
+    onlMostrar('onlLobby');
+    onlRenderLobby();
+    onlRenderBarra();
+  }
+  function onlRenderLobby(){
+    const v = ONL.sala;
+    if (!v || document.getElementById('onlLobby').classList.contains('oculto')) return;
+    document.getElementById('onlCodigoGrande').textContent = v.codigo;
+    document.getElementById('onlEndereco').textContent = location.host + location.pathname;
+    document.getElementById('onlPercurso').textContent = 'Baralho da Replicação do DNA · ' + v.equipes.length + ' de ' + v.max + ' equipes';
+    const lista = document.getElementById('onlEquipes');
+    lista.innerHTML = '';
+    if (!v.equipes.length) lista.innerHTML = '<div class="onl-vazio">Nenhuma equipe ainda…</div>';
+    v.equipes.forEach(function(e){
+      const d = document.createElement('div');
+      d.className = 'onl-eq p' + e.seat + (e.online ? '' : ' off');
+      d.innerHTML = '<span class="pino"></span><span class="onl-eq-nome">' + repChalEsc(e.nome) +
+        (ONL.papel === 'equipe' && e.seat === ONL.seat ? ' <i>(vocês)</i>' : '') + '</span>';
+      if (ONL.papel === 'prof' && v.status === 'lobby'){
+        const x = document.createElement('button');
+        x.type = 'button'; x.className = 'onl-remover'; x.textContent = '✕'; x.title = 'Remover equipe';
+        x.addEventListener('click', function(){ ONL.sock.emit('prof:remover', { seat:e.seat }, function(){}); });
+        d.appendChild(x);
+      }
+      lista.appendChild(d);
+    });
+    const prof = ONL.papel === 'prof';
+    document.getElementById('onlProfInfo').classList.toggle('oculto', !prof);
+    document.getElementById('onlAlunoInfo').classList.toggle('oculto', prof);
+    const ini = document.getElementById('onlIniciar');
+    ini.classList.toggle('oculto', !prof);
+    ini.disabled = v.equipes.length < 2;
+    ini.textContent = v.status === 'fim' ? '▶ Nova partida' : '▶ Iniciar partida';
+  }
+
+  /* faixa no topo do tabuleiro: sala, quem é este aparelho e quem caiu */
+  function onlRenderBarra(){
+    const el = document.getElementById('onlBarra');
+    if (!el) return;
+    if (!ONL.ativo){ el.classList.remove('on'); el.innerHTML = ''; return; }
+    const con = ONL.sock && ONL.sock.connected;
+    const eu = (ONL.papel === 'prof') ? 'Projetor do professor' : ('Você: <b>' + repChalEsc(ONL.nome || '') + '</b>');
+    let caidas = '';
+    if (ONL.sala){
+      const off = ONL.sala.equipes.filter(function(e){ return !e.online; }).map(function(e){ return repChalEsc(e.nome); });
+      if (off.length) caidas = ' · <span class="onl-off">⚠ desconectada: ' + off.join(', ') + '</span>';
+    }
+    el.innerHTML = '<span class="onl-pto ' + (con ? 'ok' : 'nao') + '"></span>Sala <b>' + repChalEsc(ONL.codigo || '') +
+      '</b> · ' + eu + (con ? '' : ' · <span class="onl-off">reconectando…</span>') + caidas;
+    el.classList.add('on');
   }
 
   document.getElementById('repChalNomesOk').addEventListener('click', function(){
@@ -3053,11 +3547,13 @@ body{
   });
   repChalReiniciarBtn.addEventListener('click', function(){
     if (CHAL_REP.ativo) return;
+    if (ONL.ativo){ somClique(); onlNovaPartida(); return; }
     chalRepIniciar(CHAL_REP.jogadores.map(function(j){ return j.nome; }));
     somClique();
   });
   repChalTrocarModoBtn.addEventListener('click', function(){
     if (CHAL_REP.ativo) return;
+    if (ONL.ativo){ somClique(); onlSair(); return; }
     repMostrarModo();
     somClique();
   });
