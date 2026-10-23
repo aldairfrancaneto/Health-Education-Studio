@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teste Multiplayer</title>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --txt:#e2e8f0; --mut:#94a3b8; --ok:#22c55e; --err:#ef4444; --acc:#38bdf8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,sans-serif; background:var(--bg); color:var(--txt); padding:16px; }
+  .wrap { max-width:560px; margin:0 auto; }
+  h1 { font-size:1.3rem; margin:0 0 12px; }
+  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:12px; }
+  label { display:block; font-size:.85rem; color:var(--mut); margin:8px 0 4px; }
+  input { width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:var(--txt); font-size:1rem; }
+  button { margin-top:12px; width:100%; padding:12px; border:0; border-radius:8px; background:var(--acc); color:#0f172a; font-weight:700; font-size:1rem; cursor:pointer; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  #status { font-weight:700; }
+  .ok { color:var(--ok); } .err { color:var(--err); } .mut { color:var(--mut); }
+  #log { height:260px; overflow-y:auto; font-family:ui-monospace,monospace; font-size:.9rem; line-height:1.5; }
+  .row { display:flex; gap:8px; } .row input { flex:1; } .row button { width:auto; margin-top:0; padding:10px 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎮 Teste do servidor multiplayer</h1>
+
+  <div class="card">
+    <div>Status: <span id="status" class="mut">desconectado</span></div>
+    <label>URL do servidor (Render)</label>
+    <input id="url" value="https://jogos-multiplayer-server.onrender.com">
+    <label>Sala</label>
+    <input id="sala" value="teste:TURMA1">
+    <label>Seu nome</label>
+    <input id="nome" placeholder="Ex.: Equipe Azul">
+    <button id="btnEntrar">Conectar e entrar na sala</button>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <input id="msg" placeholder="Digite uma mensagem..." disabled>
+      <button id="btnEnviar" disabled>Enviar</button>
+    </div>
+    <label>Registro</label>
+    <div id="log"></div>
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let socket = null;
+
+  function registrar(texto, classe = "") {
+    const hora = new Date().toLocaleTimeString("pt-BR");
+    const linha = document.createElement("div");
+    linha.className = classe;
+    linha.textContent = `[${hora}] ${texto}`;
+    $("log").appendChild(linha);
+    $("log").scrollTop = $("log").scrollHeight;
+  }
+
+  function status(texto, classe) {
+    $("status").textContent = texto;
+    $("status").className = classe;
+  }
+
+  $("btnEntrar").onclick = () => {
+    const url = $("url").value.trim().replace(/\/$/, "");
+    const sala = $("sala").value.trim();
+    const nome = $("nome").value.trim() || "Jogador " + Math.floor(Math.random() * 100);
+    $("nome").value = nome;
+
+    if (socket) socket.disconnect();
+    status("conectando ao servidor... (pode levar até 1 min se ele estiver hibernando)", "mut");
+    registrar("Conectando a " + url);
+
+    socket = io(url);
+
+    socket.on("connect", () => {
+      status("conectado ✔", "ok");
+      registrar("Conectado ao servidor", "ok");
+      socket.emit("entrar", { sala, nome });
+      $("msg").disabled = false;
+      $("btnEnviar").disabled = false;
+      $("msg").focus();
+    });
+
+    socket.on("connect_error", (e) => {
+      status("erro de conexão", "err");
+      registrar("Erro: " + e.message + " (tentando de novo...)", "err");
+    });
+
+    socket.on("disconnect", () => {
+      status("desconectado", "err");
+      registrar("Desconectado do servidor", "err");
+    });
+
+    socket.on("aviso", (texto) => registrar("📢 " + texto, "mut"));
+    socket.on("jogada", (d) => registrar(`💬 ${d.de}: ${d.texto}`));
+  };
+
+  function enviar() {
+    const texto = $("msg").value.trim();
+    if (!texto || !socket) return;
+    socket.emit("jogada", { texto });
+    registrar("Você: " + texto, "ok");
+    $("msg").value = "";
+  }
+
+  $("btnEnviar").onclick = enviar;
+  $("msg").addEventListener("keydown", (e) => { if (e.key === "Enter") enviar(); });
+</script>
+</body>
+</html>
