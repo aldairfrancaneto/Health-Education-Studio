@@ -262,7 +262,40 @@ figcaption { font-size: .74rem; color: var(--muted); line-height: 1.3; }
 .sum.ok { background: var(--ok-soft); color: var(--ok); }
 .sum.off { background: var(--warn-soft); color: var(--warn); }
 
-/* Régua do INR */
+/* Tabela de referência do INR (linha da paciente destacada) */
+.inr-tab { display: grid; gap: .3rem; }
+.inr-tab table { width: 100%; border-collapse: collapse; font-size: .7rem; line-height: 1.25; }
+.inr-tab th, .inr-tab td { border: 1px solid var(--line); padding: .25rem .35rem; text-align: left; vertical-align: top; hyphens: auto; -webkit-hyphens: auto; }
+.inr-tab thead th { background: var(--bg); font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.inr-tab tbody th { font-weight: 700; white-space: normal; }
+.inr-tab tr.pac.ok > * { background: var(--ok-soft); }
+.inr-tab tr.pac.warn > * { background: var(--warn-soft); }
+.inr-tab tr.pac.bad > * { background: var(--bad-soft); }
+.inr-tab tr.pac > * { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+.inr-pac { display: block; width: fit-content; margin-top: .2rem; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .66rem; padding: .05rem .35rem; border-radius: 4px; }
+.inr-tab small { font-size: .68rem; color: var(--muted); }
+.inr-tab.grande table { font-size: 1.02rem; }
+.inr-tab.grande thead th { font-size: .8rem; }
+.inr-tab.grande th, .inr-tab.grande td { padding: .45rem .6rem; }
+.inr-tab.grande .inr-pac { font-size: .85rem; }
+.inr-tab.grande small { font-size: .9rem; }
+/* Pausa 1: tomografias com o isquêmico numa coluna e o hemorrágico na outra */
+.tc-cols { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1.2rem; height: 100%; }
+.tc-col { display: grid; gap: .7rem; align-content: start; border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem 1rem; background: var(--paper); }
+.tc-col h2 { font-size: 1.6rem; text-align: center; }
+.tc-col.isq h2 { color: var(--s1); } .tc-col.hem h2 { color: var(--accent); }
+@media (max-width: 760px) { html:not(.fit) .tc-cols { grid-template-columns: 1fr; } }
+/* Tempo de resposta: contagem de grupos que já enviaram */
+.tempo-n { display: inline-block; margin-left: .6rem; background: var(--accent); color: #fff; border-radius: 999px; padding: .1rem .7rem; font-size: .9em; white-space: nowrap; }
+.aguardo .tempo-n { margin-left: 0; font-size: 1.1rem; }
+.reveal-box .tempo-resp { border: 0; padding: 0; background: none; font-size: 1rem; }
+.pausa-q .tempo-resp { text-align: left; }
+html.fit .tape-inner { flex-wrap: nowrap; }   /* faixa de cima numa linha só no projetor */
+html.fit .tape-inner .track { flex: 1 1 0; }
+html.fit .tape-inner .tools { flex: none; flex-wrap: nowrap; }
+.necro-q li.feita { opacity: .45; }
+
+/* Régua do INR (antiga, sem uso) */
 .inr { display: grid; gap: .35rem; }
 .inr-bar { position: relative; min-height: 40px; border-radius: 6px; overflow: hidden; display: flex; border: 1px solid var(--line); }
 .inr-bar span { display: grid; place-items: center; font-size: .74rem; font-weight: 700; text-align: center; line-height: 1.1; padding: 0 .2rem; }
@@ -521,6 +554,12 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 #print h3 { font-size: 11pt; margin: .5rem 0 .2rem; text-align: justify; text-wrap: wrap; hyphens: auto; }
 #print .ans { white-space: pre-wrap; text-align: justify; hyphens: auto; margin: 0; padding: .3rem .6rem; border-left: 3px solid #ccc; }
 #print .ans.vazio { color: #777; font-style: italic; }
+#print .gab { width: 100%; border-collapse: collapse; font-size: 10pt; }
+#print .gab th, #print .gab td { border: 1px solid #999; padding: .3rem .45rem; text-align: left; vertical-align: top; }
+#print .gab th { background: #eee; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .04em; }
+#print .gab td.n { text-align: center; font-weight: 700; font-size: 12pt; width: 3.2rem; }
+#print .gab-nota { font-size: 10pt; margin: 0 0 1rem; text-align: justify; }
+#print .gab-depois { font-size: 9.5pt; color: #333; margin: .35rem 0 0; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -538,7 +577,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.0 &middot; Última atualização: 23 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.2 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -563,30 +602,31 @@ const NOME = "Aprendizagem por investigação clínica";
 const ct = (src, cap, h) => `<figure><div class="ct" ${h ? `style="--ct-h:${h}px"` : ""}><img src="${src}" alt="${cap}"><span class="side l">D</span><span class="side r">E</span></div><figcaption>${cap}</figcaption></figure>`;
 const lab = (rows) => `<div class="lab">${rows.map(([n, v, ref, hi]) => `<div class="lr"><span>${n}</span><span class="lv"><b class="val ${hi ? "high" : ""}">${v}</b>${ref ? `<small>${ref}</small>` : ""}</span></div>`).join("")}</div>`;
 
-/* Régua fixa do exame de coagulação: mostra de uma vez o valor sem remédio, a faixa-alvo e o valor da paciente */
-const inrPos = (v) => Math.max(0, Math.min(100, ((v - 1) / 6) * 100));
-const inrRuler = () => `<div class="inr">
-  <div class="inr-wrap">
-    <div class="inr-bar">
-      <span class="z-low" style="flex:1">Proteção insuficiente</span>
-      <span class="z-ok" style="flex:1">Faixa-alvo<br>2 a 3</span>
-      <span class="z-high" style="flex:4">Risco de sangramento<br>aumentado</span>
-    </div>
-    <div class="inr-pin ref" style="left:${inrPos(1)}%"><b>Sem remédio: 1,0</b></div>
-    <div class="inr-pin pac" style="--to:${inrPos(6.2)}%"><b>Paciente: 6,2</b></div>
-  </div>
-  <div class="inr-scale"><i style="left:0%">1</i><i style="left:16.7%">2</i><i style="left:33.3%">3</i><i style="left:50%">4</i><i style="left:66.7%">5</i><i style="left:83.3%">6</i><i style="left:100%">7</i></div>
-</div>`;
+/* Tabela de referência do exame de coagulação (INR); a linha da paciente fica destacada com o valor dela */
+const INR_REF = [
+  ["INR entre 2,0 e 3,0", "Alvo terapêutico para maioria das indicações (fibrilação atrial, TVP, embolia pulmonar)", "Manter dose atual do anticoagulante oral; reavaliar em 4 semanas ou conforme protocolo", "ok"],
+  ["INR entre 3,0 e 4,5", "Supra-terapêutico, aumento moderado do risco hemorrágico", "Reduzir dose do anticoagulante ou omitir uma dose; reavaliar INR em 3–7 dias", "warn"],
+  ["INR > 4,5", "Supra-terapêutico significativo, alto risco de sangramento", "Suspender anticoagulante; considerar vitamina K oral 1–2,5 mg se sem sangramento ativo; reavaliar INR em 24–48 horas", "bad"],
+  ["INR < 1,5 em paciente anticoagulado", "Sub-terapêutico, risco aumentado de eventos tromboembólicos", "Aumentar dose do anticoagulante conforme algoritmo; investigar interações medicamentosas ou dieta rica em vitamina K", "warn"]
+];
+const inrTabela = (linha, valor, grande) => `<div class="inr-tab ${grande ? "grande" : ""}"><table>
+  <thead><tr><th>Achado</th><th>Interpretação</th><th>Próxima conduta</th></tr></thead>
+  <tbody>${INR_REF.map(([a, i, c, z], k) => `<tr class="${k === linha ? "pac " + z : ""}"><th scope="row">${a}${k === linha ? `<span class="inr-pac">Paciente: ${valor}</span>` : ""}</th><td>${i}</td><td>${c}</td></tr>`).join("")}</tbody>
+</table><small>Pessoa sem anticoagulante: INR de cerca de 1,0.</small></div>`;
 
 /* ---------------- Conteúdo do caso (adaptado) ---------------- */
 const BLOCOS = {
   b1: {
-    n: 1, quando: "17 a 19 de novembro de 2000", titulo: "Os últimos dias", cols: "2.35fr 1fr 1fr 1fr",
+    n: 1, quando: "17 a 19 de novembro de 2000", titulo: "Os últimos dias", cols: "1.8fr 1fr 1fr 1fr 2.4fr",
     intro: "A paciente está internada na unidade de terapia intensiva (UTI). O que aconteceu com ela nesses dias?",
     rebobinar: "O que levou essa mulher ao coma?",
     cartoes: [
       { id: "b1-gcs", cat: "Nível de consciência", wide: true, noSpan: true, dica: { sobre: "se a consciência dela melhorou ou piorou nesses dias.", ex: "Como estava a consciência dela?" },
         titulo: "Escala de Coma de Glasgow", html: () => glasgowHTML("b") },
+      { id: "b1-tc", cat: "Exame de imagem", dica: { sobre: "exame de imagem da cabeça ou se a tomografia foi repetida.", ex: "Fizeram outra tomografia?" },
+        titulo: "Tomografia computadorizada (TC) repetida", html: () => `
+        ${ct(IMG.ctIsq, "Imagem ilustrativa. D = lado direito da paciente.", 155)}
+        <p>Agora apareceu uma <strong>área escura</strong> no <strong>lado direito do cérebro</strong>.</p>` },
       { id: "b1-inf", cat: "Sinais de infecção", dica: { sobre: "febre, infecção ou exames de sangue e de urina.", ex: "Ela teve febre?" },
         titulo: "Febre, sangue e urina", html: () => `
         <p>Teve febre baixa nesses dias.</p>
@@ -598,17 +638,18 @@ const BLOCOS = {
         <p>No dia 18, a barriga ficou distendida e ela <strong>parou de eliminar fezes</strong>. Saía líquido esverdeado (bile) pela sonda do nariz ao estômago.</p>
         <p>Ultrassonografia: alças do intestino dilatadas.</p>
         <p>Radiografia: sem sinais de perfuração.</p>` },
-      { id: "b1-lab", cat: "Outros exames de sangue", dica: { sobre: "outros exames: fígado, rins ou coagulação.", ex: "Que outros exames de sangue foram feitos?" },
+      { id: "b1-lab", cat: "Outros exames de sangue", wide: true, noSpan: true, dica: { sobre: "outros exames: fígado, rins ou coagulação.", ex: "Que outros exames de sangue foram feitos?" },
         titulo: "Fígado, rins e coagulação", html: () => `
         <p>As enzimas do fígado subiram e ela passou a urinar pouco.</p>
-        ${lab([["Razão Normalizada Internacional (INR)", "2,1 a 2,7", "sem remédio: cerca de 1,0", 1]])}` }
+        <p>Razão Normalizada Internacional (INR): <b class="val">2,1 a 2,7</b></p>
+        ${inrTabela(0, "2,1 a 2,7")}` }
     ]
   },
   b2: {
     n: 2, quando: "16 de novembro de 2000", titulo: "A chegada ao hospital",
     intro: "Voltamos ao dia da internação. O que trouxe a paciente ao hospital, e o que os exames mostraram?",
     rebobinar: "Por que uma pessoa teria, de repente, falta de sangue numa parte do cérebro?",
-    pausa: "p1", cols: "2fr 1fr 1fr 1fr 1fr 1fr",
+    pausa: "p1", cols: "2fr 1fr 1fr 1fr 1fr",
     cartoes: [
       { id: "b2-gcs", cat: "Nível de consciência", wide: true, noSpan: true, dica: { sobre: "se ela estava acordada, se abria os olhos ou se respondia ao chegar.", ex: "Ela estava acordada quando chegou?" },
         titulo: "Escala de Coma de Glasgow", html: () => glasgowHTML("a") },
@@ -627,26 +668,22 @@ const BLOCOS = {
       { id: "b2-tc1", cat: "Exame de imagem", dica: { sobre: "exame de imagem da cabeça.", ex: "Fizeram tomografia?" },
         titulo: "Tomografia computadorizada (TC) nas primeiras horas", html: () => `
         ${ct(IMG.ctNormal, "Imagem ilustrativa.", 155)}
-        <p><strong>Resultado: normal.</strong> Nenhuma alteração visível.</p>` },
-      { id: "b2-tc2", cat: "Exame de imagem", dica: { sobre: "se o exame de imagem foi repetido.", ex: "A tomografia mudou depois?" },
-        titulo: "Tomografia computadorizada (TC) dias depois", html: () => `
-        ${ct(IMG.ctIsq, "Imagem ilustrativa. D = lado direito da paciente.", 155)}
-        <p>Apareceu uma <strong>área escura</strong> no <strong>lado direito do cérebro</strong>.</p>` }
+        <p><strong>Resultado: normal.</strong> Nenhuma alteração visível.</p>` }
     ]
   },
   b3: {
     n: 3, quando: "Abril a junho de 2000", titulo: "Os meses anteriores",
     intro: "Meses antes da internação, a paciente fazia acompanhamento médico. O que mudou no tratamento dela?",
-    rebobinar: "Que doença faz alguém precisar de anticoagulante?",
+    rebobinar: "Que doença faz alguém precisar de anticoagulante?", cols: "1fr 2.6fr 1fr 1fr",
     cartoes: [
       { id: "b3-rem", cat: "Remédios", dica: { sobre: "os remédios que ela usava.", ex: "Ela tomava algum remédio?" },
         titulo: "Um remédio novo", html: () => `
         <p>Tomava remédios para a pressão (captopril e verapamil) e ácido acetilsalicílico (AAS).</p>
         <p>Em <strong>abril de 2000</strong>, começou a tomar <strong>varfarina</strong>, um <strong>anticoagulante</strong>: remédio que dificulta a coagulação do sangue.</p>` },
-      { id: "b3-inr", cat: "Exame de coagulação", wide: true, dica: { sobre: "exames de controle do anticoagulante ou da coagulação.", ex: "Como estava a coagulação dela?" },
+      { id: "b3-inr", cat: "Exame de coagulação", wide: true, noSpan: true, dica: { sobre: "exames de controle do anticoagulante ou da coagulação.", ex: "Como estava a coagulação dela?" },
         titulo: "Razão Normalizada Internacional (INR) em junho de 2000", html: () => `
-        <p>Quem toma varfarina faz este exame para saber se a dose está certa.</p>
-        ${inrRuler()}
+        <p>Quem toma varfarina faz este exame para saber se a dose está certa. Resultado da paciente: <b class="val high">6,2</b></p>
+        ${inrTabela(2, "6,2")}
         <p>O médico reduziu a dose de 5 mg para 2,5 mg por dia e pediu o exame a cada 15 dias.</p>` },
       { id: "b3-pa", cat: "Pressão arterial", dica: { sobre: "o controle da pressão arterial.", ex: "A pressão estava controlada?" },
         titulo: "A pressão continuava alta", html: () => `
@@ -741,31 +778,42 @@ const ORGAOS = {
 };
 const ORDEM_ORGAOS = ["cerebro", "pulmoes", "baco", "rins", "intestino"];
 
-/* ---------------- Modo aluno: seções liberadas por código ---------------- */
-/* Etapas com pergunta para os grupos: abrem no aparelho do grupo quando o projetor chega à tela (ou pausa) correspondente */
+/* ---------------- Perguntas dos grupos ---------------- */
+/* Uma pergunta por etapa: abre no aparelho do grupo quando o projetor chega à tela, à página da pausa ou ao passo correspondente */
 const SECOES = [
-  { id: "palpite", tela: "abertura-r", quando: "Primeiro palpite, logo depois da abertura", eyebrow: "20 de novembro de 2000 · Óbito", titulo: "Primeiro palpite",
+  { id: "palpite", tela: "abertura-r", eyebrow: "20 de novembro de 2000 · Óbito", titulo: "Primeiro palpite",
     qs: [["palpite", "Uma mulher de 82 anos ficou 4 dias internada e morreu. Por que ela morreu? Escreva o seu primeiro palpite."]] },
-  { id: "b1", tela: "b1-r", quando: "Bloco 1 · Rebobinar", eyebrow: "Bloco 1 · 17 a 19 de novembro de 2000", titulo: "Os últimos dias",
+  { id: "b1", tela: "b1-r", eyebrow: "Bloco 1 · 17 a 19 de novembro de 2000", titulo: "Os últimos dias",
     qs: [["prev", BLOCOS.b1.rebobinar]] },
-  { id: "p1", pausa: "p1", quando: "Pausa didática 1 (no Bloco 2)", eyebrow: "Pausa didática 1", titulo: "O que aconteceu no cérebro",
-    qs: [["tc", "Por que a primeira tomografia computadorizada (TC) da paciente veio normal?"], ["lado", "Nestes dois exemplos de tomografia (os mesmos da pausa), que lado do corpo ficaria fraco em cada paciente? Por quê?",
-      () => `${ct(IMG.tcHem2, "Exemplo 1: hemorrágico.", 190)}${ct(IMG.tcIsq2, "Exemplo 2: isquêmico.", 190)}`]] },
-  { id: "b2", tela: "b2-r", quando: "Bloco 2 · Rebobinar", eyebrow: "Bloco 2 · 16 de novembro de 2000", titulo: "A chegada ao hospital",
+  { id: "p1tc", pausa: "p1", pg: 2, eyebrow: "Pausa didática 1 · Pergunta 1 de 2", titulo: "A primeira tomografia",
+    qs: [["tc", "Por que a primeira tomografia computadorizada (TC) da paciente veio normal?"]] },
+  { id: "p1lado", pausa: "p1", pg: 3, eyebrow: "Pausa didática 1 · Pergunta 2 de 2", titulo: "Que lado ficaria fraco?",
+    qs: [["lado", "Nestes dois exemplos de tomografia (os mesmos do projetor), que lado do corpo ficaria fraco em cada paciente? Por quê?",
+      () => `${ct(IMG.tcIsq2, "Exemplo 1: isquêmico.", 190)}${ct(IMG.tcHem2, "Exemplo 2: hemorrágico.", 190)}`]] },
+  { id: "b2", tela: "b2-r", eyebrow: "Bloco 2 · 16 de novembro de 2000", titulo: "A chegada ao hospital",
     qs: [["prev", BLOCOS.b2.rebobinar]] },
-  { id: "b3", tela: "b3-r", quando: "Bloco 3 · Rebobinar", eyebrow: "Bloco 3 · Abril a junho de 2000", titulo: "Os meses anteriores",
+  { id: "b3", tela: "b3-r", eyebrow: "Bloco 3 · Abril a junho de 2000", titulo: "Os meses anteriores",
     qs: [["prev", BLOCOS.b3.rebobinar]] },
-  { id: "p2", pausa: "p2", quando: "Pausa didática 2 (no Bloco 4)", eyebrow: "Pausa didática 2", titulo: "Do coração ao cérebro",
-    qs: [["ecg", "A tira de ritmo da paciente se parece mais com a fibrilação atrial (FA) ou com o ritmo sinusal? Que detalhe do traçado mostra isso?"], ["inr", "Com a Razão Normalizada Internacional (INR) em 6,2, que tipo de acidente vascular encefálico (AVE) você esperaria? Por quê?"]] },
-  { id: "b4", tela: "b4-r", quando: "Bloco 4 · Rebobinar", eyebrow: "Bloco 4 · Abril de 1999", titulo: "O começo",
+  { id: "p2ecg", pausa: "p2", pg: 1, eyebrow: "Pausa didática 2 · Pergunta 1 de 2", titulo: "A tira de ritmo",
+    qs: [["ecg", "A tira de ritmo da paciente se parece mais com a fibrilação atrial (FA) ou com o ritmo sinusal? Que detalhe do traçado mostra isso?"]] },
+  { id: "p2inr", pausa: "p2", pg: 2, eyebrow: "Pausa didática 2 · Pergunta 2 de 2", titulo: "O exame em 6,2",
+    qs: [["inr", "Com a Razão Normalizada Internacional (INR) em 6,2, que tipo de acidente vascular encefálico (AVE) você esperaria? Por quê?"]] },
+  { id: "b4", tela: "b4-r", eyebrow: "Bloco 4 · Abril de 1999", titulo: "O começo",
     qs: [["prev", BLOCOS.b4.rebobinar]] },
-  { id: "fita", tela: "fita", quando: "Rodar a fita para frente", eyebrow: "Fechamento", titulo: "Rodar a fita para frente",
+  { id: "fita", tela: "fita", eyebrow: "Fechamento", titulo: "Rodar a fita para frente",
     qs: [["hist", "Reconte a história da paciente na ordem certa, do começo até a morte."]] },
-  { id: "necro", tela: "necro-0", quando: "Necropsia, antes de abrir o laudo", eyebrow: "Necropsia", titulo: "Antes de abrir o laudo",
-    qs: [["coracao", "O que você acha que havia dentro do coração dela?"], ["orgaos", "Além do cérebro, algum outro órgão foi atingido? Qual?"]] },
-  { id: "final", tela: "final-0", quando: "Pergunta final", eyebrow: "Pergunta final", titulo: "Causa ou consequência?",
-    qs: [["final", "O acidente vascular encefálico foi a causa da morte ou uma das consequências? Justifique."], ["aprendi", "O que você aprendeu de mais importante nesta aula?"]] }
+  { id: "necroCor", tela: "necro-0", eyebrow: "Necropsia · Pergunta 1 de 2", titulo: "Dentro do coração",
+    qs: [["coracao", "O que você acha que havia dentro do coração dela?"]] },
+  { id: "necroOrg", tela: "necro-0", marca: "necro-0-q2", eyebrow: "Necropsia · Pergunta 2 de 2", titulo: "Outros órgãos",
+    qs: [["orgaos", "Além do cérebro, algum outro órgão foi atingido? Qual?"]] },
+  { id: "final", tela: "final-0", eyebrow: "Pergunta final", titulo: "Causa ou consequência?",
+    qs: [["final", "O acidente vascular encefálico foi a causa da morte ou uma das consequências? Justifique."]] },
+  { id: "aprendi", tela: "final-0", marca: "final-aprendi", eyebrow: "Encerramento", titulo: "O que aprendemos",
+    qs: [["aprendi", "O que você aprendeu de mais importante nesta aula?"]] }
 ];
+/* marca (em S.visto) que abre a pergunta nos aparelhos: a tela, a página da pausa ou um passo dentro da tela */
+const secChave = (sc) => sc.marca || (sc.pausa ? `pausaPg-${sc.pausa}-${sc.pg}` : sc.tela);
+const secDe = (id) => SECOES.find((x) => x.id === id);
 
 /* Cada item é uma tela que cabe inteira no palco */
 const TELAS = ["abertura", "abertura-r", "b1", "b1-r", "b2", "b2-r", "b3", "b3-r", "b4", "b4-r",
@@ -863,12 +911,12 @@ function renderTape() {
       }).join("")}
     </nav>
     <div class="tools">
-      ${S.prof ? `<span class="chip-on" role="status">● Professor</span>` : ""}
       <button class="chip-btn" data-act="gloss">Glossário</button>
       ${onlChip()}${onlChipResp()}
       ${ONL.ativo && ONL.papel === "prof" ? `<button class="chip-btn" data-act="onl-encerrar">Encerrar aula</button>` : ""}
     </div>
   </div>`;
+  onlAtualizarContagem();   /* grupos que entram ou saem mudam o "n de N" do tempo de resposta */
 }
 
 /* ---------------- Telas ---------------- */
@@ -892,6 +940,8 @@ function telaOnline() {
     <div class="body" style="display:grid;align-content:center"><div class="panel onl-box">
       <div class="access-row" style="justify-content:center"><input type="password" data-onl="senha" autocomplete="off" placeholder="Senha do professor" aria-label="Senha do professor">
       <button class="btn primary" data-act="onl-senha">Criar a sala</button></div>${msg}
+      <p class="note" style="text-align:center;margin-top:1rem">Antes da aula, salve o gabarito: qual pergunta libera cada cartão, para consultar no celular ou impresso.</p>
+      <div class="btn-row c"><button class="btn" data-act="gabarito">📄 Gabarito dos cartões (PDF)</button></div>
     </div></div>
     <div class="navrow"><button class="btn ghost" data-act="onl-volta">← Voltar</button><span></span><span></span></div>
   </section>`;
@@ -920,7 +970,8 @@ function telaOnline() {
       <div class="body onl-lobby">
         ${prof ? `<div class="code-big">${esc(v.codigo)}</div><p class="note" style="text-align:center">${esc(location.host + location.pathname)}</p>` : ""}
         <h3 class="onl-cont">${v.equipes.length} ${v.equipes.length === 1 ? "grupo" : "grupos"} de até ${v.max}</h3>
-        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> os grupos perguntam em voz alta e você clica no cartão quando a pergunta for boa. A tecla <kbd>P</kbd> mostra (só para você) no verso de cada cartão a pergunta que o libera — aperte de novo antes de projetar. O 👁 na faixa de cima mostra as respostas dos grupos quando você quiser.</p>` : ""}
+        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> os grupos perguntam em voz alta e você clica no cartão quando a pergunta for boa. Salve antes de começar o <strong>📄 Gabarito dos cartões</strong> (botão abaixo) para consultar no celular ou impresso: ele diz qual pergunta libera cada cartão. Nas telas e páginas com pergunta aparece <strong>⏳ Tempo de resposta</strong> com quantos grupos já enviaram. O 👁 na faixa de cima mostra as respostas dos grupos quando você quiser.</p>` : ""}
+        ${prof ? `<div class="btn-row c"><button class="btn" data-act="gabarito">📄 Gabarito dos cartões (PDF)</button></div>` : ""}
         <div class="onl-equipes">${lista}</div>${msg}
       </div>
       <div class="navrow"><button class="btn ghost" data-act="onl-sair">✕ Sair da sala</button><span></span>
@@ -944,7 +995,7 @@ function telaOnline() {
 }
 /* ---------------- Aparelho do grupo durante a aula ---------------- */
 /* seções com pergunta já alcançadas no projetor (pelo último retrato) */
-const grpAlcancou = (sc) => { const v = (ONL.est && ONL.est.visto) || {}; return !!(sc.tela ? v[sc.tela] : v["pausa-" + sc.pausa]); };
+const grpAlcancou = (sc) => { const v = (ONL.est && ONL.est.visto) || {}; return !!v[secChave(sc)]; };
 /* a pergunta em aberto é a da etapa alcançada mais recente: continua aqui até a próxima chegar */
 function grpSecAtual() { let at = null; SECOES.forEach((sc) => { if (grpAlcancou(sc)) at = sc; }); return at; }
 /* nome da etapa que está no projetor agora */
@@ -974,22 +1025,22 @@ function grpCartoesHTML() {
   return `<h3 class="grp-sub">Cartões abertos · Bloco ${b.n}</h3><div class="grp-cards">${html}</div>`;
 }
 function grpTopoHTML() {
-  const et = grpEtapa(), p = ONL.est && ONL.est.pausa;
+  const et = grpEtapa(), p = ONL.est && ONL.est.pausa, sc = grpSecAtual();
+  const temQ = p && sc && sc.pausa === p.k && sc.pg === p.pg;
   return `${head(et.eyebrow, et.titulo)}
-    ${p ? `<div class="grp-aviso">📘 ${esc(PAUSAS[p.k] ? PAUSAS[p.k].nome : "Pausa didática")} no projetor — acompanhem a explicação.</div>` : ""}
+    ${p ? `<div class="grp-aviso">📘 ${esc(PAUSAS[p.k] ? PAUSAS[p.k].nome : "Pausa didática")} no projetor — ${temQ ? "respondam à pergunta abaixo e cliquem em “Enviar resposta”." : "acompanhem a explicação."}</div>` : ""}
     ${ONL.est && ["sintese", "fontes"].includes(ONL.est.tela) ? `<div class="grp-aviso">🏁 A aula está terminando. Salvem o minirrelatório em PDF pelo botão “📄 Minirrelatório”.</div>` : ""}`;
 }
 function grpFormHTML() {
   const sc = grpSecAtual();
   if (!sc) return `<div class="grp-espera">✏️ Quando a aula chegar a uma pergunta, o espaço para a resposta do grupo aparece aqui.</div>`;
-  const st = ONL.envio[sc.id];
-  const rows = sc.qs.length > 1 ? 5 : 7;
+  const [q, txt, fig] = sc.qs[0];
   return `<div class="grp-form" data-grp-sec="${sc.id}">
     <h3 class="grp-sub">${esc(sc.eyebrow)} · ${esc(sc.titulo)}</h3>
-    ${sc.qs.map(([q, txt, fig]) => `<div class="al-q"><label for="r-${sc.id}-${q}">${txt}</label>
+    <div class="al-q"><label for="r-${sc.id}-${q}">${txt}</label>
       ${fig ? `<div class="al-figs grp-figs">${fig()}</div>` : ""}
-      <textarea id="r-${sc.id}-${q}" data-resp="${sc.id}:${q}" rows="${rows}">${esc(alResp(sc.id, q))}</textarea></div>`).join("")}
-    <div class="grp-envio"><span class="grp-st" id="grp-st">${st === "ok" ? "✓ Resposta enviada ao professor" : st === "enviando" ? "Enviando…" : st === "pendente" ? "Alterações ainda não enviadas" : ""}</span>
+      <textarea id="r-${sc.id}-${q}" data-resp="${sc.id}:${q}" rows="7">${esc(alResp(sc.id, q))}</textarea></div>
+    <div class="grp-envio"><span class="grp-st ${ONL.envio[sc.id] || ""}" id="grp-st">${grpStatusTxt(sc.id)}</span>
       <button class="btn primary" data-act="grp-enviar">Enviar resposta</button></div>
   </div>`;
 }
@@ -1026,29 +1077,36 @@ function grpAtualizar() {
   if ((sc ? sc.id : null) !== (atual ? atual.dataset.grpSec : null)) $("#grp-form").innerHTML = grpFormHTML();
   fitTitles($("#main")); markZoom($("#main"));
 }
-/* envio das respostas: sozinho, 1,5 s depois de parar de digitar, e pelo botão */
-let grpTimer = null;
+/* envio das respostas: SÓ pelo botão "Enviar resposta" (o professor recebe apenas o que foi enviado).
+   Estados: pendente = escrito e ainda não enviado; enviando; ok; falhou = clicou sem conexão (reenvia ao reconectar); vazio = tentou enviar em branco */
 function grpMarcar(sid) {
-  ONL.envio[sid] = "pendente"; grpStatus(sid);
-  clearTimeout(grpTimer); grpTimer = setTimeout(() => grpEnviar(sid), 1500);
+  if (ONL.envio[sid] === "enviando") return;
+  ONL.envio[sid] = alResp(sid, secDe(sid).qs[0][0]).trim() ? "pendente" : ""; grpStatus(sid);
 }
 function grpEnviar(sid) {
-  clearTimeout(grpTimer);
-  const sc = SECOES.find((x) => x.id === sid); if (!sc || !ONL.ativo || !ONL.sock) return;
+  const sc = secDe(sid); if (!sc || !ONL.ativo || !ONL.sock) return;
+  const q = sc.qs[0][0], texto = alResp(sid, q);
+  if (!texto.trim()) { ONL.envio[sid] = "vazio"; grpStatus(sid); return; }
+  if (!ONL.sock.connected) { ONL.envio[sid] = "falhou"; grpStatus(sid); return; }
   ONL.envio[sid] = "enviando"; grpStatus(sid);
-  let falta = sc.qs.length, erro = false;
-  sc.qs.forEach(([q]) => {
-    ONL.sock.emit("acao", { tipo: "resp", dados: { sec: sid, q: q, texto: alResp(sid, q) } }, (r) => {
-      if (!r || !r.ok) erro = true;
-      if (--falta === 0) { ONL.envio[sid] = erro ? "pendente" : "ok"; grpStatus(sid); }
-    });
+  ONL.sock.emit("acao", { tipo: "resp", dados: { sec: sid, q: q, texto: texto } }, (r) => {
+    if (!r || !r.ok) ONL.envio[sid] = "falhou";
+    else ONL.envio[sid] = alResp(sid, q) === texto ? "ok" : "pendente";   /* mudou enquanto enviava: falta enviar de novo */
+    grpStatus(sid);
   });
+}
+function grpStatusTxt(sid) {
+  const st = ONL.envio[sid], prox = grpSecAtual() && grpSecAtual().id === sid && SECOES.indexOf(secDe(sid)) < SECOES.length - 1;
+  return st === "ok" ? `✓ Resposta enviada ao professor.${prox ? " Aguardem a próxima pergunta." : ""}`
+    : st === "enviando" ? "Enviando…"
+    : st === "pendente" ? "Ainda não enviada — cliquem em “Enviar resposta”."
+    : st === "falhou" ? "Sem conexão — a resposta será enviada quando a internet voltar."
+    : st === "vazio" ? "Escrevam a resposta antes de enviar." : "";
 }
 function grpStatus(sid) {
   const el = $("#grp-st"); if (!el || !$(`#grp-form [data-grp-sec="${sid}"]`)) return;
-  const st = ONL.envio[sid];
-  el.textContent = st === "ok" ? "✓ Resposta enviada ao professor" : st === "enviando" ? "Enviando…" : st === "pendente" ? (ONL.sock && ONL.sock.connected ? "Alterações ainda não enviadas" : "Sem conexão — será enviada ao reconectar") : "";
-  el.className = "grp-st " + (st || "");
+  el.textContent = grpStatusTxt(sid);
+  el.className = "grp-st " + (ONL.envio[sid] || "");
 }
 
 
@@ -1075,6 +1133,22 @@ function alPdf() {
       ${s.qs.map(([q, txt]) => { const r = alResp(s.id, q).trim(); return `<h3>${txt}</h3><p class="ans ${r ? "" : "vazio"}">${r ? esc(r) : "Sem resposta."}</p>`; }).join("")}</section>`).join("")}`;
   const titulo = document.title;
   document.title = "Minirrelatório" + (A.grupo.trim() ? " - " + A.grupo.trim() : "");
+  const fim = () => { document.title = titulo; window.removeEventListener("afterprint", fim); };
+  window.addEventListener("afterprint", fim);
+  window.print();
+}
+
+/* Gabarito do professor: para cada cartão, o assunto da pergunta que o libera (salvo em PDF antes da aula, fora do projetor) */
+function profGabarito() {
+  const pausa = { p1: "Pausa didática 1", p2: "Pausa didática 2" };
+  $("#print").innerHTML = `<h1>Gabarito dos cartões</h1><p class="rep-sub">${NOME} · uso do professor</p>
+    <p class="gab-nota">Os grupos perguntam em voz alta. Abra o cartão quando a pergunta tratar do assunto da coluna “Abra quando perguntarem sobre”. Os exemplos são só referência: perguntas parecidas também valem.</p>
+    ${Object.values(BLOCOS).map((b) => `<section><h2>Bloco ${b.n} · ${b.quando} · ${b.titulo}</h2>
+      <table class="gab"><thead><tr><th>Cartão</th><th>Abra quando perguntarem sobre</th><th>Exemplo de pergunta</th><th>O que o cartão mostra</th></tr></thead>
+      <tbody>${b.cartoes.map((c, i) => `<tr><td class="n">${i + 1}</td><td>${c.dica.sobre.charAt(0).toUpperCase() + c.dica.sobre.slice(1)}</td><td>“${c.dica.ex}”</td><td><b>${c.cat}</b><br>${c.titulo}</td></tr>`).join("")}</tbody></table>
+      <p class="gab-depois">Depois dos cartões: ${b.pausa ? `abrir a <b>${pausa[b.pausa]}</b> e, em seguida, ` : ""}rebobinar — “${b.rebobinar}”</p></section>`).join("")}`;
+  const titulo = document.title;
+  document.title = "Gabarito dos cartões - " + NOME;
   const fim = () => { document.title = titulo; window.removeEventListener("afterprint", fim); };
   window.addEventListener("afterprint", fim);
   window.print();
@@ -1128,13 +1202,13 @@ function cardHTML(c, i) {
       <button class="face back" data-open="${c.id}" ${open ? 'tabindex="-1" aria-hidden="true"' : ""} aria-label="Abrir cartão ${i + 1}">
         <span class="cat">Cartão ${i + 1}</span>
         <span class="q" aria-hidden="true">?</span>
-        ${S.prof ? `<span class="hint"><span><b>Abra quando perguntarem sobre</b> ${c.dica.sobre}</span><i>Exemplo: “${c.dica.ex}”</i></span>` : `<span class="lock">Abre com a pergunta certa</span>`}
+        <span class="lock">Abre com a pergunta certa</span>
       </button>
       <div class="face front" ${open ? "" : 'aria-hidden="true"'}>
         <span class="cat">${c.cat}</span>
         <h3>${c.titulo}</h3>
         ${open ? c.html() : ""}
-        ${open && S.prof ? `<button class="flipback" data-close="${c.id}">Fechar</button>` : ""}
+        ${open && ONL.ativo && ONL.papel === "prof" ? `<button class="flipback" data-close="${c.id}">Fechar</button>` : ""}
       </div>
     </div>
   </div>`;
@@ -1161,12 +1235,28 @@ function glasgowHTML(t) {
 }
 
 function aguardoPanel(m) {
+  const sc = SECOES.find((x) => x.tela === S.tela);
   return `<div class="aguardo">
     <span class="big" aria-hidden="true">⏳</span>
     <h2>Tempo de resposta</h2>
     <p>Aguardando os grupos escreverem ${m === "m0" ? "o palpite" : "a previsão"} nos seus aparelhos.</p>
+    ${sc ? contagemResp(sc.id) : ""}
   </div>`;
 }
+/* quantos grupos já ENVIARAM a resposta desta etapa (atualiza sozinho quando chega uma resposta) */
+function contagemResp(sid) {
+  if (!ONL.ativo || ONL.papel !== "prof") return "";
+  const eq = (ONL.sala && ONL.sala.equipes) || [];
+  const n = eq.filter((e) => onlRespondeu(e.seat, sid)).length;
+  return `<b class="tempo-n" data-sec="${sid}">📝 ${n} de ${eq.length} ${eq.length === 1 ? "grupo enviou" : "grupos enviaram"}</b>`;
+}
+function onlAtualizarContagem() {
+  document.querySelectorAll(".tempo-n[data-sec]").forEach((el) => { const t = document.createElement("i"); t.innerHTML = contagemResp(el.dataset.sec); if (t.firstChild) el.replaceWith(t.firstChild); });
+}
+/* faixa do tempo de resposta (no projetor): mostra que é hora de esperar os grupos e quantos já enviaram */
+const tempoResp = (sid, txt) => `<p class="tempo-resp"><span aria-hidden="true">⏳</span> ${txt || "Tempo de resposta: aguardando os grupos responderem nos seus aparelhos."} ${contagemResp(sid)}</p>`;
+/* pergunta de uma página da pausa didática + tempo de resposta */
+const perguntaPausa = (sid, pergunta) => `<div class="reveal-box pausa-q" style="flex:none"><strong>${pergunta}</strong>${tempoResp(sid)}</div>`;
 
 function telaFita() {
   const passos = [
@@ -1182,6 +1272,7 @@ function telaFita() {
       <span class="big" aria-hidden="true">⏳</span>
       <h2>Tempo de resposta</h2>
       <p>Aguardando os grupos escreverem a história nos seus aparelhos. Depois, a fita é revelada passo a passo para conferir.</p>
+      ${contagemResp("fita")}
     </div></div>
     ${navRow("Necropsia", `<button class="btn primary" data-act="fita-start">Os grupos terminaram: revelar a história</button>`, "Revele a história antes de seguir para a necropsia.")}
   </section>`;
@@ -1247,14 +1338,15 @@ function bodySVG() {
 
 function telaNecro(step) {
   if (step === 0) {
+    const q2 = !!S.visto["necro-0-q2"];
     return `<section class="screen">
-      ${head("Necropsia", "O laudo da necropsia", "Antes de abrir o laudo, cada grupo responde no seu aparelho:")}
+      ${head("Necropsia", "O laudo da necropsia", "Antes de abrir o laudo, cada grupo responde no seu aparelho, uma pergunta de cada vez:")}
       <div class="body" style="display:grid;place-items:center;align-content:center;gap:2rem"><ol class="necro-q">
-        <li>O que vocês acham que havia dentro do coração dela?</li>
-        <li>Além do cérebro, algum outro órgão foi atingido? Qual?</li>
+        <li class="${q2 ? "feita" : ""}">O que vocês acham que havia dentro do coração dela?</li>
+        ${q2 ? `<li>Além do cérebro, algum outro órgão foi atingido? Qual?</li>` : ""}
       </ol>
-      <p class="tempo-resp"><span aria-hidden="true">⏳</span> Tempo de resposta: aguardando os grupos escreverem nos seus aparelhos.</p></div>
-      ${navRow("Abrir o laudo")}
+      ${tempoResp(q2 ? "necroOrg" : "necroCor")}</div>
+      ${navRow("Abrir o laudo", q2 ? "" : `<button class="btn primary" data-act="necro-q2">Próxima pergunta →</button>`, q2 ? "" : "Mostre a segunda pergunta antes de abrir o laudo.")}
     </section>`;
   }
   if (step === 1) {
@@ -1290,10 +1382,11 @@ function telaNecro(step) {
 function telaFinal() {
     return `<section class="screen">
       ${head("Pergunta final", "O acidente vascular encefálico foi a causa da morte ou uma das consequências?")}
-      <div class="body" style="display:grid;place-items:center">${S.finalRev ? `<div class="reveal-box" style="max-width:62rem;font-size:1.15rem">
+      <div class="body" style="display:grid;place-items:center;align-content:center;gap:1.4rem">${S.finalRev ? `<div class="reveal-box" style="max-width:62rem;font-size:1.15rem">
         <p><strong>Uma das consequências.</strong> A doença de base era a <strong>fibrilação atrial</strong>, que formou um trombo no coração. Os êmbolos atingiram cérebro, rins, baço e intestino. O infarto do intestino e a embolia nos pulmões provavelmente pesaram mais na morte do que o próprio cérebro.</p>
         <p>Todas as hipóteses tinham parte da verdade: <strong>cérebro</strong> (acidente vascular encefálico), <strong>abdome</strong> (infarto do intestino), <strong>infecção</strong> (urina, pulmões e peritônio) e <strong>coração</strong>, como a origem dos êmbolos, e não como infarto.</p>
-      </div>` : `<button class="btn primary" data-act="final-rev" style="font-size:1.2rem;padding:.8rem 1.6rem">Revelar a resposta</button>`}</div>
+      </div>${tempoResp("aprendi", "Última pergunta nos aparelhos: o que vocês aprenderam de mais importante nesta aula?")}`
+      : `${tempoResp("final")}<button class="btn primary" data-act="final-rev" style="font-size:1.2rem;padding:.8rem 1.6rem">Os grupos terminaram: revelar a resposta</button>`}</div>
       ${navRow("Quadro-síntese")}
     </section>`;
 }
@@ -1370,18 +1463,22 @@ const PAUSAS = {
         <div class="panel">${crossSVG()}</div>
       </div></div>`,
     () => `${head("", "O que a tomografia computadorizada (TC) mostra", "Na tomografia, o lado direito do paciente aparece à esquerda da imagem (marcado com D), como se olhássemos a pessoa a partir dos pés.")}
-      <div class="body"><div class="grid3">
-        ${ct(IMG.ctNormal, "Normal. No acidente vascular encefálico isquêmico, a tomografia pode ficar assim nas primeiras horas.", 360)}
-        ${ct(IMG.ctIsq, "Acidente vascular encefálico isquêmico: área escura, que só aparece depois de algumas horas.", 360)}
-        ${ct(IMG.ctHem, "Acidente vascular encefálico hemorrágico: área branca (sangue), visível logo no início.", 360)}
+      <div class="body"><div class="tc-cols">
+        <div class="tc-col isq"><h2>Isquêmico</h2><div class="grid2">
+          ${ct(IMG.ctNormal, "Nas primeiras horas: a tomografia pode parecer normal.", 330)}
+          ${ct(IMG.ctIsq, "Depois de algumas horas: aparece uma área escura.", 330)}
+        </div></div>
+        <div class="tc-col hem"><h2>Hemorrágico</h2>
+          ${ct(IMG.ctHem, "Desde o início: área branca (sangue).", 330)}
+        </div>
       </div></div>
-      <div class="reveal-box" style="flex:none"><strong>De volta ao caso: por que a primeira tomografia da paciente veio normal?</strong></div>`,
+      ${perguntaPausa("p1tc", "De volta ao caso: por que a primeira tomografia da paciente veio normal?")}`,
     () => `${head("", "Mais dois exemplos de tomografia computadorizada (TC)", "O quadro vermelho marca a lesão. Lembre: D é o lado direito do paciente.")}
       <div class="body"><div class="grid2">
-        ${ct(IMG.tcHem2, "Acidente vascular encefálico hemorrágico: área branca (sangue) no lado esquerdo do encéfalo, empurrando as estruturas vizinhas.", 395)}
         ${ct(IMG.tcIsq2, "Acidente vascular encefálico isquêmico: grande área escura no lado direito do encéfalo, o mesmo lado das lesões da nossa paciente.", 395)}
+        ${ct(IMG.tcHem2, "Acidente vascular encefálico hemorrágico: área branca (sangue) no lado esquerdo do encéfalo, empurrando as estruturas vizinhas.", 395)}
       </div></div>
-      <div class="reveal-box" style="flex:none"><strong>Em cada um desses pacientes, que lado do corpo ficaria fraco?</strong></div>`
+      ${perguntaPausa("p1lado", "Em cada um desses pacientes, que lado do corpo ficaria fraco?")}`
   ] },
   p2: { nome: "Pausa didática 2", paginas: [
     () => `${head("", "Do coração ao cérebro", "Na fibrilação atrial (FA), os átrios tremem em vez de contrair. É como uma piscina sem correnteza: o sangue fica parado na aurícula esquerda e coagula.")}
@@ -1408,13 +1505,15 @@ const PAUSAS = {
             <p><strong>Fibrilação atrial:</strong> <strong>não há onda P</strong>, a linha entre os batimentos treme, e os intervalos RR <strong>mudam o tempo todo</strong>.</p>
           </div>
         </div>
-        <figure class="ecg" style="display:grid;gap:.3rem;justify-items:center"><img style="max-height:105px;width:auto;max-width:100%" src="${IMG.ecg}" alt="Tira de ritmo do eletrocardiograma da paciente"><figcaption><strong>Agora compare com a tira da paciente</strong> (artigo original, figura 1): com qual dos dois traçados ela se parece?</figcaption></figure>
-      </div>`,
+        <figure class="ecg" style="display:grid;gap:.3rem;justify-items:center"><img style="max-height:105px;width:auto;max-width:100%" src="${IMG.ecg}" alt="Tira de ritmo do eletrocardiograma da paciente"><figcaption><strong>Agora compare com a tira da paciente</strong> (artigo original, figura 1).</figcaption></figure>
+      </div>
+      ${perguntaPausa("p2ecg", "A tira da paciente se parece mais com a fibrilação atrial ou com o ritmo sinusal? Que detalhe do traçado mostra isso?")}`,
     () => `${head("", "O dilema da anticoagulação", "Pouco anticoagulante facilita o trombo. Anticoagulante demais facilita o sangramento.")}
       <div class="body" style="display:grid;gap:1.2rem;align-content:start;max-width:70rem;margin-inline:auto;width:100%">
-        <div class="panel">${inrRuler()}</div>
+        <div class="panel">${inrTabela(2, "6,2", true)}</div>
         <div class="reveal-box">
           <h3>Com o exame em 6,2, que tipo de acidente vascular encefálico vocês esperariam?</h3>
+          ${S.pausa2Rev ? "" : tempoResp("p2inr")}
           ${S.pausa2Rev ? `<p><strong>Hemorrágico.</strong> Com o sangue coagulando muito devagar, um vaso que se rompe sangra sem parar.</p>
             <p>Mas ela teve um <strong>isquêmico</strong>. Na internação de novembro, o exame estava entre 2,1 e 2,7, perto da faixa-alvo, e mesmo assim o trombo se formou. O anticoagulante <strong>reduz o risco, mas não o elimina</strong>.</p>`
             : `<div class="btn-row c"><button class="btn primary" data-act="p2-rev">Revelar</button></div>`}
@@ -1459,6 +1558,7 @@ function renderOverlay() {
   if (PAUSAS[overlay]) {
     const p = PAUSAS[overlay], n = p.paginas.length;
     if (ovPage === n - 1 && !pausaFeita(overlay)) { S.visto["pausaFim-" + overlay] = true; save(); }
+    if (!S.visto[`pausaPg-${overlay}-${ovPage}`]) { S.visto[`pausaPg-${overlay}-${ovPage}`] = true; save(); }
     html = `<div class="ov">${ovTop(p.nome, `${ovPage + 1} de ${n}`)}${p.paginas[ovPage]()}
       <div class="navrow">${ovPage > 0 ? `<button class="btn ghost" data-act="ov-prev">← Anterior</button>` : "<span></span>"}<span></span>
       ${ovPage < n - 1 ? `<button class="btn primary" data-act="ov-next">Próxima →</button>` : `<button class="btn primary" data-act="close-ov">Voltar ao caso</button>`}</div></div>`;
@@ -1557,9 +1657,6 @@ function step(d) {
   if (d > 0 && S.tela === "fita" && !S.fitaAberta) return;                  // a fita é revelada antes de seguir
   const i = TELAS.indexOf(S.tela) + d; if (i >= 0 && i < TELAS.length) go(TELAS[i]);
 }
-function profKey() {   /* tecla P: mostra/oculta no verso dos cartões a pergunta que libera cada um (só no projetor) */
-  if (ONL.ativo && ONL.papel === "prof") { S.prof = !S.prof; render(true); }
-}
 
 /* ---------------- Eventos ---------------- */
 document.addEventListener("click", (e) => {
@@ -1605,7 +1702,9 @@ document.addEventListener("click", (e) => {
     case "fita-reset": S.fita = 0; render(true); break;
     case "fita-start": S.fitaAberta = true; S.fita = 1; render(true); break;
     case "organ-next": { const nx = ORDEM_ORGAOS.find((k) => !S.necro.acesos.includes(k)); if (nx) { S.necro.acesos.push(nx); S.necro.sel = nx; } render(true); break; }
-    case "final-rev": S.finalRev = true; render(true); break;
+    case "final-rev": S.finalRev = true; S.visto["final-aprendi"] = true; render(true); break;
+    case "necro-q2": S.visto["necro-0-q2"] = true; render(true); break;
+    case "gabarito": profGabarito(); break;
     case "p2-rev": S.pausa2Rev = true; renderOverlay(); save(); break;
   }
 });
@@ -1638,7 +1737,6 @@ document.addEventListener("keydown", (e) => {
   if (S.modo !== "apresentacao" && S.modo !== "professor") return;
   if (e.key === "ArrowRight") step(1);
   else if (e.key === "ArrowLeft") step(-1);
-  else if (e.key === "p" || e.key === "P") profKey();
   else if (e.key === "g" || e.key === "G") openOverlay("gloss");
 });
 
@@ -1663,7 +1761,7 @@ function onlConectar(cb) {
     const sk = ONL.sock = window.io(ONL_URL, { reconnectionDelayMax: 4000 });
     sk.on("connect", () => {
       onlMsg(""); if (ONL.ativo) onlRedesenhar(); if (ONL.codigo) onlRetomar();
-      if (ONL.ativo && ONL.papel === "equipe") Object.keys(ONL.envio).forEach((sid) => { if (ONL.envio[sid] !== "ok") setTimeout(() => grpEnviar(sid), 800); });
+      if (ONL.ativo && ONL.papel === "equipe") Object.keys(ONL.envio).forEach((sid) => { if (ONL.envio[sid] === "falhou") setTimeout(() => grpEnviar(sid), 800); });   /* só o que o grupo já tinha mandado enviar */
     });
     sk.on("disconnect", () => { if (ONL.ativo) onlRedesenhar(); });
     sk.on("connect_error", () => onlMsg("Conectando ao servidor… se ele estava dormindo, pode levar até 1 minuto."));
@@ -1849,8 +1947,10 @@ function onlAplicarEst(est) {
 function onlSecAtual() {
   if (overlay === "respostas") return ONL.verRespSec;
   const k = PAUSAS[overlay] ? overlay : (overlay === "zoom" && zoom && PAUSAS[zoom.back]) ? zoom.back : null;
-  const sc = k ? SECOES.find((x) => x.pausa === k) : SECOES.find((x) => x.tela === S.tela);
-  return sc ? sc.id : null;
+  const pg = PAUSAS[overlay] ? ovPage : zoom ? zoom.page : 0;
+  let at = null;   /* na pausa, só a página que tem pergunta; na tela, o passo mais recente já mostrado (ex.: 2ª pergunta da necropsia) */
+  SECOES.forEach((sc) => { if (k ? sc.pausa === k && sc.pg === pg : sc.tela === S.tela && S.visto[secChave(sc)]) at = sc; });
+  return at ? at.id : null;
 }
 function onlGuardarResp(seat, d) {
   if (!d || !d.sec || !d.q) return;
@@ -1863,7 +1963,7 @@ function onlGuardarResp(seat, d) {
   (g[d.sec] = g[d.sec] || {})[d.q] = String(d.texto || "");
   if (!ONL.ativo) return;
   if (overlay === "respostas") renderOverlay();
-  if (S.modo === "apresentacao" || S.modo === "professor") renderTape();
+  if (S.modo === "apresentacao" || S.modo === "professor") { renderTape(); onlAtualizarContagem(); }
 }
 const onlRespondeu = (seat, sid) => { const r = (ONL.resp[seat] || {})[sid] || {}; return Object.keys(r).some((q) => r[q].trim()); };
 /* selo discreto na faixa: quantos grupos já responderam + 👁 para mostrar/ocultar */
@@ -1878,7 +1978,7 @@ function onlChipResp() {
     <button class="chip-btn onl-olho ${ver ? "on" : ""}" data-act="onl-ver" title="${ver ? "Ocultar" : "Mostrar"} as respostas dos grupos no projetor" aria-pressed="${ver}">${ver ? "🙈" : "👁"}</button>`;
 }
 function onlRespostasHTML() {
-  const sid = ONL.verRespSec, sc = SECOES.find((x) => x.id === sid);
+  const sid = ONL.verRespSec, sc = secDe(sid);
   const topo = `<div class="ov-top"><span class="eyebrow" style="text-align:left">Respostas dos grupos</span><span class="pg"></span><button class="btn x" data-act="onl-ver">🙈 Ocultar respostas e voltar ao caso</button></div>`;
   if (!sc) return `<div class="ov">${topo}<div class="body"></div></div>`;
   const eq = (ONL.sala && ONL.sala.equipes) || [];
