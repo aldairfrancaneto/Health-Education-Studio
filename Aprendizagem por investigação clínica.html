@@ -218,6 +218,7 @@ html.fit .front { overflow: hidden; }
 .flipback { margin-top: auto; align-self: flex-end; flex: none; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: .1rem .7rem; font-size: .72rem; color: var(--muted); }
 .val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
 .val.high { color: var(--bad); }
+.val.low { color: var(--warn); }
 .lab { display: grid; gap: .45rem; border-top: 1px solid var(--line); padding-top: .45rem; }
 .lab .lr { display: grid; gap: .05rem; }
 .lab .lv { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .5rem; }
@@ -497,6 +498,10 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .grp-envio { display: flex; gap: .8rem; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
 .grp-st { font-size: .9rem; color: var(--muted); }
 .grp-st.ok { color: var(--ok); font-weight: 700; }
+.grp-enviada { border-color: var(--ok); text-align: center; justify-items: center; }
+.grp-enviada .big { font-size: 3rem; line-height: 1; color: var(--ok); font-weight: 800; }
+.grp-enviada h2 { font-size: 1.4rem; color: var(--ok); }
+.grp-enviada p { font-size: 1.1rem; color: var(--ink-2); text-align: center; }
 .grp-st.pendente { color: var(--warn); }
 .onl-olho { min-width: 2.2rem; }
 .onl-olho.on { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -577,7 +582,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.4 &middot; Última atualização: 24 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.7 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -607,6 +612,7 @@ const INR_REF = [
   ["INR entre 2,0 e 3,0", "Alvo terapêutico para maioria das indicações (fibrilação atrial, TVP, embolia pulmonar)", "ok"],
   ["INR entre 3,0 e 4,5", "Supra-terapêutico, aumento moderado do risco hemorrágico", "warn"],
   ["INR > 4,5", "Supra-terapêutico significativo, alto risco de sangramento", "bad"],
+  ["INR entre 1,5 e 2,0", "Abaixo do alvo, proteção reduzida contra eventos tromboembólicos", "warn"],
   ["INR < 1,5 em paciente anticoagulado", "Sub-terapêutico, risco aumentado de eventos tromboembólicos", "warn"]
 ];
 const inrTabela = (linha, valor, grande) => `<div class="inr-tab ${grande ? "grande" : ""}"><table>
@@ -641,8 +647,8 @@ const BLOCOS = {
       { id: "b1-lab", cat: "Outros exames de sangue", wide: true, noSpan: true, dica: { sobre: "outros exames: fígado, rins ou coagulação.", ex: "Que outros exames de sangue foram feitos?" },
         titulo: "Fígado, rins e coagulação", html: () => `
         <p>As enzimas do fígado subiram e ela passou a urinar pouco.</p>
-        <p>Razão Normalizada Internacional (INR): <b class="val">2,1 a 2,7</b></p>
-        ${inrTabela(0, "2,1 a 2,7")}` }
+        <p>Razão Normalizada Internacional (INR): <b class="val low">1,8</b></p>
+        ${inrTabela(3, "1,8")}` }
     ]
   },
   b2: {
@@ -1040,6 +1046,16 @@ function grpFormHTML() {
   const sc = grpSecAtual();
   if (!sc) return `<div class="grp-espera">✏️ Quando a aula chegar a uma pergunta, o espaço para a resposta do grupo aparece aqui.</div>`;
   const [q, txt, fig] = sc.qs[0];
+  /* resposta já enviada: fica travada e o aparelho espera a próxima pergunta */
+  if (ONL.envio[sc.id] === "ok") {
+    const ultima = SECOES.indexOf(sc) === SECOES.length - 1;
+    return `<div class="grp-form grp-enviada" data-grp-sec="${sc.id}" data-grp-ok="1">
+      <h3 class="grp-sub">${esc(sc.eyebrow)} · ${esc(sc.titulo)}</h3>
+      <span class="big" aria-hidden="true">✓</span>
+      <h2>Resposta enviada ao professor</h2>
+      <p>${ultima ? "Esta foi a última pergunta. Salvem o minirrelatório em PDF pelo botão “📄 Minirrelatório”." : "⏳ Aguardem a próxima pergunta no projetor."}</p>
+    </div>`;
+  }
   return `<div class="grp-form" data-grp-sec="${sc.id}">
     <h3 class="grp-sub">${esc(sc.eyebrow)} · ${esc(sc.titulo)}</h3>
     <div class="al-q"><label for="r-${sc.id}-${q}">${txt}</label>
@@ -1079,7 +1095,7 @@ function grpAtualizar() {
   $("#grp-topo").innerHTML = grpTopoHTML();
   $("#grp-cartoes").innerHTML = grpCartoesHTML();
   const sc = grpSecAtual(), atual = $("#grp-form [data-grp-sec]");
-  if ((sc ? sc.id : null) !== (atual ? atual.dataset.grpSec : null)) $("#grp-form").innerHTML = grpFormHTML();
+  if ((sc ? sc.id : null) !== (atual ? atual.dataset.grpSec : null) || (sc && !!atual.dataset.grpOk !== (ONL.envio[sc.id] === "ok"))) $("#grp-form").innerHTML = grpFormHTML();
   fitTitles($("#main")); markZoom($("#main"));
 }
 /* envio das respostas: SÓ pelo botão "Enviar resposta" (o professor recebe apenas o que foi enviado).
@@ -1089,21 +1105,21 @@ function grpMarcar(sid) {
   ONL.envio[sid] = alResp(sid, secDe(sid).qs[0][0]).trim() ? "pendente" : ""; grpStatus(sid);
 }
 function grpEnviar(sid) {
-  const sc = secDe(sid); if (!sc || !ONL.ativo || !ONL.sock) return;
+  const sc = secDe(sid); if (!sc || !ONL.ativo || !ONL.sock || ONL.envio[sid] === "ok") return;   /* enviada = travada */
   const q = sc.qs[0][0], texto = alResp(sid, q);
   if (!texto.trim()) { ONL.envio[sid] = "vazio"; grpStatus(sid); return; }
   if (!ONL.sock.connected) { ONL.envio[sid] = "falhou"; grpStatus(sid); return; }
   ONL.envio[sid] = "enviando"; grpStatus(sid);
+  const ta = $(`#grp-form textarea[data-resp="${sid}:${q}"]`); if (ta) ta.readOnly = true;   /* não muda enquanto envia */
   ONL.sock.emit("acao", { tipo: "resp", dados: { sec: sid, q: q, texto: texto } }, (r) => {
-    if (!r || !r.ok) ONL.envio[sid] = "falhou";
-    else ONL.envio[sid] = alResp(sid, q) === texto ? "ok" : "pendente";   /* mudou enquanto enviava: falta enviar de novo */
-    grpStatus(sid);
+    if (!r || !r.ok) { ONL.envio[sid] = "falhou"; const t = $(`#grp-form textarea[data-resp="${sid}:${q}"]`); if (t) t.readOnly = false; grpStatus(sid); return; }
+    ONL.envio[sid] = "ok"; save();
+    if ($(`#grp-form [data-grp-sec="${sid}"]`)) { $("#grp-form").innerHTML = grpFormHTML(); }   /* vira a tela de espera */
   });
 }
 function grpStatusTxt(sid) {
-  const st = ONL.envio[sid], prox = grpSecAtual() && grpSecAtual().id === sid && SECOES.indexOf(secDe(sid)) < SECOES.length - 1;
-  return st === "ok" ? `✓ Resposta enviada ao professor.${prox ? " Aguardem a próxima pergunta." : ""}`
-    : st === "enviando" ? "Enviando…"
+  const st = ONL.envio[sid];
+  return st === "enviando" ? "Enviando…"
     : st === "pendente" ? "Ainda não enviada — cliquem em “Enviar resposta”."
     : st === "falhou" ? "Sem conexão — a resposta será enviada quando a internet voltar."
     : st === "vazio" ? "Escrevam a resposta antes de enviar." : "";
@@ -1520,7 +1536,7 @@ const PAUSAS = {
           <h3>Com o exame em 6,2, que tipo de acidente vascular encefálico vocês esperariam?</h3>
           ${S.pausa2Rev ? "" : tempoResp("p2inr")}
           ${S.pausa2Rev ? `<p><strong>Hemorrágico.</strong> Com o sangue coagulando muito devagar, um vaso que se rompe sangra sem parar.</p>
-            <p>Mas ela teve um <strong>isquêmico</strong>. Na internação de novembro, o exame estava entre 2,1 e 2,7, perto da faixa-alvo, e mesmo assim o trombo se formou. O anticoagulante <strong>reduz o risco, mas não o elimina</strong>.</p>`
+            <p>Mas ela teve um <strong>isquêmico</strong>. Na internação de novembro, o exame estava em 1,8, <strong>um pouco abaixo da faixa-alvo</strong>: com a proteção reduzida, o trombo se formou. De 6,2 em junho para 1,8 em novembro: o difícil é <strong>manter o exame dentro da faixa</strong>.</p>`
             : `<div class="btn-row c"><button class="btn primary" data-act="p2-rev">Revelar</button></div>`}
         </div>
       </div>`
