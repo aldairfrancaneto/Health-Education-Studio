@@ -577,7 +577,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.2 &middot; Última atualização: 24 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.4 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -604,14 +604,14 @@ const lab = (rows) => `<div class="lab">${rows.map(([n, v, ref, hi]) => `<div cl
 
 /* Tabela de referência do exame de coagulação (INR); a linha da paciente fica destacada com o valor dela */
 const INR_REF = [
-  ["INR entre 2,0 e 3,0", "Alvo terapêutico para maioria das indicações (fibrilação atrial, TVP, embolia pulmonar)", "Manter dose atual do anticoagulante oral; reavaliar em 4 semanas ou conforme protocolo", "ok"],
-  ["INR entre 3,0 e 4,5", "Supra-terapêutico, aumento moderado do risco hemorrágico", "Reduzir dose do anticoagulante ou omitir uma dose; reavaliar INR em 3–7 dias", "warn"],
-  ["INR > 4,5", "Supra-terapêutico significativo, alto risco de sangramento", "Suspender anticoagulante; considerar vitamina K oral 1–2,5 mg se sem sangramento ativo; reavaliar INR em 24–48 horas", "bad"],
-  ["INR < 1,5 em paciente anticoagulado", "Sub-terapêutico, risco aumentado de eventos tromboembólicos", "Aumentar dose do anticoagulante conforme algoritmo; investigar interações medicamentosas ou dieta rica em vitamina K", "warn"]
+  ["INR entre 2,0 e 3,0", "Alvo terapêutico para maioria das indicações (fibrilação atrial, TVP, embolia pulmonar)", "ok"],
+  ["INR entre 3,0 e 4,5", "Supra-terapêutico, aumento moderado do risco hemorrágico", "warn"],
+  ["INR > 4,5", "Supra-terapêutico significativo, alto risco de sangramento", "bad"],
+  ["INR < 1,5 em paciente anticoagulado", "Sub-terapêutico, risco aumentado de eventos tromboembólicos", "warn"]
 ];
 const inrTabela = (linha, valor, grande) => `<div class="inr-tab ${grande ? "grande" : ""}"><table>
-  <thead><tr><th>Achado</th><th>Interpretação</th><th>Próxima conduta</th></tr></thead>
-  <tbody>${INR_REF.map(([a, i, c, z], k) => `<tr class="${k === linha ? "pac " + z : ""}"><th scope="row">${a}${k === linha ? `<span class="inr-pac">Paciente: ${valor}</span>` : ""}</th><td>${i}</td><td>${c}</td></tr>`).join("")}</tbody>
+  <thead><tr><th>Achado</th><th>Interpretação</th></tr></thead>
+  <tbody>${INR_REF.map(([a, i, z], k) => `<tr class="${k === linha ? "pac " + z : ""}"><th scope="row">${a}${k === linha ? `<span class="inr-pac">Paciente: ${valor}</span>` : ""}</th><td>${i}</td></tr>`).join("")}</tbody>
 </table><small>Pessoa sem anticoagulante: INR de cerca de 1,0.</small></div>`;
 
 /* ---------------- Conteúdo do caso (adaptado) ---------------- */
@@ -667,6 +667,7 @@ const BLOCOS = {
         <p>O coração batia <strong>rápido e em ritmo irregular</strong>.</p>` },
       { id: "b2-tc1", cat: "Exame de imagem", dica: { sobre: "exame de imagem da cabeça.", ex: "Fizeram tomografia?" },
         titulo: "Tomografia computadorizada (TC) nas primeiras horas", html: () => `
+        <p>Feita <strong>depois da convulsão e antes da intubação</strong>.</p>
         ${ct(IMG.ctNormal, "Imagem ilustrativa.", 155)}
         <p><strong>Resultado: normal.</strong> Nenhuma alteração visível.</p>` }
     ]
@@ -720,6 +721,10 @@ const BLOCOS = {
     ]
   }
 };
+
+/* número do cartão na aula inteira (1 a 18, na ordem dos blocos), igual ao do gabarito */
+const CARTAO_N = {};
+Object.values(BLOCOS).flatMap((b) => b.cartoes).forEach((c, i) => { CARTAO_N[c.id] = i + 1; });
 
 const GCS = {
   eyes: { lbl: "Abertura dos olhos", o: [[4, "Espontânea"], [3, "Ao chamado"], [2, "À dor"], [1, "Nenhuma"]] },
@@ -1145,7 +1150,7 @@ function profGabarito() {
     <p class="gab-nota">Os grupos perguntam em voz alta. Abra o cartão quando a pergunta tratar do assunto da coluna “Abra quando perguntarem sobre”. Os exemplos são só referência: perguntas parecidas também valem.</p>
     ${Object.values(BLOCOS).map((b) => `<section><h2>Bloco ${b.n} · ${b.quando} · ${b.titulo}</h2>
       <table class="gab"><thead><tr><th>Cartão</th><th>Abra quando perguntarem sobre</th><th>Exemplo de pergunta</th><th>O que o cartão mostra</th></tr></thead>
-      <tbody>${b.cartoes.map((c, i) => `<tr><td class="n">${i + 1}</td><td>${c.dica.sobre.charAt(0).toUpperCase() + c.dica.sobre.slice(1)}</td><td>“${c.dica.ex}”</td><td><b>${c.cat}</b><br>${c.titulo}</td></tr>`).join("")}</tbody></table>
+      <tbody>${b.cartoes.map((c) => `<tr><td class="n">${CARTAO_N[c.id]}</td><td>${c.dica.sobre.charAt(0).toUpperCase() + c.dica.sobre.slice(1)}</td><td>“${c.dica.ex}”</td><td><b>${c.cat}</b><br>${c.titulo}</td></tr>`).join("")}</tbody></table>
       <p class="gab-depois">Depois dos cartões: ${b.pausa ? `abrir a <b>${pausa[b.pausa]}</b> e, em seguida, ` : ""}rebobinar — “${b.rebobinar}”</p></section>`).join("")}`;
   const titulo = document.title;
   document.title = "Gabarito dos cartões - " + NOME;
@@ -1187,7 +1192,7 @@ function telaBloco(id) {
   const units = b.cartoes.reduce((a, c) => a + (c.span || (c.wide ? 2 : 1)), 0);
   return `<section class="screen">
     ${head(`Bloco ${b.n} · ${b.quando}`, b.titulo, b.intro)}
-    <div class="body"><div class="cards" style="--units:${units};${b.cols ? `--cols:${b.cols}` : ""}">${b.cartoes.map((c, i) => cardHTML(c, i)).join("")}</div></div>
+    <div class="body"><div class="cards" style="--units:${units};${b.cols ? `--cols:${b.cols}` : ""}">${b.cartoes.map((c) => cardHTML(c, CARTAO_N[c.id])).join("")}</div></div>
     ${b.pausa ? (pausaFeita(b.pausa)
       ? navRow("Rebobinar", `<button class="btn pausa-ok" data-pausa="${b.pausa}">✓ Pausa didática vista · rever</button>`)
       : navRow("Rebobinar", `<button class="btn pausa-cta" data-pausa="${b.pausa}">📘 Abrir pausa didática</button><span class="pausa-aviso">Percorra a pausa até a última página para liberar “Rebobinar”.</span>`, "Abra a pausa didática e percorra todas as páginas antes de rebobinar."))
@@ -1195,12 +1200,12 @@ function telaBloco(id) {
   </section>`;
 }
 
-function cardHTML(c, i) {
+function cardHTML(c, n) {
   const open = !!S.abertos[c.id];
   return `<div class="card ${c.wide && !c.noSpan ? "wide" : ""} ${open ? "open" : ""}" data-card="${c.id}">
     <div class="card-inner">
-      <button class="face back" data-open="${c.id}" ${open ? 'tabindex="-1" aria-hidden="true"' : ""} aria-label="Abrir cartão ${i + 1}">
-        <span class="cat">Cartão ${i + 1}</span>
+      <button class="face back" data-open="${c.id}" ${open ? 'tabindex="-1" aria-hidden="true"' : ""} aria-label="Abrir cartão ${n}">
+        <span class="cat">Cartão ${n}</span>
         <span class="q" aria-hidden="true">?</span>
         <span class="lock">Abre com a pergunta certa</span>
       </button>
