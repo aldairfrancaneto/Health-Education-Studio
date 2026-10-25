@@ -167,6 +167,17 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .pz-item.on span::before{content:'▶ '}
 .pz-item em{font-style:normal;font-family:var(--f-display);font-size:12px;white-space:nowrap}
 .pause-box .ctl-help{font-size:22px}
+/* leaving the game: small and out of the way, bottom right of the pause box, with a confirmation */
+.pz-sair{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:-6px;font-size:17px;color:var(--muted)}
+.pz-sair button{all:unset;cursor:pointer;font-size:16px;color:var(--muted);padding:3px 8px;border:1px solid transparent;border-radius:4px}
+.pz-sair button:hover,.pz-sair button:focus-visible{color:var(--ink);border-color:var(--line)}
+#pzSairConf{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#pzSairConf[hidden]{display:none}
+#pzSairSim{color:var(--danger)}
+.tela-menu.tela-tchau{position:fixed;z-index:2147483001;display:flex;align-items:center;justify-content:center;padding:24px}
+.tm-tchau .tm-logo{text-transform:none}
+.tela-tchau[hidden]{display:none}
+.tm-tchau{display:flex;flex-direction:column;align-items:center;gap:22px;padding:clamp(24px,5vh,44px) clamp(22px,4vw,56px);text-align:center;max-width:560px;--b1:var(--p-rox);--b2:var(--p-lar);--b3:var(--p-tur);--c:var(--p-ros);--c2:var(--p-azu)}
 
 /* Poster viewer */
 .modal{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;gap:10px;background:rgba(16,10,8,.95);padding-inline:16px;padding-block:calc(env(safe-area-inset-top,0px) + 12px) calc(env(safe-area-inset-bottom,0px) + 12px)}
@@ -186,6 +197,85 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 /* Opening screens (press start, fake loading, player name): full-viewport layers above the game */
 .tela-titulo,.tela-carregando,.tela-personagem,.tela-nome,.tela-enredo,.tela-continuar{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px;padding:56px 24px;box-sizing:border-box;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#3a2414 0%,var(--bg) 68%)}
 .tela-titulo{cursor:pointer}
+/* main menu (after Press Start): everything as if coloured with a box of coloured pencils on paper. Three bands
+   filling the screen (title, menu + preview side by side, button hints), each in a hand-drawn frame: three pencil
+   lines of different colours, a little wobbly (#tmLapis), with flourishes in the corners; the paper inside is shaded
+   with criss-cross pencil strokes. Each item has its own pencil colour (--c). */
+.tela-menu{--p-ver:#d8433b;--p-lar:#ee8a2c;--p-ama:#f2c53d;--p-vde:#4fa65a;--p-tur:#2f9c9a;--p-azu:#3f6fc4;--p-rox:#8a5bb8;--p-ros:#e2669b;--p-mar:#8a5a3c;--papel:#f6ead0;--grafite:#3a2c22;
+  position:absolute;inset:0;z-index:30;display:grid;grid-template-rows:auto 1fr auto;gap:clamp(12px,2.6vh,26px);padding:clamp(48px,7vh,58px) clamp(18px,3.4vw,44px) clamp(14px,3vh,30px);box-sizing:border-box;overflow:hidden;
+  background:
+    repeating-linear-gradient(118deg,rgba(226,102,155,.10) 0 2px,transparent 2px 9px),
+    repeating-linear-gradient(28deg,rgba(63,111,196,.12) 0 2px,transparent 2px 11px),
+    repeating-linear-gradient(72deg,rgba(242,197,61,.07) 0 1px,transparent 1px 7px),
+    radial-gradient(ellipse at 18% 22%,rgba(138,91,184,.35),transparent 55%),
+    radial-gradient(ellipse at 84% 78%,rgba(47,156,154,.32),transparent 55%),
+    radial-gradient(ellipse at 80% 14%,rgba(238,138,44,.22),transparent 45%),
+    radial-gradient(ellipse at 14% 86%,rgba(216,67,59,.22),transparent 45%),
+    #1f1630}
+.tm-quadro{position:relative;z-index:1;min-width:0;min-height:0;color:var(--grafite);
+  background:
+    repeating-linear-gradient(135deg,color-mix(in srgb,var(--c,var(--p-ama)) 16%,transparent) 0 2px,transparent 2px 7px),
+    repeating-linear-gradient(45deg,color-mix(in srgb,var(--c2,var(--p-azu)) 10%,transparent) 0 1px,transparent 1px 8px),
+    var(--papel);
+  border-radius:6px;box-shadow:0 8px 0 rgba(0,0,0,.35)}
+.tm-borda{position:absolute;inset:-7px;pointer-events:none;border-radius:10px;border:4px solid var(--b1,var(--p-ver));
+  box-shadow:inset 0 0 0 3px var(--papel),inset 0 0 0 6px var(--b2,var(--p-azu)),inset 0 0 0 8px var(--papel),inset 0 0 0 10px var(--b3,var(--p-ama)),0 0 0 3px var(--b3,var(--p-vde));filter:url(#tmLapis)}
+.tm-canto{position:absolute;width:clamp(26px,3.4vw,40px);height:clamp(26px,3.4vw,40px);pointer-events:none;z-index:2}
+.tm-canto.tl{left:-16px;top:-16px}.tm-canto.tr{right:-16px;top:-16px;transform:scaleX(-1)}
+.tm-canto.bl{left:-16px;bottom:-16px;transform:scaleY(-1)}.tm-canto.br{right:-16px;bottom:-16px;transform:scale(-1,-1)}
+.tm-topo{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(10px,2vh,18px) 20px;text-align:center;--b1:var(--p-rox);--b2:var(--p-lar);--b3:var(--p-tur);--c:var(--p-ros);--c2:var(--p-azu)}
+.tm-logo{font-family:var(--f-display);font-size:clamp(20px,4.4vw,40px);line-height:1.2;letter-spacing:.04em;text-transform:uppercase;text-shadow:2px 2px 0 rgba(58,44,34,.35)}
+.tm-logo span:nth-child(9n+1){color:var(--p-ver)}.tm-logo span:nth-child(9n+2){color:var(--p-lar)}.tm-logo span:nth-child(9n+3){color:#d9a21c}
+.tm-logo span:nth-child(9n+4){color:var(--p-vde)}.tm-logo span:nth-child(9n+5){color:var(--p-tur)}.tm-logo span:nth-child(9n+6){color:var(--p-azu)}
+.tm-logo span:nth-child(9n+7){color:var(--p-rox)}.tm-logo span:nth-child(9n+8){color:var(--p-ros)}.tm-logo span:nth-child(9n+9){color:var(--p-mar)}
+.tm-sub{margin-top:clamp(2px,.6vh,6px);font-size:clamp(20px,2.4vw,28px);letter-spacing:.06em;line-height:1.1;color:var(--grafite)}
+.tm-sub b{color:var(--p-rox);font-weight:400}
+.tm-sub i{font-style:normal;color:var(--p-ver)}
+.tm-corpo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,4vw,56px);min-height:0}
+.tm-lista{display:flex;flex-direction:column;padding:clamp(12px,2.4vh,22px) clamp(12px,1.8vw,22px);gap:clamp(4px,1vh,10px);--b1:var(--p-azu);--b2:var(--p-ver);--b3:var(--p-vde);--c:var(--p-azu);--c2:var(--p-ama)}
+.tm-tit{font-family:var(--f-display);font-size:clamp(9px,1.1vw,12px);letter-spacing:.1em;color:var(--p-rox);text-align:center;padding:0 6px clamp(6px,1.2vh,12px);
+  background:linear-gradient(90deg,var(--p-ver),var(--p-lar),var(--p-ama),var(--p-vde),var(--p-azu),var(--p-rox)) bottom/100% 3px no-repeat}
+.tm-item{all:unset;box-sizing:border-box;cursor:pointer;flex:1;max-height:92px;display:flex;align-items:center;gap:12px;padding:6px 14px;position:relative;border-radius:6px;
+  font-family:var(--f-display);font-size:clamp(11px,1.5vw,16px);letter-spacing:.05em;line-height:1.35;color:var(--grafite);
+  background:linear-gradient(90deg,var(--c) 0 8px,transparent 8px),repeating-linear-gradient(120deg,color-mix(in srgb,var(--c) 12%,transparent) 0 2px,transparent 2px 8px);
+  border:3px dashed color-mix(in srgb,var(--c) 45%,transparent)}
+.tm-item .tm-cur{width:1.1em;flex:none;color:var(--c);visibility:hidden;font-size:1.2em}
+.tm-item .tm-txt{flex:1}
+.tm-item .tm-val{flex:none;color:var(--c);font-size:.85em;white-space:nowrap;filter:brightness(.8)}
+.tm-item .tm-val span[data-d]{cursor:pointer;padding:4px}
+.tm-item.on{color:#fff;border:3px solid var(--grafite);box-shadow:0 4px 0 rgba(58,44,34,.35);text-shadow:2px 2px 0 rgba(0,0,0,.3);
+  background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 2px,transparent 2px 7px),repeating-linear-gradient(30deg,rgba(0,0,0,.08) 0 1px,transparent 1px 6px),var(--c)}
+.tm-item.on .tm-cur{visibility:visible;color:#fff;animation:ttBlink .8s steps(1) infinite}
+.tm-item.on .tm-val{color:#fff;filter:none}
+.tm-item.off{--c:#a39a90;color:#9a9088}
+.tm-item.off.on{color:#f6ead0}
+.tm-item:focus-visible{outline:3px solid var(--p-rox);outline-offset:3px}
+.tm-painel{display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;gap:12px;padding:clamp(12px,2.4vh,24px) clamp(14px,2vw,26px);text-align:center;--b1:var(--c,var(--p-vde));--b2:var(--p-ama);--b3:var(--p-ros);--c2:var(--p-tur)}
+.tm-ico{display:flex;align-items:center;justify-content:center;width:clamp(84px,13vw,150px);aspect-ratio:1;border-radius:50%;font-size:clamp(36px,6vw,66px);line-height:1;
+  background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--c) 30%,transparent) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,color-mix(in srgb,var(--p-ama) 35%,transparent) 0 2px,transparent 2px 7px),#fffaf0;
+  border:4px solid var(--c);box-shadow:0 0 0 4px var(--papel),0 0 0 7px var(--p-ama);filter:drop-shadow(0 4px 0 rgba(58,44,34,.25))}
+.tm-ico canvas{display:block;width:60%;height:auto;aspect-ratio:2/3;image-rendering:pixelated}
+.tm-pt{font-family:var(--f-display);font-size:clamp(11px,1.5vw,16px);letter-spacing:.05em;color:var(--c);line-height:1.5;filter:brightness(.85)}
+.tm-pd{font-size:clamp(19px,2.2vw,26px);line-height:1.2;color:var(--grafite);max-width:32ch}
+.tm-pd small{display:block;margin-top:8px;font-size:.85em;color:var(--p-ver)}
+.tm-ajuda{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;width:100%;font-size:clamp(16px,1.7vw,20px);line-height:1.15;color:var(--grafite);text-align:left}
+.tm-ajuda>div{padding:8px 10px;border-radius:6px;border:2px dashed color-mix(in srgb,var(--k) 60%,transparent);background:color-mix(in srgb,var(--k) 10%,transparent)}
+.tm-ajuda>div:nth-child(1){--k:var(--p-azu)}.tm-ajuda>div:nth-child(2){--k:var(--p-vde)}.tm-ajuda>div:nth-child(3){--k:var(--p-rox);grid-column:1/-1;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center}
+.tm-ajuda b{display:block;margin-bottom:4px;font-family:var(--f-display);font-size:10px;letter-spacing:.06em;color:var(--k);font-weight:400}
+.tm-ajuda>div:nth-child(3) b{grid-column:1/-1}
+.tm-ajuda svg{width:110px;height:74px;display:block}
+.tm-ajuda ul{margin:0;padding:0;list-style:none;display:grid;gap:3px}
+.tm-ajuda .gpb{margin-right:6px}
+.tm-rodape{display:flex;justify-content:space-evenly;align-items:center;flex-wrap:wrap;gap:6px 18px;padding:clamp(8px,1.4vh,12px) 16px;font-size:clamp(17px,1.8vw,21px);color:var(--grafite);--b1:var(--p-lar);--b2:var(--p-tur);--b3:var(--p-rox);--c:var(--p-vde);--c2:var(--p-ros)}
+.tm-rodape kbd{font-family:var(--f-display);font-size:9px;color:#fff;padding:4px 7px;margin-right:6px;border-radius:4px;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.tm-rodape>span:nth-child(3n+1) kbd{background:var(--p-azu)}.tm-rodape>span:nth-child(3n+2) kbd{background:var(--p-vde)}.tm-rodape>span:nth-child(3n) kbd{background:var(--p-ver)}
+.tm-rodape .so-gp{display:none}body.gp .tm-rodape .so-gp{display:inline}body.gp .tm-rodape .so-tec{display:none}
+.tm-rabisco{position:absolute;z-index:0;pointer-events:none;opacity:.55}
+@media (max-width:640px) and (orientation:portrait){.tm-corpo{grid-template-columns:1fr;grid-template-rows:auto auto}.tela-menu{overflow-y:auto;grid-template-rows:auto auto auto}.tm-corpo,.tm-quadro{min-height:auto}.tm-item{flex:none;min-height:52px}}
+@media (max-height:520px){.tela-menu{gap:9px;padding:44px 18px 8px}.tm-topo{flex-direction:row;gap:16px;padding:5px 14px}.tm-logo{font-size:17px}.tm-sub{margin:0;font-size:17px}
+  .tm-tit{display:none}.tm-corpo{gap:22px}.tm-lista{padding:8px 10px;gap:5px}.tm-item{font-size:10px;padding:3px 10px;max-height:none}
+  .tm-painel{padding:8px 12px;gap:6px;overflow:auto;justify-content:space-evenly}.tm-ico{width:58px;font-size:28px;box-shadow:0 0 0 3px var(--papel),0 0 0 5px var(--p-ama)}.tm-pd{font-size:16px}.tm-pt{font-size:10px}
+  .tm-ajuda{font-size:14px;gap:5px}.tm-ajuda>div{padding:4px 7px}.tm-ajuda svg{display:none}.tm-rodape{padding:7px 10px;font-size:15px}.tm-canto{width:20px;height:20px}.tm-canto.tl,.tm-canto.bl{left:-12px}.tm-canto.tr,.tm-canto.br{right:-12px}.tm-canto.tl,.tm-canto.tr{top:-12px}.tm-canto.bl,.tm-canto.br{bottom:-12px}}
 .tela-titulo::after,.tela-carregando::after,.tela-personagem::after,.tela-nome::after,.tela-enredo::after,.tela-continuar::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 2px,transparent 2px 4px);opacity:.4}
 .tt-ico{display:block;width:auto;height:auto;max-width:min(92vw,720px);max-height:40vh;aspect-ratio:1408/768;object-fit:contain;border:3px solid #1d1612;border-radius:10px;box-shadow:0 6px 0 rgba(0,0,0,.35);image-rendering:pixelated}
 @media (max-height:500px){.tela-titulo{gap:10px;padding-top:12px;padding-bottom:12px}.tela-titulo .tt-ico{max-height:34vh}.tela-titulo .tt-titulo{font-size:clamp(16px,3.6vw,26px);line-height:1.35}.tela-titulo .tt-start{margin-top:0}}
@@ -566,6 +656,30 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   <div class="tt-start">▶ Press Start</div>
 </div>
 
+<div class="tela-menu" id="telaMenu" style="display:none;">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="tmLapis" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+    <symbol id="tmCanto" viewBox="0 0 40 40">
+      <path d="M6 34C6 18 14 8 34 6" fill="none" stroke="#8a5bb8" stroke-width="3" stroke-linecap="round"/>
+      <path d="M10 30C11 20 17 13 28 11" fill="none" stroke="#2f9c9a" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+      <circle cx="8" cy="8" r="6.5" fill="#f2c53d" stroke="#d8433b" stroke-width="2.4"/><circle cx="8" cy="8" r="2.4" fill="#d8433b"/>
+      <path d="M17 4l2.2 4.6 5 .6-3.7 3.4 1 5-4.5-2.5-4.5 2.5 1-5L9.8 9.2l5-.6z" transform="translate(9 -1) scale(.62)" fill="#e2669b" stroke="#8a5a3c" stroke-width="1.6"/>
+      <path d="M4 22c4-1 6 1 6 5" fill="none" stroke="#4fa65a" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="6" cy="20" rx="3.6" ry="2" transform="rotate(-35 6 20)" fill="#4fa65a"/>
+      <path d="M22 4c-1 4 1 6 5 6" fill="none" stroke="#ee8a2c" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="20" cy="6" rx="3.6" ry="2" transform="rotate(-55 20 6)" fill="#ee8a2c"/>
+    </symbol>
+  </svg>
+  <div class="tm-quadro tm-topo"><div class="tm-borda"></div><svg class="tm-canto tl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto tr" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto bl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto br" aria-hidden="true"><use href="#tmCanto"/></svg>
+    <div class="tm-logo" aria-label="Uninogwarts"><span>U</span><span>n</span><span>i</span><span>n</span><span>o</span><span>g</span><span>w</span><span>a</span><span>r</span><span>t</span><span>s</span></div><div class="tm-sub">O desafio bioquímico · <b>Temporada 1</b></div></div>
+  <div class="tm-corpo">
+    <div class="tm-quadro tm-lista" id="tmLista" role="menu" aria-label="Menu principal"></div>
+    <div class="tm-quadro tm-painel" id="tmPainel" aria-live="polite"></div>
+  </div>
+  <div class="tm-quadro tm-rodape" aria-hidden="true"><div class="tm-borda"></div><svg class="tm-canto tl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto tr" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto bl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto br" aria-hidden="true"><use href="#tmCanto"/></svg>
+    <span class="so-tec"><kbd>↑↓</kbd>Escolher</span><span class="so-tec"><kbd>ENTER</kbd>Confirmar</span><span class="so-tec"><kbd>ESC</kbd>Voltar</span>
+    <span class="so-gp"><span class="gpb d"><i>✚</i></span> Escolher</span><span class="so-gp"><span class="gpb a">A</span> Confirmar</span><span class="so-gp"><span class="gpb x">X</span> Voltar</span>
+  </div>
+</div>
+
 <div class="tela-carregando aguarda-fontes" id="telaCarregando">
   <div class="tc-titulo">Carregando</div>
   <div class="tc-barra"><div class="tc-preenchimento" id="tcPreenchimento"></div></div>
@@ -755,7 +869,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.57 &middot; Última atualização: 24 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.58 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -797,6 +911,15 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     </article>
     <div class="pz-menu" id="pz-menu"></div>
     <div class="ctl-help" id="pz-ajuda" hidden></div>
+    <div class="pz-sair"><button type="button" id="pzSair">⏻ Sair do jogo</button>
+      <span id="pzSairConf" hidden><span id="pzSairTxt"></span><button type="button" id="pzSairSim">Sair</button><button type="button" id="pzSairNao">Ficar</button></span></div>
+  </div>
+</div>
+<div class="tela-menu tela-tchau" id="telaTchau" hidden role="dialog" aria-label="Até a próxima">
+  <div class="tm-quadro tm-tchau"><div class="tm-borda"></div>
+    <div class="tm-logo" aria-hidden="true"><span>A</span><span>t</span><span>é</span> <span>l</span><span>o</span><span>g</span><span>o</span><span>!</span></div>
+    <p class="tm-pd">Você saiu do jogo. Já pode fechar esta aba do navegador.</p>
+    <button type="button" class="tn-btn" id="btnTchau">▶ Voltar a jogar</button>
   </div>
 </div>
 <div class="modal" id="quiz" hidden role="dialog" aria-label="Folha de atividade">
@@ -9543,6 +9666,7 @@ if('gamepadInputEmulation' in navigator)try{navigator.gamepadInputEmulation='gam
 const keyLabel=()=>padOn?'<span class="gpb a">A</span>':'ENTER';
 function padKey(code,repeat){
   if(state==='boot'){ // opening screens: the name screen has its own keyboard; A or Menu leaves the title screen
+    if(window.telaMenuPad&&window.telaMenuPad(code))return;
     if(window.telaContinuarPad&&window.telaContinuarPad(code))return;
     if(window.telaPersonagemPad&&window.telaPersonagemPad(code))return;
     if(window.telaAmigoPad&&window.telaAmigoPad(code))return;
@@ -9632,8 +9756,28 @@ function renderPause(){
 function openPause(){
   if(state!=='play'&&state!=='dialog')return;
   closeVol();pauseBack=state;pauseAt=performance.now();pauseSel=0;pauseHelp=false;keys.clear();
-  state='pause';diaryOpens++;pauseEl.hidden=false;renderPause();syncDiaryDot();tone(520,.06,'square',.03);pauseBtn.setAttribute('aria-pressed','true');
+  state='pause';diaryOpens++;pauseEl.hidden=false;pauseSairPerg(false);renderPause();syncDiaryDot();tone(520,.06,'square',.03);pauseBtn.setAttribute('aria-pressed','true');
 }
+// leaving the game: saves (when it is a calm moment: walking, not in a dialog, a big scene or the simulator) and goes
+// back to the opening screens; online it also leaves the duo
+function pauseSairPerg(on){$('pzSair').hidden=on;$('pzSairConf').hidden=!on;
+  if(on){const guest=window.duo&&window.duo.ativo()&&!window.duo.anfitriao(),calm=pauseCalm();
+    $('pzSairTxt').textContent=guest?'Sair do jogo e fechar a aba? Ele fica salvo no aparelho do seu amigo.':calm?'Sair do jogo e fechar a aba? Ele fica salvo neste navegador.':'Sair e fechar a aba? Fica valendo o último salvamento automático.';
+  }}
+const pauseCalm=()=>pauseBack==='play'&&!tdCut&&!fade&&scene!=='salaSim'&&scene!=='simGlic'&&!(flags.graded&&!flags.pass);
+function pauseSair(){
+  if(startTime&&!endTime&&pauseCalm())saveGame();
+  if(window.duo&&window.duo.ativo())window.duo.sair();
+  muted=true;music.vol=music.vol;state='boot';pauseEl.hidden=true;
+  try{window.close();}catch(e){}
+  // the browser only lets a page close a tab it opened itself (the site opens the game in a new tab, so it usually
+  // works): otherwise a goodbye screen says the tab can be closed
+  setTimeout(()=>{$('telaTchau').hidden=false;try{$('btnTchau').focus();}catch(e){}},400);
+}
+$('btnTchau').addEventListener('click',()=>location.reload());
+$('pzSair').addEventListener('click',e=>{e.stopPropagation();pauseSairPerg(true);});
+$('pzSairNao').addEventListener('click',e=>{e.stopPropagation();pauseSairPerg(false);});
+$('pzSairSim').addEventListener('click',e=>{e.stopPropagation();pauseSair();});
 function closePause(){
   if(state!=='pause')return;
   if(!endTime)startTime+=performance.now()-pauseAt; // the paused time does not count on the clock
@@ -12391,7 +12535,7 @@ requestAnimationFrame(loop);
   dupCampo.addEventListener('keydown', function(e){ e.stopPropagation(); if (e.key === 'Enter'){ e.preventDefault(); dupEntrarOk(); } });
   dupCampo.addEventListener('input', function(){ dupCampo.value = dupCampo.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); });
   document.getElementById('dupVoltar').addEventListener('click', function(){
-    if (window.duo) window.duo.sair(); dupPapel = null; telaDupla.style.display = 'none'; if (dupContinuar) pedirContinuar(); else pedirModo();
+    if (window.duo) window.duo.sair(); dupPapel = null; telaDupla.style.display = 'none'; pedirMenu();
   });
   window.telaDuplaPad = function(code){
     if (telaDupla.style.display === 'none') return false;
@@ -12533,7 +12677,7 @@ requestAnimationFrame(loop);
   };
   var pronto = false;
   function mostrarTitulo(){ carregando.style.display = 'none'; titulo.style.display = ''; pronto = true; try{ titulo.focus(); }catch(e){} }
-  function entrar(){ if (!pronto) return; pronto = false; titulo.style.display = 'none'; (window.jogoSalvo && window.jogoSalvo() ? pedirContinuar : pedirModo)(); }
+  function entrar(){ if (!pronto) return; pronto = false; titulo.style.display = 'none'; pedirMenu(); }
   /* saved game in this browser: continue it, or start over (new character, the save is erased) */
   var telaContinuar = document.getElementById('telaContinuar'), btnCont = document.getElementById('btnContinuar'), btnNovo = document.getElementById('btnNovoJogo'), btnContD = document.getElementById('btnContDupla'), contSel = 0;
   var contBtns = [btnCont, btnContD, btnNovo];
@@ -12574,6 +12718,150 @@ requestAnimationFrame(loop);
     if (code === 'ArrowUp' || code === 'ArrowLeft'){ marcarCont(contSel - 1); bipLoad(520, 0, .03, 'square', .03); }
     else if (code === 'ArrowDown' || code === 'ArrowRight'){ marcarCont(contSel + 1); bipLoad(520, 0, .03, 'square', .03); }
     else if (code === 'Enter' || code === 'Menu') escolherCont(contSel);
+    return true;
+  };
+
+  /* main menu, right after Press Start: Continuar · Novo jogo · Dupla online · Opções, always all on screen (Continuar
+     greyed out when there is no saved game). A blinking ▶ marks the item; the panel on the right shows what it does
+     (the saved game with its character, the options' help); some items open a short list of their own (confirm,
+     duo with a saved game, options), ESC / X goes back. */
+  var telaMenu = document.getElementById('telaMenu'), tmLista = document.getElementById('tmLista'), tmPainel = document.getElementById('tmPainel');
+  var tmPilha = [], tmSel = 0;
+  var TM_CORES = ['var(--p-ver)', 'var(--p-lar)', 'var(--p-vde)', 'var(--p-azu)', 'var(--p-rox)', 'var(--p-ros)']; // one pencil per item
+  function tmMoldura(el){ // the hand-drawn frame and the four corner flourishes (redrawn whenever the box is refilled)
+    var b = document.createElement('div'); b.className = 'tm-borda'; el.appendChild(b);
+    ['tl', 'tr', 'bl', 'br'].forEach(function(k){ var sv = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); sv.setAttribute('class', 'tm-canto ' + k); sv.setAttribute('aria-hidden', 'true');
+      var u = document.createElementNS('http://www.w3.org/2000/svg', 'use'); u.setAttribute('href', '#tmCanto'); sv.appendChild(u); el.appendChild(sv); });
+  }
+  function tmSpan(cls, txt){ var e = document.createElement('span'); if (cls) e.className = cls; e.textContent = txt; return e; }
+  function tmSalvo(){ return window.jogoSalvo ? window.jogoSalvo() : null; }
+  function tmFs(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function tmTxt(id){ var e = document.getElementById(id); return e ? e.textContent : ''; }
+  function tmClique(id){ var e = document.getElementById(id); if (e) e.click(); }
+  function tmApagar(){ if (window.apagarJogoSalvo) window.apagarJogoSalvo(); }
+  function tmPrincipal(){
+    var d = tmSalvo();
+    return {tit: 'Menu principal', itens: [
+      {t: 'Continuar', off: !d, salvo: d,
+        pt: d ? '' : 'Nenhum jogo salvo', pd: d ? '' : 'Quando você joga, o jogo é salvo sozinho a cada 5 minutos, neste navegador.',
+        fn: function(){ tmFechar(); window.continuarJogo(); }},
+      {t: 'Novo jogo', ico: '🎒', pt: 'Novo jogo', pd: 'Sozinho, com um amigo de aventura do jogo. Começa às 7h30, na entrada da faculdade.', ps: d ? 'O jogo salvo neste navegador será apagado.' : '',
+        fn: function(){ if (d) tmAbrir(tmConfirmaNovo(d)); else { tmFechar(); pedirPersonagem(); } }},
+      {t: 'Dupla online', ico: '🌐', pt: 'Dupla online', pd: 'O amigo de aventura é outro aluno, em outro aparelho: um cria a sala e passa o código, o outro entra com ele.',
+        fn: function(){ if (d) tmAbrir(tmDuplaSalvo(d)); else { tmFechar(); pedirDupla(false); } }},
+      {t: 'Opções', ico: '⚙️', pt: 'Opções', pd: 'Volume da música e dos efeitos, tela cheia e os controles.',
+        fn: function(){ tmAbrir(tmOpcoes()); }}]};
+  }
+  function tmConfirmaNovo(d){
+    return {tit: 'Novo jogo', itens: [
+      {t: 'Apagar e começar do zero', ico: '⚠️', pt: 'Começar do zero?', pd: 'O jogo salvo de ' + (d.nome || 'sem nome') + ' (' + d.hora + ', ' + d.pct + '% das missões) será apagado deste navegador.',
+        fn: function(){ tmApagar(); tmFechar(); pedirPersonagem(); }},
+      {t: 'Voltar', ico: '↩', pt: 'Voltar', pd: 'O jogo salvo continua guardado.', fn: tmVoltar}]};
+  }
+  function tmDuplaSalvo(d){
+    return {tit: 'Dupla online', itens: [
+      {t: 'Continuar o jogo salvo', ico: '🌐', pt: 'Continuar em dupla', pd: 'Você cria a sala e o seu amigo entra no jogo de ' + (d.nome || 'sem nome') + ', de onde parou (' + d.hora + ').',
+        fn: function(){ tmFechar(); pedirDupla(true); }},
+      {t: 'Sala nova ou entrar', ico: '🔑', pt: 'Sala nova ou entrar na de um amigo', pd: 'Criar uma sala nova começa um jogo do zero, que substitui o jogo salvo no primeiro salvamento. Entrar na sala de um amigo não mexe no seu jogo salvo.',
+        fn: function(){ tmFechar(); pedirDupla(false); }},
+      {t: 'Voltar', ico: '↩', pt: 'Voltar', pd: 'Volta ao menu principal.', fn: tmVoltar}]};
+  }
+  function tmOpcoes(){
+    return {tit: 'Opções', itens: [
+      {t: 'Música', ico: '🎵', pt: 'Volume da música', pd: 'Use ◀ ▶ (ou toque nas setas) para mudar o volume da trilha sonora.', val: function(){ return tmTxt('pvPct'); },
+        lr: function(k){ tmClique(k < 0 ? 'pvMenos' : 'pvMais'); }},
+      {t: 'Efeitos', ico: '🔔', pt: 'Volume dos efeitos', pd: 'Use ◀ ▶ (ou toque nas setas) para mudar o volume dos sons do jogo.', val: function(){ return tmTxt('pvPctEf'); },
+        lr: function(k){ tmClique(k < 0 ? 'pvMenosEf' : 'pvMaisEf'); bipLoad(660, 0, .05, 'square', .05); }},
+      {t: 'Tela cheia', ico: '⛶', pt: 'Tela cheia', pd: 'Liga ou desliga a tela cheia. O botão do canto superior direito faz o mesmo.', val: function(){ return tmFs() ? 'Ligada' : 'Desligada'; },
+        lr: function(){ tmClique('btnTelaCheia'); setTimeout(tmRender, 350); }},
+      {t: 'Controles', ajuda: true},
+      {t: 'Voltar', ico: '↩', pt: 'Voltar', pd: 'Volta ao menu principal.', fn: tmVoltar}]};
+  }
+  function tmPainelDe(it, cor){
+    tmPainel.textContent = ''; tmMoldura(tmPainel); tmPainel.style.setProperty('--c', it.off ? '#a39a90' : cor);
+    if (it.salvo){ // the saved game: its character, name, time and missions
+      var d = it.salvo, ic = document.createElement('div'); ic.className = 'tm-ico';
+      if (window.miniaturaPersonagem){ var cv = document.createElement('canvas'); ic.appendChild(cv); window.miniaturaPersonagem(cv, d.avatar, false, d.pele); }
+      var pd = document.createElement('div'); pd.className = 'tm-pd'; pd.textContent = d.hora + ' no relógio da faculdade · ' + d.pct + '% das missões';
+      var sm = document.createElement('small'); sm.textContent = 'Salvo em ' + d.quando; pd.appendChild(sm);
+      tmPainel.append(ic, tmSpan('tm-pt', d.nome || 'Sem nome'), pd); return;
+    }
+    if (it.ajuda){ // the controls: keyboard, touch, game controller
+      var a = document.createElement('div'); a.className = 'tm-ajuda';
+      [['Teclado', 'Setas ou W A S D: andar · ENTER: falar e examinar · ESC: sair da folha · M: tirar o som'],
+       ['Toque', 'Toque onde quer ir; toque numa pessoa ou coisa para ir até ela e falar']].forEach(function(l){
+        var p = document.createElement('div'); p.appendChild(tmSpan('', '')).appendChild(document.createElement('b')).textContent = l[0]; p.appendChild(document.createElement('br')); p.appendChild(document.createTextNode(l[1])); a.appendChild(p); });
+      var gp = document.createElement('div'), gb = document.createElement('b'); gb.textContent = 'Controle'; gp.appendChild(gb);
+      var src = document.getElementById('intro-ctl'); if (src){ var cp = document.createElement('div'); cp.style.display = 'contents'; cp.innerHTML = src.innerHTML; gp.appendChild(cp); }
+      a.appendChild(gp); tmPainel.appendChild(a); return;
+    }
+    var ic2 = tmSpan('tm-ico', it.ico || ''); ic2.setAttribute('aria-hidden', 'true');
+    var pd2 = document.createElement('div'); pd2.className = 'tm-pd'; pd2.textContent = it.pd || '';
+    if (it.ps){ var s2 = document.createElement('small'); s2.textContent = it.ps; pd2.appendChild(s2); }
+    tmPainel.append(ic2, tmSpan('tm-pt', it.pt || it.t), pd2);
+  }
+  function tmRender(){
+    if (!tmPilha.length) return;
+    var L = tmPilha[tmPilha.length - 1];
+    tmLista.textContent = ''; tmMoldura(tmLista);
+    tmLista.appendChild(tmSpan('tm-tit', L.tit));
+    L.itens.forEach(function(it, i){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tm-item' + (i === tmSel ? ' on' : '') + (it.off ? ' off' : '');
+      b.setAttribute('role', 'menuitem'); if (it.off) b.setAttribute('aria-disabled', 'true');
+      b.style.setProperty('--c', it.off ? '#a39a90' : TM_CORES[i % TM_CORES.length]);
+      b.append(tmSpan('tm-cur', '▶'), tmSpan('tm-txt', it.t));
+      if (it.val){ var v = tmSpan('tm-val', ''), m = tmSpan('', '◀ '), p = tmSpan('', ' ▶'); m.dataset.d = '-1'; p.dataset.d = '1'; v.append(m, tmSpan('', it.val()), p); b.appendChild(v); }
+      b.addEventListener('pointermove', function(e){ if (e.pointerType === 'mouse' && tmSel !== i){ tmSel = i; tmRender(); } });
+      b.addEventListener('click', function(e){
+        var k = e.target && e.target.dataset ? Number(e.target.dataset.d) : 0;
+        tmSel = i;
+        if (k && it.lr){ it.lr(k); bipLoad(520, 0, .03, 'square', .03); tmRender(); return; }
+        tmOk();
+      });
+      tmLista.appendChild(b);
+    });
+    tmPainelDe(L.itens[tmSel], TM_CORES[tmSel % TM_CORES.length]);
+    try{ tmLista.querySelectorAll('.tm-item')[tmSel].focus({preventScroll: true}); }catch(e){}
+  }
+  function tmMover(k){ var n = tmPilha[tmPilha.length - 1].itens.length; tmSel = (tmSel + k + n) % n; bipLoad(520, 0, .03, 'square', .03); tmRender(); }
+  function tmLado(k){ var it = tmPilha[tmPilha.length - 1].itens[tmSel]; if (!it.lr) return; it.lr(k); bipLoad(520, 0, .03, 'square', .03); setTimeout(tmRender, 30); }
+  function tmOk(){
+    var it = tmPilha[tmPilha.length - 1].itens[tmSel];
+    if (it.off || (!it.fn && !it.lr)){ bipLoad(180, 0, .12, 'square', .05); return; }
+    if (it.lr && !it.fn){ tmLado(1); return; } // (ENTER on a value: the next value)
+    bipLoad(660, 0, .08, 'square', .05); bipLoad(990, .07, .14, 'square', .05);
+    it.fn();
+  }
+  function tmAbrir(L){ tmPilha[tmPilha.length - 1].sel = tmSel; tmPilha.push(L); tmSel = 0; tmRender(); }
+  function tmVoltar(){
+    if (tmPilha.length > 1){ tmPilha.pop(); tmSel = tmPilha[tmPilha.length - 1].sel || 0; bipLoad(440, 0, .06, 'square', .04); tmRender(); return; }
+    tmFechar(); titulo.style.display = ''; pronto = true; try{ titulo.focus(); }catch(e){} // the main menu: back to Press Start
+  }
+  function tmFechar(){ telaMenu.style.display = 'none'; tmPilha = []; }
+  function pedirMenu(){
+    carregando.style.display = 'none'; titulo.style.display = 'none';
+    telaMenu.style.display = '';
+    tmPilha = [tmPrincipal()]; tmSel = tmSalvo() ? 0 : 1; tmRender();
+  }
+  document.addEventListener('keydown', function(e){
+    if (telaMenu.style.display === 'none') return;
+    var k = e.key.toLowerCase();
+    if (k === 'arrowup' || k === 'w'){ e.preventDefault(); tmMover(-1); }
+    else if (k === 'arrowdown' || k === 's'){ e.preventDefault(); tmMover(1); }
+    else if (k === 'arrowleft' || k === 'a'){ e.preventDefault(); tmLado(-1); }
+    else if (k === 'arrowright' || k === 'd'){ e.preventDefault(); tmLado(1); }
+    else if (k === 'enter' || k === ' '){ e.preventDefault(); if (!e.repeat) tmOk(); }
+    else if (k === 'escape' || k === 'backspace'){ e.preventDefault(); tmVoltar(); }
+  });
+  document.addEventListener('fullscreenchange', function(){ if (telaMenu.style.display !== 'none') tmRender(); });
+  window.telaMenuPad = function(code){
+    if (telaMenu.style.display === 'none') return false;
+    if (code === 'ArrowUp') tmMover(-1);
+    else if (code === 'ArrowDown') tmMover(1);
+    else if (code === 'ArrowLeft') tmLado(-1);
+    else if (code === 'ArrowRight') tmLado(1);
+    else if (code === 'Enter' || code === 'Menu') tmOk();
+    else if (code === 'KeyX' || code === 'Escape') tmVoltar();
     return true;
   };
   function iniciar(){
