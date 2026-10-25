@@ -869,7 +869,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.58 &middot; Última atualização: 24 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.59 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -10443,7 +10443,7 @@ function drawDiaryArt(t){
   r(0,28,120,2,'#2a1a10');r(8,6,26,16,'#2a1a10');r(9,7,24,14,'#efe3c8');r(11,9,12,1,'#9aa2a9');r(11,12,18,1,'#9aa2a9');r(11,15,9,1,'#9aa2a9'); // a board
   const seat=(who,x,y,blink)=>{const s=personSprite(who,who==='marina'?'skirt':'shirt','down',0,blink,20);diaryX.drawImage(s.c,x-(s.c._ox||0),y-(s.c._oy||0));};
   g.save();g.translate(14,-74);drawStudyTable(10,120);g.restore(); // table top at y 46, far chairs at x 32 and 52
-  seat('marina',29,27,blinkAt(t,1.3));seat('player',49,27,blinkAt(t,0));
+  seat('marina',29,27,blinkAt(t,1.3));{const d_=drawAs;if(duoHist)drawAs='amigo';try{seat('player',49,27,blinkAt(t,0));}finally{drawAs=d_;}} // (online, on the friend's device: the main character, whose diary it is)
   r(33,48,10,7,'#efe3c8');r(34,50,7,1,'#9aa2a9');r(34,52,5,1,'#9aa2a9');r(60,49,12,7,'#2d6fb5');r(61,49,10,1,'#4d82c8'); // notes and a book
   for(let i=0;i<5;i++){ // the sheets flying off to the right, turning
     const k=(t*.22+i/5)%1,x=Math.round(72+k*52),y=Math.round(50-k*44+Math.sin(t*3+i*2)*3),w=Math.floor(t*4+i)%2?7:5;
@@ -11761,12 +11761,14 @@ const buddy={id:'amigo',get name(){return amigoNome();},x:0,y:0,dir:'down',anim:
   sprite(t){
     if(this===buddy&&isCor())return null; // (in the candle corridors: drawn from above, by fx)
     const d_=drawAs;drawAs=this===buddy?(lead==='p'?'amigo':'eu'):'amigo';
-    try{const c=personSprite('player',flags.jaleco?'coat':'shirt',this.dir,Math.floor(this.anim),blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};}
+    try{const c=personSprite('player',lookCoat(drawAs)?'coat':'shirt',this.dir,Math.floor(this.anim),blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};}
     finally{drawAs=d_;}},
   fx(t){
     const bx=Math.round(buddy.x),by=Math.round(buddy.y);
     if(isCor()){const d_=drawAs;drawAs=lead==='p'?'amigo':'eu';try{drawTopPlayer(bx,by,buddy.dir,buddy.anim,buddy.moving);}finally{drawAs=d_;}return;}
     if(flags.chapeu&&!diaryAtPlayer())drawHat(bx,by-23-(Math.floor(buddy.anim)%2),buddy.dir);}}; // the Liga's hat stays on the player's own head
+// the lab coat of whoever is drawn: online each player has their own (the other one's comes with their position)
+const lookCoat=as=>as==='amigo'&&duoPeerJal!=null?duoPeerJal:!!flags.jaleco;
 const amigoVis=()=>!!startTime&&state!=='finale'&&!flags.finale&&scene!=='salaSim'&&scene!=='simGlic'&&buddy.sc===scene;
 const playerAnchor={get x(){return player.x;},get y(){return player.y;}};
 const amigoAnchor=()=>lead==='p'?buddy:playerAnchor; // where the friend is seen
