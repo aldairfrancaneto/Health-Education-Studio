@@ -259,6 +259,9 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .tp-carta.on{border-color:var(--accent);background:#2a1a10;transform:translateY(-4px)}
 .tp-carta.on .tp-nome{color:var(--accent)}
 .tp-carta.on .tp-nome::before{content:"▶ "}
+.tp-carta.tomado{opacity:.32;filter:grayscale(.85);cursor:not-allowed;transform:none}
+.tp-carta.tomado::after{content:attr(data-tomado);font-size:clamp(11px,1.2vw,14px);color:var(--accent);text-align:center;line-height:1.2}
+#tpDuo{min-height:1.2em;color:var(--accent)}
 .tp-emo{font-size:52px;line-height:1.2}
 #telaModo .tp-carta{width:clamp(150px,22vw,240px)}
 #telaAmigo.duo .tp-nome,#telaAmigo.duo .tp-tr{display:none}
@@ -619,6 +622,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
     <button class="tp-cor" type="button" role="radio" data-sk="4" style="--c:#74462a;--d:#4a2a18" aria-label="Pele escura"></button>
   </div>
   <p class="tp-dica"><span class="so-gp"><span class="gpb d"><i>✚</i></span> escolher · ↑ ↓ cor da pele · <span class="gpb a">A</span> confirmar</span></p>
+  <p class="tp-dica" id="tpDuo" hidden></p>
   <button class="tn-btn" id="btnPersonagem" type="button">▶ Continuar</button>
 </div>
 
@@ -751,7 +755,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.55 &middot; Última atualização: 24 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.57 &middot; Última atualização: 24 de outubro de 2026</span>
   </div>
 </footer>
 
@@ -1102,7 +1106,9 @@ const sfx={
 
 /* ---------- state ---------- */
 let state,flags,inspected,player,dialog,startTime,endTime,labOpen,provas,jogador='',genero='m',avatar='m',pauseAt=0,gameMin=0; // gameMin: game minutes elapsed since 07h30 (fractional)
-const gen=(m,f)=>genero==='f'?f:m;
+let duoHist=null; // online duo, on the friend's device: the story's main character (the one who created the room) {nome,g}
+const gen=(m,f)=>(duoHist?duoHist.g:genero)==='f'?f:m;
+const jogHist=()=>duoHist?duoHist.nome||'':jogador; // the name the story knows (online, always the main character's)
 // skin tones of the playable characters (S skin, s shade), chosen on the character screen; 1 is the original
 const SKINS=[['#f1d0b0','#d39f7a'],['#d9a37c','#a87445'],['#c98b62','#8a5a3c'],['#a8683f','#6e4228'],['#74462a','#4a2a18']];
 let pele=1,amDrawing=false,diarioEu=true;const palCache={}; // amDrawing: drawing the adventure friend's looks (no diary in their hand)
@@ -1129,8 +1135,8 @@ const PLAYER_LOOK={
 const AVATARS=['m','f','r','g','d','p'],avGirl=a=>a==='f'||a==='g'||a==='p';
 function playerPal(girl){const k=avatar+pele;
   return palCache[k]||(palCache[k]=Object.assign({},girl?CHAR_PAL.playerF:CHAR_PAL.player,PLAYER_LOOK[avatar],{S:SKINS[pele][0],s:SKINS[pele][1]}));}
-const nome1=()=>(jogador||'').trim().split(/\s+/)[0]||gen('aluno','aluna'); // first name, for people who know the player // gendered words for the chosen character (boy / girl)
-const me=()=>(jogador||'Você').toUpperCase(); // speaker tag for the player's own lines
+const nome1=()=>(jogHist()||'').trim().split(/\s+/)[0]||gen('aluno','aluna'); // first name, for people who know the player // gendered words for the chosen character (boy / girl)
+const me=()=>(jogHist()||'Você').toUpperCase(); // speaker tag for the player's own lines
 function reset(){
   flags={board:false,jaleco:false,cracha:false,poster:false,up:false,sala101:false,sala103:false,lab:false,aud:false};
   inspected=new Set();provas={};if(typeof caca!=='undefined')caca=null; // provas: answered exam sheets, {reaction:{sel,ok}}
@@ -1258,22 +1264,24 @@ function drawLocker(x,num,mine){
   r(x+3,26,10,7,'#d6b07e');pxText(String(num),x+8,27,'#2a1a10','center');
   r(x+12,36,2,5,'#c99a3c');r(x+12,41,2,2,'#e8bf3f');
   if(num%3===1){px(x+5,40,'#3a2414');px(x+6,41,'#3a2414');}
-  if(mine&&!flags.jalecoPego){r(x+3,36,7,7,'#f2c94c');r(x+4,38,5,1,'#a8862a');r(x+4,40,4,1,'#a8862a');}
-  if(mine&&jogador)drawNameTag(x,18);
+  if(num===myLocker()&&!flags.jalecoPego){r(x+3,36,7,7,'#f2c94c');r(x+4,38,5,1,'#a8862a');r(x+4,40,4,1,'#a8862a');}
+  const dono=lockerOwner(num);if(dono)drawNameTag(x,18,dono,num);
 }
+let myLocker=()=>42,lockerOwner=n=>n===42?jogador:null; // (online, the friend has locker 41: see the duo block)
 // the player's locker: a paper name tag, a little crooked, its top-right corner peeling off
-let nameTag=null; // where the tag's paper is; its letters are written over the finished frame (drawNameTagText)
-function drawNameTag(x,y){ // small: at most 11x5 px (80% of the old 14x6), it fits inside the locker door
-  let s='';for(const ch of jogador.trim().split(/\s+/)[0].toUpperCase()){if(pxW(s+ch)>12)break;s+=ch;}
+const nameTags={}; // locker -> where the tag's paper is; its letters are written over the finished frame (drawNameTagText)
+function drawNameTag(x,y,nome,num){ // small: at most 11x5 px (80% of the old 14x6), it fits inside the locker door
+  let s='';for(const ch of String(nome).trim().split(/\s+/)[0].toUpperCase()){if(pxW(s+ch)>12)break;s+=ch;}
   const w=Math.max(6,Math.round((pxW(s)+2)*.8)),drop=i=>Math.floor(i/8); // one pixel lower every 8 columns
   x+=Math.floor((16-w)/2);y+=1;
   for(let i=0;i<w;i++)r(x+i,y+drop(i),1,5,'#efe3c8');
   px(x+w-1,y+drop(w-1),'#5a3d24');px(x+w-2,y+drop(w-2),'#d9c7a0'); // peeled corner shows the door
-  nameTag={x,y,w,s};
+  nameTags[num]={x,y,w,s};
 }
 // the name on the tag, at screen resolution: letters 4 px tall would be a smudge in the 384x224 pixel art
-function drawNameTagText(){
-  const T=nameTag;if(!T||scene!=='terreo'||!jogador||T.x+T.w<camX||T.x>camX+W)return;
+function drawNameTagText(){for(const n in nameTags)if(lockerOwner(+n))drawNameTagText1(nameTags[n]);}
+function drawNameTagText1(T){
+  if(!T||scene!=='terreo'||T.x+T.w<camX||T.x>camX+W)return;
   const k=cv.width/W,fa=fade?Math.max(0,Math.min(1,fade.phase==='out'?1-fade.t/fade.dur:fade.t/fade.dur)):1;
   let sz=6.4;ctx.font=sz*k+'px VT323, monospace';
   while(ctx.measureText(T.s).width>(T.w-1)*k&&sz>3){sz-=.2;ctx.font=sz*k+'px VT323, monospace';}
@@ -2110,12 +2118,12 @@ const lockerLines={
 [40,41,42,43,44,45,46,47,48].forEach((n,i)=>{
   const x=i<5?16+i*18:216+(i-5)*18;
   add({id:'locker'+n,name:'Armário '+n,wall:true,cx:x+8,top:16,zone:wallZone(x-1,18),
-    key:n===42?()=>flags.jaleco+'|'+!!flags.jalecoPego+'|'+jogador:null,
-    draw:()=>drawLocker(x,n,n===42),
+    key:n===42||n===41?()=>flags.jaleco+'|'+!!flags.jalecoPego+'|'+lockerOwner(n)+'|'+myLocker():null,
+    draw:()=>drawLocker(x,n),
     act:()=>{
       if(n!==42) return say(lockerLines[n].map(t=>({t})));
       if(!flags.jalecoPego) return say([
-        {t:'Armário 42, com uma etiqueta meio torta e mal colada: "'+(jogador||'SEU NOME').toUpperCase()+'". É o seu!'},
+        {t:'Armário 42, com uma etiqueta meio torta e mal colada: "'+(jogHist()||'SEU NOME').toUpperCase()+'". É o seu!'},
         {t:'O bilhete amarelo diz: "NÃO ESQUECER O JALECO".'},
         {t:'Você abre o cadeado e veste o jaleco.',run:()=>{flags.jalecoPego=true;}},
         {t:'Você pegou: JALECO',item:'jaleco'}
@@ -2888,6 +2896,7 @@ function handSheets(){const s_=$('slot-folhas');s_.classList.remove('got');$('fo
 // the pile on the desk: the player picks which sheet to read (answered ones open read-only)
 let pileBack=null; // pile to return to after answering one of its sheets
 function sheetPile(list,surf='carteira'){
+  if(!list.some(n=>!provas[n])&&!pileGone(list)){pileBack={list,surf};quiz=null;return closeQuiz();} // all answered but not picked up yet: it goes with the player
   const st=n=>{const e=examState(n);return e==='ok'?'certa':e==='err'?'errada':e?'respondida':'em branco';};
   const left=list.filter(n=>!provas[n]).length,one=list.length===1;
   const mn=PILE_MISSING[scene],falta=mn&&!provas[mn]?' A folha da reação '+mn+' não está aqui com as outras.':'';
@@ -4686,8 +4695,8 @@ function checkStairs(){
     if(player.x<st.x0||player.x>st.x1)continue;
     if(st.need&&!st.need()){if(!st.up&&player.y>st.edge){player.y=st.edge;ocArm=true;}continue;} // the way out is not there yet: it shows up as the player walks to it
     if(st.up){
-      if(st.gate&&!(flags.jaleco&&flags.cracha)){
-        if(player.y<108&&player.y>50){player.y=110;keys.clear();say([{t:'Antes de subir para o 1º andar, pegue o jaleco e o crachá.'}]);}
+      if(st.gate&&!flags.cracha){ // (only the lab asks for the lab coat)
+        if(player.y<108&&player.y>50){player.y=110;keys.clear();say([{t:'Antes de subir para o 1º andar, pegue o crachá.'}]);}
         continue;
       }
       if(player.y<st.edge)return goScene(...st.to);
@@ -4695,6 +4704,7 @@ function checkStairs(){
   }
 }
 let scene='terreo',fade=null,banner=null;
+let duoJalOk=()=>true,duoJalMsg=()=>''; // (online: the other one's lab coat too, see the duo block)
 function goScene(name,x,y,dir,label){
   keys.clear();state='fade';
   fade={t:0,dur:.35,phase:'out',to:{name,x,y,dir,label}};
@@ -4833,7 +4843,7 @@ function updateObjective(){
 // golden "!": the main story only (side quests have their own blue "!", see sideNeeds)
 function needsMarker(o){
   if(flags.graded)return false;
-  if(o.id==='locker42')return !!flags.wantJaleco&&!flags.jaleco;
+  if(o.id==='locker'+myLocker())return !!flags.wantJaleco&&!flags.jaleco;
   if(!flags.cracha)return o.id===(flags.marina?'secretaria':'marina');
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
   if(flags.seated)return o===aldair||o===heloisa||o.id==='sala101';
@@ -4930,7 +4940,7 @@ const reviewIds=()=>Object.keys(QUIZ).filter(k=>!isBonus(k)).concat(provas.b||fl
 function openReview(pass){reviewPass=pass;reviewSel=0;flags.review=true;showReview();}
 function showReview(){
   const list=$('rev-list');list.textContent='';
-  $('rev-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('rev-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   reviewIds().forEach((n,i)=>{
     const a=provas[n],b=document.createElement('button');
     b.type='button';b.className='rev-item '+(!a?'blank':a.ok?'ok':'err')+(i===reviewSel?' on':'');
@@ -4957,7 +4967,7 @@ function finish(pass){
   const n=finalScore();
   $('end').classList.toggle('lose',!pass);
   $('end-tag').textContent=pass?'LIÇÃO ENTREGUE':'GAME OVER';
-  $('end-title').textContent=pass?'Parabéns'+(jogador?', '+jogador:'')+'!':'Não foi desta vez';
+  $('end-title').textContent=pass?'Parabéns'+(jogHist()?', '+jogHist()+(duoHist||amigoX&&amigoX.nome?' e '+(duoHist?jogador:amigoX.nome):''):'')+'!':'Não foi desta vez';
   $('end-text').textContent=pass
     ?'Você tirou '+n+' de '+QUIZ_N+' na lição de casa'+(flags.timeUp?'.':' e entregou antes do fim da aula.')+' Está '+gen('pronto','pronta')+' para a prova de glicólise de amanhã.'
     :'Você tirou '+n+' de '+QUIZ_N+' na lição de casa. Eram necessários '+PASS+' acertos. Revise a glicólise antes da prova de amanhã.';
@@ -5098,7 +5108,7 @@ function openQuiz(n){
   const via=lg?(n[0]==='f'?'FRUTOSE':'GALACTOSE'):'';
   $('quiz-bar').textContent=lg?'DESAFIO DA LIGA · '+via+' · FOLHA '+n[1]+' DE 8':isBonus(n)?'ATIVIDADE · QUESTÃO BÔNUS':'ATIVIDADE · REAÇÃO '+n;
   $('quiz-head').textContent=lg?'LIGA DE METABOLISMO · DESAFIO DO PROF. E. M.':'UNINOGWARTS · ATIVIDADE DE BIOQUÍMICA';
-  $('quiz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('quiz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   $('quiz-title').textContent=lg?'Folha '+n[1]+' · Caso clínico':isBonus(n)?q.enz:'Reação '+n+': '+q.enz;
   quizEl.querySelector('.sheet').classList.toggle('bonus',isBonus(n));
   quizEl.querySelector('.sheet').classList.toggle('liga',lg);
@@ -5180,7 +5190,7 @@ function closeQuiz(){
   }
   // back to the pile while it still has blank sheets; a finished pile goes to the inventory
   if(pile&&justDone&&!flags.timeUp&&pile.some(n=>!provas[n])){sheetPile(pile,pb.surf);return;}
-  if(pile&&justDone&&!pile.some(n=>!provas[n])){
+  if(pile&&(justDone||!pileGone(pile))&&!pile.some(n=>!provas[n])){ // (also a pile finished by the other player online, or answered elsewhere: it is never left behind)
     const room=pile===TADEO_SHEETS?'reação 10':pile===MALVAR_SHEETS?'reação 3':{sala103:'Sala 103',sala201:'Sala 201',andar2:'mesa de estudo do 2º andar'}[scene]||'sala';
     const got=collectPile(pile,room,pb.surf),mn=PILE_MISSING[scene];
     if(pile!==TADEO_SHEETS&&mn&&!provas[mn])got.push({who:me(),t:'E a da reação '+mn+'? Não estava com as outras... Onde será que ela foi parar?'});
@@ -5259,7 +5269,7 @@ function openCaca(){
   if(!caca){const gr=cacaMake();if(!gr)return;caca={grid:gr,found:{},cur:{r:0,c:0},anchor:null,drag:false};}
   caca.out=false;
   if(!flags.cacaDica){flags.cacaDica=true;updatePauseExtra();}
-  $('caca-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('caca-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   cacaGridEl.textContent='';
   caca.grid.forEach((row,r0)=>row.forEach((ch,c0)=>{const d=document.createElement('div');d.textContent=ch;d.dataset.r=r0;d.dataset.c=c0;cacaGridEl.appendChild(d);}));
   caca.anchor=null;
@@ -5507,7 +5517,7 @@ function renderDiary(){
   const pct=Math.floor(100*SCORE_RULES.filter(r_=>scoreGot.has(r_.k)).length/SCORE_RULES.length);
   $('pz-progresso').textContent=pct>=100?'Você concluiu 100% das missões do jogo. Não sobrou nenhum segredo... ou sobrou?'
     :'Você já concluiu '+pct+'% das missões do jogo.'+(pct>=50?' Ainda há segredos pela faculdade.':' Será que só existe a missão principal?');
-  $('pz-dono').textContent=jogador?'Diário de '+jogador.split(/\s+/)[0]:'Meu diário';
+  $('pz-dono').textContent=jogHist()?'Diário de '+jogHist().split(/\s+/)[0]:'Meu diário';
   $('pz-misterio').textContent=diaryWhisper();
 }
 // the diary is a mystery: a line in glowing ink at the foot of the page, a different one each time it is opened
@@ -5901,7 +5911,7 @@ function openDuel(){
   const qs=shuffle(DUEL_Q.slice()).slice(0,DUEL_N).map(([q,...o])=>{const opts=shuffle(o.map((t,i)=>({t,ok:!i})));return {q,o:opts.map(x=>x.t),c:opts.findIndex(x=>x.ok)};});
   duel={qs,i:0,sel:0,ok:0,t:DUEL_T,lock:0,ans:[],done:false};
   if(!flags.duelOn){flags.duelOn=true;updatePauseExtra();} // accepted: shown next to the objective until won
-  $('duelo-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('duelo-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   keys.clear();state='duelo';dueloEl.hidden=false;renderDuel();duelBar();
   [523,659,784].forEach((f,i)=>tone(f,.1,'square',.04,i*.1));
 }
@@ -7229,7 +7239,7 @@ function dzRows(F){return [[1,F.e1],[3,'pfk'],[10,'pk']];}
 function openDz(){
   const f=Math.max(1,Math.min(3,flags.dzFase||1))-1;
   dz={f,pick:{1:[],3:[],10:[]},row:0,col:0,msg:'',err:false};
-  $('dz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('dz-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   keys.clear();state='dz';dzEl.hidden=false;renderDz();fitDz();tone(523,.08,'square',.04);
 }
 function renderDz(){
@@ -7395,7 +7405,7 @@ const sgEl=$('segredo');
 function openSegredo(mode,n){
   if(mode==='ordem')sg={mode,cards:shuffle(Object.keys(FICHAS).map(Number)),placed:0,sel:0,msg:'',ok:false};
   else{const P=PORTAS[n];sg={mode,n,rows:P.rows.map(([t,a])=>({t,a,v:null,o:'AFN'})).concat((P.sit||[]).map(([t,a],i)=>({t,a,v:null,o:'AF',sit:!i}))),sel:0,tries:0,msg:'',ok:false};}
-  $('sg-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogador||'—');
+  $('sg-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
   keys.clear();state='segredo';sgEl.hidden=false;renderSeg();fitSeg();tone(330,.12,'triangle',.04);
 }
 function renderSeg(){
@@ -7906,7 +7916,7 @@ function tdPlano(){
   say([{who:LW,t:'Cinco pistas, e todas levam ao Tadeo. Mas não dá para denunciar o roubo de um livro que estava numa sala que não existe. E ele negaria tudo.'},
     {who:LW,t:'Só que a tinta do livro só obedece lá dentro. Aposto que ele tentou escrever o nome aqui fora e as letras sumiram. Ele vai ter que voltar.'},
     {who:LW,t:'E a cópia de cera derrete na parede morna: para entrar de novo, ele vai precisar do seu selo outra vez.'},
-    {who:LW,t:'Deixe-o copiar. Eu e o Gabriel entramos antes e nos escondemos no laboratório antigo. Quando ele aparecer, saia sozinho primeiro. Faça ele falar. Precisamos ouvir da boca dele.'},
+    {who:LW,t:'Deixe-o copiar. Eu e o Gabriel entramos antes e nos escondemos no laboratório antigo. Quando ele aparecer, saia '+gen('sozinho','sozinha')+' primeiro. Faça ele falar. Precisamos ouvir da boca dele.'},
     {who:me(),t:'E o Bruno?'},
     {who:LW,t:'O Bruno vai distrair o Tadeo enquanto você passa pela parede. E fica de vigia na escada.',run:()=>{flags.td=6;updatePauseExtra();}}]);
 }
@@ -8307,7 +8317,7 @@ function tdEpilogo(){
   const parte2=()=>say([
     {t:'O Bruno abre o Livro dos Convites, com o canto ainda chamuscado, e passa as páginas até a última.',run:()=>sfx.pencil()},
     {who:BW_,t:'Eu escrevi o seu nome aqui antes de tudo acontecer. Será que a tinta...'},
-    {t:'Na última linha, as letras brilham, douradas: '+(jogador||nome1()).trim().toUpperCase()+'. Nenhuma delas sumiu.',run:glowBook},
+    {t:'Na última linha, as letras brilham, douradas: '+(jogHist()||nome1()).trim().toUpperCase()+'. Nenhuma delas sumiu.',run:glowBook},
     {who:GW_,t:gen('Bem-vindo','Bem-vinda')+' à Liga de Metabolismo, '+nome1()+'. Agora é oficial.',run:()=>setMood('player','happy',10)},
     {who:LW,t:'Falta uma coisa.',run:()=>{
       tdMove(L,[[V?V.x+2:180,V?V.y:176]],40,()=>{if(V)V.st='sumiu';tone(1320,.05,'triangle',.02); // she picks up the candle
@@ -8642,7 +8652,7 @@ SCENES.salaOculta.push(Object.defineProperty({id:'livroConvites',name:'Livro dos
   key:()=>tdBookHere()?1:0,
   draw:()=>{if(!tdBookHere())return;r(267,102,14,8,'#1d1612');r(268,102,12,7,'#5a2230');r(268,102,12,1,'#7a2e3e');r(273,102,1,7,'#3a1a20');px(270,105,'#c99a3c');px(277,105,'#c99a3c');r(268,108,12,1,'#efe3c8');},
   act:()=>{
-    const N=(jogador||'SEU NOME').toUpperCase();
+    const N=(jogHist()||'SEU NOME').toUpperCase();
     say([{t:'Um livro grosso de capa vinho, sem título na lombada. Na primeira página, em letra caprichada: LIVRO DOS CONVITES.'},
       {t:'As páginas brilham devagar, como a tinta do seu diário. Entre centenas de nomes, você acha o seu: "'+N+'. Entende antes de decorar." E. M.'}]
       .concat((flags.td||0)>=7?[{t:'Logo abaixo, na letra do Bruno: "'+gen('ACEITO','ACEITA')+'". E, numa página colada de volta: "TADEO CORNIEL. Ainda não."'}]:[]));
@@ -9475,13 +9485,13 @@ function tObjAt(p){ // the person or thing under the finger
   }
   return best;
 }
-function tClampY(y){ // keep the target on the floor
+function tClampY(y,x){ // keep the target on the floor (in the new areas it goes on further down)
   const c=isCor(),tp=c?COR_TOP:4,bt=c?COR_BOT:0,top=(scene.startsWith('sala')?66:54)+tp+1;
-  return Math.max(top,Math.min(210-bt-1,y));
+  return Math.max(top,Math.min((x!=null?t2Bottom(x,c?COR_HW:5):210)-bt-1,y));
 }
 // the player walks in a straight line; something in the way: he stops, and the finger shows another way
 function tSetGoal(p,o){
-  let x=p.x,y=tClampY(p.y);
+  let x=p.x,y=tClampY(p.y,p.x);
   if(o){const z=o.zone,m=Math.min(4,z.w/3,z.h/3); // the nearest spot inside the place where one talks to it
     x=Math.max(z.x+m,Math.min(z.x+z.w-m,player.x));y=Math.max(z.y+m,Math.min(z.y+z.h-m,player.y));}
   tGo={x,y,o,sc:scene,still:0,lx:player.x,ly:player.y};
@@ -9745,11 +9755,12 @@ function shadow(cx,base,w){
   const rx=Math.max(4,Math.round(w/2)+1);
   g=fctx;pxEllipse(Math.round(cx),base-1,rx,2,'rgba(24,14,8,.32)');
 }
-let camX=0,camY=0;
+let camX=0,camY=0,camFocus=()=>[player.x,player.y]; // (online: between the two players, see the duo block)
 function render(t){
   fctx=fctx0;g=fctx;let catHere=false;
-  camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(player.x-W/2)));
-  camY=T2_EXR[scene]?Math.max(0,Math.min(T2_EXT,Math.round(player.y-154))):0; // the new area: the camera goes down with the player
+  const [fx_,fy_]=camFocus();
+  camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(fx_-W/2)));
+  camY=T2_EXR[scene]?Math.max(0,Math.min(T2_EXT,Math.round(fy_-154))):0; // the new area: the camera goes down with the player
   fctx.drawImage({terreo:bgT2,andar1:bg1T2,andar2:bg2T2,sala101:bgS,sala103:bgS3,sala201:bgS201,sala204:bgS204,salaLab:bgLab,salaOculta:bgOc,salaCorredor:BG_COR[0][0],salaCorredor2:BG_COR[1][0],salaSim:bgSim,simGlic:bgGlic,salaBib:bgBib,salaAud:bgAud,salaAlx:bgAlx,salaSec:bgSec}[scene]||T2_BG[scene],0,0);
   if(scene==='terreo')drawClock();
   drawJanitorFloor();
@@ -9797,7 +9808,7 @@ function render(t){
   if(state==='play'&&!(ride&&rideSt&&rideSt.mode==='desafio')){
     const o=nearest();
     if(o){
-      const kl=padOn?'A':touchOn?'TOQUE':'ENTER',name=o.name.toUpperCase(),w=pxW(kl)+5+pxW(name)+6;
+      const kl=padOn?'A':touchOn?'TOQUE':'ENTER',name=String(o.name||'').toUpperCase(),w=pxW(kl)+5+pxW(name)+6;
       let bx=Math.round(px_-w/2);bx=Math.max(camX+2,Math.min(camX+W-w-2,bx));
       const by=ride?py_+29:py_-36; // on the ride: below the rail, so the poster stays visible
       tLabel={x:bx,y:by,w,h:9};
@@ -9822,10 +9833,11 @@ function render(t){
 }
 
 let last=performance.now(),frameRaw=0;
+let duoPauseTick=()=>{}; // (online: the pause still talks to the other device)
 function loop(now){
   const raw=Math.min(1,(now-last)/1000),dt=Math.min(.05,raw);last=now;frameRaw=raw;
   tickClock(raw); // the clock follows real time, even when frames come slowly
-  pollPad();syncPauseBtn();if(state==='pause')music.tick(dt);else{update(dt);diaryTick(dt);scoreTick(dt);autoTick(raw);}render(now/1000);
+  pollPad();syncPauseBtn();if(state==='pause'){music.tick(dt);duoPauseTick(dt);}else{update(dt);diaryTick(dt);scoreTick(dt);autoTick(raw);}render(now/1000);
   if(state==='intro')drawDiaryArt(now/1000);
   requestAnimationFrame(loop);
 }
@@ -10140,8 +10152,12 @@ function creditsBuild(){
   const grade=(list,cls)=>{const g=el('div','cr-elenco'+(cls?' '+cls:''));list.forEach(([who,nome,papel,o])=>g.appendChild(pessoa(who==='gato'?crCat():crSprite(who,o),nome,papel)));R.appendChild(g);};
   R.appendChild(el('div','cr-tit','Uninogwarts'));R.appendChild(el('div','cr-sub','O desafio bioquímico · Temporada 1'));
   sec('ESTRELANDO');
-  R.appendChild(pessoa(crSprite('player'),jogador||'Você',gen('o calouro','a caloura')+' do 1º ano',true));
-  R.appendChild(pessoa(crSprite('amigo',buddy),amigoNome(),(amigoGirl()?'amiga':'amigo')+' de aventura · '+AMIGOS[amigoAv].traco));
+  if(duoHist){ // online, on the friend's device: the main character first, then this player as the friend
+    R.appendChild(pessoa(crSprite('amigo',buddy),duoHist.nome||'—',gen('o calouro','a caloura')+' do 1º ano',true));
+    R.appendChild(pessoa(crSprite('player'),jogador||'Você',amigoGen('amigo','amiga')+' de aventura'));
+  }else{
+    R.appendChild(pessoa(crSprite('player'),jogador||'Você',gen('o calouro','a caloura')+' do 1º ano',true));
+    R.appendChild(pessoa(crSprite('amigo',buddy),amigoNome(),(amigoGirl()?'amiga':'amigo')+' de aventura'+(amigoX&&amigoX.nome?'':' · '+AMIGOS[amigoAv].traco)));}
   sec('A JORNADA DE '+(nome1()||'').toUpperCase());
   const doors=Math.max(corOpen(),flags.alost===6?10:0),pct=missPct(scoreGot);
   const fic=el('div','cr-ficha');
@@ -11580,13 +11596,15 @@ const AMIGOS={
   g:{nome:'Giovana',pele:0,traco:'ousada e competitiva'},
   d:{nome:'Diego',pele:0,traco:'esnobe, mas fiel'},
   p:{nome:'Pietra',pele:3,traco:'fofoqueira e sarcástica'}};
-let amigoAv='f',lead='p',drawAs=null,amigoX=null; // amigoX: {nome, pele} of the other player in the online duo // lead: 'p' the player's avatar walks in front, 'a' the friend does
-const amigoNome=()=>amigoX&&amigoX.nome||AMIGOS[amigoAv].nome;
+let amigoAv='f',lead='p',drawAs=null,amigoX=null,duoPeerJal=null; // duoPeerJal: online, the other player's lab coat (null alone)
+ // amigoX: {nome, pele} of the other player in the online duo // lead: 'p' the player's avatar walks in front, 'a' the friend does
+const amigoNome=()=>duoHist?jogador||'você':amigoX&&amigoX.nome||AMIGOS[amigoAv].nome; // (online, on the friend's device the story's friend is this player)
 const amigoGirl=()=>avGirl(amigoAv);
-const amigoGen=(m,f)=>amigoGirl()?f:m;
+const amigoGen=(m,f)=>(duoHist?genero==='f':amigoGirl())?f:m;
 function withLook(fn){ // draws as the friend: their avatar, skin and gender, only for the call
-  const a=avatar,p_=pele,g_=genero,d_=amDrawing;avatar=amigoAv;pele=amigoX&&amigoX.pele!=null?amigoX.pele:AMIGOS[amigoAv].pele;genero=amigoGirl()?'f':'m';amDrawing=true;
-  try{return fn();}finally{avatar=a;pele=p_;genero=g_;amDrawing=d_;}
+  const a=avatar,p_=pele,g_=genero,d_=amDrawing,j_=flags&&flags.jaleco,jx=duoPeerJal!=null&&!!flags;avatar=amigoAv;pele=amigoX&&amigoX.pele!=null?amigoX.pele:AMIGOS[amigoAv].pele;genero=amigoGirl()?'f':'m';amDrawing=true;
+  if(jx)flags.jaleco=duoPeerJal; // (online each one has their own lab coat)
+  try{return fn();}finally{avatar=a;pele=p_;genero=g_;amDrawing=d_;if(jx)flags.jaleco=j_;}
 }
 {const ps0=personSprite;personSprite=function(who,...a){
   if(who==='player'&&(drawAs||(lead==='a'?'amigo':'eu'))==='amigo')return withLook(()=>ps0.call(this,who,...a));
@@ -11739,7 +11757,8 @@ const AM_FALA={
    points, the word search...), gm (the main character's clock), tela (pictures of the simulator), perfil, comecar,
    pedir/full (after a reconnection the friend gets everything again). */
 const DUO_URL='https://jogos-multiplayer-server.onrender.com',DUO_LIB='https://cdn.socket.io/4.8.1/socket.io.min.js';
-const DUO={on:false,host:false,sock:null,codigo:null,token:null,peer:null,peerOn:false,go:false,rem:{s:null,x:0,y:0,d:'down',m:0,t:0},
+const DUO={on:false,host:false,sock:null,codigo:null,token:null,peer:null,peerOn:false,go:false,rem:{s:null,x:0,y:0,d:'down',m:0,t:0,j:0,b:'',o:null},
+  avOk:false,talkO:null,goWait:null, // avOk: this player's character is chosen (only then the other one sees it taken)
   posAt:0,posKey:'',last:{},stAt:0,gmAt:0,sc:null,remoteMove:false,sceneAt:0,queue:null,nudge:false,img:null,frameAt:0,pend:null,ev:{}};
 const duoFire=(e,v)=>(DUO.ev[e]||[]).forEach(f=>{try{f(v);}catch(err){}});
 const duoNote=t=>duoFire('msg',t);
@@ -11770,7 +11789,7 @@ function duoRetomar(){
   else DUO.sock.emit('aluno:entrar',{codigo:DUO.codigo,token:DUO.token,nome:'amigo'},r=>{if(r&&r.ok){duoEmit('ola');if(startTime)duoEmit('pedir');}});
 }
 window.duo={
-  ativo:()=>DUO.on,anfitriao:()=>DUO.host,par:()=>DUO.peer,
+  ativo:()=>DUO.on,anfitriao:()=>DUO.host,par:()=>DUO.peer,parAv:()=>DUO.peer&&DUO.peer.av||null,
   on(e,f){(DUO.ev[e]||(DUO.ev[e]=[])).push(f);},
   criar(cb){duoConnect(()=>DUO.sock.emit('prof:criar',{jogo:'uninogwarts',max:1},r=>{
     if(!r||!r.ok)return cb({erro:(r&&r.erro)||'Não consegui criar a sala.'});
@@ -11778,17 +11797,17 @@ window.duo={
   entrar(codigo,cb){duoConnect(()=>DUO.sock.emit('aluno:entrar',{codigo,nome:'amigo'},r=>{
     if(!r||!r.ok)return cb({erro:(r&&r.erro)||'Não consegui entrar.'});
     Object.assign(DUO,{on:true,host:false,codigo:r.sala.codigo,token:r.token,peerOn:!!r.sala.professorOnline});diarioEu=false;duoEmit('ola');cb({ok:true});}));},
-  prepararContinuar(d){if(!d)return;avatar=AVATARS.includes(d.avatar)?d.avatar:'m';genero=avGirl(avatar)?'f':'m';if(d.pele!=null)pele=d.pele;jogador=String(d.nome||'');}, // (so the friend sees who they will play with)
+  prepararContinuar(d){if(!d)return;DUO.avOk=true;avatar=AVATARS.includes(d.avatar)?d.avatar:'m';genero=avGirl(avatar)?'f':'m';if(d.pele!=null)pele=d.pele;jogador=String(d.nome||'');}, // (so the friend sees who they will play with)
   comecarSalvo(){ // the main character's saved game goes on, the friend joins it where it is
     window.continuarJogo();
     const P=DUO.peer||{};if(P.av&&AVATARS.includes(P.av))amigoAv=P.av;amigoX={nome:P.nome||null,pele:P.pele};lead='p';diarioEu=true;
     DUO.sc=scene;DUO.last=duoSnap();duoEmit('comecar');duoFull();
     duoEmit('cena',{s:scene,x:Math.round(player.x),y:Math.round(player.y),d:player.dir,l:''});},
-  sair(){if(DUO.sock){try{DUO.sock.disconnect();}catch(e){}}Object.assign(DUO,{on:false,host:false,sock:null,codigo:null,token:null,peer:null,peerOn:false});diarioEu=true;amigoX=null;}
+  sair(){if(DUO.sock){try{DUO.sock.disconnect();}catch(e){}}Object.assign(DUO,{on:false,host:false,sock:null,codigo:null,token:null,peer:null,peerOn:false,avOk:false});diarioEu=true;amigoX=null;duoHist=null;duoPeerJal=null;}
 };
 // the friend's looks and name become the other player's
-function duoPerfil(){duoEmit('perfil',{av:avatar,pele,nome:jogador||null});}
-{const rp0=window.registrarPersonagem;window.registrarPersonagem=(av,sk)=>{rp0(av,sk);if(DUO.on)duoPerfil();};}
+function duoPerfil(){duoEmit('perfil',DUO.avOk?{av:avatar,pele,nome:jogador||null}:{nome:jogador||null});}
+{const rp0=window.registrarPersonagem;window.registrarPersonagem=(av,sk)=>{rp0(av,sk);if(DUO.on){DUO.avOk=true;duoPerfil();}};}
 {const rj0=window.registrarJogador;window.registrarJogador=n=>{rj0(n);if(DUO.on){duoPerfil();duoIntroBtn();}};}
 function duoIntroBtn(){ // the briefing's start button waits for the other one
   const b=$('btn-start');if(!b)return;
@@ -11799,26 +11818,38 @@ function duoIntroBtn(){ // the briefing's start button waits for the other one
 }
 {const st0=start;start=function(){
   if(DUO.on){if(DUO.host){if(!(DUO.peer&&DUO.peer.nome&&DUO.peerOn))return duoIntroBtn();duoEmit('comecar');}else if(!DUO.go)return duoIntroBtn();}
-  st0();if(DUO.on){DUO.sc=scene;DUO.last=duoSnap();if(!DUO.host)duoEmit('pedir');}};} // (the friend asks for everything: a saved game may be going on)
+  st0();if(DUO.on){DUO.sc=scene;DUO.last=duoSnap();if(!DUO.host){duoEmit('pedir');DUO.nudge=true;}}};} // (the friend starts a step beside, not on top) // (the friend asks for everything: a saved game may be going on)
 // the story's state, as text per key, to send only what changed
+const DUO_MEU=new Set(['amV','jaleco','jalecoPego','wantJaleco']); // each device's own (online each player has a lab coat)
 function duoSnap(){
-  const o={};for(const k in flags)if(k!=='amV')o['f.'+k]=JSON.stringify(flags[k]);
+  const o={};for(const k in flags)if(!DUO_MEU.has(k))o['f.'+k]=JSON.stringify(flags[k]);
   o['#pr']=JSON.stringify(provas||{});o['#sc']=JSON.stringify(score);o['#sg']=JSON.stringify([...scoreGot]);o['#ins']=JSON.stringify([...inspected]);
   o['#dk']=JSON.stringify([...diaryKnown]);o['#df']=JSON.stringify([...diaryFam]);o['#caca']=JSON.stringify(caca?{grid:caca.grid,found:caca.found}:null);
   return o;
 }
 function duoDiff(){const cur=duoSnap(),out={};let n=0;for(const k in cur)if(cur[k]!==DUO.last[k]){out[k]=cur[k];n++;}DUO.last=cur;return n?out:null;}
 function duoFull(){if(DUO.on&&DUO.host&&startTime){duoEmit('full',{st:duoSnap(),gm:gameMin,s:scene,x:Math.round(player.x),y:Math.round(player.y),d:player.dir});duoPerfil();}}
-const DUO_FREE=['play','fade','dialog','pause','assistir','gather','intro'];
+const DUO_FREE=['play','fade','dialog','pause','assistir','gather','intro','espera'];
 function duoApply(d){
   if(!DUO_FREE.includes(state)){DUO.pend=Object.assign(DUO.pend||{},d);return;} // in a sheet or a game: right after it
-  const old={profsIn:flags.profsIn,seated:flags.seated,alost:flags.alost,graded:flags.graded},tdCh=Object.keys(d).some(k=>/^f\.td/.test(k));
+  const old={profsIn:flags.profsIn,seated:flags.seated,alost:flags.alost,graded:flags.graded},tdCh=Object.keys(d).some(k=>/^f\.td/.test(k)),mix=[];
+  // what both may have added at the same time (the sheets answered, the sheets held, the points, the diary) is
+  // joined, never overwritten: two sheets answered a moment apart on the two devices both count
+  const uniao=(cur,v)=>{const u=new Set([...cur,...(v||[])]);return u;};
   for(const k in d){let v;try{v=JSON.parse(d[k]);}catch(e){continue;}
-    if(k.startsWith('f.'))flags[k.slice(2)]=v;
-    else if(k==='#pr')provas=v||{};else if(k==='#sc')score=v||0;else if(k==='#sg')scoreGot=new Set(v||[]);else if(k==='#ins')inspected=new Set(v||[]);
-    else if(k==='#dk')diaryKnown=new Set(v||[]);else if(k==='#df')diaryFam=new Set(v||[]);
-    else if(k==='#caca'){if(!v)caca=null;else if(caca){caca.grid=v.grid;caca.found=v.found||{};}else caca={grid:v.grid,found:v.found||{},cur:{r:0,c:0},anchor:null,drag:false};}
+    if(k.startsWith('f.')){const f=k.slice(2);if(DUO_MEU.has(f))continue;
+      if(f==='held'){const u=[...uniao(flags.held||[],v)];if(u.length!==(v||[]).length)mix.push(k);flags.held=u;}
+      else if(f==='abord'&&v&&typeof v==='object'){flags.abord=Object.assign({},flags.abord||{},v);if(Object.keys(flags.abord).length!==Object.keys(v).length)mix.push(k);}
+      else flags[f]=v;}
+    else if(k==='#pr'){const u=Object.assign({},v||{},provas||{});if(Object.keys(u).length!==Object.keys(v||{}).length)mix.push(k);provas=u;}
+    else if(k==='#sc'){} // (worked out again below, from the rules won)
+    else if(k==='#sg'||k==='#ins'||k==='#dk'||k==='#df'){
+      const u=uniao({'#sg':scoreGot,'#ins':inspected,'#dk':diaryKnown,'#df':diaryFam}[k],v);if(u.size!==(v||[]).length)mix.push(k);
+      if(k==='#sg')scoreGot=u;else if(k==='#ins')inspected=u;else if(k==='#dk')diaryKnown=u;else diaryFam=u;}
+    else if(k==='#caca'){if(!v)caca=null;else if(caca){caca.grid=v.grid;caca.found=Object.assign({},v.found||{},caca.found||{});}else caca={grid:v.grid,found:v.found||{},cur:{r:0,c:0},anchor:null,drag:false};}
     DUO.last[k]=d[k];}
+  if(flags.entregue&&flags.held&&flags.held.length)flags.held=[]; // handed in: the sheets are with the professors
+  score=SCORE_RULES.reduce((s_,r_)=>s_+(scoreGot.has(r_.k)?r_.pts:0),0);
   // the inventory and the panels
   SLOTS.forEach(k=>{if(k!=='folhas')$('slot-'+k).classList.toggle('got',!!flags[k]);});
   $('slot-folhas').classList.toggle('got',!!(flags.held&&flags.held.length));$('folhas-cnt').textContent=flags.held&&flags.held.length?flags.held.length:'';
@@ -11832,19 +11863,26 @@ function duoApply(d){
     if(!old.graded&&flags.graded)DUO.endPend=true; // after watching the correction: this device's own result (and finale)
   }catch(e){}
   DUO.last=Object.assign(DUO.last,duoSnap());
+  for(const k of mix)DUO.last[k]=d[k]; // (what was joined goes back to the other one, so both end up with all of it)
 }
 function duoRecv(m){
   switch(m.k){
     case 'ola':duoFire('peer',true);if(DUO.host)duoPerfil();break;
-    case 'perfil':DUO.peer=Object.assign(DUO.peer||{},m);if(m.av&&AVATARS.includes(m.av))amigoAv=m.av;amigoX={nome:DUO.peer.nome||null,pele:DUO.peer.pele};
+    case 'perfil':
+      if(!DUO.host&&DUO.avOk&&m.av&&m.av===avatar){DUO.avOk=false;duoFire('avTomado',m.av);} // both took the same one at once: the main character keeps it
+      DUO.peer=Object.assign(DUO.peer||{},m);if(!m.av){delete DUO.peer.av;delete DUO.peer.pele;}
+      if(m.av&&AVATARS.includes(m.av))amigoAv=m.av;amigoX={nome:DUO.peer.nome||null,pele:DUO.peer.pele};
+      if(!DUO.host){duoHist={nome:DUO.peer.nome||'',g:avGirl(DUO.peer.av||'m')?'f':'m'}; // the story is the main character's
+        const n_=(DUO.peer.nome||'').trim().split(/\s+/)[0];if(n_)$('te-dono').textContent='Diário de '+n_;}
       duoFire('perfil',DUO.peer);duoIntroBtn();break;
     case 'comecar':if(!DUO.host){DUO.go=true;duoIntroBtn();if(state==='intro')start();}break;
-    case 'pos':DUO.rem={s:m.s,x:m.x,y:m.y,d:m.d,m:m.m,t:performance.now()};break;
+    case 'pos':DUO.rem={s:m.s,x:m.x,y:m.y,d:m.d,m:m.m,t:performance.now(),j:m.j?1:0,b:m.b||'',o:m.o||null};break;
     case 'cena':duoCena(m);break;
     case 'st':if(startTime)duoApply(m.d);break;
     case 'gm':if(!DUO.host&&startTime&&typeof m.gm==='number')gameMin=m.gm;break;
     case 'pedir':duoFull();break;
-    case 'full':if(!DUO.host&&startTime){duoApply(m.st);if(typeof m.gm==='number')gameMin=m.gm;if(m.s&&m.s!==scene)duoCena({s:m.s,x:m.x,y:m.y,d:m.d,l:''});}break;
+    case 'full':if(!DUO.host&&startTime){duoApply(m.st);if(typeof m.gm==='number')gameMin=m.gm;
+      if(m.s&&m.s!==scene)duoCena({s:m.s,x:m.x,y:m.y,d:m.d,l:''});}break;
     case 'tela':if(typeof m.img==='string'){const im=new Image();im.onload=()=>{DUO.img=im;};im.src=m.img;}if(m.html&&state==='assistir')duoMirror(m.html);else if(m.html)DUO.htmlPend=m.html;break;
     case 'ver':if(m.on){DUO.verOn=true;DUO.verTxt=m.t||'';}else{DUO.verOn=false;DUO.htmlPend=null;if(state==='assistir'){duoVerSair();if(m.s&&m.s!==scene)duoCena({s:m.s,x:m.x,y:m.y,d:m.d,l:''});}}break;
     case 'npc':if(!DUO.host){DUO.npc=m;DUO.npc.t=performance.now();}break;
@@ -11853,6 +11891,7 @@ function duoRecv(m){
 // the other one went through a door: come along (the friend only watches the simulator)
 function duoCena(m){
   if(!startTime)return;
+  if(state==='espera'){state='play';DUO.goWait=null;} // waiting at a door: the other one went first, follow
   const sim=m.s==='salaSim'||m.s==='simGlic';
   if(sim){ // the simulator: the friend waits in the lab (and watches it: see 'ver')
     if(DUO.host||scene==='salaLab')return;
@@ -11869,8 +11908,15 @@ function duoTick(dt){
   if(!DUO.on||!startTime)return;
   const now=performance.now();
   // where I am
-  const key=[scene,Math.round(player.x),Math.round(player.y),player.dir,player.moving?1:0].join(',');
-  if(now-DUO.posAt>(key!==DUO.posKey?100:1000)){DUO.posAt=now;DUO.posKey=key;duoEmit('pos',{s:scene,x:Math.round(player.x),y:Math.round(player.y),d:player.dir,m:player.moving?1:0});}
+  if(state==='play')DUO.talkO=null;
+  const bz=DUO_BUSY.includes(state)?state:'',key=[scene,Math.round(player.x),Math.round(player.y),player.dir,player.moving?1:0,flags.jaleco?1:0,bz,DUO.talkO].join(',');
+  if(now-DUO.posAt>(key!==DUO.posKey?100:1000)){DUO.posAt=now;DUO.posKey=key;
+    duoEmit('pos',{s:scene,x:Math.round(player.x),y:Math.round(player.y),d:player.dir,m:player.moving?1:0,j:flags.jaleco?1:0,b:bz,o:bz?DUO.talkO:null});}
+  duoPeerJal=now-DUO.rem.t<15000?!!DUO.rem.j:null;
+  // waiting at a door for the other one to finish (a talk, a sheet, the pause) or to come out of the restroom
+  if(state==='espera'){const w=duoWaitWhy();
+    if(!w||!DUO.goWait){state='play';const g_=DUO.goWait;DUO.goWait=null;if(g_)goScene(...g_);}
+    else if(!banner||banner.t<.3)banner={text:'ESPERANDO '+duoPeerName().toUpperCase()+' '+w,t:.8};}
   // I went through a door
   if(DUO.sc!==scene){const was=DUO.sc;DUO.sc=scene;
     if(DUO.remoteMove)DUO.remoteMove=false;
@@ -11891,7 +11937,8 @@ function duoTick(dt){
   if(DUO.host&&now-(DUO.npcAt||0)>200){DUO.npcAt=now;
     const L_=seatsOf(scene);
     duoEmit('npc',{s:scene,
-      w:(WANDER[scene]||[]).filter(o=>o.x!=null).map(o=>[o.id,Math.round(o.x),Math.round(o.y),o.dir,o.moving?1:0,o.sitting>0&&o.seat?L_.indexOf(o.seat):-1,o.chat>0?1:0,o.role|0]),
+      p:(SCENES[scene]||[]).filter(duoMobile).map(o=>duoPack(o,L_)),
+      jz:Object.assign(duoPrim(jan),{x:Math.round(jan.x*10)/10,y:Math.round(jan.y*10)/10,path:jan.path.map(q=>[Math.round(q[0]),Math.round(q[1])])}),
       g:[ghZ,ghT].map(o=>[o.st.sc,Math.round(o.x),Math.round(o.y),Math.round(o.alpha*100)/100,o.dir,o.look|0]),
       c:[cat.sc,Math.round(cat.x),Math.round(cat.y),cat.face,cat.mode,cat.moving?1:0]});}
   // the other one, on screen
@@ -11940,19 +11987,73 @@ function duoVerSair(){if(state==='assistir')state='play';DUO.img=null;duoMirror(
 {const sg0=saveGame;saveGame=function(){if(DUO.on&&!DUO.host)return;return sg0();};}
 const duoNpcOk=()=>DUO.on&&!DUO.host&&!!DUO.npc&&performance.now()-DUO.npc.t<1500;
 const duoLerp=(o,x,y,dt)=>{if(Math.hypot(x-o.x,y-o.y)>40){o.x=x;o.y=y;}else{const k=Math.min(1,dt*10);o.x+=(x-o.x)*k;o.y+=(y-o.y)*k;}};
+/* The people of the scene, the same on both devices: the main character's device moves everyone who walks (the
+   students of the corridors and of Sala 101, the professors on their way, Larissa, Tadeo, the janitor...) and sends,
+   5 times a second, where each one is and how they look (their plain values); the friend's device shows them there,
+   puts in the scene whoever is there on the other screen and takes out whoever is not. */
+const DUO_SKIP=new Set(['id','x','y','anim','blinkPh','name','_px','_py']);
+const duoMobile=o=>!!o&&o!==buddy&&typeof o.x==='number'&&typeof o.y==='number'&&typeof o.id==='string'&&!o.wall&&typeof o.sprite==='function';
+function duoPrim(o){ // the plain values of an object (numbers, text, yes/no), no getters
+  const p_={};
+  for(const k of Object.keys(o)){if(DUO_SKIP.has(k))continue;const ds=Object.getOwnPropertyDescriptor(o,k);if(!ds||!('value' in ds))continue;
+    const v=ds.value,t=typeof v;if(t==='number')p_[k]=Number.isFinite(v)?Math.round(v*100)/100:(v>0?1e9:-1e9);else if(t==='string'||t==='boolean'||v===null)p_[k]=v;}
+  return p_;
+}
+function duoPack(o,L_){
+  const p_=duoPrim(o);
+  if(o.solid&&!o.solids)p_._s=[o.solid.x,o.solid.y,o.solid.w,o.solid.h];
+  if(o.zone)p_._z=[o.zone.x,o.zone.y,o.zone.w,o.zone.h];
+  if('seat' in o)p_._seat=o.seat?L_.indexOf(o.seat):-1;
+  return [o.id,Math.round(o.x*10)/10,Math.round(o.y*10)/10,p_];
+}
+let duoRegM=null; // everyone who may walk, by id (also those out of every scene at the moment)
+function duoReg(){
+  if(!duoRegM){duoRegM=new Map();for(const sc in SCENES)for(const o of SCENES[sc])if(o&&typeof o.id==='string'&&typeof o.sprite==='function')duoRegM.set(o.id,o);
+    for(const o of RECESS.concat(profsCorr))duoRegM.set(o.id,o);}
+  for(const o of profsCorr)duoRegM.set(o.id,o); // (made anew on each walk)
+  return duoRegM;
+}
+function duoPuppets(dt){
+  if(!duoNpcOk())return;
+  const N=DUO.npc;
+  if(N.jz){ // the janitor
+    const z=N.jz,sc0=jan.sc,cl0=janCleaning();
+    for(const k in z)if(k!=='x'&&k!=='y'&&k!=='path')jan[k]=z[k];jan.path=(z.path||[]).map(q=>q.slice());
+    if(sc0!==jan.sc||Math.hypot(z.x-jan.x,z.y-jan.y)>40){jan.x=z.x;jan.y=z.y;}else{const k=Math.min(1,dt*10);jan.x+=(z.x-jan.x)*k;jan.y+=(z.y-jan.y)*k;}
+    if(jan.moving)jan.anim+=dt*6;
+    if(sc0!==jan.sc||cl0!==janCleaning()||!SCENES[jan.sc].includes(zelObj))janPlace();else janSync();
+  }
+  if(N.s!==scene||!N.p)return;
+  const here=SCENES[scene],seen=new Set(),L_=seatsOf(scene);
+  for(const [id,x,y,p_] of N.p){
+    let o=here.find(q=>q.id===id);
+    if(!o){ // somewhere else on this device: brought here
+      for(const sc in SCENES){if(sc===scene)continue;const i=SCENES[sc].findIndex(q=>q.id===id);if(i>=0){o=SCENES[sc][i];SCENES[sc].splice(i,1);break;}}
+      if(!o)o=duoReg().get(id); // (or out of every scene here: a student who has not arrived yet on this device)
+      if(!o)continue;here.push(o);o._px=null;}
+    if(WANDER[scene]&&WANDER[scene].indexOf(o)<0&&Object.keys(WANDER).some(k=>WANDER[k].includes(o))){
+      for(const k in WANDER){const i=WANDER[k].indexOf(o);if(i>=0)WANDER[k].splice(i,1);}WANDER[scene].push(o);}
+    seen.add(o);
+    for(const k in p_)if(k[0]!=='_')try{o[k]=p_[k];}catch(e){}
+    if(p_._s)o.solid={x:p_._s[0],y:p_._s[1],w:p_._s[2],h:p_._s[3]};
+    if(p_._z)o.zone={x:p_._z[0],y:p_._z[1],w:p_._z[2],h:p_._z[3]};
+    if('_seat' in p_)o.seat=p_._seat>=0?L_[p_._seat]||null:null;
+    if(o._px==null||Math.hypot(x-o._px,y-o._py)>40){o._px=x;o._py=y;}else{const k=Math.min(1,dt*10);o._px+=(x-o._px)*k;o._py+=(y-o._py)*k;}
+    o.x=o._px;o.y=o._py;
+    if(o.moving)o.anim=(o.anim||0)+dt*7;else o.anim=0;
+  }
+  for(let i=here.length-1;i>=0;i--){const o=here[i];if(duoMobile(o)&&!seen.has(o)){here.splice(i,1);o._px=null;}} // not here on the main character's screen
+}
 {const uw0=updateWanderers;updateWanderers=function(dt){
-  if(!(duoNpcOk()&&DUO.npc.s===scene))return uw0(dt);
-  if(state!=='play')return; // (talking to one of them: they wait)
-  const L_=seatsOf(scene);
-  for(const r of DUO.npc.w){const o=(WANDER[scene]||[]).find(q=>q.id===r[0]);if(!o)continue;
-    if(o.wait>0){o.wait-=dt;continue;}
-    const st=r[5]>=0&&L_[r[5]];
-    if(st){o.seat=st;o.sitting=1;o.noShadow=!st.stand;Object.assign(o,{cx:st.cx,base:st.base,top:st.top,solid:{x:st.cx-5,y:st.base-5,w:10,h:4}});
-      o.zone={x:st.cx-30,y:st.top-14,w:60,h:st.base+20-(st.top-14)};o.chat=0;continue;}
-    if(o.sitting>0||o.seat){o.sitting=0;o.seat=null;o.noShadow=false;}
-    duoLerp(o,r[1],r[2],dt);o.dir=r[3];o.moving=!!r[4];if(o.moving)o.anim+=dt*7;else o.anim=0;
-    o.chat=r[6]?1:0;o.role=r[7];o.tx=null;o.queue=[];o.meet=null;syncW(o);}
+  if(duoNpcOk()&&DUO.npc.s===scene)return; // (the main character's device moves them: duoPuppets)
+  if(DUO.on&&DUO.host&&state==='dialog'){state='play';try{return uw0(dt);}finally{state='dialog';}} // online the others go on while one of them talks
+  return uw0(dt);
 };}
+{const rt0=recessTick;recessTick=function(dt){
+  if(DUO.on&&DUO.host&&state==='dialog'){state='play';try{return rt0(dt);}finally{state='dialog';}}
+  return rt0(dt);
+};}
+{const ju0=janUpdate;janUpdate=function(dt){if(duoNpcOk())return;return ju0(dt);};}
 function duoGhost(o,dt){
   const r=DUO.npc.g[o===ghZ?0:1],S=o.st;if(!r)return;
   if(S.sc!==r[0]){ghPlace(o,r[0]);o.x=r[1];o.y=r[2];}
@@ -11965,7 +12066,118 @@ function duoGhost(o,dt){
   if(cat.sc!==c[0]){catPlace(c[0]);cat.x=c[1];cat.y=c[2];}
   duoLerp(cat,c[1],c[2],dt);cat.face=c[3];cat.mode=c[4];cat.moving=!!c[5];if(cat.moving)cat.anim+=dt*6;cat.slide=null;catSync();
 };} // only the main character's device saves
-{const u0=update;update=function(dt){u0(dt);duoTick(dt);};}
+/* Whoever is talking to someone keeps them: the person stands still and faces the one talking, on both screens (the
+   main character's device moves people, so it holds them still for either player). */
+const DUO_BUSY=['dialog','quiz','caca','duelo','dz','segredo','laudo','poster','review','pause'];
+const DUO_DESAFIO=['quiz','caca','duelo','dz','segredo','laudo'];
+{const s0=say;say=function(l,cb){if(DUO.on&&state==='play'){const n=nearest();DUO.talkO=n&&typeof n.id==='string'?n.id:null;}return s0(l,cb);};}
+function duoFrozen(){
+  if(!(DUO.on&&DUO.host&&startTime))return [];
+  const L=[],add_=(id,who)=>{const o=id&&objects.find(q=>q.id===id);if(o&&typeof o.x==='number')L.push({o,who,x:o.x,y:o.y,d:o.d});};
+  if(DUO_BUSY.includes(state))add_(DUO.talkO,player);
+  if(DUO.rem.b&&DUO.rem.s===scene&&performance.now()-DUO.rem.t<3000)add_(DUO.rem.o,buddy);
+  return L;
+}
+duoPauseTick=dt=>duoTick(dt);
+{const tc0=tickClock;tickClock=function(raw){if(DUO.on&&!DUO.host&&startTime&&DUO.rem.b==='pause'&&performance.now()-DUO.rem.t<3000)return;return tc0(raw);};} // the main character's pause stops the clock for both
+{const u0=update;update=function(dt){
+  const fz=duoFrozen();
+  u0(dt);
+  for(const f of fz){const o=f.o;
+    if(o.x!==f.x||o.y!==f.y){o.x=f.x;o.y=f.y;if(f.d!==undefined)o.d=f.d;if(!(o.sitting>0)&&o.solid&&o.solid.w===10&&o.solid.h===4)syncW(o);}
+    o.moving=false;o.anim=0;if(!(o.sitting>0))o.dir=faceTo(o,f.who);}
+  if(DUO.on&&!DUO.host)duoPuppets(dt);
+  duoTick(dt);
+};}
+/* Together all the time: the two bodies do not overlap, and neither can walk off the other's screen (the camera
+   frames both of them); to go somewhere else they walk side by side. */
+const duoNear=()=>DUO.on&&!!startTime&&DUO.peerOn&&buddy.sc===scene&&DUO.rem.s===scene&&performance.now()-DUO.rem.t<3000&&scene!=='salaSim'&&scene!=='simGlic';
+const DUO_LX=W-44,DUO_LY=H-64;
+{const b0=blocked;blocked=function(x,y){
+  if(b0(x,y))return true;
+  if(!duoNear()||(x===player.x&&y===player.y))return false;
+  const bx=buddy.x,by=buddy.y,ax=Math.abs(x-bx),ay=Math.abs(y-by),ox=Math.abs(player.x-bx),oy=Math.abs(player.y-by);
+  if(ax<10&&ay<6&&Math.hypot(x-bx,y-by)<Math.hypot(player.x-bx,player.y-by))return true; // the other one's body
+  if(ax>DUO_LX&&ax>ox)return true;if(ay>DUO_LY&&ay>oy)return true; // the edge of the other one's screen
+  return false;
+};}
+camFocus=()=>{
+  if(!duoNear())return [player.x,player.y];
+  const y0=Math.min(player.y,buddy.y),y1=Math.max(player.y,buddy.y);
+  return [(player.x+buddy.x)/2,(y0+y1)/2+29]; // (the two, from the head of the upper one to the feet of the lower one)
+};
+{const pa0=playerAhead,nb0=npcBackOff;let viaB=false; // the people walking also step aside for the other player
+  playerAhead=function(...a){viaB=false;if(pa0(...a))return true;if(!duoNear())return false;
+    const px_=player.x,py_=player.y;player.x=buddy.x;player.y=buddy.y;try{viaB=pa0(...a);return viaB;}finally{player.x=px_;player.y=py_;}};
+  npcBackOff=function(...a){if(!viaB)return nb0(...a);const px_=player.x,py_=player.y;player.x=buddy.x;player.y=buddy.y;try{return nb0(...a);}finally{player.x=px_;player.y=py_;}};}
+/* A door waits for the other one: nobody goes through while the other is in a talk, a sheet or the pause (or in the
+   restroom), and nobody is pulled out of a talk. */
+function duoWaitWhy(){
+  if(!DUO.on||!DUO.peerOn||performance.now()-DUO.rem.t>15000)return '';
+  const r_=DUO.rem;
+  if(r_.s&&r_.s!==scene&&BAN_RE.test(r_.s))return 'SAIR DO BANHEIRO';
+  if(r_.s!==scene)return '';
+  if(r_.b==='dialog')return 'TERMINAR A CONVERSA';
+  if(r_.b==='pause')return 'VOLTAR DA PAUSA';
+  if(DUO_DESAFIO.includes(r_.b))return 'TERMINAR O DESAFIO';
+  if(r_.b)return 'TERMINAR DE LER';
+  return '';
+}
+{const gs0=goScene;goScene=function(...a){
+  if(DUO.on&&startTime&&!DUO.remoteMove&&!tdCut&&state==='play'&&a[0]!==DUO.rem.s){ // (into the room where the other one already is: no need to wait)
+    const w=duoWaitWhy();
+    if(w){DUO.goWait=a;state='espera';keys.clear();tGo=null;tDrag=null;banner={text:'ESPERANDO '+duoPeerName().toUpperCase()+' '+w,t:.8};return;}
+  }
+  return gs0.apply(this,a);
+};}
+/* The challenges, one player at a time: while one answers a sheet (or the word search, the duel, the Liga's
+   challenge, the riddles, the blood bags' report), the other waits; what is solved counts for both. */
+const duoDesafioOutro=()=>DUO.on&&DUO.peerOn&&performance.now()-DUO.rem.t<15000&&DUO_DESAFIO.includes(DUO.rem.b);
+const duoEspereDesafio=()=>{pileBack=null;say([{t:duoPeerName()+' está respondendo um desafio agora. Espere terminar: o que for resolvido vale para os dois.'}]);};
+{const f0=openQuiz;openQuiz=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const f0=openCaca;openCaca=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const f0=openDuel;openDuel=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const f0=openDz;openDz=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const f0=openSegredo;openSegredo=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const f0=openLaudo;openLaudo=function(...a){if(duoDesafioOutro())return duoEspereDesafio();return f0.apply(this,a);};}
+{const h0=handSheets;handSheets=function(){if(DUO.on)flags.entregue=true;return h0();};}
+// the story is the main character's: people come up to them, not to the friend
+{const ab0=abordTick;abordTick=function(dt){if(DUO.on&&!DUO.host)return;return ab0(dt);};}
+/* Each one has their own lab coat: the main character's in locker 42, the friend's in locker 41 (with their name).
+   The lab is the only room that asks for it: in only with both in lab coats. */
+myLocker=()=>DUO.on&&!DUO.host?41:42;
+lockerOwner=n=>n===42?jogHist():n===41&&DUO.on?(DUO.host?(DUO.peer&&DUO.peer.nome)||'':jogador):null;
+duoJalOk=()=>!DUO.on||duoPeerJal==null||duoPeerJal;
+duoJalMsg=onde=>'Espere: '+duoPeerName()+' ainda está sem jaleco. Para '+onde+', vocês dois precisam estar de jaleco. O armário de '+duoPeerName()+' é o '+(DUO.host?41:42)+', no térreo.';
+{const T=SCENES.terreo,L42=T.find(o=>o.id==='locker42'),L41=T.find(o=>o.id==='locker41'),a42=L42.act,a41=L41.act;
+  const tag=n_=>(n_||'SEM NOME').toUpperCase();
+  function meuArmario(){ // the friend's own locker (no Liga hat: that one goes with the main character)
+    if(!flags.jalecoPego)return say([
+      {t:'Armário 41, com uma etiqueta escrita à mão: "'+tag(jogador)+'". É o seu!'},
+      {t:'Você abre o cadeado e veste o jaleco.',run:()=>{flags.jalecoPego=true;}},
+      {t:'Você pegou: JALECO',item:'jaleco'}]);
+    if(flags.jaleco)return say([{t:'Seu armário. Só tem seu caderno e um guarda-chuva.',choices:[
+      {t:'Tirar o jaleco e guardar no armário',fn:()=>{flags.jaleco=false;$('slot-jaleco').classList.remove('got');sfx.item();updateObjective();
+        say([{t:'Você tira o jaleco, dobra direitinho e guarda no armário.'},{t:'Lembre-se: no laboratório, só entra quem estiver de jaleco.'}]);}},
+      {t:'Continuar de jaleco',fn:()=>{}}]}]);
+    say([{t:'Seu armário. O jaleco está dobrado ali dentro.',choices:[
+      {t:'Vestir o jaleco',fn:()=>say([{t:'Você veste o jaleco de novo.'},{t:'Você está de: JALECO',item:'jaleco'}])},
+      {t:'Deixar o jaleco no armário',fn:()=>{}}]}]);
+  }
+  L41.act=function(){
+    if(!DUO.on)return a41.call(this);
+    if(DUO.host)return say([{t:'Armário 41, com uma etiqueta escrita à mão: "'+tag(DUO.peer&&DUO.peer.nome)+'". É o armário de '+duoPeerName()+'.'},{t:'O jaleco de '+duoPeerName()+' fica aí dentro.'}]);
+    return meuArmario();};
+  L42.act=function(){
+    if(DUO.on&&!DUO.host)return say([{t:'Armário 42, com uma etiqueta meio torta: "'+tag(jogHist())+'". É o armário de '+duoPeerName()+'.'},{t:'O seu é o 41, aqui do lado.'}]);
+    return a42.call(this);};
+  const LB=T.find(o=>o.id==='lab'),lb0=LB.act;
+  LB.act=function(){
+    if(DUO.on&&flags.cracha&&flags.jaleco&&!duoJalOk()){sfx.bump();
+      return say([{t:'Você aproxima o crachá do leitor... BIP-BIP. Luz vermelha.'},{t:duoJalMsg('entrar no laboratório')}]);}
+    return lb0.call(this);};
+}
+
 requestAnimationFrame(loop);
 })();
 </script>
@@ -12024,9 +12236,22 @@ requestAnimationFrame(loop);
     escolha = i;
     cartas.forEach(function(c, k){ c.classList.toggle('on', k === i); c.setAttribute('aria-checked', k === i ? 'true' : 'false'); });
   }
+  /* online: the character the other player already chose is taken (greyed out, with their name); the two screens
+     are open at the same time, and whoever confirms first keeps it */
+  var tpDuo = document.getElementById('tpDuo');
+  function tomado(i){ return cartas[i].classList.contains('tomado'); }
+  function proximo(i, d){ for (var k = 0; k < cartas.length; k++){ i = (i + d + cartas.length) % cartas.length; if (!tomado(i)) return i; } return i; }
+  function marcarTomado(){
+    var on = window.duo && window.duo.ativo(), av = on && window.duo.parAv ? window.duo.parAv() : null, p = on ? window.duo.par() : null;
+    cartas.forEach(function(c){ var t = !!av && c.dataset.gen === av; c.classList.toggle('tomado', t); c.setAttribute('aria-disabled', t ? 'true' : 'false');
+      if (t) c.dataset.tomado = 'Escolhido por ' + ((p && p.nome) || 'seu amigo'); else delete c.dataset.tomado; });
+    tpDuo.hidden = !on; tpDuo.textContent = on ? (av ? 'O personagem apagado já foi escolhido por ' + ((p && p.nome) || 'seu amigo') + '.' : 'Cada um escolhe um personagem diferente.') : '';
+    if (tomado(escolha)){ escolher(proximo(escolha, 1)); if (linha === 0) marcarLinha(0); }
+  }
   function pedirPersonagem(){
     carregando.style.display = 'none';
     telaPersonagem.style.display = '';
+    marcarTomado();
     desenharCartas(-1);
     var n = 0;
     piscaIv = setInterval(function(){ n++; desenharCartas(n % 3 === 0 ? (n / 3) % cartas.length : -1); }, 600);
@@ -12034,6 +12259,7 @@ requestAnimationFrame(loop);
   }
   function confirmarPersonagem(){
     if (telaPersonagem.style.display === 'none') return;
+    if (tomado(escolha)){ bipLoad(180, 0, .12, 'square', .05); return; }
     clearInterval(piscaIv);
     bipLoad(660, 0, .08, 'square', .05); bipLoad(990, .07, .14, 'square', .05);
     var gn = cartas[escolha].dataset.gen;
@@ -12044,8 +12270,8 @@ requestAnimationFrame(loop);
     if (window.duo && window.duo.ativo()) pedirNome(); else pedirAmigo(gn); // (online the friend is the other player)
   }
   cartas.forEach(function(c, i){
-    c.addEventListener('click', function(){ if (escolha !== i){ escolher(i); bipLoad(520, 0, .03, 'square', .03); } else confirmarPersonagem(); });
-    c.addEventListener('dblclick', confirmarPersonagem);
+    c.addEventListener('click', function(){ if (tomado(i)){ bipLoad(180, 0, .12, 'square', .05); return; } if (escolha !== i){ escolher(i); bipLoad(520, 0, .03, 'square', .03); } else confirmarPersonagem(); });
+    c.addEventListener('dblclick', function(){ if (!tomado(i)) confirmarPersonagem(); });
   });
   document.getElementById('btnPersonagem').addEventListener('click', confirmarPersonagem);
   document.addEventListener('keydown', function(e){
@@ -12055,7 +12281,7 @@ requestAnimationFrame(loop);
     else if (k === 'arrowleft' || k === 'arrowright' || k === 'a' || k === 'd'){
       e.preventDefault();
       if (linha === 1){ escolherPele(pele + (k === 'arrowleft' || k === 'a' ? -1 : 1)); marcarLinha(1); }
-      else { escolher((escolha + (k === 'arrowleft' || k === 'a' ? -1 : 1) + cartas.length) % cartas.length); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
+      else { escolher(proximo(escolha, k === 'arrowleft' || k === 'a' ? -1 : 1)); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
     } else if (e.key === 'Enter' || (e.key === ' ' && linha === 0)){ e.preventDefault(); confirmarPersonagem(); }
   });
   // called by the game's controller code while the opening screens are up; true = handled here
@@ -12063,7 +12289,7 @@ requestAnimationFrame(loop);
     if (telaPersonagem.style.display === 'none') return false;
     if (code === 'ArrowUp' || code === 'ArrowDown') marcarLinha(1 - linha);
     else if ((code === 'ArrowLeft' || code === 'ArrowRight') && linha === 1){ escolherPele(pele + (code === 'ArrowLeft' ? -1 : 1)); marcarLinha(1); }
-    else if (code === 'ArrowLeft' || code === 'ArrowRight'){ escolher((escolha + (code === 'ArrowLeft' ? -1 : 1) + cartas.length) % cartas.length); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
+    else if (code === 'ArrowLeft' || code === 'ArrowRight'){ escolher(proximo(escolha, code === 'ArrowLeft' ? -1 : 1)); bipLoad(520, 0, .03, 'square', .03); marcarLinha(0); }
     else if (code === 'Enter' || code === 'Menu') confirmarPersonagem();
     return true;
   };
@@ -12125,9 +12351,11 @@ requestAnimationFrame(loop);
     window.duo.on('perfil', function(p){ // continuing a saved game: once the friend has a name, the game goes on
       if (dupPapel === 'continuar' && p && p.nome && telaDupla.style.display !== 'none'){ telaDupla.style.display = 'none'; window.duo.comecarSalvo(); }
     });
-    window.duo.on('perfil', function(p){ // joining: once the main character has a character, choose one of the others
-      if (dupPapel !== 'entrar' || telaDupla.style.display === 'none' || !p || !p.av) return;
-      telaDupla.style.display = 'none'; duoAmigo = true; pedirAmigo(p.av);
+    window.duo.on('perfil', function(){ if (telaPersonagem.style.display !== 'none') marcarTomado(); }); // the other one chose (or changed): that character is taken
+    window.duo.on('avTomado', function(){ // both confirmed the same character at once: the main character keeps it, choose again
+      telaNome.style.display = 'none'; pedirPersonagem();
+      var p = window.duo.par(); tpDuo.textContent = ((p && p.nome) || 'Seu amigo') + ' escolheu esse personagem um instante antes. Escolha outro.';
+      bipLoad(180, 0, .12, 'square', .05);
     });
   }
   function criarSala(){
@@ -12155,9 +12383,8 @@ requestAnimationFrame(loop);
     window.duo.entrar(c, function(r){
       if (r.erro){ dupPapel = null; dupNota(r.erro); return; }
       document.getElementById('dupEntrarBox').hidden = true;
-      var p = window.duo.par();
-      if (p && p.av){ telaDupla.style.display = 'none'; duoAmigo = true; pedirAmigo(p.av); }
-      else dupNota('Você entrou! Esperando o seu amigo escolher o personagem...');
+      dupNota('Você entrou! Vamos lá...'); bipLoad(880, 0, .12, 'triangle', .1);
+      setTimeout(function(){ telaDupla.style.display = 'none'; pedirPersonagem(); }, 700); // the two choose at the same time
     });
   }
   document.getElementById('dupOk').addEventListener('click', dupEntrarOk);
