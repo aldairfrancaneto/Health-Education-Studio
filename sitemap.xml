@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Página inicial -->
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Projetos -->
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/projetos.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Jogos -->
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-lactato-mobile.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/codigo-inflamacao.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/Uninogwarts.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Atividades presenciais (página de entrada; as atividades com senha ficam de fora) -->
+  <url>
+    <loc>https://aldairfrancaneto.github.io/Health-Education-Studio/atividades.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>
