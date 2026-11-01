@@ -6,7 +6,7 @@
 <title>Uninogwarts: O desafio bioquímico · Temporada 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Cinzel+Decorative:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Cinzel+Decorative:wght@700&family=Patrick+Hand&display=swap">
 <style>
 /* Layout: a single fixed-ratio game screen scaled to fit the viewport; objective and inventory sit inside it. One-look dark design (hospital teal + caution yellow of the tactile floor strip). */
 :root{
@@ -128,52 +128,50 @@ body.gp .tela-nome,body.xbox .tela-nome{gap:14px;padding-block:20px}
 .ctl-help li{display:flex;align-items:center;gap:.45em}
 .ctl-help .gpb{font-size:.4em;flex:none}
 /* Pause menu (Menu button on the controller, P on the keyboard) */
-#pausa{align-items:center;justify-content:center}
-.pause-box{width:min(620px,100%);max-height:100%;overflow:auto;background:var(--panel);border:4px solid var(--ink);box-shadow:8px 8px 0 #0d0806;padding:22px 26px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px}
-.pz-tit{font-family:var(--f-display);font-size:16px;color:var(--accent);letter-spacing:.1em}
-/* the diary: a ruled page with the objectives stuck on it, in the colours they had on the game screen */
-.pz-diario{display:flex;flex-direction:column;gap:12px;padding:12px 16px 18px 36px;color:#2a1a10;transform:rotate(-.5deg);
-  background:linear-gradient(90deg,transparent 22px,rgba(208,53,43,.45) 0 24px,transparent 0),repeating-linear-gradient(180deg,transparent 0 25px,rgba(45,111,181,.22) 0 26px),#efe3c8;
-  box-shadow:0 5px 0 #0d0806}
-.pz-cab{display:flex;justify-content:space-between;gap:12px;margin:0;font-size:21px;color:#7a2e3e;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid rgba(122,46,62,.35)} /* VT323: Press Start has no capital accented letters */
-.pz-lista{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
-.pz-nota{position:relative;max-width:100%;box-sizing:border-box;display:flex;align-items:stretch;gap:10px;background:rgba(29,22,18,.94);color:var(--ink);font-size:22px;line-height:1.05;padding:0 12px 0 0;box-shadow:2px 3px 0 rgba(13,8,6,.35);transform:rotate(.5deg)}
-.pz-nota:nth-child(even){transform:rotate(-.6deg)}
-.pz-nota::before{content:"";position:absolute;top:-6px;left:18px;width:34px;height:11px;background:rgba(242,201,76,.7);transform:rotate(-5deg)} /* tape */
-.pz-nota b{flex:none;display:grid;place-items:center;font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.08em;color:#1a1606;background:var(--accent);padding:4px 6px}
-.pz-nota span{min-width:0;padding:5px 0;white-space:pre-line}
-.pz-nota i{flex:none;align-self:center;font-style:normal;font-family:var(--f-display);font-size:8px;letter-spacing:.06em;color:#fff;background:#d0352b;padding:3px 5px;animation:te-bob 1.2s ease-in-out infinite}
-.pz-nota em{flex:none;align-self:center;font-style:normal;font-family:var(--f-display);font-size:8px;color:#1a1606;background:#f2c94c;padding:3px 5px}
-.pz-nota.extra{background:rgba(18,26,38,.94);color:#d7e8f7}
-.pz-nota.extra b{color:#08182a;background:#5fb4f0}
-.pz-progresso{margin:0;font-size:20px;color:#7a2e3e;border-top:2px dashed rgba(122,46,62,.3);padding-top:6px}
-.pz-nota.feito{background:#8a8178;color:#f4efe4;box-shadow:none}
-.pz-nota.feito b{color:#3a342e;background:#d8d0c2}
-.pz-nota.feito::before{background:rgba(242,201,76,.4)}
-@media (prefers-reduced-motion:reduce){.pz-nota i{animation:none}}
+/* the pause menu in the colored-pencil look of the main menu: the list on the left, a diary page on the right; nothing here ever scrolls (long lists turn pages, see pzPaginar) */
+#pausa{padding:0;--f-lapis:"Patrick Hand","Comic Sans MS",cursive}
+.tela-menu.pz-tela{grid-template-rows:minmax(0,1fr);overflow:hidden}
+.pz-tela .tm-corpo{grid-template-columns:minmax(0,36fr) minmax(0,64fr);grid-template-rows:minmax(0,1fr);gap:clamp(20px,3vw,44px);height:100%;min-height:0}
+.pz-tela .tm-quadro{min-height:0}
+.pz-tela .tm-item{min-height:0;flex:1 1 0;padding:2px 10px}
+.pz-tela .tm-val{color:var(--p-ver);font-size:.7em;filter:none}
+.pz-tela .tm-item.on .tm-val{color:#fff}
+.pz-diario{display:flex;flex-direction:column;gap:clamp(3px,1vh,10px);padding:clamp(8px,2vh,18px) clamp(12px,2vw,24px) clamp(6px,1.6vh,14px) clamp(30px,4vw,48px);font-family:var(--f-lapis);color:var(--grafite);
+  background:repeating-linear-gradient(180deg,transparent 0 31px,rgba(63,111,196,.2) 31px 32px),var(--papel)}
+.pz-diario::before{content:"";position:absolute;left:clamp(8px,1.2vw,14px);top:12px;bottom:12px;width:11px;background:radial-gradient(circle at 50% 50%,#1d1612 0 32%,transparent 36%) 0 0/100% 24px}
+.pz-tit2{margin:0;flex:none;font-family:var(--f-display);font-size:clamp(11px,1.5vw,16px);letter-spacing:.05em;line-height:1.5;color:var(--t,var(--p-rox));padding-bottom:clamp(4px,1vh,10px);
+  background:linear-gradient(90deg,var(--p-ver),var(--p-lar),var(--p-ama),var(--p-vde),var(--p-azu),var(--p-rox)) bottom/100% 3px no-repeat}
+.pz-lista{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:clamp(3px,1vh,10px);filter:url(#pzLapis)}
+.pz-li{display:grid;grid-template-columns:1.1em minmax(0,1fr) auto;gap:.3em;align-items:start;font-size:clamp(17px,3.2vh,27px);line-height:1.12;color:var(--pen,var(--grafite));white-space:pre-line}
+.pz-lista.mini .pz-li{font-size:clamp(14px,2.5vh,20px)}
+.pz-li i{font-style:normal;align-self:center;font-family:var(--f-display);font-size:8px;color:#fff;background:#4f8a2a;padding:3px 5px;white-space:nowrap}
+.pz-li em{font-style:normal;align-self:center;font-family:var(--f-display);font-size:8px;color:#1a1606;background:var(--p-ama);padding:3px 5px}
+.pz-li.fresca>span:nth-of-type(2){animation:tinta-fresca 1.6s ease-in-out infinite}
+.pz-pe{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:clamp(15px,2.6vh,21px);color:var(--p-mar)}
+.pz-pag{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-body);color:var(--grafite)}
+.pz-seta{all:unset;cursor:pointer;font-family:var(--f-display);font-size:9px;padding:5px 7px;border:2px solid var(--p-rox);border-radius:4px;color:var(--p-rox)}
+.pz-seta[disabled]{opacity:.28;cursor:default}
+.pz-seta:focus-visible,.pz-btn:focus-visible{outline:3px solid var(--p-ros);outline-offset:2px}
+.pz-legenda{flex:none;display:flex;flex-wrap:wrap;gap:2px 14px;margin:0;font-size:clamp(13px,2.3vh,18px)}
+.pz-legenda[hidden]{display:none}
+.pz-legenda span{display:inline-flex;align-items:center;gap:5px}
+.pz-legenda b{display:inline-grid;place-items:center;width:12px;height:15px;border:2px solid var(--grafite);color:#1d2226;font-family:var(--f-body);font-size:13px;line-height:1}
+.pz-misterio{flex:none;margin:0;text-align:right;font-size:clamp(13px,2.4vh,19px);line-height:1.05;color:#3f8a3a}
+.pz-op{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:clamp(18px,3.4vh,28px);padding:2px 8px;border:3px dashed transparent;border-radius:6px;color:var(--pen)}
+.pz-op.on{border-color:var(--pen)}
+.pz-op>span{display:inline-flex;align-items:center;gap:10px}
+.pz-btns{display:flex;gap:10px;margin-top:6px}
+.pz-btn{all:unset;cursor:pointer;font-family:var(--f-display);font-size:clamp(10px,1.3vw,13px);padding:9px 14px;border-radius:6px;color:#fff;background:var(--c)}
+@media (max-width:640px) and (orientation:portrait){.pz-tela .tm-corpo{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:18px}.pz-tela .tm-lista{flex-direction:row;flex-wrap:wrap;padding:8px}.pz-tela .tm-tit{display:none}
+  .pz-tela .tm-item{flex:1 1 45%;min-height:38px;max-height:44px;font-size:10px;gap:4px}.pz-tela .tm-item .tm-cur{display:none}.pz-li{font-size:20px}.pz-lista.mini .pz-li{font-size:17px}.pz-pe{font-size:15px;gap:6px}}
+.pz-pag,#pz-pontos{white-space:nowrap}
+@media (max-height:520px){.pz-tela .tm-tit{padding-bottom:3px}.pz-tela .tm-item{font-size:10px;border-width:2px;gap:4px;padding:0 6px}.pz-tela .tm-item.on{border-width:2px}.pz-tela .tm-lista{gap:3px;padding:7px 9px}.pz-misterio{display:none}}
 /* new entry not read yet: the diary button glows with the living ink (green-gold main story, blue side quest) */
 #btnPausa[data-novo="gold"]{color:#e8f57a;border-color:#b8d84a;animation:tinta-viva 1.4s ease-in-out infinite;--brilho:rgba(200,240,96,.85)}
 #btnPausa[data-novo="blue"]{color:#bfeaff;border-color:#6fc3ee;animation:tinta-viva 1.4s ease-in-out infinite;--brilho:rgba(127,212,255,.85)}
 @keyframes tinta-viva{0%,100%{box-shadow:0 0 2px 0 var(--brilho)}50%{box-shadow:0 0 12px 4px var(--brilho)}}
-.pz-nota.fresca span{animation:tinta-fresca 1.6s ease-in-out infinite}
 @keyframes tinta-fresca{0%,100%{text-shadow:0 0 0 transparent}50%{text-shadow:0 0 7px rgba(200,240,96,.95)}}
-.pz-nota i{background:#4f8a2a!important;color:#f4ffd8!important}
-.pz-misterio{margin:4px 0 0;align-self:flex-end;max-width:92%;text-align:right;font-size:19px;line-height:1.1;color:rgba(58,120,48,.8);transform:rotate(-1.2deg);text-shadow:0 0 6px rgba(160,240,100,.55)}
-@media (prefers-reduced-motion:reduce){#btnPausa[data-novo]{animation:none!important}.pz-nota.fresca span{animation:none}}
-.pz-menu{display:flex;flex-direction:column;gap:4px}
-.pz-item{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:27px;line-height:1.1;color:var(--ink);padding:5px 10px;border:2px solid transparent}
-.pz-item span::before{content:'  ';white-space:pre;font-family:var(--f-display);font-size:.5em}
-.pz-item.on{color:var(--accent);border-color:var(--line);background:rgba(217,164,65,.08)}
-.pz-item.on span::before{content:'▶ '}
-.pz-item em{font-style:normal;font-family:var(--f-display);font-size:12px;white-space:nowrap}
-.pause-box .ctl-help{font-size:22px}
-/* leaving the game: small and out of the way, bottom right of the pause box, with a confirmation */
-.pz-sair{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:-6px;font-size:17px;color:var(--muted)}
-.pz-sair button{all:unset;cursor:pointer;font-size:16px;color:var(--muted);padding:3px 8px;border:1px solid transparent;border-radius:4px}
-.pz-sair button:hover,.pz-sair button:focus-visible{color:var(--ink);border-color:var(--line)}
-#pzSairConf{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-#pzSairConf[hidden]{display:none}
-#pzSairSim{color:var(--danger)}
+@media (prefers-reduced-motion:reduce){#btnPausa[data-novo]{animation:none!important}.pz-li.fresca>span:last-of-type{animation:none}}
 .tela-menu.tela-tchau{position:fixed;z-index:2147483001;display:flex;align-items:center;justify-content:center;padding:24px}
 .tm-tchau .tm-logo{text-transform:none}
 .tela-tchau[hidden]{display:none}
@@ -617,6 +615,58 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 #painelVolume .pv-passo[disabled]{opacity:.35;cursor:not-allowed}
 #painelVolume input[type=range]{flex:1 1 auto;min-width:0;accent-color:var(--accent);cursor:pointer}
 .modal-bar{padding-right:120px} /* keeps the poster/exam top bar clear of those buttons */
+/* the colored-pencil look on the other screens (the screens get .lp and a frame from the small script after the footer) */
+.lp{--p-ver:#d8433b;--p-lar:#ee8a2c;--p-ama:#f2c53d;--p-vde:#4fa65a;--p-tur:#2f9c9a;--p-azu:#3f6fc4;--p-rox:#8a5bb8;--p-ros:#e2669b;--p-mar:#8a5a3c;--papel:#f6ead0;--grafite:#3a2c22;--f-lapis:"Patrick Hand","Comic Sans MS",cursive;
+  background:repeating-linear-gradient(118deg,rgba(226,102,155,.10) 0 2px,transparent 2px 9px),repeating-linear-gradient(28deg,rgba(63,111,196,.12) 0 2px,transparent 2px 11px),repeating-linear-gradient(72deg,rgba(242,197,61,.07) 0 1px,transparent 1px 7px),
+    radial-gradient(ellipse at 18% 22%,rgba(138,91,184,.35),transparent 55%),radial-gradient(ellipse at 84% 78%,rgba(47,156,154,.32),transparent 55%),radial-gradient(ellipse at 80% 14%,rgba(238,138,44,.22),transparent 45%),radial-gradient(ellipse at 14% 86%,rgba(216,67,59,.22),transparent 45%),#1f1630}
+.lp::after{display:none}
+.lp-quadro{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:clamp(7px,2vh,20px);box-sizing:border-box;max-width:100%;max-height:100%;padding:clamp(12px,2.6vh,28px) clamp(16px,3vw,42px);--b1:var(--p-rox);--b2:var(--p-lar);--b3:var(--p-tur);--c2:var(--p-azu)}
+.lp .tn-titulo,.lp .te-titulo{color:var(--p-rox);text-shadow:2px 2px 0 rgba(58,44,34,.22);padding-bottom:6px;background:linear-gradient(90deg,var(--p-ver),var(--p-lar),var(--p-ama),var(--p-vde),var(--p-azu),var(--p-rox)) bottom/100% 3px no-repeat}
+.tela-enredo.lp .te-titulo{color:var(--p-ama);text-shadow:2px 2px 0 rgba(0,0,0,.45)}
+.lp .tp-dica,.lp .tc-info,.lp .tc-aviso,.lp .tn-dica,.lp .dup-txt,.lp .dup-msg,.lp .tp-rot{color:var(--grafite)}
+.lp .tc-info b{color:var(--p-rox)}.lp .tc-info small{color:var(--p-mar)}
+.lp .tp-opcoes .tp-carta{--c:var(--p-azu)}.lp .tp-opcoes .tp-carta:nth-child(6n+2){--c:var(--p-ver)}.lp .tp-opcoes .tp-carta:nth-child(6n+3){--c:var(--p-vde)}.lp .tp-opcoes .tp-carta:nth-child(6n+4){--c:var(--p-rox)}.lp .tp-opcoes .tp-carta:nth-child(6n+5){--c:var(--p-lar)}.lp .tp-opcoes .tp-carta:nth-child(6n+6){--c:var(--p-tur)}
+.lp .tp-carta{border-radius:8px;box-shadow:none;border:3px dashed color-mix(in srgb,var(--c) 55%,transparent);background:repeating-linear-gradient(120deg,color-mix(in srgb,var(--c) 14%,transparent) 0 2px,transparent 2px 8px)}
+.lp .tp-carta.on{border:3px solid var(--grafite);box-shadow:0 4px 0 rgba(58,44,34,.35);background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 2px,transparent 2px 7px),var(--c)}
+.lp .tp-nome,.lp .tp-tr{color:var(--grafite)}.lp .tp-carta.on .tp-nome,.lp .tp-carta.on .tp-tr{color:#fff}
+.lp .tp-carta.tomado::after{color:var(--p-ver)}
+.lp .tp-carta:focus-visible,.lp .tp-cor:focus-visible{outline:3px solid var(--p-ros)}
+.lp .tp-cor{border:3px solid var(--grafite);box-shadow:none;border-radius:6px}.lp .tp-cor.on{outline:3px solid var(--p-rox)}
+.lp .tp-pele.foco,.lp .tp-opcoes.foco{outline-color:var(--p-rox)}
+.lp .tn-btn,.lp .btn{--c:var(--p-vde);font-family:var(--f-display);color:#fff;border:3px solid var(--grafite);border-radius:6px;outline:none;box-shadow:0 4px 0 rgba(58,44,34,.35);text-shadow:2px 2px 0 rgba(0,0,0,.3);background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 2px,transparent 2px 7px),var(--c)}
+.lp .tn-btn:hover{box-shadow:0 6px 0 rgba(58,44,34,.35)}.lp .tn-btn:active{box-shadow:0 1px 0 rgba(58,44,34,.35)}
+.lp .tn-btn:focus-visible,.lp .btn:focus-visible{outline:3px solid var(--p-ros);outline-offset:3px}
+.lp .tc-btns .tn-btn.alt,.lp .btn.alt,.lp .dup-voltar{--c:var(--p-azu);color:var(--grafite);text-shadow:none;outline:none;box-shadow:none;border:3px dashed color-mix(in srgb,var(--c) 55%,transparent);background:repeating-linear-gradient(120deg,color-mix(in srgb,var(--c) 14%,transparent) 0 2px,transparent 2px 8px)}
+.lp .tc-btns .tn-btn.on,.lp .tc-btns .tn-btn.alt.on,.lp .end-btns.kb .btn.on{--c:var(--p-vde);color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,.3);outline:3px solid var(--p-ros);outline-offset:3px;border:3px solid var(--grafite);background:repeating-linear-gradient(120deg,rgba(255,255,255,.18) 0 2px,transparent 2px 7px),var(--c)}
+.lp .tn-campo,.lp .dup-campo{background:#fff8e6;color:var(--grafite);border:3px dashed var(--p-rox);border-radius:6px}
+.lp .tn-campo:focus,.lp .dup-campo:focus{border:3px solid var(--p-rox)}.lp .tn-campo::placeholder,.lp .dup-campo::placeholder{color:rgba(58,44,34,.45)}
+.lp .tn-campo.tn-campo-erro{border-color:var(--p-ver)}.lp .tn-erro{color:var(--p-ver)}
+.lp .tn-tecla{background:#fff8e6;color:var(--grafite);border:2px solid var(--p-azu);border-bottom-width:4px;border-radius:5px}
+.lp .tn-tecla.tn-pronto{color:var(--p-vde)}.lp .tn-tecla.on{background:var(--p-azu);color:#fff;border-color:var(--grafite);outline:3px solid var(--p-ros)}
+.lp .dup-codigo{color:var(--p-rox);background:#fff8e6;border-color:var(--p-rox)}
+.lp .tc-titulo{color:var(--p-rox)}.lp .tc-pct{color:var(--grafite)}
+.lp .tc-barra{background:#fff8e6;border:3px dashed var(--p-rox);border-radius:6px}
+.lp .tc-preenchimento{border-radius:3px;background:repeating-linear-gradient(115deg,rgba(255,255,255,.28) 0 2px,transparent 2px 6px),linear-gradient(90deg,var(--p-ver),var(--p-lar),var(--p-ama),var(--p-vde),var(--p-tur),var(--p-azu),var(--p-rox));background-size:auto,min(480px,85vw) 100%}
+.tela-enredo.lp .te-diario{--papel:#f6ead0;background:repeating-linear-gradient(180deg,transparent 0 31px,rgba(63,111,196,.2) 31px 32px),var(--papel);--b1:var(--p-rox);--b2:var(--p-lar);--b3:var(--p-tur)}
+.lp .te-pagina{font-family:var(--f-lapis)}
+.lp .te-pagina .intro-txt p:nth-child(1){color:var(--p-ver)}.lp .te-pagina .intro-txt p:nth-child(2){color:#3f8a3a;text-shadow:none}.lp .te-pagina .intro-txt p:nth-child(3){color:var(--p-azu)}
+.lp .te-dia{color:inherit;font-weight:400}.lp .te-cab{color:var(--p-rox);border-bottom-color:var(--p-rox)}
+.lp .te-foto figcaption{font-family:var(--f-lapis)}
+.lp .te-missao{background:repeating-linear-gradient(120deg,rgba(242,197,61,.2) 0 2px,transparent 2px 8px),#fff8e6;color:var(--grafite);border:3px dashed var(--p-lar);border-radius:6px;box-shadow:none}
+.lp .te-missao-t{color:var(--p-ver)}.lp .te-missao small{color:var(--p-mar)}.lp .te-missao i{color:#c9701a}
+.overlay.lp{padding:calc(var(--u)*6)}
+.overlay.lp .lp-quadro{gap:calc(var(--u)*3.4);padding:calc(var(--u)*6) calc(var(--u)*9)}
+.overlay.lp h2{color:var(--p-rox);text-shadow:2px 2px 0 rgba(58,44,34,.22)}.overlay.lose.lp h2{color:var(--p-ver)}
+.overlay.lp .tag{color:var(--p-vde)}.overlay.lose.lp .tag{color:var(--p-ver)}
+.overlay.lp p{color:var(--grafite);font-family:var(--f-lapis);font-size:calc(var(--u)*6)}
+.lp .stats div{color:var(--p-azu)}.lp .stats div:nth-child(2){color:var(--p-lar)}.lp .stats div:nth-child(3){color:var(--p-rox)}.lp .stats b{color:var(--grafite)}
+.lp .btn{font-size:calc(var(--u)*3.2);padding:calc(var(--u)*2.6) calc(var(--u)*4)}
+.tela-enredo.lp .te-diario{min-height:auto;flex:none}
+@media (max-height:520px){.lp-quadro{gap:5px;padding:9px 16px}.lp .tn-titulo{font-size:14px;line-height:1.3;padding-bottom:4px}.lp .tn-ico{display:none}
+  .lp .tp-opcoes{flex-wrap:nowrap;gap:7px}.lp .tp-carta{width:clamp(78px,12vw,112px);padding:6px 5px;gap:3px}.lp .tp-carta canvas{width:auto;height:clamp(44px,17vh,78px)}.lp .tp-nome{font-size:9px}.lp .tp-tr{font-size:13px;margin-top:0}.lp .tp-emo{font-size:26px}
+  #telaModo.lp .tp-carta{width:clamp(130px,22vw,190px)}.lp .tp-pele{padding:0 6px;gap:7px}.lp .tp-cor{width:22px;height:22px}.lp .tp-dica,.lp .tc-aviso{display:none}
+  .lp .tn-btn{font-size:11px;padding:7px 14px}.lp .tc-btns{gap:6px}.lp .tc-info{font-size:16px;line-height:1.05}.lp .tc-info small{margin-top:1px;font-size:14px}.lp .tn-campo{padding:7px 10px;font-size:12px}.lp .dup-codigo{font-size:22px;padding:2px 12px}.lp .dup-txt{font-size:16px}
+  .tela-enredo.lp{padding-top:40px;padding-bottom:30px;gap:6px}}
 </style>
 
 <style>body{margin:0}</style>
@@ -659,6 +709,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <div class="tela-menu" id="telaMenu" style="display:none;">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="tmLapis" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+    <filter id="pzLapis" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.2"/></filter>
     <symbol id="tmCanto" viewBox="0 0 40 40">
       <path d="M6 34C6 18 14 8 34 6" fill="none" stroke="#8a5bb8" stroke-width="3" stroke-linecap="round"/>
       <path d="M10 30C11 20 17 13 28 11" fill="none" stroke="#2f9c9a" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
@@ -838,7 +889,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="overlay" id="agradecimento" hidden role="dialog" aria-label="Agradecimento">
         <div class="ag-carta" lang="pt-BR">
           <i class="ag-canto tl"></i><i class="ag-canto tr"></i><i class="ag-canto bl"></i><i class="ag-canto br"></i>
-          <span class="tag">✦ 100% DO JOGO COMPLETO ✦</span>
+          <span class="tag" id="ag-tag">✦ 100% DO JOGO COMPLETO ✦</span>
           <h2 id="ag-titulo">Obrigado!</h2>
           <div class="ag-texto"><p id="ag-p1"></p><p id="ag-p2"></p></div>
           <div class="ag-assin"><img class="ag-foto" id="ag-foto" alt="Foto do Prof. Dr. Aldair de França Neto"><div class="ag-nome">Com carinho,<b>Prof. Dr. Aldair de França Neto</b></div></div>
@@ -869,9 +920,20 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.60 &middot; Última atualização: 25 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 2.69 &middot; Última atualização: 1 de novembro de 2026</span>
   </div>
 </footer>
+<script>
+// the colored-pencil frame on the screens that keep their own content (ids, buttons and keys stay as they are)
+(function(){
+  var cantos='<div class="tm-borda"></div>'+['tl','tr','bl','br'].map(function(k){return '<svg class="tm-canto '+k+'" aria-hidden="true"><use href="#tmCanto"/></svg>';}).join('');
+  ['telaPersonagem','telaModo','telaDupla','telaAmigo','telaContinuar','telaNome','telaCarregando','end'].forEach(function(id){
+    var t=document.getElementById(id),q=document.createElement('div');q.className='tm-quadro lp-quadro';q.innerHTML=cantos;
+    Array.prototype.slice.call(t.childNodes).forEach(function(n){if(!(n.classList&&n.classList.contains('creditos-loading')))q.appendChild(n);});
+    t.insertBefore(q,t.firstChild);t.classList.add('lp');});
+  var intro=document.getElementById('intro'),d=intro.querySelector('.te-diario');intro.classList.add('lp');d.classList.add('tm-quadro');d.insertAdjacentHTML('afterbegin',cantos);
+})();
+</script>
 
 <div class="modal" id="poster" hidden role="dialog" aria-label="Cartaz da glicólise">
   <div class="modal-bar">
@@ -901,18 +963,17 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   </div>
 </div>
 <div class="modal" id="pausa" hidden role="dialog" aria-label="Pausa">
-  <div class="pause-box">
-    <div class="pz-tit">⏸ JOGO PAUSADO</div>
-    <article class="pz-diario" aria-label="Diário">
-      <p class="pz-cab"><span id="pz-dono">Meu diário</span><span id="pz-pontos">★ 0 pontos</span></p>
-      <div class="pz-lista" id="pz-lista" aria-live="polite"></div>
-      <p class="pz-progresso" id="pz-progresso"></p>
-      <p class="pz-misterio" id="pz-misterio"></p>
-    </article>
-    <div class="pz-menu" id="pz-menu"></div>
-    <div class="ctl-help" id="pz-ajuda" hidden></div>
-    <div class="pz-sair"><button type="button" id="pzSair">⏻ Sair do jogo</button>
-      <span id="pzSairConf" hidden><span id="pzSairTxt"></span><button type="button" id="pzSairSim">Sair</button><button type="button" id="pzSairNao">Ficar</button></span></div>
+  <div class="tela-menu pz-tela">
+    <div class="tm-corpo">
+      <div class="tm-quadro tm-lista" style="--b1:var(--p-azu);--b2:var(--p-ver);--b3:var(--p-vde)"><div class="tm-borda"></div><svg class="tm-canto tl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto tr" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto bl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto br" aria-hidden="true"><use href="#tmCanto"/></svg><div class="tm-tit">JOGO PAUSADO</div><div id="pz-menu" style="display:contents" role="menu"></div></div>
+      <article class="tm-quadro pz-diario" aria-label="Diário" style="--b1:var(--p-rox);--b2:var(--p-lar);--b3:var(--p-tur)"><div class="tm-borda"></div><svg class="tm-canto tl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto tr" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto bl" aria-hidden="true"><use href="#tmCanto"/></svg><svg class="tm-canto br" aria-hidden="true"><use href="#tmCanto"/></svg>
+        <p class="pz-tit2" id="pz-tit"></p>
+        <div class="pz-lista" id="pz-lista" aria-live="polite"></div>
+        <div class="pz-pe"><span class="pz-pag" id="pz-pag"></span><span id="pz-pontos"></span></div>
+        <p class="pz-legenda" id="pz-legenda"><span><b style="background:#d9a441">!</b> Nova principal</span><span><b style="background:#5fb4f0">!</b> Nova secundária</span><span><b style="background:#5fc46a">!</b> Em andamento</span></p>
+        <p class="pz-misterio" id="pz-misterio"></p>
+      </article>
+    </div>
   </div>
 </div>
 <div class="tela-menu tela-tchau" id="telaTchau" hidden role="dialog" aria-label="Até a próxima">
@@ -1735,7 +1796,7 @@ function girlRows(outfit,dir,f,blink,lab){
    zip, pockets, laces, stripes) and a faint card texture; the face shows a mood (eyebrows, lids, mouth) and the
    mouth flaps while that character's line is being typed in a dialog. */
 const PAPER_INK='#1d1612',PW=21,PH=30,POX=2,POY=3;
-const HAIR_STYLE={marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
+const HAIR_STYLE={diretora:'bushy',marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
   lucas:'quiff',felipe:'fade',rafael:'curtains',tiago:'locs',bruno:'hawk',caio:'afro',julia:'afro',davi:'locs',gabriel:'shaggy',
   ana:'buns',bia:'pixie',aldair:'neto',malvar:'malvar',pedro:'curly',zelador:'short',tadeo:'riddle'};
 const GLASSES={aldair:'#c9a85a',cida:'#a8862a',lucia:'#c99a3c'}; // frame colour round the eyes
@@ -1749,6 +1810,7 @@ const TRAITS={
   gabriel:{beanie:'#2d6fb5',beanieB:'#f4f6f4',pompom:'#d0352b'},
   lucia:{chain:'#c99a3c'},
   heloisa:{earrings:'#e8bf3f'},
+  diretora:{earrings:'#e8bf3f'},
   pedro:{cap:'#d0352b',capD:'#a12a22',backwards:1},
   marina:{headband:'#ec9fa8'},
   lucas:{stripes:1},bia:{stripes:1},rafael:{plaid:1},bruno:{stripes:1},
@@ -1872,6 +1934,7 @@ const LOOKS={
 const COAT_IN={malvar:{inner:'#2c2830',b:'#1d1a1f',bd:'#141414',shoes:'flat',sh:'#141414'},
   aldair:{inner:'#b9d3ee',tie:'#22346e',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#3a2414'},
   heloisa:{inner:'#ef6a5c',necklace:'#e8bf3f',b:'#2b4a6f',bd:'#1f2f4f',shoes:'flat',sh:'#7a2e3e'},
+  diretora:{inner:'#3f8a4c',necklace:'#e8bf3f',b:'#1f4a33',bd:'#16352a',shoes:'flat',sh:'#7a522f'},
   kido:{inner:'#f4f6f4',b:'#3a4740',bd:'#2c3631',shoes:'flat',sh:'#1d1612'},
   larissa:{inner:'#d0352b',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#d0352b'},
   camila:{inner:'#3fa682',b:'#2c3236',bd:'#1d2226',shoes:'boot',sh:'#3a2414',sole:'#1d1612'},
@@ -2298,8 +2361,8 @@ add({id:'almox',name:'Almoxarifado',wall:true,cx:305,top:12,zone:wallZone(288,42
   act(){sfx.bump();say(flags.cracha
     ?[{t:'Você aproxima seu crachá do leitor... BIP-BIP. Luz vermelha: ACESSO NEGADO.'},{t:'O almoxarifado só abre com o crachá dos funcionários da escola.'}]
     :[{t:this.sign},{t:'Só funcionários da escola entram aqui.'}]);}});
-add({id:'entrada',name:'Entrada da escola',wall:true,cx:5,oy:116,top:88,zone:{x:10,y:90,w:22,h:52},draw:()=>{},
-  act:()=>say(flags.graded?[{t:'A porta de entrada da escola. Lá fora, o pátio está cheio de gente conversando.'},{t:'A lição já foi entregue... mas ainda tem muita coisa para descobrir aqui dentro.'}]
+add({id:'entrada',name:'Entrada da escola',wall:true,cx:5,oy:116,top:88,mark:{x:13,y:92},zone:{x:10,y:90,w:22,h:52},draw:()=>{},
+  act:()=>storyDone()?saidaPergunta():say(flags.graded?[{t:'A porta de entrada da escola. Lá fora, o pátio está cheio de gente conversando.'},{t:'A lição já foi entregue... mas ainda tem muita coisa para descobrir aqui dentro.'}]
     :[{t:'A porta de entrada da escola. Lá fora, o estacionamento já está lotando.'},{t:'Sair agora não dá: você precisa entregar a lição de casa até as 11h30.'}])});
 
 [
@@ -4166,15 +4229,31 @@ function wanderer(sc,id,name,x0,x1,y,look,lines){
   const o={id,name,x0,x1,y0:y,x:x0+Math.random()*(x1-x0),y,dir:'down',anim:0,moving:false,wait:1+Math.random()*3,cool:5+Math.random()*10,
     tx:null,ty:y,meet:null,chat:0,role:0,talk:0,queue:[],seat:null,sitting:0,sitCool:12+Math.random()*30,
     sprite(t){
-      if(this.sitting>0){const st=this.seat,c=look(Object.assign({},this,{dir:this.hushed?'left':'down',anim:0}),t,st.crop);return {c:c.c,x:st.cx-8,y:st.top};}
+      if(this.sitting>0){const st=this.seat,c=look(Object.assign({},this,{dir:this.hushed?'left':st.dir||'down',anim:0}),t,st.crop);return {c:c.c,x:st.cx-8,y:st.top};}
       const c=look(this,t);return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
-    fx(t){if(this.chat>0)chatBubble(this,t);},
+    fx(t){if(this.chat>0&&!ghBub.some(b=>b.o===this||b.o===this.meet))chatBubble(this,t);}, // (a gossip in balloons: no dots)
     act(){stopChat(this);this.wait=4;if(!(this.sitting>0))this.dir=faceTo(this,player);const l=lines[this.talk++%lines.length];say([{who,t:typeof l==='function'?l():l}]);}}; // a line may be a function (gendered words)
   syncW(o);SCENES[sc].push(o);WANDER[sc].push(o);return o;
 }
 const faceTo=(o,p)=>Math.abs(p.x-o.x)>Math.abs(p.y-o.y)?(p.x<o.x?'left':'right'):(p.y<o.y?'up':'down');
 function stopChat(o){const p=o.meet;o.meet=null;o.chat=0;o.tx=null;o.cool=8+Math.random()*10;
   if(p&&p.meet===o){p.meet=null;p.chat=0;p.tx=null;p.wait=1+Math.random()*2;p.cool=8+Math.random()*10;}}
+/* An accepted quest does not repeat itself: each conversation of a step is heard once (counted in flags.fala, so a
+   saved game keeps it) and after them only a short balloon comes out, rotating, without stopping the game. */
+const BAL_DUR=4;
+function balao(o,t,delay=0,sc=scene,rede=true){
+  if(!delay)for(let i=ghBub.length-1;i>=0;i--)if(ghBub[i].o===o)ghBub.splice(i,1);
+  ghSay(o,t,delay,BAL_DUR,sc);ghBub[ghBub.length-1].viva=true;
+  if(rede&&DUO.on)duoEmit('bal',{id:o.id,s:sc,t,de:delay}); // online: the same balloon on both screens
+}
+const falaN=k=>(flags.fala||{})[k]|0;
+const falaMais=k=>{const F=flags.fala||(flags.fala={}),n=F[k]|0;F[k]=n+1;return n;};
+function falaViva(o,key,convs,curtas){
+  if(ghBub.some(b=>b.o===o&&b.viva&&b.t<1.2))return; // (the key held down: the balloon has only just appeared)
+  const n=falaMais(key);
+  if(n<convs.length)return say(convs[n]);
+  balao(o,curtas[(n-convs.length)%curtas.length]);
+}
 function chatBubble(o,t){
   if(Math.floor(t/1.3)%2!==o.role)return; // the two take turns
   const x=Math.round(o.x)-6,y=Math.round(o.y)-37,k=Math.floor(t*4)%3;
@@ -4252,7 +4331,7 @@ function updateWanderers(dt){
       o.x=o.tx;o.y=o.ty;syncW(o);
       if(o.queue.length){[o.tx,o.ty]=o.queue.shift();continue;}
       if(o.seat){ // on the seat: faces the corridor and stays a while
-        const st=o.seat;o.tx=null;o.dir='down';o.sitting=10+Math.random()*14;o.noShadow=!st.stand;
+        const st=o.seat;o.tx=null;o.dir=st.dir||'down';o.sitting=10+Math.random()*14;o.noShadow=!st.stand;
         Object.assign(o,{cx:st.cx,base:st.base,top:st.top,solid:{x:st.cx-5,y:st.base-5,w:10,h:4}});o.zone={x:st.cx-30,y:st.top-14,w:60,h:st.base+20-(st.top-14)}; // reachable from any side: in front of / behind / beside the bench, across or beside the table
         continue;
       }
@@ -4480,12 +4559,13 @@ function janSync(){
   Object.assign(cartObj,push?{cx:cx0+11,top:Y-25,base:Y,solid:{x:cx0,y:Y-8,w:22,h:8}}:{cx:cx0+11,top:Y-26,base:Y,solid:{x:cx0,y:Y-8,w:22,h:8}});cartObj.zone=expand(cartObj.solid,10);
   Object.assign(signObj,{cx:X-31,top:Y-14,base:Y,solid:{x:X-36,y:Y-6,w:11,h:6}});signObj.zone=expand(signObj.solid,10);
 }
+SCENES.fora=[]; // nowhere: the janitor on his way between two floors, out of sight
 function janPlace(){ // puts him (and the cart, and the sign while he mops) in his corridor
-  for(const k of ['terreo','andar1','andar2']){const L=SCENES[k];for(const o of [zelObj,cartObj,signObj]){const i=L.indexOf(o);if(i>=0)L.splice(i,1);}}
+  for(const k of ['terreo','andar1','andar2','fora']){const L=SCENES[k];for(const o of [zelObj,cartObj,signObj]){const i=L.indexOf(o);if(i>=0)L.splice(i,1);}}
   SCENES[jan.sc].push(zelObj,cartObj);if(janCleaning())SCENES[jan.sc].push(signObj);
   janSync();
 }
-function janReset(){Object.assign(jan,{spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,wait:0});janPlace();}
+function janReset(){Object.assign(jan,{spot:0,sc:'terreo',x:216,y:126,dir:'left',anim:0,moving:false,path:[],to:-1,leaving:false,last:null,side:1,wait:0,away:0,from:'terreo'});janPlace();}
 function janArrive(){const s_=JAN_SPOTS[jan.to];Object.assign(jan,{spot:jan.to,to:-1,path:[],leaving:false,x:s_.x,y:s_.y,dir:'left',moving:false,side:1});janPlace();}
 const janRoute=(x0,x1,y1)=>[[x0,JAN_LANE[jan.sc]],[x1,JAN_LANE[jan.sc]],[x1,y1]];
 function janSwitch(){ // takes the stairs: appears on the other floor (walking from its stairs if the player is there)
@@ -4493,11 +4573,15 @@ function janSwitch(){ // takes the stairs: appears on the other floor (walking f
   if(scene===jan.sc&&state!=='intro'){const e=JAN_STAIRS[jan.sc][from],f=JAN_STAIR_END[jan.sc][from];jan.x=f[0];jan.y=f[1];jan.path=[e].concat(janRoute(e[0],s_.x,s_.y));janPlace();} // up/down the whole flight first
   else janArrive();
 }
+function janFora(){ // out of sight, the way to another floor still takes the time of the walk: nobody sees him get there first
+  const s_=JAN_SPOTS[jan.to];jan.from=jan.sc;jan.away=Math.max(12,(Math.abs(jan.x-352)+Math.abs(s_.x-352)+160)/20);
+  jan.sc='fora';jan.path=[];jan.leaving=false;janPlace();
+}
 function janGo(i){
   jan.to=i;const s_=JAN_SPOTS[i],seen=scene===jan.sc;
   if(s_.sc===jan.sc){if(seen){jan.path=janRoute(jan.x,s_.x,s_.y);janPlace();}else janArrive();return;}
   if(seen){const e=JAN_STAIRS[jan.sc][s_.sc];jan.path=janRoute(jan.x,e[0],e[1]).concat([JAN_STAIR_END[jan.sc][s_.sc]]);jan.leaving=true;janPlace();} // and on up/down the steps
-  else janSwitch();
+  else janFora();
 }
 function janUpdate(dt){
   const m=gameMinutes();if(jan.last==null)jan.last=0; // jan.last: real seconds spent cleaning the current spot
@@ -4508,13 +4592,14 @@ function janUpdate(dt){
     janGo(far[(Math.random()*far.length)|0]);
   }
   jan.moving=false;
+  if(jan.away>0){jan.away-=dt;if(jan.away<=0){jan.sc=jan.from;janSwitch();}return;} // (the player on that floor sees him come from the stairs)
   if(!jan.path.length)return;
-  if(scene!==jan.sc){if(jan.leaving)janSwitch();else janArrive();return;} // the player left his corridor
+  if(scene!==jan.sc){if(jan.leaving)janFora();else janArrive();return;} // the player left his corridor
   if(state!=='play')return;
   if(jan.wait>0){jan.wait-=dt;return;}
   const [tx,ty]=jan.path[0],dx=tx-jan.x,dy=ty-jan.y,d=Math.hypot(dx,dy);
   if(d<.6){jan.x=tx;jan.y=ty;jan.path.shift();
-    if(!jan.path.length){if(jan.leaving)janSwitch();else janArrive();}
+    if(!jan.path.length){if(jan.leaving)janFora();else janArrive();}
     else janSync();return;}
   const st=Math.min(d,20*dt),nx=jan.x+dx/d*st,ny=jan.y+dy/d*st,cx0=janPushX(nx);
   if(playerAhead(jan.x,jan.y,dx/d,dy/d,12,8)||playerAhead(cx0+11,ny,dx/d,dy/d,17,12)){ // the player in the way: after a moment he backs off (the way he came) and waits
@@ -4994,7 +5079,8 @@ function noBadge(){
 function updateObjective(){
   const t=!flags.cracha&&!flags.marina?'Pergunte à Marina se ela viu suas folhas'
     :!flags.cracha?'Pegue seu crachá com a Dona Tati, na secretaria'
-    :flags.graded?(flags.pass?'Atividade entregue. Explore a faculdade à vontade':'Atividade corrigida')
+    :flags.graded?(!flags.pass?'Atividade corrigida':storyDone()?'Dia concluído! Quando estiver pronto, vá para casa pela Entrada da escola, no térreo. O jogo termina ali'
+      :!flags.alost?'Atividade entregue! Mas o dia não acabou: passe no laboratório do térreo':'Atividade entregue! Agora descubra o que a faculdade esconde')
     :flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp?'Busque a questão bônus no laboratório (térreo) e entregue até 11h30'
     :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
     :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, na Sala 101, até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, na Sala 101')
@@ -5125,7 +5211,7 @@ function reviewOpen(){if(reviewSel>=reviewIds().length)return reviewDone();revie
 function reviewDone(){reviewEl.hidden=true;flags.review=false;state='play';finish(reviewPass);}
 $('rev-done').addEventListener('click',reviewDone);
 function finish(pass){
-  flags.graded=true;flags.pass=pass;state='end';keys.clear();flags.entregaMin=gameMinutes();
+  flags.graded=true;flags.pass=pass;state='end';keys.clear();flags.entregaMin=gameMinutes();updateObjective();
   if(pass)gameMin=Math.min(gameMin,END_MIN-START_MIN); // the clock goes on from the time shown at the hand-in (it never jumps)
   else endTime=performance.now(); // game over: the clock stops
   updateObjective();updateScore();
@@ -5138,9 +5224,7 @@ function finish(pass){
     :'Você tirou '+n+' de '+QUIZ_N+' na lição de casa. Eram necessários '+PASS+' acertos. Revise a glicólise antes da prova de amanhã.';
   $('st-obj').textContent=n+'/'+QUIZ_N;$('st-time').textContent=hhmm(gameMinutes());
   scoreCheck();$('st-pts').textContent=score+' de '+SCORE_MAX;
-  // 100% at the hand-in: the thank-you comes right now, instead of ambushing the player after "continuar no cenário"
-  if(pass&&allDone()){setTimeout(finale,700);return;}
-  if(pass)$('end-text').textContent+=' Ainda faltam missões para os 100%: continue no cenário para concluí-las.';
+  if(pass)$('end-text').textContent+=storyDone()?' Sua história está completa: quando quiser, vá para casa pela Entrada da escola.':' Mas o dia ainda não acabou: continue no cenário e veja o que a faculdade esconde.';
   $('btn-again').innerHTML=keyLabel()+(pass?' · CONTINUAR NO CENÁRIO':' · JOGAR DE NOVO');
   $('btn-restart').hidden=!pass;endSel=0;syncEndBtns();
   if(pass)sfx.open();else{saveClear();music.stop();[392,330,262,196].forEach((f,i)=>tone(f,.3,'triangle',.06,i*.22));}
@@ -5535,15 +5619,22 @@ $('caca-close').addEventListener('click',closeCaca);
       return say([{who:me(),t:'Camila, achei as '+CACA_WORDS.length+' palavras do caça-palavras!'},
         {who:CW,t:'Que demais! Glicose, piruvato, citosol, ATP, NADH, lactato... Você revisou a glicólise do começo ao fim.'},
         {who:CW,t:'Agora é descansar e ir bem na prova de amanhã. Boa sorte!'}]);}
-    if(!flags.caca&&(flags.cacaTold||flags.cacaDica)&&this.rem++%2===0){face();
-      return say([{who:CW,t:cacaCount()?'Já achou '+cacaCount()+' das '+CACA_WORDS.length+' palavras do caça-palavras? Continue, a revisão vale a pena!'
-        :'Já passou no laboratório? O caça-palavras da glicólise está na mesinha ao lado da porta. É ótimo para revisar!'}].concat(coatTip()));}
+    if(!flags.caca&&(flags.cacaTold||flags.cacaDica)){
+      const n=cacaCount(),key='caca'+n,conv=n?[[{who:me(),t:'Camila, já achei '+n+' das '+CACA_WORDS.length+' palavras do caça-palavras!'},
+          {who:CW,t:n<4?'Boa! Leia com calma a dica de cada palavra: é aí que a revisão acontece.':'Faltam poucas! Quando achar todas, passe aqui para me contar.'}]]
+        :[[{who:CW,t:'Já passou no laboratório? O caça-palavras da glicólise está na mesinha ao lado da porta. É ótimo para revisar!'}].concat(coatTip()),
+          [{who:CW,t:'Cada palavra vem com uma dica de revisão. Depois da primeira, as outras saem mais fácil.'}]];
+      if(falaN(key)<conv.length||this.rem++%2===0){face();
+        return falaViva(this,key,conv,n?['Faltam '+(CACA_WORDS.length-n)+' palavras. Continue!']:['A mesinha fica ao lado da porta do lab!']);}
+    }
     return act0.call(this);
   };
 }
 /* Side quests: a blue "!" over whoever offers one or is the next step of an accepted one (sideNeeds, shown even
    after grading), and each accepted, unfinished side quest gets a blue "EXTRA" line above the main objective. */
 function sideNeeds(o){
+  if(o.id==='entrada')return storyDone()&&!saidaOn; // the way home: the end of the game
+  if(o.id==='lab'&&flags.graded&&flags.pass&&!flags.alost)return true; // handed in without ever going to the lab: the Liga starts at its door
   const tn=tdNeeds(o);if(tn!=null)return tn;
   if(ligaNeeds(o))return true; // Prof. Malvar's fructose and galactose challenges
   if(flags.alost){ // the room that is not there
@@ -5568,6 +5659,22 @@ function sideNeeds(o){
     if(o.id==='lucia')return q===3;
     if(o.id==='zelador')return q===4; }
   return false;
+}
+/* The story to the credits: the hand-in (a pass), the room that is not there, the Liga challenge, E. M. and the Tadeo
+   arc (they come one after the other, so the end of the arc says it all). The other missions only count for the 100%.
+   The "!": gold, a new mission of the story; blue, a new side quest; green, anything already under way. */
+const storyDone=()=>!!flags&&!!flags.graded&&!!flags.pass&&(flags.td||0)>=7;
+const storyKey=k=>/^(alost|dz|fundador|recado|td|nome)/.test(k); // the diary lines of the story
+const MARK={nova:'#d9a441',extra:'#5fb4f0',vai:'#5fc46a'};
+function markKind(o){
+  const main=needsMarker(o);
+  if(!main&&!sideNeeds(o))return null;
+  if(o.id==='entrada'||(o.id==='marina'&&!flags.marina)||(o.id==='bruno'&&flags.alost===6&&!flags.dzOn))return 'nova';
+  if(main||tdNeeds(o)||sideMarker(o))return 'vai';
+  const q=flags.bolsaQ||0;
+  if((o.id==='tiago'&&!flags.tiagoQ)||(o.id==='camila'&&!flags.cacaTold)||(o.id==='kido'&&!q)||(o.id==='gabriel'&&!flags.duelOn)
+    ||(o.id==='malvar'&&!!flags.malvarQ&&!flags.lgG&&flags.alost!==6))return 'extra';
+  return 'vai';
 }
 const TIAGO_STEP=['',
   'pergunte ao Gabriel (3º ano), no 2º andar',
@@ -5621,8 +5728,8 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(td===6)add_(flags.tdTrap?'nome7':'nome6',flags.tdTrap?'O Nome Embaralhado: passe três vezes diante da parede do fim do 2º andar e espere escondido no laboratório antigo'
     :'O Nome Embaralhado: encontre o Tadeo, no lado oeste do 2º andar, e deixe-o ver o seu convite');
   ligaActive(add_);
-  if(flags.graded&&flags.pass&&scoreGot&&!allDone()){const n=SCORE_RULES.filter(r_=>!scoreGot.has(r_.k)).length;
-    add_('fim'+n,'Final completo: ainda falta'+(n>1?'m '+n+' missões':' 1 missão')+' para chegar a 100% ('+missPct(scoreGot)+'% concluído)');}
+  if(storyDone()&&scoreGot&&!allDone()){const n=SCORE_RULES.filter(r_=>!scoreGot.has(r_.k)).length;
+    add_('fim'+n,'Antes de ir para casa: ainda falta'+(n>1?'m '+n+' missões':' 1 missão')+' para chegar a 100% ('+missPct(scoreGot)+'% concluído)');}
   return L;
 }
 function sideDone(){ // finished side quests, greyed out at the end of the diary
@@ -5650,6 +5757,7 @@ function diaryReset(){scoreReset();curObj='';diaryKnown=new Set();diaryNew=new S
    accepted. The smaller steps are written in the diary quietly ("TINTA FRESCA" when it is opened). */
 function mainChapter(){
   if(!flags.marina)return 'marina';
+  if(storyDone())return 'saida';
   if(flags.graded)return '';
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp)return 'bonus';
   if(flags.seated)return 'entrega';
@@ -5658,7 +5766,7 @@ function mainChapter(){
 }
 const sideFamily=k=>({camila:'caca',dzBruno:'dz'})[k]||k.replace(/\d+$/,'');
 function diaryCheck(){
-  const L=[{k:'main:'+curObj,blue:false,fam:'main:'+mainChapter()}].concat(sideActive().map(e=>({k:'x:'+e.k,blue:true,fam:'x:'+sideFamily(e.k)})));
+  const L=[{k:'main:'+curObj,blue:false,fam:'main:'+mainChapter()}].concat(sideActive().map(e=>({k:'x:'+e.k,blue:!storyKey(e.k),fam:'x:'+sideFamily(e.k)})));
   let fresh=null;
   for(const e of L)if(!diaryKnown.has(e.k)){
     diaryKnown.add(e.k);diaryNew.add(e.k);
@@ -5674,25 +5782,63 @@ function syncDiaryDot(){ // the button pulses only for new missions not read yet
   pauseBtnEl().dataset.novo=L.some(k=>k.startsWith('main:'))?'gold':L.length?'blue':'';
 }
 const pauseBtnEl=()=>document.getElementById('btnPausa');
-function renderDiary(){
-  const box=$('pz-lista');box.textContent='';
-  const note=(cls,tag,t,k)=>{
-    const d=document.createElement('div');d.className='pz-nota'+cls;d.innerHTML='<b></b><span></span>';
-    d.firstChild.textContent=tag;d.lastChild.textContent=t;
-    if(k&&diaryNew.has(k)){d.classList.add('fresca');const i=document.createElement('i');i.textContent='TINTA FRESCA';d.appendChild(i);}
-    box.appendChild(d);
-  };
-  note('','MISSÃO PRINCIPAL',curObj,'main:'+curObj);
-  sideActive().forEach(e=>note(' extra','MISSÃO SECUNDÁRIA',e.t,'x:'+e.k));
+const PZ_PENS=['#d8433b','#2f9c9a','#8a5bb8','#3f6fc4','#c9701a','#3f8a3a'],PZ_LISTA={prin:'Desafios principais',sec:'Desafios secundários',feito:'Concluídos'};
+var pzPage=0,pzOp=-1; // pzOp: the option row being changed (-1: the left menu has the keys)
+function pzEntradas(id){
+  if(id==='prin')return [{k:'main:'+curObj,t:curObj}].concat(sideActive().filter(e=>storyKey(e.k)).map(e=>({k:'x:'+e.k,t:e.t})));
+  if(id==='sec')return sideActive().filter(e=>!storyKey(e.k)).map(e=>({k:'x:'+e.k,t:e.t}));
   const ptsOf=k=>SCORE_RULES.filter(r_=>r_.k===k||(k==='caca'&&r_.k==='camila')).reduce((a,r_)=>a+(scoreGot.has(r_.k)?r_.pts:0),0);
-  sideDone().forEach(e=>{note(' feito','CONCLUÍDA',e.t);const n=ptsOf(e.k);if(n){const i=document.createElement('em');i.textContent='+'+n;box.lastChild.appendChild(i);}});
-  $('pz-pontos').textContent='★ '+score+' pontos';
-  // share of ALL missions (main + secondary) done, without telling how many there are: a nudge to go exploring
-  const pct=Math.floor(100*SCORE_RULES.filter(r_=>scoreGot.has(r_.k)).length/SCORE_RULES.length);
-  $('pz-progresso').textContent=pct>=100?'Você concluiu 100% das missões do jogo. Não sobrou nenhum segredo... ou sobrou?'
-    :'Você já concluiu '+pct+'% das missões do jogo.'+(pct>=50?' Ainda há segredos pela faculdade.':' Será que só existe a missão principal?');
-  $('pz-dono').textContent=jogHist()?'Diário de '+jogHist().split(/\s+/)[0]:'Meu diário';
-  $('pz-misterio').textContent=diaryWhisper();
+  return sideDone().map(e=>({t:e.t,ok:true,pts:ptsOf(e.k)}));
+}
+function pzNo(e,i){
+  const d=document.createElement('div');d.className='pz-li';d.style.setProperty('--pen',PZ_PENS[i%PZ_PENS.length]);
+  const a=document.createElement('span'),b=document.createElement('span');a.textContent=e.m||(e.ok?'✓':'☐');b.textContent=e.t;d.append(a,b);
+  if(e.k&&diaryNew.has(e.k)){d.classList.add('fresca');const t=document.createElement('i');t.textContent='TINTA FRESCA';d.appendChild(t);}
+  if(e.pts){const t=document.createElement('em');t.textContent='+'+e.pts;d.appendChild(t);}
+  return d;
+}
+// the pages of a list come from the real size of the page on this screen: nothing is ever cut or scrolled
+function pzPaginar(L){
+  const box=$('pz-lista');box.textContent='';box.classList.remove('mini');
+  const P=[];let cur=[];
+  L.forEach((e,i)=>{const n=pzNo(e,i);box.appendChild(n);
+    if(box.scrollHeight>box.clientHeight+1&&cur.length){P.push(cur);cur=[];box.textContent='';box.appendChild(n);}
+    cur.push({e,i});});
+  P.push(cur);pzPage=Math.max(0,Math.min(pzPage,P.length-1));
+  box.textContent='';P[pzPage].forEach(q=>box.appendChild(pzNo(q.e,q.i)));
+  if(box.scrollHeight>box.clientHeight+1)box.classList.add('mini'); // one very long entry alone on its page
+  return P.length;
+}
+function pzPager(n){
+  const w=$('pz-pag');w.textContent='';if(n<2)return;
+  const seta=(d,t,lb)=>{const b=document.createElement('button');b.type='button';b.className='pz-seta';b.textContent=t;b.setAttribute('aria-label',lb);b.disabled=d<0?pzPage<=0:pzPage>=n-1;
+    b.addEventListener('click',e=>{e.stopPropagation();pauseSide(d);});return b;};
+  w.append(seta(-1,'◀','Página anterior'),'Página '+(pzPage+1)+' de '+n,seta(1,'▶','Próxima página'));
+}
+const pzOpLin=()=>[['Música',$('pvPct').textContent,'pvMenos','pvMais'],['Efeitos',$('pvPctEf').textContent,'pvMenosEf','pvMaisEf'],['Tela cheia',fsEl()?'Ligada':'Desligada','btnTelaCheia','btnTelaCheia']];
+function pzOpMuda(i,d){const L=pzOpLin()[i];sfx.blip();$(d<0?L[2]:L[3]).click();setTimeout(()=>{if(state==='pause')renderDiary();},i===2?350:0);}
+function renderDiary(){
+  const id=(pauseItems()[pauseSel]||{}).id,box=$('pz-lista'),pct=missPct(scoreGot),lst=!!PZ_LISTA[id],dono=jogHist()?'Diário de '+jogHist().split(/\s+/)[0]:'Meu diário';
+  $('pz-tit').textContent=PZ_LISTA[id]||{opcoes:'Opções',sair:'Sair do jogo'}[id]||dono;
+  $('pz-tit').style.setProperty('--t',{prin:'var(--p-ver)',sec:'var(--p-azu)'}[id]||'var(--p-rox)');
+  $('pz-pontos').textContent='★ '+score+' pontos · '+pct+'% das missões';
+  $('pz-legenda').hidden=!lst;$('pz-misterio').textContent=diaryWhisper();
+  box.textContent='';box.classList.remove('mini');$('pz-pag').textContent='';
+  if(lst){const L=pzEntradas(id);
+    if(!L.length)return box.appendChild(pzNo({m:'…',t:id==='sec'?'Nenhum desafio secundário em andamento. Será que alguém pela faculdade precisa de ajuda?':'Nada concluído por enquanto.'},2));
+    return pzPager(pzPaginar(L));}
+  if(id==='opcoes'){pzOpLin().forEach((l,i)=>{const d=document.createElement('div');d.className='pz-op'+(i===pzOp?' on':'');d.style.setProperty('--pen',PZ_PENS[i+1]);
+      const n=document.createElement('span'),v=document.createElement('span'),seta=(q,t)=>{const b=document.createElement('button');b.type='button';b.className='pz-seta';b.textContent=t;b.setAttribute('aria-label',l[0]+(q<0?': menos':': mais'));
+        b.addEventListener('click',e=>{e.stopPropagation();pzOpMuda(i,q);});return b;};
+      n.textContent=l[0];v.append(seta(-1,'◀'),l[1],seta(1,'▶'));d.append(n,v);box.appendChild(d);});
+    return;}
+  if(id==='sair'){box.appendChild(pzNo({m:'!',t:pauseSairTxt()},0));
+    const w=document.createElement('div');w.className='pz-btns';
+    [['Sair','var(--p-ver)',pauseSair],['Ficar','var(--p-vde)',()=>{pauseSel=pauseItems().findIndex(q=>q.id==='prin');sfx.blip();renderPause();}]].forEach(([t,c,f])=>{const b=document.createElement('button');b.type='button';b.className='pz-btn';b.style.setProperty('--c',c);b.textContent=t;
+      b.addEventListener('click',e=>{e.stopPropagation();f();});w.appendChild(b);});
+    box.appendChild(w);return;}
+  // a share of ALL the missions (main + secondary): a nudge to go exploring
+  [{m:'★',t:score+' pontos'},{m:'✓',t:pct>=100?'Você concluiu 100% das missões do jogo. Não sobrou nenhum segredo... ou sobrou?':'Você já concluiu '+pct+'% das missões do jogo.'+(pct>=50?' Ainda há segredos pela faculdade.':' Será que só existe a missão principal?')}].forEach((e,i)=>box.appendChild(pzNo(e,i+2)));
 }
 // the diary is a mystery: a line in glowing ink at the foot of the page, a different one each time it is opened
 const DIARY_WHISPERS=['A tinta só brilha quando há energia. De onde ela tira o ATP, eu ainda não sei.',
@@ -5831,6 +5977,32 @@ function tdNeeds(o){ // "O Nome Embaralhado": the next steps (null: not this que
   return null;
 }
 const sideMarker=o=>!!flags.tiagoQ&&(flags.tiagoQ===2?['pedro','bruna','lucia'][tiagoSub()]:QUEST_NEXT[flags.tiagoQ])===o.id;
+/* Tiago cannot leave the corridor, so he only knows what the player comes back and tells him. By step of the trail:
+   c conversations ([1,text]: the player; [0,text]: Tiago), b short balloons (when he is told), p balloons as the player passes. */
+const TIAGO_FALA={
+  1:{c:[[[0,'Alguma notícia do meu caderno? O Gabriel, do 3º ano, fica no 2º andar. Talvez ele tenha visto.']],
+      [[0,'Cada vez que a porta da Sala 102 abre, meu coração dispara. Ainda não chamaram ninguém.']]],
+    b:['O Gabriel fica no 2º andar!','Ainda nada do seminário...'],p:['Falou com o Gabriel?']},
+  '2_0':{c:[[[1,'Tiago, o Gabriel viu o seu caderno ontem, na biblioteca. O Pedro estava folheando.'],
+        [0,'O Pedro, o veterano das lendas? Tomara que ele não tenha desenhado nenhum fantasma nos meus resumos!']],
+      [[0,'Achou o Pedro? Ele vive no térreo, contando histórias para os calouros.']]],
+    b:['O Pedro fica no térreo!','Que nervoso, viu...'],p:['Será que o Pedro ainda está com ele?']},
+  '2_1':{c:[[[1,'O Pedro passou o seu caderno para a Bruna, que ia entregar para você.'],
+        [0,'A Bruna? Ela é da minha turma! Mas ontem eu fui embora mais cedo... Ela deve ter me procurado à toa.']],
+      [[0,'Se a Bruna passou por aqui, eu não vi. Ela costuma ficar do outro lado deste andar.']]],
+    b:['A Bruna fica neste andar!','Será que ela ainda está com ele?'],p:['Tomara que a Bruna ainda esteja com ele!']},
+  '2_2':{c:[[[1,'A Bruna deixou o seu caderno no balcão da biblioteca, com a Dona Lúcia.'],
+        [0,'Ufa! A Dona Lúcia cuida de tudo o que esquecem por lá. Já perguntou para ela?']],
+      [[0,'Ainda não falou com a Dona Lúcia? A biblioteca fica no 2º andar.']]],
+    b:['A biblioteca fica no 2º andar!'],p:['Já foi à biblioteca?']},
+  3:{c:[[[1,'A Dona Lúcia disse que o Seu Antônio recolheu tudo o que estava no balcão.'],
+        [0,'O Seu Antônio? Mas ele passa o dia limpando o prédio inteiro! Procure o carrinho de limpeza dele.']],
+      [[0,'Achou o Seu Antônio? Eu daria tudo para poder sair deste corredor...']]],
+    b:['Procure o carrinho de limpeza!'],p:['Achou o Seu Antônio?']},
+  4:{c:[[[1,'O Seu Antônio levou o seu caderno para os achados e perdidos, na secretaria.'],
+        [0,'Na secretaria! Se eu pudesse sair daqui, ia correndo. A Dona Tati deve estar com ele.']],
+      [[0,'Conseguiu falar com a Dona Tati? Falta pouco para a minha vez no seminário!']]],
+    b:['Fale com a Dona Tati!'],p:['Passou na secretaria?']}};
 {
   const tia=SCENES.andar1.find(o=>o.id==='tiago'),TW='TIAGO (1º ANO)';
   const TIPS=['Estou revisando a fase preparatória. Ela gasta 2 ATP: um na reação 1 e outro na reação 3.',
@@ -5849,8 +6021,7 @@ const sideMarker=o=>!!flags.tiagoQ&&(flags.tiagoQ===2?['pedro','bruna','lucia'][
       {who:TW,t:'Sou o próximo da lista! Se ele chamar meu nome e eu não estiver na porta, perco a vez e fico sem nota.'},
       {who:TW,t:'E sem o caderno eu estou perdido para a prova de amanhã... Você me ajuda a procurar?',choices:help}]);
     if(q===0&&this.rem++%2===0)return say([{who:TW,t:'Ainda nada do meu caderno laranja... E eu continuo preso aqui, esperando chamarem para o seminário. Você pode me ajudar a procurar?',choices:help}]);
-    if(q>=1&&q<=4&&this.rem++%2===0)return say([{who:TW,t:q===1?'Alguma notícia do meu caderno? O Gabriel, do 3º ano, fica no 2º andar. Talvez ele tenha visto.'
-      :'Alguma notícia do meu caderno laranja? Ainda não me chamaram para o seminário, e eu estou ficando nervoso com a prova de amanhã...'}]);
+    if(q>=1&&q<=4){const f=q===2?'2_'+tiagoSub():''+q,S=TIAGO_FALA[f];return falaViva(this,'tiago'+f,S.c.map(c=>c.map(l=>l[0]?{who:me(),t:l[1]}:{who:TW,t:l[1]})),S.b);}
     if(q===5)return say([{who:me(),t:'Tiago, olha o que eu achei!'},
       {who:TW,t:'MEU CADERNO!!! Onde ele estava?',run:()=>{$('slot-caderno').classList.remove('got');flags.caderno=false;}},
       {who:me(),t:'O Seu Antônio recolheu e levou para os achados e perdidos. A Dona Tati guardou para você.'},
@@ -5944,10 +6115,23 @@ function bolsaKiko(o,jokeLines){
     {who:KW,t:'O problema: o laudo mostra as bolsas muito diferentes umas das outras. A forma da célula eu explico. O porquê, só a Bioquímica. Você me ajuda?',choices:[
       {t:'Ajudo! Vou buscar as bolsas e o laudo',oferta:1,fn:()=>{bolsaUpd(1);say([{who:KW,t:'Obrigado! A geladeira fica no laboratório, no térreo, perto do simulador. Não esqueça o jaleco, hein?'}]);}},
       {t:'Agora não, professor',fn:()=>say([{who:KW,t:'Tudo bem! Se mudar de ideia, estou sempre aqui pelo corredor.'}])}]}]));
-  if(q===1)return say([{who:KW,t:'As bolsas estão na geladeira de amostras do laboratório, no térreo, perto do simulador. De jaleco!'}]);
-  if(q>=2&&q<=5)return say([{who:KW,t:q===4
-      ?'A bolsa C com cara de bolsa velha? Estranho... Eu separei as três ontem à tarde na bancada do laboratório e guardei na geladeira. Pelo menos achei que tinha guardado as três.'
-      :'Conseguiu entender o laudo? A professora Rosa, da Bioquímica, explica isso melhor que ninguém. Ela fica na Sala 101.'}]);
+  if(q>=1&&q<=5){const M={
+    1:[[[{who:KW,t:'As bolsas estão na geladeira de amostras do laboratório, no térreo, perto do simulador. De jaleco!'}],
+        [{who:KW,t:'À tarde cada aluno faz o próprio esfregaço. Sem essas bolsas, a aula prática vira aula teórica!'}]],
+      ['Geladeira do laboratório, no térreo!','De jaleco, hein?']],
+    2:[[[{who:KW,t:'Conseguiu entender o laudo? A professora Rosa, da Bioquímica, explica isso melhor que ninguém. Ela fica na Sala 101.'}],
+        [{who:KW,t:'A forma da célula eu vejo no microscópio. O porquê de tudo isso, só a Bioquímica responde.'}]],
+      ['A Profa. Rosa fica na Sala 101!']],
+    3:[[[{who:me(),t:'A professora Rosa me mandou ler o Manual de Hemoterapia, com a Dona Lúcia.'},
+        {who:KW,t:'Boa! Se a Rosa recomendou, vale a leitura. Depois volte a ela com o que aprendeu.'}]],
+      ['O manual está com a Dona Lúcia!']],
+    4:[[[{who:KW,t:'A bolsa C com cara de bolsa velha? Estranho... Eu separei as três ontem à tarde na bancada do laboratório e guardei na geladeira. Pelo menos achei que tinha guardado as três.'}],
+        [{who:KW,t:'Se alguém viu essa bolsa fora do lugar, foi o Seu Antônio. Ele limpa o laboratório toda noite.'}]],
+      ['Pergunte ao Seu Antônio!']],
+    5:[[[{who:me(),t:'O Seu Antônio achou a bolsa C na bancada, ontem à noite. Ela passou a noite fora da geladeira!'},
+        {who:KW,t:'A noite inteira? Que estranho... Conte isso à professora Rosa. Ela vai saber o que isso muda no laudo.'}]],
+      ['Conte à Profa. Rosa!']]}[q];
+    return falaViva(o,'bolsa'+q,M[0],M[1]);}
   if(q===6)return say([
     {who:me(),t:'Professor, entendi o laudo! A hemácia continua fazendo glicólise dentro da bolsa: gasta glicose, faz lactato e vai perdendo ATP e 2,3-BPG.'},
     {who:me(),t:'Sem ATP, o potássio escapa. E a bolsa C passou a noite fora da geladeira: no calor, a glicólise acelerou.'},
@@ -6172,8 +6356,10 @@ $('duelo-close').addEventListener('click',e=>{e.stopPropagation();closeDuel();})
       return say([{who:GW,t:'Ei, '+gen('calouro','caloura')+'! Já ouviu falar do Duelo Relâmpago do 3º ano?'},
         {who:GW,t:'São '+DUEL_N+' perguntas de glicólise em '+DUEL_T+' segundos. No ano passado eu acertei 3. Para me vencer, você precisa de pelo menos '+DUEL_WIN+'.'},
         {who:GW,t:'Não vale nota, é só pela glória. Topa?',choices:duelChoices('Ficou com medo, né? Quando quiser, é só chamar.')}]);}
-    if(!flags.duelWin&&this.rem++%2===0)
-      return say([{who:GW,t:'E aí, vai encarar o Duelo Relâmpago? '+DUEL_N+' perguntas, '+DUEL_T+' segundos.',choices:duelChoices('Tudo bem. O troféu continua comigo!')}]);
+    if(!flags.duelWin&&this.rem++%2===0){
+      const L=flags.duelOn?['Perdeu e voltou? Gosto disso. Mais uma rodada?','Quase, hein? Mais uma vez, valendo o troféu?','Dizem que na terceira tentativa sai. Vamos testar?']
+        :['E aí, vai encarar o Duelo Relâmpago? '+DUEL_N+' perguntas, '+DUEL_T+' segundos.','O troféu está aqui, pegando poeira. Vem buscar?','Subiu até o 2º andar e não vai encarar o duelo?'];
+      return say([{who:GW,t:L[falaMais(flags.duelOn?'duelo2':'duelo1')%L.length],choices:duelChoices('Tudo bem. O troféu continua comigo!')}]);}
     if(flags.duelWin&&this.rem++%3===0)
       return say([{who:GW,t:'Respeito, '+doc()+'! Quer outra rodada do Duelo Relâmpago, só pela diversão?',choices:duelChoices('Beleza, '+doc()+'. Fica para a próxima!')}]);
     say([{who:GW,t:(flags.duelWin?'Fala, '+doc()+'! ':'')+TIPS[k%TIPS.length]}]);
@@ -6258,7 +6444,7 @@ function alostStart(){
     {t:'Ela para por um instante, olha bem para você e baixa a voz:'},
     {who:LW,t:'Sabe... às vezes o que a gente nem sabia que procurava já está esperando no lugar de sempre. Aquele que tem o seu nome.'},
     {t:'Antes que você pergunte qualquer coisa, ela some pelo corredor, na direção dos armários.'}],()=>{
-      music.duck(1);flags.alost=1;updatePauseExtra();
+      music.duck(1);flags.alost=1;updateObjective();updatePauseExtra();
       if(la)laRun=[[la.x,la.y0],[226,la.y0]];});
 }
 // called by updateFade when the scene changes
@@ -7793,7 +7979,10 @@ function brunoVisitTick(dt){
     stopChat(this);this.wait=4;if(!(this.sitting>0))this.dir=faceTo(this,player);
     if(!flags.dzOn&&!flags.dzAsked)return dzConvite(); // (normally already asked at the hidden wall, on the 2nd floor)
     if(!flags.dzOn)return say([{who:BW,t:'E aí, vai encarar o Desafio da Liga no simulador?',choices:dzAsk()}]);
-    if(!flags.dzDone)return say([{who:BW,t:'Como vai o desafio? Você está na fase '+flags.dzFase+' de 3. O computador fica no laboratório, virado para a bancada do espectrofotômetro.'}]);
+    if(!flags.dzDone)return falaViva(this,'dz'+flags.dzFase,[[{who:BW,t:'Como vai o desafio? Você está na fase '+flags.dzFase+' de 3. O computador fica no laboratório, virado para a bancada do espectrofotômetro.'}],
+      [{who:BW,t:['Pense no músculo em plena corrida: o que sobe quando o ATP cai?','Depois do almoço quem manda é a insulina. Procure a molécula que vence a inibição pelo ATP.',
+        'No jejum, o cérebro depende da glicose que o fígado manda para o sangue. Pense nisso antes de escolher as moléculas.'][flags.dzFase-1]}]],
+      ['Fase '+flags.dzFase+' de 3. Boa sorte!','O computador fica no laboratório!']);
     if(!flags.dzReward){setMood('bruno','happy',6);
       return say([{who:me(),t:'Bruno, venci as três fases do Desafio da Liga!'},
         {who:BW,t:'As três?! Até a do jejum? Essa derruba muita gente, porque é a única em que você precisa frear a via.'},
@@ -8497,8 +8686,7 @@ function tdVitoria(){
                             {who:BW_,t:'Valeu, '+nome1()+'. De verdade.'}],tdEpilogo);});});});});});});}));});});});});});});
 }
 /* the end of the arc, among friends (the last scene of a Harry Potter film): who was brave, the name that stayed in the
-   book, the candle lit again, the meeting at the end of the day. With the game at 100%, the four walk out together
-   and the screen goes slowly dark into the professors' duel (finaleSoft); otherwise the game goes on. */
+   book, the candle lit again, the meeting at the end of the day. The game goes on until the player goes home. */
 function tdEpilogo(){
   const O=tdOc,L=O.L,G=O.G,B=O.B,V=O.vela;state='tdcut';
   tdMove(player,[[184,196]],40,()=>{player.dir='left';});
@@ -8540,17 +8728,8 @@ function tdEpilogo(){
     ()=>{state='tdcut';const go=()=>{if(tdMoving(B))return tdLater(.2,go);B.dir='up';
       tdMove(player,[[242,142]],40,()=>{player.dir='up';});tdMove(G,[[208,152]],34,()=>{G.dir='right';});parte2();};go();});
 }
-function tdArcoFim(){ // the arc is over: 100% of the game → the four walk out and the finale comes in slowly; otherwise the game goes on
-  const O=tdOc;flags.td=7;flags.tdTrap=false;updatePauseExtra();scoreCheck();
-  if(flags.graded&&flags.pass&&allDone()){
-    scorePops.length=0;state='tdcut';
-    say([{t:'Vocês cinco saem juntos do laboratório antigo, rindo alto pelo corredor das velas. Atrás de vocês, a vela acesa ilumina o seu nome no livro.'}],()=>{
-      state='tdcut';
-      for(const [o,d] of [[O.B,0],[O.L,.3],[O.G,.6],[player,.9]])tdLater(d,()=>tdMove(o,[[o.x,Math.max(o.y,200)],[192+(o===player?0:(o===O.L?-6:6)),206],[192,250]],34));
-      tdLater(1.2,()=>finaleSoft(['No fim do dia, a Liga de Metabolismo se reuniu no laboratório antigo. Havia um nome novo no livro.',
-        'Enquanto isso, os professores resolveram comemorar o fim do dia... do jeito deles.']));});
-    return;
-  }
+function tdArcoFim(){ // the arc is over: everybody back to their day (the game ends when the player goes home, see saidaFinal)
+  const O=tdOc;flags.td=7;flags.tdTrap=false;updateObjective();updatePauseExtra();scoreCheck();
   const swap=(t_,o)=>{if(!o)return;tdOff(t_);
     wOn(o,'salaOculta',t_.x,t_.y,t_.dir,false);o.wait=3;o._dest=undefined;o._dep=null;};
   swap(O.L,larissa);swap(O.G,tdGabObj);swap(O.B,tdBruno());
@@ -9295,7 +9474,7 @@ function ligaNeto(o){
       if(flags.lgRe)return ligaPile(ligaRe8(flags.lgRe),'refazer'+flags.lgRe);
       if(ligaFinal()>=7)return ligaHat();
       flags.lgSemChapeu=true;return ligaRetryOffer();}
-    if(F<5||G<5)return say([{who:MW,t:LIGA_NAG[ligaNag++%LIGA_NAG.length]()}]);
+    if(F<5||G<5)return falaViva(malvar,'lgNag'+F+'_'+G,[[{who:MW,t:LIGA_NAG[ligaNag++%LIGA_NAG.length]()}]],['Tique-taque.','Fascinante. Ainda aqui.','As folhas não se respondem sozinhas.']);
     if(flags.chapeu&&!flags.lgHatLine){flags.lgHatLine=true;return say([{who:MW,t:'Endireite esse chapéu. Está torto. ...Ele sempre fica torto.'}]);}
     return null;
   }
@@ -9625,6 +9804,8 @@ function onKey(e){
     else if(e.code==='Escape')pauseBackKey();
     else if(e.code==='KeyW'||e.code==='ArrowUp')pauseMove(-1);
     else if(e.code==='KeyS'||e.code==='ArrowDown')pauseMove(1);
+    else if(e.code==='KeyA'||e.code==='ArrowLeft')pauseSide(-1);
+    else if(e.code==='KeyD'||e.code==='ArrowRight')pauseSide(1);
     return;
   }
   if(state==='tdDuel'){ // the duel in the old lab: open the diary at the right moment
@@ -9867,39 +10048,41 @@ const CTL_HELP='<svg viewBox="0 0 120 80" aria-hidden="true">'
   +'<li><span class="gpb x">X</span>Sair da folha, voltar, fechar</li>'
   +'<li><span class="gpb y">Y</span>Ampliar o cartaz; no jogo, trocar de personagem</li>'
   +'<li><span class="gpb m"><i>≡</i></span>Pausa: diário de missões</li></ul>';
-$('intro-ctl').innerHTML=CTL_HELP;$('pz-ajuda').innerHTML=CTL_HELP;
+$('intro-ctl').innerHTML=CTL_HELP;
 
 /* ---------- pause menu ----------
    Freezes the clock and everything on screen; shows the diary (objectives) and the controller help. */
-const pauseEl=$('pausa');let pauseSel=0,pauseBack='play',pauseHelp=false;
+const pauseEl=$('pausa');let pauseSel=0,pauseBack='play';
 function pauseItems(){
-  const L=[{id:'voltar',t:'Voltar ao jogo'}];
-  if(scene==='simGlic')L.push({id:'sairSim',t:'Voltar ao menu do simulador'});
-  else if(scene==='salaSim')L.push({id:'sairSim',t:'Sair do simulador'});
-  return L;
+  const L=[{id:'voltar',t:'Continuar',c:'--p-vde'}];
+  if(scene==='simGlic')L.push({id:'sairSim',t:'Menu do simulador',c:'--p-tur'});
+  else if(scene==='salaSim')L.push({id:'sairSim',t:'Sair do simulador',c:'--p-tur'});
+  return L.concat([{id:'prin',t:'Desafios principais',c:'--p-ver'},{id:'sec',t:'Desafios secundários',c:'--p-azu'},{id:'feito',t:'Concluídos',c:'--p-rox'},{id:'opcoes',t:'Opções',c:'--p-lar'},{id:'sair',t:'Sair do jogo',c:'--p-mar'}]);
 }
+const pzNovo=id=>(id==='prin'||id==='sec')&&pzEntradas(id).some(e=>diaryNew.has(e.k));
 function renderPause(){
-  renderDiary();
-  $('pz-menu').hidden=pauseHelp;$('pz-ajuda').hidden=!pauseHelp;
   const box=$('pz-menu');box.textContent='';
   pauseItems().forEach((it,i)=>{
-    const b=document.createElement('button');b.type='button';b.className='pz-item'+(i===pauseSel?' on':'');
-    b.innerHTML='<span></span>';b.firstChild.textContent=it.t;
-    b.addEventListener('click',e=>{e.stopPropagation();pauseSel=i;pauseSelect();});
+    const b=document.createElement('button');b.type='button';b.className='tm-item'+(i===pauseSel?' on':'');b.setAttribute('role','menuitem');b.style.setProperty('--c','var('+it.c+')');
+    b.innerHTML='<span class="tm-cur">▶</span><span class="tm-txt"></span>'+(pzNovo(it.id)?'<span class="tm-val">●</span>':'');b.children[1].textContent=it.t;
+    b.addEventListener('click',e=>{e.stopPropagation();const de=i===pauseSel||it.id==='voltar'||it.id==='sairSim';pauseSel=i;pzPage=0;pzOp=-1;if(de)pauseSelect();else{sfx.blip();renderPause();}});
     box.appendChild(b);
   });
+  renderDiary();
 }
 function openPause(){
   if(state!=='play'&&state!=='dialog')return;
-  closeVol();pauseBack=state;pauseAt=performance.now();pauseSel=0;pauseHelp=false;keys.clear();
-  state='pause';diaryOpens++;pauseEl.hidden=false;pauseSairPerg(false);renderPause();syncDiaryDot();tone(520,.06,'square',.03);pauseBtn.setAttribute('aria-pressed','true');
+  closeVol();pauseBack=state;pauseAt=performance.now();pzPage=0;pzOp=-1;keys.clear();
+  state='pause';diaryOpens++;pauseEl.hidden=false;
+  pauseSel=pauseItems().findIndex(q=>q.id===(pzNovo('prin')||!pzNovo('sec')?'prin':'sec')); // opens on the list with fresh ink
+  renderPause();syncDiaryDot();tone(520,.06,'square',.03);pauseBtn.setAttribute('aria-pressed','true');
 }
+addEventListener('resize',()=>{if(state==='pause')renderDiary();});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(state==='pause')renderDiary();});
 // leaving the game: saves (when it is a calm moment: walking, not in a dialog, a big scene or the simulator) and goes
 // back to the opening screens; online it also leaves the duo
-function pauseSairPerg(on){$('pzSair').hidden=on;$('pzSairConf').hidden=!on;
-  if(on){const guest=window.duo&&window.duo.ativo()&&!window.duo.anfitriao(),calm=pauseCalm();
-    $('pzSairTxt').textContent=guest?'Sair do jogo e fechar a aba? Ele fica salvo no aparelho do seu amigo.':calm?'Sair do jogo e fechar a aba? Ele fica salvo neste navegador.':'Sair e fechar a aba? Fica valendo o último salvamento automático.';
-  }}
+function pauseSairTxt(){const guest=window.duo&&window.duo.ativo()&&!window.duo.anfitriao();
+  return guest?'Sair do jogo e fechar a aba? Ele fica salvo no aparelho do seu amigo.':pauseCalm()?'Sair do jogo e fechar a aba? Ele fica salvo neste navegador.':'Sair e fechar a aba? Fica valendo o último salvamento automático.';}
 const pauseCalm=()=>pauseBack==='play'&&!tdCut&&!fade&&scene!=='salaSim'&&scene!=='simGlic'&&!(flags.graded&&!flags.pass);
 function pauseSair(){
   if(startTime&&!endTime&&pauseCalm())saveGame();
@@ -9911,9 +10094,6 @@ function pauseSair(){
   setTimeout(()=>{$('telaTchau').hidden=false;try{$('btnTchau').focus();}catch(e){}},400);
 }
 $('btnTchau').addEventListener('click',()=>location.reload());
-$('pzSair').addEventListener('click',e=>{e.stopPropagation();pauseSairPerg(true);});
-$('pzSairNao').addEventListener('click',e=>{e.stopPropagation();pauseSairPerg(false);});
-$('pzSairSim').addEventListener('click',e=>{e.stopPropagation();pauseSair();});
 function closePause(){
   if(state!=='pause')return;
   if(!endTime)startTime+=performance.now()-pauseAt; // the paused time does not count on the clock
@@ -9926,15 +10106,23 @@ pauseBtn.addEventListener('click',e=>{
   if(state==='pause')closePause();else openPause();
 });
 function syncPauseBtn(){const off=state==='boot'||state==='intro';if(pauseBtn.hidden!==off)pauseBtn.hidden=off;}
-function pauseMove(d){if(pauseHelp)return;const n=pauseItems().length;pauseSel=(pauseSel+d+n)%n;sfx.blip();renderPause();}
+function pauseMove(d){
+  if(pzOp>=0){pzOp=(pzOp+d+3)%3;sfx.blip();return renderDiary();}
+  const n=pauseItems().length;pauseSel=(pauseSel+d+n)%n;pzPage=0;sfx.blip();renderPause();
+}
+function pauseSide(d){ // ◀ ▶: the pages of a list, or the option being changed
+  if(pzOp>=0)return pzOpMuda(pzOp,d);
+  if(!PZ_LISTA[(pauseItems()[pauseSel]||{}).id])return;
+  const p0=pzPage;pzPage=Math.max(0,pzPage+d);renderDiary();if(pzPage!==p0)sfx.blip();
+}
 function pauseSelect(){
-  if(pauseHelp){pauseHelp=false;renderPause();return;}
   const it=pauseItems()[pauseSel];
   if(it.id==='voltar')closePause();
   else if(it.id==='sairSim'){closePause();if(scene==='simGlic')simBack();else simExit();}
-  else if(it.id==='controles'){pauseHelp=true;sfx.blip();renderPause();}
+  else if(it.id==='opcoes'&&pzOp<0){pzOp=0;sfx.blip();renderDiary();}
+  else if(it.id==='sair')pauseSair();
 }
-function pauseBackKey(){if(pauseHelp){pauseHelp=false;renderPause();}else closePause();}
+function pauseBackKey(){if(pzOp>=0){pzOp=-1;renderDiary();}else closePause();}
 $('btn-start').addEventListener('click',e=>{e.stopPropagation();unlockAudio();start();});
 $('btn-again').addEventListener('click',e=>{e.stopPropagation();endSel=0;endAction();});
 $('btn-restart').addEventListener('click',e=>{e.stopPropagation();endSel=1;endAction();});
@@ -10077,10 +10265,9 @@ function render(t){
   // quest markers
   const bob=Math.round(Math.sin(t*5)*1.5);
   for(const o of objects){
-    const main=needsMarker(o);
-    if(!main&&!sideNeeds(o))continue; // gold: main story; blue: side quests
+    const kind=markKind(o);if(!kind)continue;
     const mx=Math.round(o.mark?o.mark.x:o.cx),my=(o.mark?o.mark.y:Math.max(2,o.top-13))+bob;
-    r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,main?'#d9a441':'#5fb4f0');r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
+    r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,MARK[kind]);r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
   }
   if(!sim&&!ride){drawDiaryNote(...protXY(px_,py_));drawScorePop(px_,py_);} // (the diary glows where the player's own avatar is)
   // interaction prompt
@@ -10175,8 +10362,7 @@ function autoTick(dt){
   if((state==='play'||state==='dialog'||state==='quiz')&&flags.chapeu&&diarioEu)hatT+=dt; // real time of play (not paused); online the hat only talks to who wears it: the main character
   const calm=state==='play'&&!fade&&!dialog&&!tdCut&&scene!=='salaSim'&&scene!=='simGlic';
   if(!calm)return;
-  if(hatT>=HAT_EVERY&&flags.chapeu&&!(flags.graded&&flags.pass&&allDone())){hatT=0;return hatSpeak();}
-  if(flags.graded&&flags.pass&&!scorePops.length&&allDone())return finaleSoft([]);
+  if(hatT>=HAT_EVERY&&flags.chapeu){hatT=0;return hatSpeak();}
   if(saveT>=SAVE_EVERY){saveT=0;saveGame();}
 }
 function drawSaveFlash(){
@@ -10197,11 +10383,67 @@ function finaleSoft(lines){
     3000+(ps.length?30000:0));
 }
 // 100% of the game (main mission passed and every side quest): the game ends with the author's thank-you
+/* Going home, at the school entrance, ends the game: only once the story is done, and the player confirms (the save
+   ends in finale). Bruno runs up before the door ("the meeting!"), the dark screen carries the time to the evening,
+   the Liga meets in the old lab and the five walk out together. It all runs on the main character's device and the
+   friend watches it (tdCut); only the last dark screen comes to both, through 'saida'. */
+function saidaPergunta(){
+  if(duoAjud())return say([{t:'Quem decide a hora de ir para casa é '+duoPeerName()+', quem criou a sala.'}]);
+  say([{t:'A porta de entrada da escola. Lá fora, o pátio já está mais calmo.'},
+    {t:'Ao ir para casa, o dia termina e o jogo chega ao final: não dá para voltar depois. Você concluiu '+missPct(scoreGot)+'% das missões.',choices:[
+      {t:'Ir para casa e encerrar o dia',fn:()=>saidaFinal()},
+      {t:'Ainda não',fn:()=>say([{t:'Você decide ficar mais um pouco.'}])}]}]);
+}
+const SAIDA_TXT=['Naquela noite, havia um nome novo no livro da Liga de Metabolismo.','Enquanto isso, os professores resolveram comemorar o fim do dia... do jeito deles.'];
+var saidaOn=false;
+function saidaFinal(){
+  if(saidaOn||flags.finale)return;
+  saidaOn=true;state='tdcut';tdCut=true;keys.clear();tGo=null;
+  if(lead==='a'){const p_={x:player.x,y:player.y,dir:player.dir};player.x=buddy.x;player.y=buddy.y;player.dir=buddy.dir;buddy.x=p_.x;buddy.y=p_.y;lead='p';buddy.trail=[];} // (the main character's avatar in front)
+  const real=tdBruno(),aqui=real&&tdWhere(real)==='terreo',bx=aqui?real.x:352,by=aqui?real.y:126;
+  tdBrunoObj=tdBrunoObj||real;tdGabObj=tdGabObj||tdFind('gabriel');
+  for(const o of [real,larissa,tdGabObj])if(o)wOff(o); // (they are at the meeting now; the game does not come back from here)
+  const B=tdNpc('saidaBruno','Bruno (1º ano)','bruno','hoodie',bx,by,'left',1.7);SCENES.terreo.push(B);
+  tdMove(player,[[Math.max(player.x,14),116],[14,116]],40);
+  tdMove(B,[[42,116]],150,()=>{B.dir='left';player.dir='right';
+    say([{who:BW_,t:'Ei! Espera! Ia embora sem a reunião?'},
+      {who:BW_,t:'A Larissa acendeu a vela. Só falta você!'},
+      {who:me(),t:'A reunião da Liga! Quase esqueci.'}],saidaNoite);});
+}
+function saidaNoite(){
+  state='tdcut';music.duck(.4);
+  const T_=$('transFinal');T_.textContent='';T_.hidden=false;void T_.offsetWidth;T_.classList.add('on');
+  const p=document.createElement('p');p.textContent='No fim do dia...';T_.appendChild(p);
+  setTimeout(()=>p.classList.add('on'),2700);
+  setTimeout(()=>{tdTempOut();onArrive=saidaReuniao;goScene('salaOculta',242,146,'up','LABORATÓRIO ANTIGO');},6200);
+}
+function saidaReuniao(){
+  state='tdcut';tdCut=true;
+  const T_=$('transFinal');T_.classList.remove('on');T_.textContent='';setTimeout(()=>{if(!T_.classList.contains('on'))T_.hidden=true;},2800);
+  const O=tdOc={asked:new Set(),book:false,tm:[],pt:[],hops:[],vela:null,fogo:0,queimado:false,broche:null,bang:null,amHide:true,amFree:true,ap:{x:238,y:170,dir:'up',mv:false,an:0}};
+  const L=tdNpc('ocLarissa','Larissa (2º ano)','larissa','coat',206,112,'down',.8),G=tdNpc('ocGabriel','Gabriel (3º ano)','gabriel','hoodie',208,152,'right',3.1),
+    B=tdNpc('ocBruno','Bruno (1º ano)','bruno','hoodie',262,134,'up',1.7);
+  SCENES.salaOculta.push(L,G,B);O.L=L;O.G=G;O.B=B;player.dir='up';
+  const brilho=()=>{sfx.ink();for(let i=0;i<16;i++)tdPart({x:266+Math.random()*16,y:104+Math.random()*4,vy:-5-Math.random()*9,vx:(Math.random()-.5)*6,life:1.2+Math.random()*.8,age:-i*.08,c:i%3?'#f2c94c':'#fff27a',k:'dot'});};
+  tdLater(1.8,()=>say([{t:'O laboratório antigo, no fim do dia. As velas estalam, e a Liga inteira cabe em volta de uma mesa.'},
+    {who:LW,t:'Declaro aberta a reunião da Liga de Metabolismo. Primeiro assunto: '+nome1()+'.',run:()=>{setMood('larissa','happy',8);setMood('player','happy',8);}},
+    {who:BW_,t:'Olha o livro. Essa vela nunca iluminou tanto a última linha.',run:brilho},
+    {who:GW_,t:'Segundo assunto: o pão de queijo de amanhã. Quem paga é '+gen('o novato','a novata')+'.',run:()=>setMood('gabriel','happy',8)},
+    {who:me(),t:'Ei! Você disse "hoje eu pago"!'},
+    {who:GW_,t:'E paguei. Hoje. Amanhã é outro dia.'},
+    {who:LW,t:'Reunião encerrada. Vamos, antes que o Prof. Malvar venha contar as velas.'},
+    {t:'Vocês cinco saem juntos do laboratório antigo, rindo alto pelo corredor das velas. Atrás de vocês, a vela acesa ilumina o seu nome no livro.'}],()=>{
+      state='tdcut';
+      for(const [o,d] of [[B,0],[L,.3],[G,.6],[player,.9]])tdLater(d,()=>tdMove(o,[[o.x,Math.max(o.y,200)],[192+(o===player?0:(o===L?-6:6)),206],[192,250]],34));
+      tdLater(1.2,()=>{if(DUO.on)duoEmit('saida');finaleSoft(SAIDA_TXT);});}));
+}
 function finale(){
   flags.finale=true;saveClear();state='finale';keys.clear();sfx.open();
+  const tudo=allDone();
+  $('ag-tag').textContent=tudo?'✦ 100% DO JOGO COMPLETO ✦':'✦ HISTÓRIA CONCLUÍDA ✦';
   $('ag-titulo').textContent='Obrigado, '+nome1()+'!';
-  $('ag-p1').textContent='Você terminou a missão principal e desvendou todos os segredos da Uninogwarts. Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
-  $('ag-p2').textContent='Cada sala, cada enigma e cada porta foram pensados para alunos como você. Continue '+gen('curioso','curiosa')+': a Bioquímica ainda tem muitos caminhos esperando por você.';
+  $('ag-p1').textContent=(tudo?'Você terminou a missão principal e desvendou todos os segredos da Uninogwarts.':'Você terminou a história deste dia na Uninogwarts.')+' Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
+  $('ag-p2').textContent=(tudo?'Cada sala, cada enigma e cada porta foram pensados para alunos como você.':'Alguns segredos ainda ficaram por descobrir: quem sabe em uma próxima visita?')+' Continue '+gen('curioso','curiosa')+': a Bioquímica ainda tem muitos caminhos esperando por você.';
   const foto=$('ag-foto'),src=document.querySelector('.creditos-loading .cl-foto');if(src&&!foto.src)foto.src=src.src;
   $('agradecimento').hidden=false;wdStart();music.special('duel');
 }
@@ -10451,7 +10693,7 @@ function creditsBuild(){
   grade([['aldair','Prof. Neto','Bioquímica',aldair],['heloisa','Profa. Rosa','Bioquímica',heloisa],['kido','Prof. Kiko','Histologia',crFind('kido')],
     ['malvar','Prof. Edmundo Malvar','Poções · fundador da Liga de Metabolismo',malvarR]],'quatro');
   sec('OS ALUNOS');
-  grade([['marina','Marina','sua colega de estudos',crFind('marina')],['larissa','Larissa','2º ano · Liga de Metabolismo',larissa],
+  grade([['diretora','Profa. Ana Carolina Arcanjo','diretora da Uninogwarts',crFind('diretora')],['marina','Marina','sua colega de estudos',crFind('marina')],['larissa','Larissa','2º ano · Liga de Metabolismo',larissa],
     ['bruno','Bruno','1º ano · Liga de Metabolismo',crFind('bruno')],['tiago','Tiago','1º ano · o dono do caderno laranja',crFind('tiago')],
     ['camila','Camila','monitora de Bioquímica',crFind('camila')],['gabriel','Gabriel','3º ano · o rei do Duelo Relâmpago',crFind('gabriel')],
     ['lucas','Lucas','2º ano · o caderno de capa preta',crFind('lucas')],['pedro','Pedro','veterano · guardião das lendas',crFind('pedro')],
@@ -11383,9 +11625,9 @@ t2HallBg(bg1T2.getContext('2d'));
   });
   add({id:'hallMesaProf',name:'Mesa dos professores',cx:534,top:458,base:500,solid:{x:440,y:466,w:188,h:34},zone:{x:436,y:452,w:196,h:56},draw:t2HighTable,
     act:()=>say([{t:'A mesa dos professores, sobre o tablado, virada para o salão inteiro.'},
-                 {t:'No meio, a cadeira dourada do diretor, com uma corujinha esculpida no encosto. Ela parece estar de olho em você.'}])});
+                 {t:'No meio, a cadeira dourada da diretora, com uma corujinha esculpida no encosto. Ela parece estar de olho em você.'}])});
   add({id:'hallCoruja',name:'Púlpito da coruja',cx:532,top:414,base:446,solid:{x:526,y:440,w:12,h:6},zone:{x:518,y:432,w:28,h:20},draw:t2OwlLectern,
-    act:()=>say([{t:'Um púlpito de bronze em forma de coruja de asas abertas. É daqui que o diretor faz os avisos do começo do ano.'},
+    act:()=>say([{t:'Um púlpito de bronze em forma de coruja de asas abertas. É daqui que a diretora faz os avisos do começo do ano.'},
                  {t:'No livro aberto sobre as asas, a primeira linha diz: "Sejam bem-vindos a mais um ano letivo na Uninogwarts!"'}])});
   [[404,0,.55],[424,1,.8],[644,2,.4],[664,3,.65]].forEach(([x,k,f])=>add({id:'hallAmp'+k,name:'Ampulheta de pontos',cx:x,top:466,base:500,solid:{x:x-5,y:494,w:10,h:6},
     zone:{x:x-8,y:486,w:16,h:22},draw:()=>t2Hourglass(x,HALL_T[k].c,f),
@@ -11480,11 +11722,11 @@ function t2DirBg(){
       r(335,32,2,14,'#d8dee2');r(336,32,1,14,'#f4f6f4');r(331,45,10,2,'#c99a3c');r(334,47,4,3,'#a8862a');px(335,46,'#d0352b');px(332,45,'#d0352b');px(339,45,'#d0352b');},
     act:()=>say([{t:'Uma espada de prata numa vitrine, com rubis no cabo. Na lâmina, um nome gravado que você não consegue ler direito.'},
                  {t:'Dizem que ela só aparece para quem precisa de verdade. Hoje, aparentemente, ela só está aqui.'}])});
-  add({id:'dirPoltrona',name:'Poltrona do diretor',cx:192,top:62,base:92,solid:{x:182,y:86,w:20,h:6},draw:()=>{
+  add({id:'dirPoltrona',name:'Poltrona da diretora',cx:192,top:62,base:92,solid:{x:182,y:86,w:20,h:6},draw:()=>{
       r(180,64,24,28,'#a8862a');r(182,66,20,24,'#6a3f80');r(184,68,16,18,'#8e5aa8');for(let i=0;i<5;i++)r(180+i,64-i,24-2*i,1,'#c99a3c');
       pxEllipse(192,58,2,2,'#e8bf3f');r(178,80,4,12,'#c99a3c');r(202,80,4,12,'#c99a3c');},
     act:()=>say([{t:'Uma poltrona alta de veludo roxo, com braços dourados. Parece confortável demais para alguém que trabalha tanto.'}])});
-  add({id:'dirMesa',name:'Mesa do diretor',cx:192,top:90,base:118,solid:{x:140,y:102,w:104,h:16},draw:()=>{
+  add({id:'dirMesa',name:'Mesa da diretora',cx:192,top:90,base:118,solid:{x:140,y:102,w:104,h:16},draw:()=>{
       r(140,94,104,10,'#7a522f');r(140,94,104,1,'#a87445');r(142,104,100,12,'#5a3d24');for(let x=148;x<236;x+=22)r(x,106,16,8,'#4a3020');
       for(const fx_ of [140,238]){r(fx_,114,6,4,'#c99a3c');px(fx_,117,'#a8862a');px(fx_+5,117,'#a8862a');} // claw feet
       r(150,90,14,5,'#efe3c8');r(151,89,12,1,'#f4f6f4');r(166,91,2,5,'#1d1612');r(167,86,1,5,'#efe3c8'); // papers, ink and quill
@@ -11513,8 +11755,8 @@ function t2DirBg(){
                  {t:'A lembrança se desfaz num redemoinho prateado. Melhor não mexer no que não é seu.'}])});
   t2Finish();
   objects=SCENES.andar2;
-  add({id:'dirPortaCorr',name:'Sala do diretor',wall:true,cx:DIR_X0-4,oy:DIR_DOOR_Y+34,top:DIR_DOOR_Y-14,zone:{x:DIR_X0,y:DIR_DOOR_Y+2,w:24,h:56},draw:()=>{},
-    act:()=>goScene('salaDiretor',W-30,124,'left','SALA DO DIRETOR')});
+  add({id:'dirPortaCorr',name:'Sala da diretora',wall:true,cx:DIR_X0-4,oy:DIR_DOOR_Y+34,top:DIR_DOOR_Y-14,zone:{x:DIR_X0,y:DIR_DOOR_Y+2,w:24,h:56},draw:()=>{},
+    act:()=>goScene('salaDiretor',W-30,124,'left','SALA DA DIRETORA')});
   const gx=DIR_X0+14,gb=DIR_DOOR_Y+92;
   add({id:'dirGargula',name:'Gárgula de pedra',cx:gx,top:gb-30,base:gb,solid:{x:gx-7,y:gb-6,w:14,h:6},zone:{x:gx-14,y:gb-14,w:28,h:24},draw:()=>{
       r(gx-7,gb-8,14,8,'#5e564c');r(gx-7,gb-8,14,1,'#776f63'); // pedestal
@@ -11522,7 +11764,7 @@ function t2DirBg(){
       r(gx-10,gb-24,4,10,'#776f63');r(gx+6,gb-24,4,10,'#776f63');px(gx-11,gb-25,'#776f63');px(gx+10,gb-25,'#776f63'); // folded wings
       px(gx-3,gb-27,'#776f63');px(gx+3,gb-27,'#776f63'); // horns
       px(gx-2,gb-23,'#1d1612');px(gx+1,gb-23,'#1d1612');r(gx-1,gb-20,3,1,'#4a4239');},
-    act:()=>say([{t:'Uma gárgula de pedra, feiosa, guardando a porta do diretor. Ela abre um olho.'},
+    act:()=>say([{t:'Uma gárgula de pedra, feiosa, guardando a porta da diretora. Ela abre um olho.'},
                  {who:'GÁRGULA',t:'Senha? ...Ah, deixa. Hoje a porta está aberta. Mas da próxima vez eu quero ouvir o nome de uma enzima.'}])});
   t2Finish();
   objects=SCENES.terreo;
@@ -11570,19 +11812,207 @@ const manualMesa=()=>SCENES.salaBib.find(o=>o.id==='bibMesa2');
    1st floor), stand there a while and come back: the same as sitting on a bench (seatsOf), only standing up.
    col: the free column between the study tables that leads down; spots: where they stop. */
 const VISIT={
-  terreo:{col:523,row:240,spots:[[470,300],[600,282],[650,420],[520,384],[440,452]]},
+  terreo:{col:523,row:240,aisle:510,spots:[[452,442],[484,442],[534,462],[642,512,'up'],[605,410,'up']]}, // around the table football, by the coffee tables and the machine, reading the notice board
   andar1:{col:532,row:264,spots:[[460,304],[604,330],[460,396],[604,410],[532,280]]}, // through the arch, then the aisles between the house tables
-  andar2:{col:554,row:240,spots:[[436,300],[560,282],[622,384],[480,424],[660,470]]}};
+  andar2:{col:554,row:240,aisle:480,spots:[[436,313,'up'],[524,313,'up'],[612,313,'up'],[530,424,'up'],[596,424,'up']]}}; // looking at the trophy cases and at the photographs
 {
   const seats0=seatsOf;
   seatsOf=function(sc){
     if(SEATS[sc])return SEATS[sc];
     const L=seats0(sc),V=VISIT[sc];
-    if(V)for(const [sx,sy] of V.spots)L.push({cx:sx,top:sy-23,base:sy+1,crop:0,by:null,stand:true,
-      go:y0=>[[V.col,y0],[V.col,V.row],[sx,V.row],[sx,sy]].filter((p_,k,a)=>!k||p_[0]!==a[k-1][0]||p_[1]!==a[k-1][1])});
+    if(V)for(const [sx,sy,dir] of V.spots)L.push({cx:sx,top:sy-23,base:sy+1,crop:0,by:null,stand:true,dir,
+      go:y0=>(V.aisle?[[V.col,y0],[V.col,V.row],[V.aisle,V.row],[V.aisle,sy],[sx,sy]]:[[V.col,y0],[V.col,V.row],[sx,V.row],[sx,sy]]).filter((p_,k,a)=>!k||p_[0]!==a[k-1][0]||p_[1]!==a[k-1][1])});
+    if(V&&V.seats)L.push(...V.seats());
     return L;
   };
 }
+
+/* The furniture of the two open areas: the students' lounge on the ground floor (between the restrooms' doors and
+   the east wall) and the Galeria de Honra on the 2nd floor (outside the headmaster's door). The left side stays
+   free, for the doors; the students reach everything along the free column of VISIT (aisle). */
+{
+  const mv=o=>add(Object.assign(o,{zone:o.zone||expand(o.solid,10)}));
+  const chao=(id,base,draw)=>add({id,deco:true,noShadow:true,cx:0,top:base,base,solid:{x:-9,y:-9,w:0,h:0},zone:{x:-99,y:-99,w:0,h:0},draw});
+  const sofa=(x,w,by,a,b,cc)=>{ // seen from the front, the seat toward the player
+    r(x+2,by-3,3,3,'#2a1a10');r(x+w-5,by-3,3,3,'#2a1a10');
+    r(x,by-27,w,16,a);r(x,by-27,w,1,cc);r(x,by-14,w,11,b);r(x,by-14,w,1,cc);
+    r(x-4,by-20,6,17,a);r(x+w-2,by-20,6,17,a);r(x-4,by-20,6,1,cc);r(x+w-2,by-20,6,1,cc);r(x,by-4,w,1,'#1d1612');};
+  objects=SCENES.terreo;
+  chao('convTapete',297,()=>{r(520,298,148,66,'#2f6f6a');r(522,300,144,62,'#c9a227');r(524,302,140,58,'#3f8a84');
+    for(let i=0;i<7;i++)r(532+i*20,330,10,2,'#c9a227');});
+  mv({id:'convSofa',name:'Sofá',cx:590,top:290,base:318,solid:{x:552,y:306,w:76,h:12},draw:()=>{sofa(556,68,318,'#7a2e3e','#9a3f4e','#b85a68');r(589,305,2,9,'#7a2e3e');},
+    act:()=>say([{t:'Um sofá velho e muito confortável, disputado no intervalo.'},{t:'Entre as almofadas você encontra uma caneta, três moedas e um resumo de glicólise amassado.'}])});
+  mv({id:'convMesaCentro',name:'Mesa de centro',cx:590,top:334,base:352,solid:{x:572,y:342,w:36,h:10},draw:()=>{
+      r(574,346,3,6,'#3a2414');r(603,346,3,6,'#3a2414');r(572,338,36,8,'#7a522f');r(572,338,36,1,'#a87445');r(578,335,12,5,'#2d6fb5');r(580,336,8,1,'#efe3c8');r(594,336,9,4,'#efe3c8');},
+    act:()=>say([{t:'Revistas antigas sobre a mesa. Na capa da mais usada: "Mitocôndria Hoje: dez motivos para respeitar o seu NADH".'}])});
+  mv({id:'convPoltrona',name:'Poltrona',cx:654,top:318,base:346,solid:{x:640,y:334,w:28,h:12},draw:()=>sofa(644,20,346,'#a8862a','#c9a227','#e8bf3f'),
+    act:()=>say([{t:'Uma poltrona cor de mostarda. Quem senta aqui costuma dormir antes da segunda página.'}])});
+  const jogos=(id,nm,x,y,tampo,L)=>mv({id,name:nm,cx:x+24,top:y-20,base:y+30,solid:{x:x-2,y:y-9,w:52,h:39},draw:()=>{drawStudyTable(x,y);tampo(x,y);},act:()=>say(L)});
+  jogos('convJogos','Xadrez das Enzimas',434,312,(x,y)=>{for(let i=0;i<5;i++)for(let j=0;j<3;j++)r(x+14+i*4,y+4+j*4,4,4,(i+j)%2?'#efe3c8':'#3a2414');
+      px(x+18,y+5,'#d0352b');px(x+26,y+9,'#d0352b');px(x+22,y+11,'#2d6fb5');px(x+30,y+5,'#2d6fb5');},
+    [{t:'Um tabuleiro de Xadrez das Enzimas. O rei é a fosfofrutocinase-1: se ele cair, a via para.'},{t:'Um bilhete ao lado das peças: "Partida em andamento. Não mexa!"'}]);
+  jogos('convDomino','Dominó das Reações',434,372,(x,y)=>{for(const [a,b,c] of [[8,5,0],[15,9,1],[22,5,0],[29,9,1],[36,5,0]]){r(x+a,y+b,6,4,'#efe3c8');r(x+a+3,y+b,1,4,'#3a2414');px(x+a+1,y+b+1+c,'#3a2414');px(x+a+5,y+b+2-c,'#3a2414');}},
+    [{t:'Dominó das Reações: cada peça liga o produto de uma reação ao substrato da seguinte.'},{t:'A partida parou na frutose-1,6-bisfosfato. Alguém perdeu a peça da aldolase?'}]);
+  jogos('convCartas','Baralho das Coenzimas',524,424,(x,y)=>{for(const [a,c] of [[10,'#d0352b'],[17,'#2d6fb5'],[24,'#e8bf3f'],[31,'#4fa65a']]){r(x+a,y+4,6,9,'#efe3c8');r(x+a+1,y+5,4,7,c);}},
+    [{t:'Baralho das Coenzimas. Na mesa, NAD+, FAD e coenzima A.'},{t:'Regra escrita à mão: "Quem reduz, passa a vez. Quem oxida, compra uma carta."'}]);
+  mv({id:'convPebolim',name:'Pebolim',cx:468,top:446,base:470,solid:{x:434,y:454,w:68,h:16},draw:()=>{
+      r(438,464,4,6,'#3a2414');r(494,464,4,6,'#3a2414');r(434,448,68,17,'#5a3d24');r(434,448,68,1,'#8a6238');r(437,450,62,13,'#2f7a44');r(467,450,2,13,'#d7efd9');
+      for(const [x,c] of [[446,'#d0352b'],[456,'#2d6fb5'],[478,'#d0352b'],[488,'#2d6fb5']]){r(x,446,1,21,'#c9cfd3');for(let k=0;k<3;k++)r(x-1,451+k*4,3,3,c);}},
+    act:()=>say([{t:'Pebolim: Glicólise contra Gliconeogênese. O placar marca 10 a 10.'},{t:'Dizem que essa partida nunca termina. Quando um lado ataca, a célula segura o outro.'}])});
+  mv({id:'convMural',name:'Mural dos alunos',cx:605,top:360,base:398,solid:{x:568,y:392,w:74,h:6},draw:()=>{
+      r(572,380,3,18,'#3a2414');r(635,380,3,18,'#3a2414');r(568,360,74,28,'#5a3d24');r(570,362,70,24,'#b98a58');
+      r(574,365,16,12,'#f2c94c');r(594,364,14,16,'#efe3c8');r(612,366,20,10,'#8ec6e0');r(578,378,18,6,'#e6a0b4');r(615,378,20,6,'#efe3c8');
+      for(const [x,y] of [[581,365],[600,364],[621,366]])px(x,y,'#d0352b');},
+    act:()=>{const L=[{t:'Mural dos alunos. "Vendo resumo de glicólise, pouco usado." "Procuro dupla para o seminário de Fisiologia."'}];
+      if(flags.tiagoQ>=1&&flags.tiagoQ<=5)L.push({t:'Um recado escrito às pressas: "PERDI UM CADERNO LARANJA, CHEIO DE ADESIVOS. Tiago, 1º ano."'});
+      if(flags.duelWin)L.push({t:'Alguém anotou no canto: "O Gabriel perdeu o Duelo Relâmpago! Eu vi!"'});
+      say(L);}});
+  mv({id:'convCafe',name:'Máquina de café',cx:642,top:450,base:500,solid:{x:626,y:488,w:32,h:12},draw:()=>{
+      r(628,452,28,48,'#3a4048');r(628,452,28,1,'#6a737c');r(631,456,22,10,'#1d2226');r(633,458,18,6,'#6fd0a8');r(631,470,12,14,'#2c3236');r(635,478,5,6,'#efe3c8');r(646,470,7,3,'#d0352b');r(646,475,7,3,'#e8bf3f');r(646,480,7,3,'#2d6fb5');r(628,498,28,2,'#1d2226');},
+    fx:t=>{const k=Math.floor(t*3)%3;px(637,474-k,'#c9cfd3');px(638,472-k,'#9aa2a9');},
+    act:()=>say([{t:'A máquina de café da turma. Um copo custa o preço de uma prova de resistência.'},{t:'Um aviso colado nela: "Cafeína não fornece ATP. Ela só bloqueia os receptores de adenosina e adia o cansaço."'}])});
+  const mesaCafe=(id,cx,by,L)=>mv({id,name:'Mesa de café',cx,top:by-28,base:by,solid:{x:cx-24,y:by-10,w:48,h:10},draw:()=>{
+      for(const x of [cx-24,cx+16]){r(x+3,by-8,2,8,'#3a2414');r(x,by-10,8,3,'#7a2e3e');r(x,by-10,8,1,'#b85a68');}
+      r(cx-2,by-18,4,16,'#3a2414');r(cx-8,by-3,16,3,'#2a1a10');pxEllipse(cx,by-20,15,5,'#7a522f');pxEllipse(cx,by-21,14,4,'#a87445');r(cx-6,by-26,5,5,'#efe3c8');r(cx-1,by-24,1,2,'#efe3c8');r(cx+5,by-24,4,3,'#d0352b');},
+    act:()=>say(L)});
+  mesaCafe('convMesaCafe',548,492,[{t:'Dois copos de café esquecidos e uma anotação no guardanapo: "ATP: 2 gastos, 4 feitos, saldo 2."'}]);
+  mesaCafe('convMesaCafe2',600,508,[{t:'No guardanapo, alguém desenhou uma mitocôndria sorrindo. Embaixo: "Boa sorte amanhã!"'}]);
+  mesaCafe('convMesaCafe3',652,442,[{t:'Uma xícara ainda morna e um resumo aberto na reação 6: "NADH nasce aqui."'}]);
+  mv({id:'convPlanta',name:'Planta grande',cx:426,top:476,base:522,solid:{x:416,y:510,w:20,h:12},draw:()=>{
+      r(417,508,18,14,'#a8552e');r(417,508,18,2,'#c97648');for(const [x,y,w] of [[414,484,8],[430,484,8],[420,478,12],[410,494,10],[432,494,10],[420,492,12],[424,500,5]])pxEllipse(x+w/2,y+6,w/2+2,6,'#2f7a44');pxEllipse(426,486,5,4,'#4fa65a');pxEllipse(416,498,4,3,'#4fa65a');pxEllipse(438,498,4,3,'#4fa65a');},
+    act:()=>say([{t:'Uma planta enorme. Cresceu tanto que alguém pôs nela uma etiqueta: "Veterana".'}])});
+
+  objects=SCENES.andar2;
+  const VD='#2c6a38',VE='#1f4a33',OU='#c99a3c',OC='#f2cf5a'; // the green and gold of the corridor above
+  chao('galTapete',214,()=>{const P=[[464,214,32,300],[404,304,286,36],[496,438,196,76]];
+    for(const [x,y,w,h] of P)r(x,y,w,h,VE);for(const [x,y,w,h] of P)r(x+3,y+3,w-6,h-6,VD);
+    for(let y=222;y<506;y+=10){if(y>300&&y<342)continue;px(468,y,OU);if(y<440||y>512)px(491,y,OU);}
+    for(let x=412;x<684;x+=10){if(x>462&&x<498)continue;px(x,308,OU);px(x,335,OU);}
+    for(let x=504;x<686;x+=10){px(x,442,OU);px(x,509,OU);}
+    pxEllipse(480,322,13,9,VE);pxEllipse(480,322,11,7,OU);pxEllipse(480,322,9,6,VD);for(const [a,b] of [[0,-4],[4,-2],[4,2],[0,4],[-4,2],[-4,-2]])r(479+a,321+b,2,2,OC);});
+  mv({id:'galArco',name:'Entrada da galeria',cx:480,top:214,base:248,solid:{x:440,y:244,w:6,h:4},solids:[{x:440,y:244,w:6,h:4},{x:514,y:244,w:6,h:4}],zone:{x:-99,y:-99,w:0,h:0},draw:()=>{
+      for(const x of [440,514]){r(x,228,6,20,VE);r(x+1,228,1,20,VD);r(x-1,246,8,2,OU);r(x-1,226,8,2,OU);}
+      r(432,214,96,16,VE);r(432,214,96,1,OC);r(432,229,96,1,OU);r(434,216,92,12,VD);pxText('GALERIA DE HONRA',480,219,OC,'center');}});
+  const trofeu=(x,c,cd)=>{r(x-6,280,12,4,cd);r(x-2,274,4,6,c);r(x-6,263,12,11,c);r(x-6,263,12,1,'#fff27a');r(x-9,265,3,6,cd);r(x+6,265,3,6,cd);};
+  [[436,'Troféu Embden-Meyerhof',x=>trofeu(x,'#e8bf3f','#a8862a'),[{t:'Troféu Embden-Meyerhof, do torneio anual de Bioquímica.'},{t:'A placa explica o nome: a glicólise também é chamada de via de Embden-Meyerhof-Parnas.'}]],
+   [524,'Medalha Buchner',x=>{r(x-1,258,2,12,'#7a2e3e');pxEllipse(x,276,8,8,'#7a828a');pxEllipse(x,276,6,6,'#dfe4e6');pxEllipse(x,276,3,3,'#a9b2b8');},[{t:'Medalha Buchner, sobre uma almofada de veludo verde.'},{t:'Eduard Buchner mostrou que um extrato sem células vivas fermenta açúcar. Nobel de Química de 1907.'}]],
+   [612,'Copa Warburg',x=>trofeu(x,'#d98a4a','#8a5a34'),[{t:'Copa Warburg, de bronze.'},{t:'Otto Warburg ganhou o Nobel de Medicina de 1931 por estudar a enzima da respiração celular.'}]]].forEach(([x,nm,obj,L],i)=>
+    mv({id:'galVit'+i,name:nm,cx:x,top:250,base:300,solid:{x:x-16,y:288,w:32,h:12},draw:()=>{
+        r(x-16,284,32,16,VE);r(x-16,284,32,1,OU);r(x-14,298,28,2,OU);r(x-8,289,16,5,OU);r(x-7,290,14,3,'#fff0b8');
+        r(x-13,254,26,31,'#1d2226');r(x-12,255,24,29,VD);r(x-12,255,24,3,VE);obj(x);r(x-11,256,2,27,'#a9d6b4');r(x+8,256,1,27,'#6fae80');
+        r(x-14,250,28,4,VE);r(x-14,250,28,1,OU);r(x-2,247,4,3,OU);},act:()=>say(L)}));
+  const estandarte=(id,x,L)=>mv({id,name:'Estandarte',cx:x,top:248,base:300,solid:{x:x-3,y:296,w:6,h:4},draw:()=>{
+      r(x-6,296,12,4,VE);r(x-1,254,2,44,'#5a3d24');r(x-2,251,4,4,OU);r(x-10,257,20,2,OU);r(x-9,259,18,26,VD);r(x-9,259,1,26,OU);r(x+8,259,1,26,OU);
+      for(let k=0;k<4;k++){r(x-9+k,285+k,9-k,1,VD);r(x+k,285+k,9-k,1,VD);}
+      for(const [a,b] of [[0,-5],[4,-2],[4,3],[0,6],[-4,3],[-4,-2]])r(x+a-1,271+b-1,2,2,OC);r(x-1,270,2,2,OU);},act:()=>say(L)});
+  estandarte('galEstandarte0',568,[{t:'Um estandarte verde com o anel de seis pontas douradas: a glicose, símbolo da Uninogwarts.'}]);
+  estandarte('galEstandarte1',660,[{t:'O bordado é antigo. Na barra, em letras miúdas: "Da glicose se tira a energia. Da dúvida, o conhecimento."'}]);
+  const tocha=(id,x,by)=>mv({id,name:'Tocheiro',cx:x,top:by-40,base:by,solid:{x:x-3,y:by-4,w:6,h:4},draw:()=>{
+      r(x-4,by-3,8,3,'#5a3d24');r(x-1,by-30,2,28,OU);r(x,by-30,1,28,OC);r(x-4,by-33,8,3,OU);},
+    fx:t=>{const k=Math.floor(t*6)%3;r(x-2,by-37-k,4,4+k,'#e8913a');r(x-1,by-36-k,2,3+k,'#fff27a');},
+    act:()=>say([{t:'Um tocheiro de latão. A chama não esquenta nem queima: é só para deixar os troféus bonitos.'}])});
+  tocha('galTocha0',676,300);tocha('galTocha1',452,512);tocha('galTocha2',686,432);
+  mv({id:'galFotos',name:'Fotos das turmas',cx:560,top:360,base:408,solid:{x:498,y:402,w:124,h:6},draw:()=>{
+      r(504,394,4,14,VE);r(612,394,4,14,VE);r(498,366,124,34,VE);r(498,366,124,1,OU);r(500,368,120,30,VD);r(500,399,120,1,OU);r(552,360,16,7,OU);r(556,362,8,3,VE);
+      for(let i=0;i<6;i++){const x=504+i*19;r(x,373,16,21,OU);r(x+1,374,14,19,'#d8c79a');r(x+2,375,12,10,'#8a8178');for(let k=0;k<4;k++)r(x+3+k*3,379+(k%2)*3,2,5,'#3a342e');r(x+4,388,8,1,'#7a6a4a');r(x+5,390,6,1,'#7a6a4a');}},
+    act:()=>say([{t:'Fotografias das turmas, uma ao lado da outra. As mais antigas já estão amareladas.'},{t:'Na foto de 1924, ninguém sorri. Na última fila, dois alunos estão cobertos por lençóis brancos.'},{t:'A legenda diz apenas: "Autorização pendente".'}])});
+  mv({id:'galQuadro',name:'Quadro de honra',cx:660,top:362,base:408,solid:{x:640,y:402,w:40,h:6},draw:()=>{
+      r(646,394,3,14,VE);r(671,394,3,14,VE);r(640,366,40,32,VE);r(640,366,40,1,OU);r(642,368,36,28,VD);r(642,395,36,1,OU);r(654,362,12,5,OU);r(647,371,26,3,OC);for(let i=0;i<4;i++)r(646,378+i*4,28-i*3,1,'#d7efd9');},
+    act:()=>{const n=jogHist()||nome1(),L=[{t:'Quadro de honra da Uninogwarts.'},{t:flags.duelWin?'Duelo Relâmpago: GABRIEL (riscado). Abaixo, com tinta nova: '+n+'.':'Duelo Relâmpago: GABRIEL, 3 acertos, invicto.'}];
+      if(flags.graded&&flags.pass)L.push({t:'Atividade de glicólise: '+n+', aprovad'+gen('o','a')+'.'});
+      say(L);}});
+  mv({id:'galBusto',name:'Busto de bronze',cx:430,top:386,base:424,solid:{x:421,y:416,w:18,h:8},draw:()=>{
+      r(421,412,18,12,VE);r(421,412,18,1,OU);r(421,422,18,2,OU);r(425,416,10,4,OU);r(423,407,14,5,'#8a5a34');r(423,407,14,1,'#a8733f');r(428,403,4,4,'#8a5a34');pxEllipse(430,397,6,7,'#a8733f');pxEllipse(430,392,6,3,'#8a5a34');
+      for(let k=0;k<5;k++){px(424+k,393-k%2,VD);px(436-k,393-k%2,VD);}px(428,397,'#3a2414');px(432,397,'#3a2414');r(429,401,3,1,'#6a4424');px(430,399,'#c99a5c');},
+    act:()=>say([{t:'Um busto de bronze com uma coroa de louros, o nariz gasto de tanto os calouros passarem a mão para dar sorte.'},{t:'Na base está escrito: "Aqui se aprende a perguntar."'}])});
+  const pedestal=(x,by)=>{r(x-11,by-20,22,20,VE);r(x-11,by-20,22,1,OU);r(x-11,by-2,22,2,OU);r(x-6,by-13,12,5,OU);r(x-5,by-12,10,3,'#fff0b8');};
+  mv({id:'galGlicose',name:'Modelo da glicose',cx:430,top:462,base:508,solid:{x:419,y:498,w:22,h:10},draw:()=>{pedestal(430,508);
+      const C=[[0,-11],[9,-6],[9,4],[0,9],[-9,4],[-9,-6]];for(let i=0;i<6;i++){const [a,b]=C[i],[e,f]=C[(i+1)%6],n=8;for(let k=0;k<n;k++)px(430+Math.round(a+(e-a)*k/n),476+Math.round(b+(f-b)*k/n),'#c9cfd3');}
+      C.forEach(([a,b],i)=>pxEllipse(430+a,476+b,2,2,i===0?'#d0352b':'#2a2f33'));r(429,484,2,4,OU);},
+    act:()=>say([{t:'Modelo da glicose: seis carbonos em um anel de latão.'},{t:'A placa lembra: a glicólise divide essa molécula em dois piruvatos, de três carbonos cada.'}])});
+  mv({id:'galATP',name:'Modelo do ATP',cx:666,top:464,base:504,solid:{x:655,y:494,w:22,h:10},draw:()=>{pedestal(666,504);
+      r(665,478,2,6,OU);r(655,477,24,1,'#c9cfd3');pxEllipse(655,476,4,4,'#2d6fb5');for(const x of [663,670,677])pxEllipse(x,477,2,2,'#e8913a');},
+    act:()=>say([{t:'Modelo do ATP: adenosina e três fosfatos enfileirados.'},{t:'Uma etiqueta ao lado: "Saldo da glicólise: 2 ATP por glicose."'}])});
+  [[506,0],[590,1]].forEach(([x,i])=>mv({id:'galBanco'+i,name:'Banco de veludo',cx:x+28,top:462,base:476,solid:{x,y:466,w:56,h:10},draw:()=>{
+      r(x+2,470,3,6,'#5a3d24');r(x+51,470,3,6,'#5a3d24');r(x,462,56,9,VE);r(x+1,463,54,7,'#3f8a4c');r(x,462,56,1,OU);r(x,470,56,1,OU);for(let k=8;k<56;k+=13)px(x+k,466,OC);},
+    act:()=>say([{t:'Um banco de veludo verde. Daqui dá para olhar as fotos das turmas com calma.'}])}));
+  mv({id:'galTopiaria',name:'Arbusto',cx:575,top:446,base:480,solid:{x:568,y:472,w:14,h:8},draw:()=>{
+      r(568,470,14,10,OU);r(568,470,14,1,OC);r(574,464,2,6,'#5a3d24');pxEllipse(575,456,9,9,VE);pxEllipse(575,455,8,8,VD);px(572,451,'#6fae80');px(578,456,'#6fae80');},
+    act:()=>say([{t:'Um arbusto podado em forma de esfera, num vaso dourado. O Seu Antônio cuida dele com mais carinho que da própria mesa.'}])});
+  objects=SCENES.terreo;
+  VISIT.terreo.seats=()=>[{cx:574,top:288,base:319,crop:0,by:null,go:y0=>[[523,y0],[523,240],[542,240],[542,326],[574,326]]},
+    {cx:606,top:288,base:319,crop:0,by:null,go:y0=>[[523,y0],[523,240],[542,240],[542,326],[606,326]]},
+    {cx:654,top:316,base:347,crop:0,by:null,go:y0=>[[523,y0],[523,240],[680,240],[680,354],[654,354]]},
+    ...[447,467].map(cx=>({cx,top:292,base:343,crop:20,by:null,go:y0=>[[523,y0],[523,240],[cx,240],[cx,300]]})),
+    ...[447,467].map(cx=>({cx,top:352,base:403,crop:20,by:null,go:y0=>[[523,y0],[523,240],[510,240],[510,360],[cx,360]]})),
+    ...[537,557].map(cx=>({cx,top:404,base:455,crop:20,by:null,go:y0=>[[523,y0],[523,240],[510,240],[510,412],[cx,412]]}))];
+  VISIT.andar2.seats=()=>[520,548,604,632].map(cx=>({cx,top:446,base:477,crop:0,by:null,go:y0=>[[554,y0],[554,240],[480,240],[480,484],[cx,484]]}));
+}
+
+/* Profa. Ana Carolina Arcanjo, the headmistress: former teacher of Engineering of Magical Structures, married to
+   Prof. Neto, kind to everybody. She works behind her desk and, once a day (DIRA_MIN), walks the three floors to see
+   that all is well; anybody may call her for a talk on the way. Off the player's floor she only takes the time of the
+   walk. Saved with flags.diraFeita; online the main character's device moves her. */
+CHAR_PAL.diretora=Object.assign({},CHAR_PAL.heloisa,{S:'#f6dcc8',s:'#e4b8a0',H:'#f7dc7a',h:'#e0b84a',d:'#b98a2a',m:'#c2576a',i:'#2d6fb5',A:'#3f8a4c',C:'#f7efe0',c:'#1f4a33'});
+HEAD.diretora=HEAD.player;
+const DIRA_MIN=8*60+45,DIRA_W='PROFA. ANA CAROLINA',DIRA_RONDA=[
+  {sc:'andar2',p:[[404,322],[480,322],[480,240],[456,240],[456,108,3],[640,108,3],[200,108,3],[363,108],[363,122]]},
+  {sc:'andar1',p:[[352,120],[352,108],[600,108,3],[120,108,3],[352,108],[352,120]]},
+  {sc:'terreo',p:[[352,142],[640,142,3],[60,142,3],[352,142]]}];
+var dira=null;
+const dirA={id:'diretora',name:'Profa. Ana Carolina Arcanjo',x:192,y:94,dir:'down',anim:0,moving:false,
+  sprite(t){const c=personSprite('diretora','coat',this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,2.6));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
+  act(){if(dira)dira.wait=Math.max(dira.wait,5);if(this.x!=null&&SCENES.salaDiretor.indexOf(this)<0)this.dir=faceTo(this,player);diraConversa();}};
+function diraPlace(sc,x,y,dir){
+  for(const k in SCENES){const i=SCENES[k].indexOf(dirA);if(i>=0)SCENES[k].splice(i,1);}
+  dirA.x=x;dirA.y=y;dirA.dir=dir||dirA.dir;dirA.moving=false;syncW(dirA);SCENES[sc].push(dirA);
+  if(sc==='salaDiretor')dirA.zone={x:140,y:118,w:104,h:24};
+}
+function diraReset(){dira=null;diraPlace('salaDiretor',192,94,'down');}
+function diraProx(){
+  dira.ph++;dira.i=0;dira.away=0;dira.wait=0;
+  const F=DIRA_RONDA[dira.ph];
+  if(F)return diraPlace(F.sc,F.p[0][0],F.p[0][1]);
+  flags.diraFeita=true;
+  if(scene==='salaDiretor'){dira.fim=true;return diraPlace('fora',192,94);} // back when the player is not looking at her chair
+  diraReset();
+}
+function diraTick(dt){
+  if(!startTime||!flags||state==='boot'||state==='intro'||(DUO.on&&!DUO.host))return;
+  if(!dira){if(!flags.diraFeita&&gameMinutes()>=DIRA_MIN&&scene!=='salaDiretor'){dira={ph:-1,i:0,wait:0,away:0};diraProx();}return;}
+  if(dira.fim){if(scene!=='salaDiretor')diraReset();return;}
+  const F=DIRA_RONDA[dira.ph],o=dirA;o.moving=false;
+  if(scene!==F.sc){if((dira.away+=dt)>=45)diraProx();return;}
+  if(state!=='play')return;
+  if(dira.wait>0){dira.wait-=dt;return;}
+  const p=F.p[dira.i];if(!p)return diraProx();
+  const dx=p[0]-o.x,dy=p[1]-o.y,d=Math.hypot(dx,dy);
+  if(d<.6){o.x=p[0];o.y=p[1];syncW(o);dira.i++;if(p[2])dira.wait=p[2];return;}
+  if(playerAhead(o.x,o.y,dx/d,dy/d))return npcBackOff(o,dt);
+  const st=Math.min(d,26*dt);o.x+=dx/d*st;o.y+=dy/d*st;o.moving=true;o.anim+=dt*6;
+  o.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');syncW(o);
+}
+const DIRA_INCENTIVO=[()=>'Errar uma questão não diz quem você é. Diz por onde continuar estudando. Vá em frente, '+nome1()+'!',
+  ()=>'Quero ver você entre '+gen('os melhores','as melhores')+' desta faculdade. E acho que você consegue.',
+  ()=>'Grandes construções começam com uma pedra bem colocada. Uma reação por vez, combinado?'];
+function diraConversa(){
+  const W_=DIRA_W,menu=t=>say([{who:W_,t,choices:[
+    {t:'Como vai a faculdade, professora?',fn:()=>say([{who:W_,t:'Tudo em ordem, graças a alunos como você. Eu ando pelos corredores uma vez por dia só para ter certeza.'},{who:W_,t:DIRA_INCENTIVO[falaMais('diraInc')%DIRA_INCENTIVO.length]()}])},
+    {t:'O que a senhora ensinava antes de ser diretora?',fn:()=>say([{who:W_,t:'Engenharia das estruturas mágicas! Arcos, escadas, torres, portas que rangem de propósito...'},{who:W_,t:'Sabe por que este prédio não cai? Cada arco se apoia no outro. Com gente é igual: ninguém fica de pé sozinho.'}])},
+    {t:'É verdade que a senhora é casada com o Prof. Neto?',fn:()=>say([{who:W_,t:'É verdade! Ele explica glicólise até no café da manhã.'},{who:W_,t:'Em aula ele parece muito sério, eu sei. Não acredite: quem mais torce por vocês é ele.'}])},
+    {t:'Só vim dar bom dia.',fn:()=>say([{who:W_,t:'Bom dia para você também, '+nome1()+'! Conte comigo para o que precisar.'}])}]}]);
+  if(!flags.diraVista){flags.diraVista=true;
+    return say([{who:W_,t:'Olá, '+nome1()+'! Que bom ver você. Sou a Profa. Ana Carolina Arcanjo, diretora da Uninogwarts.'},
+      {who:W_,t:'Minha porta está sempre aberta, e a gárgula só finge que é brava.'}],()=>menu('Posso ajudar em alguma coisa?'));}
+  menu(flags.graded&&flags.pass?'Fiquei sabendo da sua aprovação, '+nome1()+'! Parabéns! Quer conversar um pouco?':'Olá de novo, '+nome1()+'! Sobre o que vamos conversar?');
+}
+diraReset();
+{const mesa=SCENES.salaDiretor.find(o=>o.id==='dirMesa');if(mesa){const a0=mesa.act;mesa.act=function(){
+  if(!SCENES.salaDiretor.includes(dirA))return say([{t:'Um bilhete sobre a mesa, com letra redonda e caprichada: "Fui ver como está a faculdade. Já volto! Profa. Ana Carolina."'}]);
+  return dirA.act();};Object.defineProperty(mesa,'name',{get:()=>SCENES.salaDiretor.includes(dirA)?'Profa. Ana Carolina':'Mesa da diretora'});}} // (from in front of the desk the talk is with her)
+{const r0=reset;reset=function(){r0();if(typeof diraReset==='function')diraReset();};}
+{const l0=loadGame;loadGame=function(d){const v=l0(d);diraReset();return v;};}
+{const u0=update;update=function(dt){u0(dt);diraTick(dt);};}
 
 /* Dona Tati works inside the secretaria's office too: seated at the service window, facing the glass, serving whoever
    is in the corridor on the other side (the same Tati the corridor sees through the window). Talking to her in here
@@ -11826,6 +12256,79 @@ function ghTick(dt){
   for(let i=ghBub.length-1;i>=0;i--){const b=ghBub[i];if(b.delay>0){b.delay-=dt;continue;}b.t+=dt;if(b.t>=b.dur)ghBub.splice(i,1);}
   for(const o of [ghZ,ghT]){if(typeof duoNpcOk==='function'&&duoNpcOk())duoGhost(o,dt);else ghMove(o,dt);ghNear(o,dt);}
 }
+/* The school reacts to the accepted quests, in 4-second balloons that never stop the game: whoever gave a quest calls
+   out as the player passes (once per approach, 60 s per person, sooner if the quest moved on), and students chatting
+   near the player gossip about what is public (never the Liga, the hidden room, E. M. or the Tadeo arc). One balloon
+   talk at a time (the same queue as the ghosts and the friend), 20 s between them; online the main character's device
+   decides and sends them. */
+const VIVA_GAP=20,VIVA_NPC=60000,FOFOCA_GAP=120;
+const vivaOf={},vivaLonge={};let vivaCool=25,fofocaCool=40;
+const vivaTenso=()=>(flags.td||0)>=4&&(flags.td||0)<7; // from the theft to the trap: the people of that story are not in the mood
+const VIVA_ARCO=new Set(['bruno','larissa','gabriel','malvar']);
+const VIVA_IDS=['tiago','camila','kido','gabriel','bruno','malvar'];
+function vivaPasso(o){ // what this person says as the player passes: {f: the step, L: balloons}, or null
+  if(o.id==='tiago'){const q=flags.tiagoQ||0;if(q<1||q>5)return null;
+    if(q===5)return {f:'5',L:['Espera... isso aí é laranja?!']};
+    const f=q===2?'2_'+tiagoSub():''+q;
+    return {f,L:falaN('tiago'+f)?TIAGO_FALA[f].p:['Alguma notícia do caderno?','Ainda não me chamaram. Que nervoso!']};} // (he only knows what he was told)
+  if(o.id==='camila'){if(flags.caca&&!flags.cacaThanks)return {f:'c2',L:['E o caça-palavras, como foi?']};
+    return flags.cacaTold&&!flags.caca?{f:'c1',L:['E o caça-palavras, já foi lá?','Cada palavra vem com uma dica!']}:null;}
+  if(o.id==='kido'){const q=flags.bolsaQ||0;if(q<1||q>6)return null;
+    return {f:''+q,L:q===1?['Achou as bolsas?','A geladeira fica no laboratório!']:['Alguma novidade do laudo?','A aula prática é hoje à tarde!']};}
+  if(o.id==='gabriel')return flags.duelTold&&!flags.duelWin&&flags.tiagoQ!==1?{f:'d'+(flags.duelOn?1:0),L:['O troféu continua comigo!','Vai encarar o duelo?']}:null;
+  if(o.id==='bruno')return flags.alost===6&&flags.dzOn&&!flags.dzDone?{f:''+flags.dzFase,L:['Psiu! Como vai no simulador?','Boa sorte na fase '+flags.dzFase+'!']}:null;
+  if(o.id==='malvar'){const F=flags.lgF||0,G=flags.lgG||0;return G&&(F<5||G<5)?{f:F+'_'+G,L:['O relógio não perdoa, '+nome1()+'.','O gato me contou por onde você andou.','Tique-taque.']}:null;}
+  return null;
+}
+const FOFOCAS=[
+  {k:'cad',ok:()=>flags.tiagoQ>=1&&flags.tiagoQ<=5,fora:['tiago'],L:[['Viu o Tiago? Perdeu o caderno laranja.','E nem pode sair do corredor, coitado!'],
+    ['Alguém está procurando o caderno do Tiago.','Tomara que ache antes da prova!']]},
+  {k:'cadFim',ok:()=>flags.tiagoQ===6,fora:['tiago'],L:[['O Tiago recuperou o caderno!','Deu até a Glicose de Ouro de presente!']]},
+  {k:'bol',ok:()=>flags.bolsaQ>=1&&flags.bolsaQ<=6,L:[['O Prof. Kiko anda atrás de bolsas de sangue?','É para a aula prática da tarde.'],
+    ['Vai ter esfregaço de sangue hoje à tarde?','Vai! Cada aluno faz o seu.']]},
+  {k:'bolFim',ok:()=>flags.bolsaQ===7,L:[['A aula do Prof. Kiko hoje vai ser boa!','Dizem que vai juntar Histologia e Bioquímica.']]},
+  {k:'duel',ok:()=>flags.duelTold&&!flags.duelWin,fora:['gabriel'],L:[[()=>'O Gabriel desafiou '+gen('mais um calouro','mais uma caloura')+'.','Ninguém ganha dele no Duelo Relâmpago!']]},
+  {k:'duelFim',ok:()=>flags.duelWin,fora:['gabriel'],L:[['Soube? Venceram o Gabriel no Duelo Relâmpago!','Sério? Queria ter visto a cara dele!']]},
+  {k:'caca',ok:()=>flags.caca&&flags.cacaThanks,fora:['camila'],L:[['Alguém achou todas as palavras da Camila!','Ela está contando para todo mundo.']]}];
+function vivaPerto(o,P){ // o, the distance to the nearest player (online, either of them)
+  return Math.min(...P.map(p=>Math.hypot((o.x??o.cx)-p.x,(o.y??o.base)-p.y)));
+}
+function vivaTick(dt){
+  vivaCool-=dt;fofocaCool-=dt;
+  if(DUO.on&&!DUO.host)return;
+  if(fade||tdCut||abord||!flags.cracha||endTime)return;
+  if(scene==='andar2'&&flags.alost>=4&&player.x>=640&&player.y<212)return; // at the secret wall nobody looks that way
+  const P=[player];if(DUO.on&&buddy.sc===scene)P.push(buddy);
+  const now=performance.now(),tenso=vivaTenso();
+  for(const id of VIVA_IDS){
+    const o=(SCENES[scene]||[]).find(q=>q.id===id);if(!o||tdMoving(o))continue;
+    const d=vivaPerto(o,P);if(d>76){vivaLonge[id]=true;continue;}
+    const R=vivaPasso(o);if(!R||d>=44||vivaLonge[id]===false)continue;
+    if(tenso&&VIVA_ARCO.has(id))continue;
+    if(vivaCool>0||ghBusy()||o.chat>0||o.meet)continue;
+    const S=vivaOf[id]||(vivaOf[id]={f:null,t:0}),novo=S.f!==R.f;
+    if(!novo&&S.t>now)continue;
+    S.f=R.f;S.t=now+VIVA_NPC;vivaLonge[id]=false;vivaCool=VIVA_GAP;
+    if('meet' in o){o.wait=Math.max(o.wait||0,BAL_DUR);if(!(o.sitting>0))o.dir=faceTo(o,player);}
+    balao(o,R.L[falaMais('p_'+id)%R.L.length]);
+    return;
+  }
+  if(fofocaCool>0||vivaCool>0||ghBusy())return;
+  for(const a of WANDER[scene]||[]){
+    const b=a.meet;if(!b||a.role!==0||!(a.chat>1.5)||!(b.chat>0))continue;
+    if(vivaPerto(a,P)>90)continue;
+    const fora=t=>[a.id,b.id].some(i=>i==='tadeo'||i==='kido'||(t.fora||[]).includes(i)||(tenso&&VIVA_ARCO.has(i)));
+    const T=FOFOCAS.filter(t=>t.ok()&&!fora(t)&&falaN('f_'+t.k)<t.L.length).sort((x,y)=>falaN('f_'+x.k)-falaN('f_'+y.k))[0];
+    if(!T)return;
+    const L=T.L[falaMais('f_'+T.k)],tx=l=>typeof l==='function'?l():l;
+    a.chat=b.chat=Math.max(a.chat,BAL_DUR*2+.4);balao(a,tx(L[0]));balao(b,tx(L[1]),BAL_DUR+.2);
+    vivaCool=VIVA_GAP;fofocaCool=FOFOCA_GAP;
+    return;
+  }
+}
+{const u0=update;update=function(dt){u0(dt);
+  if(state==='play'&&startTime&&!ghHidden())vivaTick(dt);
+  else for(let i=ghBub.length-1;i>=0;i--)if(ghBub[i].viva)ghBub.splice(i,1);};} // (a conversation or a scene started: these balloons give way)
 // a talk with the player: alone, each one has his own; when both are there, they talk together (in turns)
 const ZW='ZECA',TBW='TIBÚRCIO';
 const GH_SOLO={
@@ -12019,33 +12522,33 @@ window.registrarAmigo=av=>{amigoAv=AVATARS.includes(av)&&av!==avatar?av:(avatar=
 const AM_FALA={
   m:{nova:['Que lugar! Fica perto de mim, tá?','Tenho um pressentimento sobre esta sala...','Se der problema, a gente resolve junto.','Já estive em lugares mais estranhos. Acho.'],
     lugares:{salaBib:'Biblioteca... Me lembra de não dormir em cima do livro.',salaLab:'Jaleco no lugar? Então bora estudar essa glicólise.',
-      sala204:'Esse professor de Poções não vai muito com a minha cara.',salaDiretor:'A sala do diretor! A gente não devia estar aqui... Vamos ver tudo!'},
+      sala204:'Esse professor de Poções não vai muito com a minha cara.',salaDiretor:'A sala da diretora! Olha quanta coisa! Vamos ver tudo!'},
     fantasma:['Oi, fantasma! ...Eles são legais, né?','Nunca vou me acostumar com gente atravessando parede.'],
     ocioso:[()=>'Tá tudo bem, '+nome1()+'? Pode contar comigo.','Bora? O relógio não para.','Eu ia sugerir um plano, mas sou melhor improvisando.'],
     espera:'Te espero aqui fora. Não demora!',volta:['Pronto? Então vamos.','Até que enfim! Achei que tinha caído no ralo.'],
     troca:['Deixa comigo. Vou na frente.','Pode deixar, eu abro caminho.']},
   f:{nova:['Sabia que eu li sobre este lugar? Duas vezes.',()=>'Anota tudo, '+nome1()+'. Depois cai na prova.','Segundo o regulamento, a gente nem devia correr aqui.','Hum. Isso me lembra um capítulo do Lehninger.'],
     lugares:{salaBib:'A BIBLIOTECA! Por favor, a gente pode ficar só cinco minutinhos?',salaLab:'Jaleco, cabelo preso, nada de comer. Regra número um do laboratório.',
-      sala204:'Poções exige precisão. Não mexe em nada sem ler o rótulo!',salaDiretor:'Isso é totalmente contra as regras. ...Mas olha esses livros!'},
+      sala204:'Poções exige precisão. Não mexe em nada sem ler o rótulo!',salaDiretor:'Que biblioteca particular! Quantos livros sobre estruturas mágicas!'},
     fantasma:['Fantasmas não estão no programa de Bioquímica. Que pena.','Bom dia! ...Será que eles respiram? Preciso pesquisar.'],
     ocioso:['Quer que eu repita as dez reações? Eu sei de cor.','Ficar parado não regenera ATP, sabia?','Glicose, hexocinase, glicose-6-fosfato... Desculpa, é mania.'],
     espera:'Eu espero aqui. E lava as mãos por 20 segundos, hein!',volta:['Vinte segundos lavando as mãos? Espero que sim.','Ótimo. Vamos, temos muito a revisar.'],
     troca:['Finalmente! Eu sei o caminho.','Deixa que eu guio. Eu decorei o mapa.']},
   r:{nova:['Tem comida aqui? Não? Que pena.','Isto é legal... mas tem aranha?','Minha mãe ia dizer que isso aqui tá bagunçado.','Tô com fome. Só avisando.'],
     lugares:{salaBib:'Biblioteca. Silêncio, livros... e nenhum lanche. Um pesadelo.',salaLab:'Se explodir alguma coisa, eu não estava aqui.',
-      sala204:'Poções. Eu sempre erro a ordem dos ingredientes.',salaDiretor:'O diretor tem um pote de balas! Será que ele percebe se faltar uma?'},
+      sala204:'Poções. Eu sempre erro a ordem dos ingredientes.',salaDiretor:'A diretora tem um pote de balas! Será que ela me dá uma?'},
     fantasma:['AAAH! ...Ah. Bom dia, fantasma.','Fantasma não come, né? Sobra mais lanche pra mim.'],
     ocioso:['A gente podia passar na máquina de lanches...','Tô morrendo de fome. Figurativamente. Espero.','Você viu alguma aranha por aí? Pergunto por nada.'],
     espera:'Vou ficar aqui. Sozinho. No corredor. Tudo bem. Tudo ótimo.',volta:['Ufa, voltou! Já estava com fome de tédio.','Demorou! Pensei que tinha virado fantasma.'],
     troca:['Eu na frente? Tá bom... Se aparecer aranha, a gente troca.','Beleza, deixa comigo!']},
   g:{nova:['Aposto que chego primeiro na próxima porta!','Nada aqui me assusta. Vem!','Se alguém mexer com você, me avisa.','Lugar novo, regra nova: a gente explora tudo.'],
     lugares:{salaBib:'Livro é bom, mas eu gosto mesmo é de ação.',salaLab:'Bora fazer essa via funcionar mais rápido que todo mundo!',
-      sala204:'Esse caldeirão não me assusta. Nem o professor.',salaDiretor:'Ninguém viu a gente entrar. Perfeito.'},
+      sala204:'Esse caldeirão não me assusta. Nem o professor.',salaDiretor:'Essa sala parece um castelo dentro do castelo.'},
     fantasma:['E aí, fantasma! Corrida até o 2º andar?','Eles atravessam parede. Que inveja!'],
     ocioso:['Vamos logo! Parado ninguém ganha nada.','Desafio: a gente acha tudo antes do sinal.','Você tá pensando demais. Vai no instinto!'],
     espera:'Aqui fora. Sem pressa... Mas com um pouquinho de pressa.',volta:['Até que enfim! Vamos!','Pronto? Tempo é ponto!'],
     troca:['Minha vez! Segura aí.','Agora sim. Eu vou na frente!']},
-  d:{nova:['Hm. Já vi lugares melhores.','Meu pai conhece o diretor, sabia?','Isso aqui precisava de uma reforma. Urgente.','Não encosta em nada, vai sujar o uniforme.'],
+  d:{nova:['Hm. Já vi lugares melhores.','Meu pai conhece a diretora, sabia?','Isso aqui precisava de uma reforma. Urgente.','Não encosta em nada, vai sujar o uniforme.'],
     lugares:{salaBib:'Meu pai doou metade desses livros. Ou queria ter doado.',salaLab:'Jaleco de novo? Ele amassa o meu blazer.',
       sala204:'Poções. Finalmente uma matéria à minha altura.',salaDiretor:'Um dia eu vou ter uma sala assim. Maior.'},
     fantasma:['Fantasmas... Que falta de modos atravessar parede assim.','Bom dia. Não chega perto do meu cabelo.'],
@@ -12198,6 +12701,8 @@ function duoRecv(m){
     case 'tela':if(typeof m.img==='string'){const im=new Image();im.onload=()=>{DUO.img=im;};im.src=m.img;}if(m.html&&state==='assistir')duoMirror(m.html);else if(m.html)DUO.htmlPend=m.html;break;
     case 'ver':if(m.on){DUO.verOn=true;DUO.verTxt=m.t||'';}else{DUO.verOn=false;DUO.htmlPend=null;if(state==='assistir'){duoVerSair();if(m.s&&m.s!==scene)duoCena({s:m.s,x:m.x,y:m.y,d:m.d,l:''});}}break;
     case 'npc':if(!DUO.host){DUO.npc=m;DUO.npc.t=performance.now();}break;
+    case 'saida':if(startTime){DUO.verOn=false;DUO.htmlPend=null;if(state==='assistir')duoVerSair();finaleSoft(SAIDA_TXT);}break; // the end of the Liga's meeting: the last dark screen, on both
+    case 'bal':{const o_=(SCENES[m.s]||[]).find(q=>q.id===m.id);if(o_&&typeof m.t==='string')balao(o_,m.t,m.de||0,m.s,false);break;}
   }
 }
 // the other one went through a door: come along (the friend only watches the simulator)
@@ -12560,6 +13065,8 @@ duoJalMsg=onde=>'Espere: '+duoPeerName()+' ainda está sem jaleco. Para '+onde+'
       return say([{t:'Você aproxima o crachá do leitor... BIP-BIP. Luz vermelha.'},{t:duoJalMsg('entrar no laboratório')}]);}
     return lb0.call(this);};
 }
+
+{const a0=zelObj.act;zelObj.act=function(){jan.last=0;return a0.call(this);};} // a talk with him: he stays a while longer where the player left him
 
 requestAnimationFrame(loop);
 })();
