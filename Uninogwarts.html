@@ -1305,7 +1305,7 @@ let pele=1,amDrawing=false,diarioEu=true;const palCache={}; // amDrawing: drawin
 // (platinum hair slicked back, black blazer, Slytherin tie), 'p' Pansy-like girl (black bob with a blunt fringe, green
 // cardigan, Slytherin tie, grey skirt); genero follows it.
 const PLAYER_LOOK={
-  m:{H:'#3a2e28',h:'#2a2420',d:'#1d1612',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#2c3236',p:'#1d2226',B:'#3a2e28',
+  m:{H:'#5e4737',h:'#2e221b',d:'#15100c',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#2c3236',p:'#1d2226',B:'#3a2e28',
      R:'#7a522f',r:'#5a3d24',J:'#a12a22',j:'#e8bf3f'},
   f:{H:'#a8743f',h:'#7a522f',d:'#5a3d24',T:'#6b7075',t:'#4a5055',u:'#3a4045',A:'#a12a22',P:'#3a4045',p:'#2c3236',B:'#3a2e28',
      Q:'#4a5055',q:'#2c3236',R:'#7a522f',r:'#5a3d24',F:'#a12a22',f:'#7a2e3e'},
@@ -1796,7 +1796,7 @@ function girlRows(outfit,dir,f,blink,lab){
    Extras: each character has a trademark (TRAITS: cap, beard, beanie...), clothes have details (collar, print,
    zip, pockets, laces, stripes) and a faint card texture; the face shows a mood (eyebrows, lids, mouth) and the
    mouth flaps while that character's line is being typed in a dialog. */
-const PAPER_INK='#1d1612',PW=21,PH=30,POX=2,POY=3;
+const PAPER_INK='#1d1612',SPRITE_INK='#111319',PW=21,PH=30,POX=2,POY=3;
 const HAIR_STYLE={diretora:'bushy',marina:'wavy',heloisa:'wavy',camila:'braids',larissa:'pony',bruna:'bob',lucia:'chignon',cida:'bun',kido:'einstein',
   lucas:'quiff',felipe:'fade',rafael:'curtains',tiago:'locs',bruno:'hawk',caio:'afro',julia:'afro',davi:'locs',gabriel:'shaggy',
   ana:'buns',bia:'pixie',aldair:'neto',malvar:'malvar',pedro:'curly',zelador:'short',tadeo:'riddle'};
@@ -1817,10 +1817,25 @@ const TRAITS={
   lucas:{stripes:1},bia:{stripes:1},rafael:{plaid:1},bruno:{stripes:1},
   tadeo:{pin:'#d8dee2',pinC:'#1f6b3f'}};
 // Harry's hair masks (rows from the top of the head; '#' = hair)
+// Avatar 1's curly hair (like pagina-02.png): a big bumpy cloud, wider than the head. 18 columns = x -1..16,
+// rows from y=-1; '#' hair. Pixels outside the 16x24 grid go to G.ext (paperCanvas has room for them).
+// Avatar 1's face (rows 0-12, like pagina-02.png): round cheeks narrowing to a small chin; row 13 is the collar
+const HARRY_FACE={
+  front:['....########....','..############..','.##############.','################','################','################',
+         '################','################','################','################','.##############.','..############..','....########....'],
+  side: ['....########....','..############..','.##############.','################','################','################',
+         '################','################','################','################','.###############','..#############.','.....#########..']};
+HARRY_FACE.back=HARRY_FACE.front;
 const HARRY_HAIR={
-  front:['..#.##..#.##.#..','.##############.','################','################','##.####.###.####','##..#..#.....###','##...........###','#.............##'],
-  side: ['...#.##.##.#....','..###########...','.#############..','###############.','######.###.#.##.','#####.....#.....','#####...........','####............','###.............'],
-  back: ['..#.##..#.##.#..','.##############.','################','################','################','################','################','################','################','################','.##.###.##.###..','..#..#...#..#...']};
+  front:['....##..##..##....','..#.##########.##.','.################.','#################.','##################',
+         '.#################','###.#.##.#.#.##.##','###............###','##..............##','.##............##.',
+         '##..............##'],
+  side: ['...##..##..##.....','.##.##########.#..','.##############.#.','################..','#################.',
+         '.################.','#######.#.#.#.##..','.######...........','#######...........','.#####............',
+         '######............','.####.............','..##..............'],
+  back: ['....##..##..##....','..##.##########.#.','.################.','##################','.#################',
+         '##################','#################.','##################','.#################','##################',
+         '#################.','.################.','..######..######..']};
 // stylish haircuts drawn by hand: F front, R side (facing right), B back, BF/BR the part behind the body (long hair);
 // '#' hair, '+' lighter strand, '-' darker strand, 's' shaved skin (only on the head), 'k' accessory (beads, tie), '.' nothing
 const HAIRCUTS={
@@ -1908,7 +1923,7 @@ const HAIRCUTS={
 // outfits: top (tee, sweater, hoodie, jacket, flannel, cardigan, varsity, overalls, vest, coverall; the lab coat is 'coat'),
 // bottom (jeans, pants, joggers, cargo, shorts, skirt, longskirt) and shoes (sneaker, boot, flat), with their colours
 const LOOKS={
-  player_m:{top:'jacket',c:'#2f5a3a',cd:'#1f3f28',inner:'#f4f6f4',print:'#d9a441',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#2d6fb5'},
+  player_m:{top:'jacket',c:'#2f5a3a',cd:'#1f3f28',inner:'#f4f6f4',tie:'#d9a441',tieB:'#a8862a',print:'#d9a441',bottom:'jeans',b:'#3b5f8a',bd:'#2b4a6f',shoes:'sneaker',sh:'#f4f6f4',sole:'#9aa2a9',lace:'#2d6fb5'},
   player_r:{top:'sweater',c:'#7a2e3e',cd:'#5a2230',alt:'#7a2e3e',letter:'#e8bf3f',bottom:'pants',b:'#7a522f',bd:'#5a3d24',shoes:'sneaker',sh:'#3a2e28',sole:'#9aa2a9',lace:'#f4f6f4'},
   player_d:{top:'jacket',c:'#25292e',cd:'#15181b',inner:'#f4f6f4',tie:'#1f6b3f',tieB:'#b9c2c8',bottom:'pants',b:'#25292e',bd:'#15181b',shoes:'flat',sh:'#141414'},
   player_p:{top:'cardigan',c:'#1f4a33',cd:'#143323',inner:'#f4f6f4',tie:'#2f8a52',tieB:'#b9c2c8',bottom:'skirt',b:'#4a5055',bd:'#2c3236',legs:'#1d1a1f',shoes:'flat',sh:'#141414'},
@@ -1959,7 +1974,7 @@ function paperSpec(who,outfit,crop){
     pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
     diary:me_&&out==='coat'&&(amDrawing?!diarioEu:diarioEu), // no backpack with the lab coat: the player carries the diary in hand (only the player: not the adventure friend)
     scarf:false,harry:me_&&avatar==='m',
-    phones:false,bow:false,scrunchie:me_&&avatar==='f'&&lab,glasses:me_&&avatar==='m'?'#8a6a3a':GLASSES[who]||null,
+    phones:false,bow:false,scrunchie:me_&&avatar==='f'&&lab,glasses:me_&&avatar==='m'?'#7a5c27':GLASSES[who]||null,
     key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||'',noPin?'np':''].join(':')};
 }
 // mood: 'normal' | 'happy' | 'worried' | 'angry' | 'smug' | 'surprised'; talk: mouth open
@@ -1970,7 +1985,7 @@ function paperGrid(sp,view,f,blink,mood,talk){
   const rect=(x0,y0,x1,y1,c)=>{for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)put(x,y,c);};
   const ell=(x,y,cx,cy,rx,ry)=>((x+.5-cx)/rx)**2+((y+.5-cy)/ry)**2<=1;
   const coat=sp.outfit==='coat',skirt=sp.outfit==='skirt',hood=sp.outfit==='hoodie',side=view==='side',back=view==='back',tr=sp.tr;
-  const top=coat?P('W'):P('T'),S=P('S'),h=P('h'),INK=PAPER_INK,WHITE='#f4f6f4';
+  const top=coat?P('W'):P('T'),S=P('S'),h=P('h'),INK=SPRITE_INK,WHITE='#f4f6f4';
   // shoes and legs: a gap between the feet becomes an outline line
   const lift=side?[0,2,0,1][f%4]:[0,1,0,2][f%4]; // 1 = left (side: back) foot up, 2 = right (side: front) foot up
   const feet=side?[[4,7,1],[8,11,2]]:[[3,6,1],[9,12,2]];
@@ -2140,13 +2155,21 @@ function paperGrid(sp,view,f,blink,mood,talk){
     put(x,y,hairy?h:S);
   }
   if(sp.hair==='spiky')for(let x=1;x<=14;x+=3){put(x,0,h);put(x+1,0,h);} // mad-scientist tufts
-  if(sp.hair==='messy'){ // Harry's untidy hair: spikes all round, a ragged fringe, a few lighter strands
-    const M_=side?HARRY_HAIR.side:back?HARRY_HAIR.back:HARRY_HAIR.front,HL=side?[[6,1],[7,2],[11,2]]:back?[[5,2],[10,3],[7,5]]:[[4,1],[5,2],[10,1],[11,2],[8,3]];
-    for(let y=0;y<=13;y++)for(let x=0;x<16;x++){
-      if(M_[y]&&M_[y][x]==='#')put(x,y,HL.some(([a,b])=>a===x&&b===y)?H_:h);
-      else if(inHead(x,y))put(x,y,y>=12&&back?P('s'):S);
+  if(sp.hair==='messy'){ // Avatar 1: a cloud of dark-brown curls, with darker curls and a few lighter tips
+    const M_=side?HARRY_HAIR.side:back?HARRY_HAIR.back:HARRY_HAIR.front;
+    const CT=['.+...-..','.-..+...','.....-.+','+......-','-..+....','...-..+.','......-.'];
+    const curlC=(x,y)=>{ // irregular curls: a light arc ('+') with its shadow ('-') under it
+      const k=CT[(y+7)%7][(x+8+3*Math.floor((y+7)/7))%8];
+      return k==='-'?d_:k==='+'&&y<=(back?10:6)?H_:h;};
+    G.ext=G.ext||[];
+    for(let y=-1;y<=13;y++)for(let x=-1;x<=16;x++){
+      const row=M_[y+1];
+      const F_=HARRY_FACE[side?'side':back?'back':'front'][y],face=!!F_&&F_[x]==='#';
+      if(row&&row[x+1]==='#'){if(x>=0&&x<16&&y>=0)put(x,y,curlC(x,y));else G.ext.push([x,y,curlC(x,y)]);}
+      else if(face)put(x,y,S);
+      else if(x>=0&&x<16&&y>=0&&inHead(x,y))put(x,y,null);
     }
-    if(back)rect(6,12,9,12,P('s'));
+    for(let x=x0+1;x<x1;x++)if(!G[13][x]&&G[14][x])put(x,13,G[14][x]); // shorter head, taller torso: the jacket starts a row higher, round shoulders
   }
   if(sp.hair==='bushy'&&!side&&!back){put(7,1,d_);put(8,2,d_);} // the parting
   if(HC){if(back&&!/[#\-]/.test(HC.B[12]||''))rect(6,12,9,12,P('s'));mask(side?HC.R:back?HC.B:HC.F);} // nape only under short hair
@@ -2183,14 +2206,14 @@ function paperGrid(sp,view,f,blink,mood,talk){
       if(!blink){const pup=mood==='surprised'?Math.round(cx-.5):pup0;put(pup,mood==='worried'?8:7,INK);}
       // eyebrows: inner end up when worried/surprised, down when angry
       if(mood!=='normal'&&mood!=='happy'&&!blink){
-        const inner=side?cx+1.5:(cx<8?cx+1.5:cx-1.5),outer=side?cx-1.5:(cx<8?cx-1.5:cx+1.5),bc=sp.glasses?ring:INK;
+        const inner=side?cx+1.5:(cx<8?cx+1.5:cx-1.5),outer=side?cx-1.5:(cx<8?cx-1.5:cx+1.5),bc=sp.glasses&&!sp.harry?ring:INK;
         const yi=mood==='angry'?4:3,yo=mood==='angry'?3:4,ym=mood==='surprised'?3:4;
         if(mood==='surprised')for(let x=Math.floor(cx-1);x<=Math.floor(cx+1);x++)put(x,2,bc);
         else{put(Math.floor(outer),yo,bc);put(Math.floor(cx),ym,bc);put(Math.floor(inner),yi,bc);}
       }
     }
     if(sp.glasses&&!side){put(7,7,sp.glasses);put(8,7,sp.glasses);}
-    if(sp.harry||tr.roundArms){if(side){put(5,7,sp.glasses);put(4,7,sp.glasses);}else{put(1,7,sp.glasses);put(2,7,sp.glasses);put(13,7,sp.glasses);put(14,7,sp.glasses);}} // round glasses' arms
+    if(sp.harry||tr.roundArms){if(side){put(5,7,sp.glasses);put(4,7,sp.glasses);}else{if(!sp.harry){put(1,7,sp.glasses);put(14,7,sp.glasses);}put(2,7,sp.glasses);put(13,7,sp.glasses);}} // Avatar 1: short arms, the curls cover the rest // round glasses' arms
     if(tr.freckles){const F_=P('s');if(side){put(9,9,F_);put(11,9,F_);put(10,10,F_);}else{put(3,9,F_);put(5,9,F_);put(4,10,F_);put(10,9,F_);put(12,9,F_);put(11,10,F_);}}
     if(tr.chain){const cxs=side?[5]:[1,14];for(const x of cxs)for(let y=9;y<=13;y+=2)put(x,y,tr.chain);}
     if(tr.beard){for(let y=10;y<=13;y++)for(let x=0;x<16;x++)if(inHead(x,y)&&(side?x>=6:true)&&(y>=12||x<=(side?7:3)||x>=(side?15:12))){
@@ -2220,15 +2243,15 @@ const rgbOf=c=>hexRGB[c]||(hexRGB[c]=[parseInt(c.slice(1,3),16),parseInt(c.slice
 function paperCanvas(G,mirror,hop){
   const oy=hop?POY-1:POY,M=Array.from({length:PH},()=>new Array(PW).fill(0)),C=Array.from({length:PH},()=>new Array(PW).fill(null));
   for(let y=0;y<24;y++)for(let x=0;x<16;x++){const c=G[y][mirror?15-x:x];if(c){M[y+oy][x+POX]=1;C[y+oy][x+POX]=c;}}
+  if(G.ext)for(const [x,y,c] of G.ext){const X=(mirror?15-x:x)+POX,Y=y+oy;if(X>=1&&X<PW-1&&Y>=1&&Y<PH){M[Y][X]=1;C[Y][X]=c;}} // hair beyond the 16x24 grid
   const at=(x,y)=>x>=0&&y>=0&&x<PW&&y<PH?M[y][x]:0;
   const L=[];for(let y=0;y<PH;y++)for(let x=0;x<PW;x++)if(!M[y][x]&&(at(x-1,y)===1||at(x+1,y)===1||at(x,y-1)===1||at(x,y+1)===1))L.push([x,y]);
   for(const [x,y] of L)M[y][x]=2;
   const [c,cx]=mk(PW,PH),img=cx.createImageData(PW,PH),D=img.data;
   for(let y=0;y<PH;y++)for(let x=0;x<PW;x++){
     const v=M[y][x];if(!v)continue;
-    const col=v===1?C[y][x]:PAPER_INK,[R,G_,B]=rgbOf(col),i=(y*PW+x)*4;
-    const n=v===1&&col!=='#ffffff'&&col!==PAPER_INK?(((x*7+y*13)%3)-1)*2:0; // card grain, not on eyes or lines
-    D[i]=Math.max(0,Math.min(255,R+n));D[i+1]=Math.max(0,Math.min(255,G_+n));D[i+2]=Math.max(0,Math.min(255,B+n));D[i+3]=255;
+    const col=v===1?C[y][x]:SPRITE_INK,[R,G_,B]=rgbOf(col),i=(y*PW+x)*4;
+    D[i]=R;D[i+1]=G_;D[i+2]=B;D[i+3]=255;
   }
   cx.putImageData(img,0,0);c._ox=POX;c._oy=POY;
   return {c,w:16,h:24};
@@ -6937,7 +6960,7 @@ function topGrid(st){
   const put=(x,y,c)=>{if(x>=0&&y>=0&&x<TOP_N&&y<TOP_N)G[y][x]=c;};
   const rect=(x0,y0,x1,y1,c)=>{for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)put(x,y,c);};
   const ell=(x,y,cx,cy,rx,ry)=>((x+.5-cx)/rx)**2+((y+.5-cy)/ry)**2<=1;
-  const S=P('S'),sk=P('s'),h=P('h'),HL=P('H'),HD=P('d'),INK=PAPER_INK,WHITE='#f4f6f4';
+  const S=P('S'),sk=P('s'),h=P('h'),HL=P('H'),HD=P('d'),INK=SPRITE_INK,WHITE='#f4f6f4';
   const top=coat?P('W'):L.c,topD=coat?P('w'):L.cd,shoe=L.sh,hair=sp.hair;
   // shoes, one ahead of the other (the front of the shoe lighter: laces / toe cap)
   const shoeC=shoe==='#f4f6f4'?'#c9cfd3':shoe; // white sneakers a shade darker, so they never read as eyes
@@ -6952,7 +6975,7 @@ function topGrid(st){
   if(L.top==='sweater')for(let x=3;x<=20;x++)if(G[15][x]===top)put(x,15,x%2?L.alt||topD:topD); // knitted band
   if(L.top==='varsity')for(const x of [4,5,18,19])for(let y=10;y<=14;y++)if(G[y][x]===top)put(x,y,L.alt);      // sleeves of the jacket
   if(coat){put(9,17,topD);put(10,18,topD);put(14,17,topD);put(13,18,topD);put(11,18,L.inner||WHITE);put(12,18,L.inner||WHITE);} // lapels
-  else if(L.top==='jacket'){put(10,18,L.inner||WHITE);put(11,18,L.inner||WHITE);put(12,18,L.inner||WHITE);put(13,18,L.inner||WHITE);} // shirt collar
+  else if(L.top==='jacket'){put(10,18,L.inner||WHITE);put(11,18,L.inner||WHITE);put(12,18,L.inner||WHITE);put(13,18,L.inner||WHITE);if(L.tie){put(11,17,L.tie);put(12,17,L.tie);put(11,18,L.tieB||L.tie);}} // shirt collar
   // backpack on the back (the side away from where they look), straps over the shoulders
   if(sp.pack){rect(7,3,16,7,P('r'));rect(8,3,15,6,P('R'));rect(8,5,15,5,P('r'));put(11,4,'#b9c2c8');put(12,4,'#b9c2c8');
     for(let y=8;y<=15;y++){if(G[y][6])put(6,y,P('r'));if(G[y][17])put(17,y,P('r'));}}
@@ -6974,7 +6997,7 @@ function topGrid(st){
       if(sp.scrunchie)for(let x=9;x<=15;x++)put(x,5,P('F'));}
   }else if(hair==='messy'){ // Harry: untidy spikes all round, a ragged fringe
     for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,11)||(y===12&&inH(x,y)&&x%2===1))put(x,y,strand(x,y));
-    for(const [x,y] of [[6,2],[9,1],[13,1],[17,2],[19,4],[4,4],[3,7],[20,7],[11,2],[15,1],[8,2]]){put(x,y,h);HEAD[y][x]=true;}
+    for(const [x,y] of [[5,3],[7,2],[10,1],[13,1],[16,2],[18,3],[4,5],[19,5],[3,8],[20,8],[7,6],[16,6]]){put(x,y,h);HEAD[y][x]=true;}
     for(const [x,y] of [[8,5],[13,4],[10,8],[15,7],[6,9]])put(x,y,HL);
   }else if(hair==='curtains'){ // Ron: parted in the middle, falling to both sides
     for(let y=0;y<TOP_N;y++)for(let x=0;x<TOP_N;x++)if(hairArea(x,y,11)||(y===12&&inH(x,y)&&(x<10||x>14)))put(x,y,(x+y)%6===0?HD:x%5===2?HL:h);
@@ -7013,11 +7036,11 @@ function topCanvas(dir,st){
     if(!C[y][x]){if(n4.some(([a,b])=>at(x+a,y+b)))ink.push([x,y]);}                               // the cut-out outline
     else if(!H_[y][x]&&n4.some(([a,b])=>H_[y+b]&&H_[y+b][x+a]))ink.push([x,y]);                    // the head's edge over the body
   }
-  for(const [x,y] of ink)C[y][x]=PAPER_INK;
+  for(const [x,y] of ink)C[y][x]=SPRITE_INK;
   const [cv_,cx]=mk(M,M),img=cx.createImageData(M,M),D=img.data;
   for(let y=0;y<M;y++)for(let x=0;x<M;x++){const col=C[y][x];if(!col)continue;
-    const [R,G_,B]=rgbOf(col),i=(y*M+x)*4,n=col!=='#f4f6f4'&&col!==PAPER_INK?(((x*7+y*13)%3)-1)*2:0; // card grain
-    D[i]=Math.max(0,Math.min(255,R+n));D[i+1]=Math.max(0,Math.min(255,G_+n));D[i+2]=Math.max(0,Math.min(255,B+n));D[i+3]=255;}
+    const [R,G_,B]=rgbOf(col),i=(y*M+x)*4;
+    D[i]=R;D[i+1]=G_;D[i+2]=B;D[i+3]=255;}
   cx.putImageData(img,0,0);topCache.set(key,cv_);return cv_;
 }
 function drawTopPlayer(x,y,dir,anim,moving){
