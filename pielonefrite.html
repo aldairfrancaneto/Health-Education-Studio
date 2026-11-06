@@ -1412,6 +1412,10 @@ body{
   .onl-pto{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#3E9E5E; }
   .onl-pto.nao{ background:#C9524C; }
   .onl-off{ color:#F5B4B0; }
+
+/* telas de clique em área inteira: sem o contorno de foco do navegador (o foco é dado por código,
+   para que qualquer tecla avance; o contorno aparecia como uma linha solta acima do rodapé) */
+.tela-titulo:focus, .tela-carregando:focus, #telaTitulo:focus, #telaCarregando:focus{ outline:none; }
 </style>
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
@@ -1897,7 +1901,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.7 &middot; Última atualização: 23 de outubro de 2026</span>
+    <span class="site-footer-verso">Versão 1.9 &middot; Última atualização: 6 de novembro de 2026</span>
   </div>
 </footer>
 
@@ -4158,17 +4162,17 @@ body{
   }
 
   /* ---------- distribuição inicial: parte das cartas já começa posicionada ----------
-     Sorteia ~CHAL_PREPOSICIONADAS do total de cartas (dos dois montes) e põe cada uma
+     Sorteia ~CHAL_PREPOSICIONADAS das cartas de CATEGORIA (só desse monte) e põe cada uma
      numa estação DIFERENTE, também sorteada — assim nenhum par começa pronto. As cartas
      não têm dono: quem completar o par com elas leva as duas, como qualquer outro par.
      A animação mostra cada carta caindo do alto no seu encaixe, antes da 1ª vez. */
-  const CHAL_PREPOSICIONADAS = 0.25;
+  const CHAL_PREPOSICIONADAS = 0.70;   /* fração das cartas de CATEGORIA que já começam no tabuleiro */
+  const CHAL_TIPO_CATEGORIA = 'cat';      /* só a categoria é pré-posicionada; os outros tipos vêm todos dos montes */
   let chalDistTok = 0;
   function chalDistribuirIniciais(cb){
     const meu = ++chalDistTok;
-    const n = Math.round(LES_PARES.length * 2 * CHAL_PREPOSICIONADAS);
-    const todas = [];
-    Object.keys(CHAL_LES.montes).forEach(function(t){ CHAL_LES.montes[t].forEach(function(c){ todas.push(c); }); });
+    const n = Math.round(LES_PARES.length * CHAL_PREPOSICIONADAS);
+    const todas = CHAL_LES.montes[CHAL_TIPO_CATEGORIA].slice();   /* só as cartas de categoria */
     const escolhidas = lesEmbaralhar(todas).slice(0, n);
     escolhidas.forEach(function(c){ const m = CHAL_LES.montes[c.tipo]; m.splice(m.indexOf(c), 1); });
     const ests = lesEmbaralhar([].slice.call(lesChalCampo.querySelectorAll('.estacao'))).slice(0, escolhidas.length);
@@ -4857,6 +4861,102 @@ body{
       if (k < 1) requestAnimationFrame(passo);
     })();
   }, 40);
+})();
+</script>
+
+<!-- ============================================================
+     SETAS NA CARTA AMPLIADA (só no Single Player)
+     Com uma carta ampliada pela lupa, as setas ‹ › (ou ← → do teclado, ou arrastar
+     no celular) passam para a carta vizinha do MESMO tipo, na ordem da tela, dando a
+     volta no fim. Funciona "tocando a lupa" da carta vizinha, então a ampliação de
+     cada jogo continua a mesma (cores, carta em HTML etc.).
+     ============================================================ -->
+<style>
+.jc-lbnav{ position:fixed; z-index:9990; width:48px; height:48px; padding:0; border-radius:50%; cursor:pointer; display:none;
+  background:rgba(232,199,102,.10); border:1.5px solid rgba(232,199,102,.45); color:#F6DD8E;
+  box-shadow:0 4px 14px rgba(0,0,0,.45); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+  transition:background .18s, border-color .18s, transform .18s, box-shadow .18s; }
+.jc-lbnav svg{ width:22px; height:22px; display:block; margin:auto; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
+.jc-lbnav:hover, .jc-lbnav:focus-visible{ background:rgba(232,199,102,.24); border-color:#E8C766; transform:scale(1.08);
+  box-shadow:0 0 0 4px rgba(232,199,102,.12), 0 6px 18px rgba(0,0,0,.5); outline:none; }
+.jc-lbnav:active{ transform:scale(.95); }
+.jc-lbcont{ position:fixed; z-index:9990; display:none; transform:translateX(-50%); pointer-events:none;
+  font:700 13px/1 Cinzel, Georgia, serif; letter-spacing:.14em; color:rgba(246,221,142,.9); text-shadow:0 1px 3px #000;
+  padding:5px 12px; border-radius:999px; background:rgba(6,10,20,.72); border:1px solid rgba(232,199,102,.3); }
+.jc-lbnav.on, .jc-lbcont.on{ display:block; }
+@media (max-width:600px){ .jc-lbnav{ width:38px; height:38px; } }
+</style>
+<button class="jc-lbnav" id="jcLbAnt" type="button" aria-label="Carta anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19"/></svg></button>
+<button class="jc-lbnav" id="jcLbProx" type="button" aria-label="Próxima carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19"/></svg></button>
+<div class="jc-lbcont" id="jcLbCont" aria-live="polite"></div>
+<script>
+(function(){
+  const CFG = { lb:'#lightbox', carta:'#lbImg', lupa:'.lupa',
+    solo:function(l){ return !!l.closest('#lesTabuleiro'); },
+    tipo:function(l){ return l.parentElement.classList.contains('mini') ? 'cat' : 'def'; } };
+  const lb = document.querySelector(CFG.lb);
+  if (!lb) return;
+  const ant = document.getElementById('jcLbAnt'), prox = document.getElementById('jcLbProx'), cont = document.getElementById('jcLbCont');
+  let atual = null, tipo = null;
+  const aberto = function(){ return lb.classList.contains('on'); };
+  function sequencia(){
+    return [].filter.call(document.querySelectorAll(CFG.lupa), function(l){
+      return !lb.contains(l) && l.offsetParent !== null && CFG.solo(l) && CFG.tipo(l) === tipo;
+    });
+  }
+  function posicionar(){
+    if (!atual || !aberto()){ esconder(); return; }
+    const seq = sequencia();
+    if (seq.length < 2){ esconder(); return; }
+    const carta = lb.querySelector(CFG.carta) || lb;
+    const r = carta.getBoundingClientRect();
+    if (!r.width){ return; }
+    const W = window.innerWidth, H = window.innerHeight, b = ant.offsetWidth || 48;
+    const meio = r.top + r.height / 2 - b / 2;
+    ant.style.left = Math.max(6, r.left - b - 16) + 'px';
+    prox.style.left = Math.min(W - b - 6, r.right + 16) + 'px';
+    ant.style.top = prox.style.top = Math.max(6, Math.min(H - b - 6, meio)) + 'px';
+    const i = seq.indexOf(atual);
+    cont.textContent = (i < 0 ? 1 : i + 1) + ' / ' + seq.length;
+    cont.style.left = (r.left + r.width / 2) + 'px';
+    cont.style.top = Math.min(H - 22, r.bottom + 8) + 'px';
+    ant.classList.add('on'); prox.classList.add('on'); cont.classList.add('on');
+  }
+  function esconder(){ ant.classList.remove('on'); prox.classList.remove('on'); cont.classList.remove('on'); }
+  function reposicionarLogo(){ posicionar(); requestAnimationFrame(posicionar); setTimeout(posicionar, 120); setTimeout(posicionar, 400); }
+  /* qual lupa abriu a carta ampliada? (fase de captura: antes do próprio jogo) */
+  document.addEventListener('click', function(e){
+    const l = e.target.closest && e.target.closest(CFG.lupa);
+    if (!l || lb.contains(l)) return;
+    if (CFG.solo(l)){ atual = l; tipo = CFG.tipo(l); setTimeout(reposicionarLogo, 0); }
+    else { atual = null; esconder(); }
+  }, true);
+  function passar(d){
+    if (!atual || !aberto()) return;
+    const seq = sequencia();
+    if (seq.length < 2) return;
+    let i = seq.indexOf(atual); if (i < 0) i = 0;
+    seq[(i + d + seq.length) % seq.length].click();
+  }
+  ant.addEventListener('click', function(e){ e.stopPropagation(); passar(-1); });
+  prox.addEventListener('click', function(e){ e.stopPropagation(); passar(1); });
+  document.addEventListener('keydown', function(e){
+    if (!ant.classList.contains('on')) return;
+    if (e.key === 'ArrowRight'){ e.preventDefault(); e.stopPropagation(); passar(1); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); e.stopPropagation(); passar(-1); }
+  }, true);
+  let x0 = null, y0 = null;
+  lb.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive:true });
+  lb.addEventListener('touchend', function(e){
+    if (x0 === null || !ant.classList.contains('on')) { x0 = null; return; }
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) passar(dx < 0 ? 1 : -1);
+  });
+  new MutationObserver(function(){ if (aberto()) reposicionarLogo(); else { esconder(); atual = null; } })
+    .observe(lb, { attributes:true, attributeFilter:['class'] });
+  lb.addEventListener('load', posicionar, true);   /* imagem ampliada terminou de carregar */
+  window.addEventListener('resize', posicionar);
 })();
 </script>
 </body>

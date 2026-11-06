@@ -509,6 +509,19 @@ body{
   .cl-foto{ width:40px; height:40px; }
   .cl-copyright{ font-size:10.5px; }
 }
+
+/* telas de clique em área inteira: sem o contorno de foco do navegador (o foco é dado por código,
+   para que qualquer tecla avance; o contorno aparecia como uma linha solta acima do rodapé) */
+.tela-titulo:focus, .tela-carregando:focus, #telaTitulo:focus, #telaCarregando:focus{ outline:none; }
+
+/* acento das maiúsculas desenhado em pixels (a fonte pixelada espreme o acento dentro da letra) */
+.tt-ac{ position:relative; display:inline-block; }
+.tt-ac::before{ content:""; position:absolute; left:0; top:calc(50% - .5em - .5em); width:.125em; height:.125em;
+  background:transparent; filter:drop-shadow(.06em .06em 0 rgba(0,0,0,.4)); pointer-events:none; }
+.tt-ac.ag::before{ box-shadow: .5em 0 currentColor, .625em 0 currentColor, .375em .125em currentColor, .5em .125em currentColor; }
+.tt-ac.gr::before{ box-shadow: .25em 0 currentColor, .375em 0 currentColor, .375em .125em currentColor, .5em .125em currentColor; }
+.tt-ac.ci::before{ top:calc(50% - .5em - .625em); box-shadow: .375em 0 currentColor, .25em .125em currentColor, .5em .125em currentColor, .125em .25em currentColor, .625em .25em currentColor; }
+.tt-ac.ti::before{ box-shadow: .25em 0 currentColor, .375em 0 currentColor, .75em 0 currentColor, .125em .125em currentColor, .5em .125em currentColor, .625em .125em currentColor; }
 </style>
 </head>
 <body>
@@ -517,7 +530,7 @@ body{
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar.">
   <div class="tt-ico" aria-hidden="true">🎲</div>
   <div class="tt-caso">Atividade 08</div>
-  <div class="tt-titulo">Diário de<br>Classe</div>
+  <div class="tt-titulo" role="heading" aria-level="1" aria-label="Diário de Classe"><span aria-hidden="true">Di<span class="tt-ac ag">a</span>rio de<br>Classe</span></div>
   <div class="tt-start">▶ Press Start</div>
 </div>
 
@@ -658,7 +671,7 @@ body{
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 3 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.3 &middot; Última atualização: 6 de novembro de 2026</span>
   </div>
 </footer>
 
@@ -2233,6 +2246,32 @@ body{
     e.preventDefault();
     iniciar();
   });
+})();
+</script>
+<script>
+/* ===== créditos do carregamento: a foto entra rolando da borda lateral oposta e chega ao
+   seu lugar 1 s antes do fim do carregamento (7 s) ===== */
+(function(){
+  "use strict";
+  var foto = document.querySelector('.creditos-loading .cl-foto');
+  if (!foto) return;
+  var DUR_LOAD = 7000, ANTES = 1000;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var iv = setInterval(function(){
+    if (!foto.getClientRects().length) return;          /* tela de carregamento ainda escondida */
+    clearInterval(iv);
+    var r = foto.getBoundingClientRect();
+    var dist = Math.max(0, window.innerWidth - r.right - 12);  /* da borda direita até o lugar final */
+    var voltas = dist / (Math.PI * r.width);             /* gira como uma roda de verdade */
+    var giro = voltas * 360, t0 = performance.now(), dur = DUR_LOAD - ANTES;
+    /* movida pelo mesmo relógio da barra de carregamento (requestAnimationFrame) */
+    (function passo(){
+      var k = Math.min(1, (performance.now() - t0) / dur);
+      var resta = Math.pow(1 - k, 1.3);                  /* desacelera ao chegar */
+      foto.style.transform = k < 1 ? 'translateX(' + (dist * resta).toFixed(1) + 'px) rotate(' + (giro * resta).toFixed(1) + 'deg)' : '';
+      if (k < 1) requestAnimationFrame(passo);
+    })();
+  }, 40);
 })();
 </script>
 </body>

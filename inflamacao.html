@@ -588,6 +588,19 @@
   .cl-foto{ width:40px; height:40px; }
   .cl-copyright{ font-size:10.5px; }
 }
+
+/* telas de clique em área inteira: sem o contorno de foco do navegador (o foco é dado por código,
+   para que qualquer tecla avance; o contorno aparecia como uma linha solta acima do rodapé) */
+.tela-titulo:focus, .tela-carregando:focus, #telaTitulo:focus, #telaCarregando:focus{ outline:none; }
+
+/* acento das maiúsculas desenhado em pixels (a fonte pixelada espreme o acento dentro da letra) */
+.tt-ac{ position:relative; display:inline-block; }
+.tt-ac::before{ content:""; position:absolute; left:0; top:calc(50% - .5em - .5em); width:.125em; height:.125em;
+  background:transparent; filter:drop-shadow(.06em .06em 0 rgba(0,0,0,.4)); pointer-events:none; }
+.tt-ac.ag::before{ box-shadow: .5em 0 currentColor, .625em 0 currentColor, .375em .125em currentColor, .5em .125em currentColor; }
+.tt-ac.gr::before{ box-shadow: .25em 0 currentColor, .375em 0 currentColor, .375em .125em currentColor, .5em .125em currentColor; }
+.tt-ac.ci::before{ top:calc(50% - .5em - .625em); box-shadow: .375em 0 currentColor, .25em .125em currentColor, .5em .125em currentColor, .125em .25em currentColor, .625em .25em currentColor; }
+.tt-ac.ti::before{ box-shadow: .25em 0 currentColor, .375em 0 currentColor, .75em 0 currentColor, .125em .125em currentColor, .5em .125em currentColor, .625em .125em currentColor; }
 </style>
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
@@ -599,7 +612,7 @@
 <div class="tela-titulo" id="telaTitulo" role="button" tabindex="0" aria-label="Tela inicial. Clique para começar." style="display:none;">
   <div class="tt-ico" aria-hidden="true">🩺</div>
   <div class="tt-caso">Atividade 10</div>
-  <div class="tt-titulo">Investigação<br>Inflamatória</div>
+  <div class="tt-titulo" role="heading" aria-level="1" aria-label="Investigação Inflamatória"><span aria-hidden="true">Investigaç<span class="tt-ac ti">a</span>o<br>Inflamat<span class="tt-ac ag">o</span>ria</span></div>
   <div class="tt-start">▶ Press Start</div>
 </div>
 
@@ -719,7 +732,7 @@
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 1.1 &middot; Última atualização: 2 de setembro de 2026</span>
+    <span class="site-footer-verso">Versão 1.2 &middot; Última atualização: 6 de novembro de 2026</span>
   </div>
 </footer>
 
