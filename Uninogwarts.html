@@ -686,6 +686,10 @@ body:not(.kb) .caca-grid div.cur{outline:none}
   #telaModo.lp .tp-carta{width:clamp(130px,22vw,190px)}.lp .tp-pele{padding:0 6px;gap:7px}.lp .tp-cor{width:22px;height:22px}.lp .tp-dica,.lp .tc-aviso{display:none}
   .lp .tn-btn{font-size:11px;padding:7px 14px}.lp .tc-btns{gap:6px}.lp .tc-info{font-size:16px;line-height:1.05}.lp .tc-info small{margin-top:1px;font-size:14px}.lp .tn-campo{padding:7px 10px;font-size:12px}.lp .dup-codigo{font-size:22px;padding:2px 12px}.lp .dup-txt{font-size:16px}
   .tela-enredo.lp{padding-top:40px;padding-bottom:30px;gap:6px}}
+
+/* telas de clique em área inteira: sem o contorno de foco do navegador (o foco é dado por código,
+   para que qualquer tecla avance; o contorno aparecia como uma linha solta acima do rodapé) */
+.tela-titulo:focus, .tela-carregando:focus, #telaTitulo:focus, #telaCarregando:focus{ outline:none; }
 </style>
 
 <style>body{margin:0}</style>
@@ -932,7 +936,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 2.97 &middot; Última atualização: 4 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 2.98 &middot; Última atualização: 6 de novembro de 2026</span>
   </div>
 </footer>
 <script>
