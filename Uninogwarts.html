@@ -943,7 +943,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.04 &middot; Última atualização: 7 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.05 &middot; Última atualização: 8 de novembro de 2026</span>
   </div>
 </footer>
 <script>
@@ -5276,13 +5276,15 @@ function seatProfs(){
   if(flags.seated)return;
   profsArrive(true);
   flags.seated=true;profWait=false;[aldair,heloisa].forEach(o=>{o.sat=false;o.script=null;});
-  [[aldair,176],[heloisa,208]].forEach(([o,x])=>{
-    o.x=x;o.y=80;o.dir='down';o.anim=0;o.moving=false;o.detour=null;o.back=false;syncW(o);
-    o.solid={x,y:80,w:0,h:0};o.zone={x:x-30,y:66,w:60,h:52};o.oy=84;o.noShadow=true;
+  const vis=scene==='sala101';
+  [[aldair,176,146],[heloisa,208,238]].forEach(([o,x,ex])=>{
+    const senta=()=>{o.x=x;o.y=80;o.dir='down';o.anim=0;o.moving=false;o.detour=null;o.back=false;syncW(o);
+      o.solid={x,y:80,w:0,h:0};o.zone={x:x-30,y:66,w:60,h:52};o.oy=84;o.noShadow=true;};
+    if(vis&&SCENES.sala101.includes(o)&&Math.hypot(o.x-x,o.y-80)>3)tdMove(o,[[ex,Math.max(o.y,104)],[ex,80],[x,80]],30,senta); // (v3.05) on foot to the desk, no fade
+    else senta();
   });
   deskProf.solids=[{x:152,y:62,w:80,h:30}]; // nobody walks behind the desk while they sit there
   updateObjective();
-  if(scene==='sala101')goScene('sala101',192,182,'up','SALA 101'); // short fade hides the change
 }
 function unseatProfs(){profWait=false;[aldair,heloisa].forEach(o=>{delete o.oy;o.noShadow=false;o.sat=false;o.script=null;});delete deskProf.solids;}
 function bell(){[784,988,784,988,784,988].forEach((f,i)=>tone(f,.14,'square',.05,i*.16));}
@@ -8401,7 +8403,7 @@ function tdSync(force){
   tdGo(tdFelObj,'andar2',{lane:1},force);
   // Tadeo: the 2nd floor (its west end while Bruno holds him), the old lab (the trap scene's own Tadeo), then Sala 204
   if(tdNicho&&scene!=='andar2')tdNicho=false;
-  tdGo(tadeo,oc||tdNicho?null:td>=7?'sala204':'andar2',td>=7?{x:318,y:92,dir:'up'}:trap?{x:30,y:112,dir:'right'}:{lane:1},force);
+  tdGo(tadeo,oc||tdNicho?null:td>=7?'sala204':trTd2Want()?'sala201':'andar2',td>=7?{x:318,y:92,dir:'up'}:trap?{x:30,y:112,dir:'right'}:trTd2Want()?{x:256,y:98,dir:'left'}:{lane:1},force);
   // Larissa
   const lw=tdWhere(larissa);
   if(td===4&&!furto&&!flags.tdLarSai)tdGo(larissa,'salaLab',{x:282,y:196,dir:'right'},force);
@@ -8714,9 +8716,10 @@ const TD_Q=[
     'Na sexta, no fim da tarde, eu passei pela sala do Malvar e ouvi ele dizer à Larissa que alguém do 1º ano, da Sala 101, ia receber o convite este ano.',
     'Depois vi você estudando com a Marina, de sala em sala, com aquela mochila aberta. Não foi difícil entender quem era.',
     'Peguei as folhas da sua mochila. A da reação 3 escorregou do meu bolso no corredor. O Malvar quase me viu recolhendo.',
-    'As outras eu amassei e fui jogando fora, um pouco por dia. Cada vez que alguém falava do convite, mais uma ia parar numa lixeira, num banheiro, num cesto.',
-    'A do seu armário... Eu sabia o número: tinha visto você pegando o jaleco lá. Eu não sei por que fiz aquilo. Alisei, dobrei e enfiei pela fresta. Acho que uma parte de mim queria que você achasse.',
-    'E a 10 eu empurrei hoje cedo por baixo da porta da 101. Não para ser gentil. Para não ter que olhar mais para ela.',
+    'As outras eu amassei e escondi todas juntas, no nicho atrás da tapeçaria, onde ninguém olha.', // (v3.05) the ghosts took them back, a few each night
+    'Mas toda manhã faltava mais uma. E ela aparecia numa lixeira, num banheiro, num cesto... sempre com uma letra prateada no verso.',
+    'Achei que era você. Mas você nunca subia lá de noite. Eu sei: eu fiquei vigiando.',
+    'A 10 eu nunca larguei. Hoje cedo empurrei por baixo da porta da 101. Não para ser gentil. Para não ter que olhar mais para ela.',
     'Eu só queria que, uma vez na vida, você perdesse a hora em alguma coisa. Como eu perdi três anos.']}];
 // while the player asks, Tadeo never stands still: where he walks to, where he looks, what the hidden two do
 const TD_MV={
@@ -8733,9 +8736,36 @@ const TD_MV={
   porta:{p:[[262,132]],d:'up',pre:[{t:'O Tadeo vira de costas para você.'}]},
   folhas:{p:[[230,128]],d:'left',pre:[{t:'O Tadeo para. Pela primeira vez, ele desvia o olhar.'}],
     react:()=>{setMood('tadeo','worried',8);setMood('player','angry',6);},
-    after:()=>[{who:me(),t:'Você me fez procurar as minhas próprias folhas pela faculdade inteira.'},{who:TW_,t:(answered()>=QUIZ_N||flags.graded?'E você achou todas.':'E mesmo assim você não desistiu.')+' É por isso que eu te odeio um pouco, '+nome1()+'.',run:()=>setMood('tadeo','smug',20)}]},
+    after:()=>[{who:me(),t:'Você me fez procurar as minhas próprias folhas pela faculdade inteira.'},{who:TW_,t:(answered()>=QUIZ_N||flags.graded?'E você achou todas.':'E mesmo assim você não desistiu.')+' É por isso que eu te odeio um pouco, '+nome1()+'.',run:()=>setMood('tadeo','smug',20)}]
+      .concat(tdFantasmas())},
   quer:{p:[[214,140]],d:'left',pre:[{t:'Ele dá a volta na mesa e chega mais perto.'}],
     react:()=>{setMood('gabriel','angry',5);setMood('larissa','worried',5);tdPeek(tdOc.G,'G',3.5);tdPeek(tdOc.L,'L',3.5);}}};
+// (v3.05) the ones who wrote the riddles: the two little ghosts, through the west wall of the old lab
+function tdGhostNpc(id,draw,x,y){
+  const o={id,name:'',x,y,dir:'right',anim:0,moving:false,noShadow:true,
+    sprite(t){return {c:draw(this,t),x:Math.round(this.x)-12,y:Math.round(this.y)-31};},act(){}};
+  syncW(o);o.solid={x:-99,y:-99,w:0,h:0};tdTemp.push(o);SCENES.salaOculta.push(o);return o;
+}
+function tdGhostOut(o){
+  tdMove(o,[[-20,o.y]],30,()=>{const i=SCENES.salaOculta.indexOf(o);if(i>=0)SCENES.salaOculta.splice(i,1);const j=tdTemp.indexOf(o);if(j>=0)tdTemp.splice(j,1);});
+}
+function tdFantasmas(){
+  if(flags.diaAntigo)return [];
+  const T=tdOc.T;let Z=null,B=null;
+  return [
+    {t:'De repente, a sala esfria. A chama da vela se deita, como se alguém tivesse soprado de leve.',run:()=>{try{sfx.ink();}catch(_){}
+      Z=tdGhostNpc('ocZeca',zecaDraw,-14,118);B=tdGhostNpc('ocTiburcio',tibDraw,-30,132);
+      tdMove(Z,[[176,122]],26,()=>{Z.dir='right';});tdMove(B,[[150,134]],22,()=>{B.dir='right';});
+      T.dir='left';setMood('tadeo','surprised',10);}},
+    {t:'Da parede, devagar, atravessa um fantasminha de lençol com gravata-borboleta vermelha. Atrás dele, encolhido, vem outro.'},
+    {who:'ZECA',t:'Fomos nós. Toda noite, um pouco.'},
+    {who:'TIBÚRCIO',t:'A gente viu você na sexta, monitor. Com a mochila aberta e as mãos cheias de folhas.'},
+    {who:'ZECA',t:'Fantasma não conta segredo de ninguém. Mas ninguém nunca disse nada sobre escrever.',run:()=>{const L=tdOc.L;if(L)tdPeek(L,'L',3);setMood('player','happy',5);}},
+    {t:'O Tadeo fica branco. Pela primeira vez, ele recua um passo.',run:()=>{setMood('tadeo','worried',12);tdMove(T,[[T.x+10,T.y]],20,()=>{T.dir='left';});}},
+    {who:TW_,t:'...Fantasmas. Três anos de plano, e eu perdi para dois lençóis.'},
+    {t:'Os dois fantasminhas acenam para você e somem pela parede, do mesmo jeito que vieram.',run:()=>{if(Z)tdGhostOut(Z);if(B)tdGhostOut(B);}},
+    {who:TW_,t:'...Isso não muda nada.',run:()=>setMood('tadeo','angry',20)}];
+}
 function tdAsk(){
   const left=TD_Q.filter(q=>!tdOc.asked.has(q.k)&&!(q.novo&&flags.diaAntigo));
   if(!left.length)return tdProposta();
@@ -14118,6 +14148,10 @@ const DIA_HOJE={2:'O prazo das folhas é quinta, às 11h30, e a prova, na sexta.
   3:'Hoje tem aula prática do Prof. Kiko, às 9h, no laboratório.',
   4:'Hoje termina o prazo das folhas: até as 11h30, na Sala 101. E, no fim do dia, a reunião da Liga.'};
 const DIA_TINTA={2:'"Dez passos. Nenhum deles está no chão."',3:'"Atrás do ferro, as páginas que faltam."',4:'"Hoje, alguém vai querer o que é seu. Fique de olho."'};
+const DIA_QUEM={ // (v3.05) the diary wonders who writes the riddles: never the ghosts, until the confession
+  2:()=>'E quem escreve as adivinhações no verso das folhas? '+((flags.alost||0)>=2?'Seria a garota de jaleco que esbarrou em mim? Alguém deixou um bilhete no meu armário... Talvez seja a mesma pessoa.':'Alguém da minha turma? A letra é tremida, e a tinta, fria.'),
+  3:()=>((flags.alost||0)>=2?'A letra das adivinhações não é a mesma do bilhete do armário. ':'Ninguém da turma escreve com tinta prateada. ')+'O Prof. Malvar escreve com tinta viva... mas ele não teria paciência para adivinhações.',
+  4:()=>'Quem escreve as adivinhações sabe de coisas que acontecem de noite, quando a faculdade está vazia. Quem anda por aqui de madrugada?'};
 function diaPagina(n){
   const viu=new Set(flags.diaSnap||[]),nov=DIA_FEITOS.filter(([k,ok])=>!viu.has(k)&&ok());
   flags.diaSnap=[...viu,...nov.map(f=>f[0])];
@@ -14125,6 +14159,7 @@ function diaPagina(n){
   if(!L.length)ontem='Foi um dia calmo.';
   else{const mais=L.length>4;if(mais)L.length=4;ontem=L.map(t=>cap1(t)+'.').join(' ')+(mais?' E ainda teve mais coisa!':'');}
   if(answered()&&answered()<QUIZ_N&&!nov.some(f=>f[0]==='folhas'))ontem+=' Das folhas, já achei '+answered()+' de 10.';
+  if(trilhaOn()&&flags.trTinta&&DIA_QUEM[n])ontem+=' '+DIA_QUEM[n](); // (v3.05) who writes the riddles?
   const falta=QUIZ_N-answered();
   return {rotOntem:DIAS[n-1][0].replace('-feira','')+'.',ontem,rotHoje:DIAS[n][0].replace('-feira','')+', '+diaIni(n).hora+'.',
     hoje:DIA_HOJE[n]+(falta>0?' Ainda faltam '+falta+' folhas para achar!':''),tinta:'A tinta brilha, sozinha: '+DIA_TINTA[n]};
@@ -14200,7 +14235,7 @@ TRILHA=[
    pista:'Mais alto ainda, onde se fala baixinho: entre lombadas que ninguém lê, uma folha dorme deitada.'},
   {n:5,dia:1,em:[['salaBib','bibEstante2']],xy:[[112,162]],
    achar:'Deitada atrás de uma fileira de livros de Fisiologia, cheios de poeira, uma folha amassada. É a sua folha da reação 5!',
-   futuro:true,pista:'Por hoje basta. Amanhã, onde muitos ouvem e um só fala, olhe a última fileira.'},
+   futuro:true,pista:'Por hoje basta: de dia, a gente não consegue segurar papel. Esta noite, levamos a próxima para onde muitos ouvem e um só fala. Olhe a última fileira.'},
   {n:6,dia:2,em:[['salaAud','audFilaD20']],xy:[[26,208]],
    achar:'Na última fileira do auditório, embaixo de uma poltrona, uma folha amassada. É a sua folha da reação 6!',
    pista:'Desça um andar e lave as mãos: a pia de quem é como você esconde mais um pedaço do caminho.'},
@@ -14209,12 +14244,12 @@ TRILHA=[
    pista:'Na sala duzentos e um, o cesto que engole rascunhos engoliu também a sua folha.'},
   {n:8,dia:2,em:[['sala201','mesaProf201']],xy:[[243,86]],
    achar:'No cesto de papel ao lado da mesa do professor, por baixo de uns rascunhos, uma folha amassada. É a sua folha da reação 8!',
-   futuro:true,pista:'Onde você guarda o que veste para entrar no laboratório... mas só quando o sol nascer de novo.'},
+   futuro:true,pista:'Esta noite, a próxima vai para onde você guarda o que veste para entrar no laboratório. Procure lá quando o sol nascer de novo.'},
   {n:9,dia:3,em:[['terreo','locker42']],xy:[[64,46]],
    achar:'Você abre o armário. Lá no fundo, uma folha dobrada que alguém enfiou pela fresta da porta. Está amassada, mas alguém tentou alisá-la. É a sua folha da reação 9!',
-   futuro:true,pista:'Esta não foi atirada: foi devolvida, por alguém que ainda não sabe por quê. A da reação três espera quem primeiro ouvir a aula do laboratório, às 9h. Depois, procure no lugar mais escuro do prédio, ao lado do caldeirão de quem nunca sorri.'},
+   pista:'Esta foi difícil: alisamos como deu, com mãos que quase não seguram nada. A da reação três espera quem primeiro ouvir a aula do laboratório, às 9h. Depois, procure no lugar mais escuro do prédio, ao lado do caldeirão de quem nunca sorri.'},
   {n:3,dia:3,list:MALVAR_SHEETS,
-   futuro:true,pista:'Nove encontradas. A última não está perdida: está guardada por quem mais queria que você não chegasse aqui.'},
+   pista:'Nove encontradas. A última, a gente não conseguiu tirar dele: está guardada, de dia e de noite, por quem mais queria que você não chegasse aqui.'},
   {n:10,dia:4,list:TRILHA10,em:[['andar1','sala101']],xy:[[62,58]],
    achar:'No chão, rente à porta da Sala 101, uma folha amassada que alguém empurrou por baixo da porta. É a sua folha da reação 10!'}];
 for(const e of TRILHA){
@@ -14255,10 +14290,11 @@ function trilhaGuarda(e,surf){
     got.push(flags.trTinta?{t:'No verso da folha, a tinta prateada aparece outra vez, letra por letra:'}
       :{t:'Quando você termina, uma tinta prateada começa a surgir no verso da folha, letra por letra, como se alguém escrevesse do outro lado.',run:()=>{flags.trTinta=true;}},
       {who:'NO VERSO DA FOLHA',t:'"'+e.pista+'"',run:()=>{try{sfx.item();}catch(_){}}});
-    if(!flags.trTinta2)got.push({who:me(),t:'Uma adivinhação... Deve ser a pista de onde está a próxima folha!'},
-      {t:'Você se lembra do aviso do Prof. Neto no começo do ano: as folhas da lição são impressas com tinta mágica de Uninogwarts. Quando o dono responde uma delas, a tinta o ajuda a encontrar as outras.',run:()=>{flags.trTinta2=true;}});
-    if(e.futuro&&!flags.trFuturo)got.push({who:me(),t:'Espera... Essa pista fala de uma coisa que ainda nem aconteceu.'}, // (v3.04) why a riddle can speak of what is still to come
-      {t:'É a tinta mágica: às vezes ela mostra um acontecimento do futuro, para o dono da folha saber quando e onde procurar a próxima.',run:()=>{flags.trFuturo=true;}});
+    if(!flags.trTinta2)got.push({who:me(),t:'Uma adivinhação... Deve ser a pista de onde está a próxima folha!'}, // (v3.05) the ghosts write them: nobody may know it before the confession
+      {who:me(),t:'Alguém está me ajudando a encontrar as folhas. Mas quem? E por que não aparece?'},
+      {t:'A letra é tremida, e a tinta, fria como água de poço. Não se parece com a de ninguém que você conhece.',run:()=>{flags.trTinta2=true;}});
+    if(e.futuro&&!flags.trFuturo)got.push({who:me(),t:'"Esta noite"? Então quem escreve vai levar a próxima folha de madrugada...'}, // (v3.05) a promise, not a prophecy
+      {who:me(),t:'Quem anda pela faculdade de noite, quando está tudo vazio?',run:()=>{flags.trFuturo=true;setMood('player','worried',3);}});
   }else if(e.n===10&&!flags.td7Folha)got.push({who:me(),t:'Alguém empurrou a folha por baixo da porta. Quem será que estava com ela esse tempo todo?'});
   updateObjective();
   if(answered()===QUIZ_N&&!flags.seated)return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'}].concat(sheetsReadyLines())),sheetsReadyEnd);
@@ -14328,6 +14364,50 @@ function fd2Tick(dt){
       mrPlace(false);fd2=null;tdCut=false;state='play';diaVirar();});
 }
 {const u0=update;update=function(dt){u0(dt);fd2Tick(dt);};}
+/* (v3.05) Tadeo, once a day, close to the trail: Day 1 he has heard about the sheets (the riddles take the smile off
+   his face), Day 2 he is at the wastebasket of Sala 201 (the next sheet is in it), Day 3 he reads the back of one
+   ("Quem escreveu isso aqui?"). He never knows who writes them: neither does the player, until the confession. */
+const trTdOff=()=>!trilhaOn()||(flags.td||0)>=3||flags.graded||(typeof DUO!=='undefined'&&DUO.on);
+function trTd2Want(){return !trTdOff()&&diaN()===2&&!flags.trTd2&&!!TRILHA&&trilhaPode(TR_BY[8]);}
+function trTdIntro(){if(flags.tadeo)return [];flags.tadeo=true;return [{who:'TADEO (3º ANO)',t:gen('Um calouro','Uma caloura')+' de crachá novo. Tadeo Corniel, 3º ano. Monitor do andar.'}];}
+function trTdGhosts(){const L=[];
+  if(ghT.st.sc===scene&&ghT.alpha>.6)L.push({t:'Do outro lado do corredor, o Tibúrcio some dentro da parede, depressa.'});
+  if(ghZ.st.sc===scene&&ghZ.alpha>.6)L.push({t:'O Zeca, que flutuava por ali, para de sorrir e fica olhando para o Tadeo.'});
+  return L;}
+function trTdTalk(L,then){
+  const o=tadeo;stopChat(o);o.wait=12;o.dir=faceTo(o,player);player.dir=faceTo(player,o);keys.clear();tGo=null;
+  say(trTdIntro().concat(L),then);
+}
+function trTdTick(){
+  if(trTdOff()||state!=='play'||fade||dialog||tdCut||!startTime)return;
+  const d=diaN(),at=tdWhere(tadeo),TW='TADEO (3º ANO)';
+  if(at!==scene||tdMoving(tadeo))return;
+  if(scene==='sala201'&&d===2&&!flags.trTd2&&player.y<190){flags.trTd2=true;setMood('tadeo','surprised',3);
+    return trTdTalk([{t:'Perto do cesto de papel, o Tadeo se endireita depressa, como quem foi pego.'},
+      {who:TW,t:'Ah. '+nome1()+'.'},
+      {who:TW,t:'Ronda de monitor. Alguém anda deixando papel amassado pelas salas do andar. Uma sujeira.',run:()=>setMood('tadeo','smug',8)},
+      {who:TW,t:'Se achar alguma coisa sua por aí... guarde melhor, desta vez.'},
+      {t:'Ele passa por você e sai pela porta sem olhar para trás.'}],()=>{
+        tadeo.wait=60;tdMove(tadeo,[[192,206],[192,226]],44,()=>{wOff(tadeo);tadeo._dep={sc:'sala201',t:tdClock};tadeo.wait=2;});});}
+  if(scene!=='andar2'||!flags.trTinta||Math.hypot(tadeo.x-player.x,tadeo.y-player.y)>46)return;
+  if(d===1&&!flags.trTd1){flags.trTd1=true;
+    return trTdTalk([{t:'O Tadeo se aproxima, com as mãos nos bolsos do colete.'},
+      {who:TW,t:'Ouvi o Seu Antônio reclamar de folhas de lição amassadas pelas lixeiras. Suas, imagino.',run:()=>setMood('tadeo','smug',6)},
+      {who:me(),t:'São. E alguém escreveu adivinhações no verso, mostrando onde estão as outras.'},
+      {t:'Por um instante, o meio-sorriso do Tadeo some.',run:()=>setMood('tadeo','surprised',4)},
+      {who:TW,t:'...Adivinhações. Tem gente com tempo livre demais nesta faculdade.'}].concat(trTdGhosts(),[
+      {who:TW,t:'Boa caçada, '+nome1()+'. Quem guarda bem as próprias coisas não precisa procurar por elas.',run:()=>setMood('tadeo','smug',8)}]));}
+  if(d===3&&!flags.trTd3&&answered()>0){flags.trTd3=true;
+    return trTdTalk([{t:'O Tadeo para na sua frente e estende a mão.'},
+      {who:TW,t:'Uma das suas famosas folhas. Posso ver?',run:()=>setMood('tadeo','smug',6)},
+      {t:'Ele vira a folha e lê o verso. Os olhos dele demoram na tinta prateada.'},
+      {who:TW,t:'Quem escreveu isso aqui?'},
+      {who:me(),t:'Não sei. Elas já aparecem assim.'},
+      {who:TW,t:'Letra tremida. Tinta fria... Ninguém nesta faculdade escreve desse jeito.',run:()=>setMood('tadeo','worried',6)}].concat(trTdGhosts(),[
+      {t:'Ele devolve a folha mais depressa do que pegou.'},
+      {who:TW,t:'Cuidado com quem te ajuda sem mostrar o rosto, '+nome1()+'.',run:()=>setMood('tadeo','smug',8)}]));}
+}
+{const u0=update;update=function(dt){u0(dt);trTdTick();};}
 // a save from the four days with sheets answered on a desk but never picked up: they go with the player
 {const l0=loadGame;loadGame=function(){const res=l0.apply(this,arguments);
   try{if(trilhaOn()&&!flags.graded){const h=flags.held||(flags.held=[]);let k=0;
@@ -14540,13 +14620,38 @@ function adFimFalas(d,ok){
     4:[{who:R,t:'A aula acabou. O Prof. Neto já volta para receber as folhas.'},{t:'A Diretora deseja boa prova a todos e sai. O Prof. Neto volta logo depois.'}]}[d]));
   return L;
 }
+/* (v3.05) the class scenes, on foot: the professors of the day walk from where they are (or in by the door) to the
+   front of the room, the audience of the auditorium comes in a line, the one who gives the class away walks out;
+   at the end each one goes back to where they were, or out by the door. Nobody pops in or out. */
+var adQ_=[];const adLater=(sec,fn)=>adQ_.push({t:sec,fn});
+const AD_LANE={salaLab:236}; // the aisle of each room (in the lab the middle is taken by the benches)
+function adLane(sc){return AD_LANE[sc]||192;}
+function adTira(T){const sc=tdWhere(T);if(sc)SCENES[sc].splice(SCENES[sc].indexOf(T),1);const j=tdTemp.indexOf(T);if(j>=0)tdTemp.splice(j,1);}
+function adDaMesa(sc,r){ // from the teachers' desk of Sala 101: round its end, never through it
+  if(sc!=='sala101'||r[1]>90)return [];const ex=r[0]<192?146:238;return [[ex,r[1]],[ex,104]];}
+function adIda(sc,r,pos){const a=adLane(sc);
+  if(r)return adDaMesa(sc,r).concat([pos]);
+  return [[a,206],[a,pos[1]+14],[pos[0],pos[1]+14],pos];}
+function adSaida(sc,r){const a=adLane(sc);return adDaMesa(sc,r).concat([[a,Math.max(r[1]+14,130)],[a,206],[a,244]]);}
 function adStart(d){
   const A=AD_DIA[d];if(!A||adCena)return;
-  const L=SCENES[A.sc];adCena={d,i:0,esc:[],atr:[]};state='tdcut';tdCut=true;keys.clear();tGo=null;
-  for(const k of A.par.concat(A.fora||[]))for(const o of adReais(k)){const i=o?L.indexOf(o):-1;if(i>=0){L.splice(i,1);adCena.esc.push([o,i]);}} // (Thursday: Prof. Neto gave his class away)
-  A.par.forEach((k,j)=>{const [x,y]=A.pos[j],T=tdNpc('ad_'+k,AD_NOME[k],k,'coat',x,y,'down',1.1+j*.7);L.push(T);adCena.atr.push(T);});
-  if(A.plateia)AD_PLATEIA.forEach(([k,ou,x,y],j)=>{const T=tdNpc('adp_'+k,k,k,ou,x,y,'up',1.3+j*.4);L.push(T);adCena.atr.push(T);});
-  if(A.eu){player.x=A.eu[0];player.y=A.eu[1];}
+  const L=SCENES[A.sc],a=adLane(A.sc);adCena={d,i:0,esc:[],atr:[],real:{},go:false,t:0};state='tdcut';tdCut=true;keys.clear();tGo=null;
+  for(const k of A.par.concat(A.fora||[]))for(const o of adReais(k)){const i=o?L.indexOf(o):-1;if(i>=0){L.splice(i,1);adCena.esc.push([o,i]);if(!adCena.real[k])adCena.real[k]={o,x:o.x,y:o.y,dir:o.dir};}} // (Thursday: Prof. Neto gave his class away)
+  let n=1;const pronto=()=>{if(--n<=0&&adCena&&!adCena.go)adGo();};
+  const anda=(T,P,v,fim)=>{n++;tdMove(T,P,v,()=>{if(fim)fim();pronto();});};
+  A.par.forEach((k,j)=>{const pos=A.pos[j],r=adCena.real[k],T=tdNpc('ad_'+k,AD_NOME[k],k,'coat',r?r.x:a,r?r.y:236+j*16,r?r.dir:'up',1.1+j*.7);
+    T.adK=k;L.push(T);adCena.atr.push(T);anda(T,adIda(A.sc,r?[r.x,r.y]:null,pos),34,()=>{T.dir='down';});});
+  (A.fora||[]).forEach(k=>{const r=adCena.real[k];if(!r)return; // he says goodbye with a nod and walks out
+    const T=tdNpc('adf_'+k,AD_NOME[k],k,'coat',r.x,r.y,'down',1.1);L.push(T);anda(T,adSaida(A.sc,[r.x,r.y]),40,()=>adTira(T));});
+  if(A.plateia){alunosSaem(scene==='sala101');lunchFora=true;} // (v3.05) the class is in the auditorium now: their desks in 101 stay empty
+  if(A.plateia)AD_PLATEIA.forEach(([k,ou,x,y],j)=>{ // the class of 101, in a line through the door, each one to a seat
+    const T=tdNpc('adp_'+k,k,k,ou,a,250+j*18,'up',1.3+j*.4);T.adP=[x,y];L.push(T);adCena.atr.push(T);
+    anda(T,[[a,y+24],[x,y+24],[x,y]],46,()=>{T.dir='up';});});
+  if(A.eu){const [ex,ey]=A.eu;anda(player,Math.abs(player.x-ex)+Math.abs(player.y-ey)>2?[[ex,ey]]:[],44,()=>{player.dir='up';});}
+  pronto();
+}
+function adGo(){
+  const d=adCena.d,A=AD_DIA[d];adCena.go=true;
   player.dir='up';player.moving=false;
   const late=gameMinutes()>A.min+45;
   say(adIntro(d,late),adPergunta);
@@ -14562,9 +14667,21 @@ function adFim(){
   state='tdcut';tdCut=true;
   say(adFimFalas(d,ok),()=>{
     (flags.aulaD||(flags.aulaD={}))[d]=true;
-    const A=AD_DIA[d],L=SCENES[A.sc];
-    for(const T of adCena.atr){const i=L.indexOf(T);if(i>=0)L.splice(i,1);const j=tdTemp.indexOf(T);if(j>=0)tdTemp.splice(j,1);}
-    for(const [o,i] of adCena.esc)if(!tdWhere(o))L.splice(Math.min(i,L.length),0,o);
+    const A=AD_DIA[d],L=SCENES[A.sc],C=adCena,a=adLane(A.sc);
+    // each real professor comes back into the room at the spot where the walk of his stand-in ends
+    const volta=(k,T)=>{adTira(T);const e=C.real[k];if(!e||tdWhere(e.o))return;
+      const i=(C.esc.find(x=>x[0]===e.o)||[0,L.length])[1];L.splice(Math.min(i,L.length),0,e.o);e.o.dir=e.dir;};
+    for(const T of C.atr){
+      if(T.adP){const [x,y]=T.adP,j=AD_PLATEIA.findIndex(p=>'adp_'+p[0]===T.id); // the audience: row by row, out by the door
+        adLater(.6+j*.7,()=>tdMove(T,[[x,y+24],[a,y+24],[a,206],[a,244]],46,()=>adTira(T)));continue;}
+      const e=C.real[T.adK];
+      if(e)tdMove(T,adDaMesa(A.sc,[e.x,e.y]).reverse().concat([[e.x,e.y]]),32,()=>volta(T.adK,T)); // back to where he was (round the desk of 101)
+      else tdMove(T,adSaida(A.sc,[T.x,T.y]),38,()=>adTira(T)); // not from this room: out by the door
+    }
+    (A.fora||[]).forEach(k=>{const e=C.real[k];if(!e)return; // the one who gave his class away comes back, a little later
+      adLater(3.5,()=>{const T=tdNpc('adf_'+k,AD_NOME[k],k,'coat',a,236,'up',1.1);L.push(T);
+        tdMove(T,[[a,206],[a,Math.max(e.y+14,130)]].concat(adDaMesa(A.sc,[e.x,e.y]).reverse(),[[e.x,e.y]]),36,()=>volta(k,T));});});
+    if(A.plateia)adLater(14,()=>{if(!lunchOn&&!aulaOn)alunosVoltam();}); // (v3.05) back down to Sala 101: the walk from the auditorium takes a while
     adCena=null;tdCut=false;state='play';keys.clear();
     updateObjective();try{saveGame();}catch(_){}
   });
@@ -14580,7 +14697,12 @@ function adEsconde(){ // a real professor of the pair walking in during the clas
   const A=AD_DIA[adCena.d],L=SCENES[A.sc];
   for(const k of A.par.concat(A.fora||[]))for(const o of adReais(k)){const i=o?L.indexOf(o):-1;if(i>=0){L.splice(i,1);if(!adCena.esc.some(x=>x[0]===o))adCena.esc.push([o,i]);}}
 }
-{const u0=update;update=function(dt){u0(dt);if(adCena){try{adEsconde();}catch(_){}return;}if((adChk-=dt||0)>0)return;adChk=.5;try{adTick();}catch(_){}};}
+{const u0=update;update=function(dt){u0(dt);
+  if(adQ_.length){for(const q of adQ_)q.t-=dt||0;const due=adQ_.filter(q=>q.t<=0);adQ_=adQ_.filter(q=>q.t>0);due.forEach(q=>{try{q.fn();}catch(_){}});}
+  if(adCena){try{adEsconde();}catch(_){}
+    if(!adCena.go&&(adCena.t+=dt||0)>14){tdMovers=tdMovers.filter(m=>!adCena.atr.includes(m.o)&&m.o!==player);adGo();} // (never stuck on the way in)
+    return;}
+  if((adChk-=dt||0)>0)return;adChk=.5;try{adTick();}catch(_){}};}
 // the quiz sheet of a class: its own header, the right answer shown at once, no "leave it for later"
 {const oq=openQuiz;openQuiz=function(n){oq(n);if(!adQ(n)||!quiz)return;
   const q=AD_Q[n];
