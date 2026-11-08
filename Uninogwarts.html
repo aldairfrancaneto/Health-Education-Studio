@@ -943,7 +943,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.03 &middot; Última atualização: 7 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.04 &middot; Última atualização: 7 de novembro de 2026</span>
   </div>
 </footer>
 <script>
@@ -12009,7 +12009,7 @@ t2HallBg(bg1T2.getContext('2d'));
   objects=SCENES.terreo;
 }
 /* the headmaster's office (2nd floor, door in the left wall of the new area, where the restrooms are on the floors
-   below; a stone gargoyle keeps it), in the style of the old headmaster's round office of the wizard films:
+   below), in the style of the old headmaster's round office of the wizard films:
    portraits of former headmasters dozing all round the wall, bookshelves, a tall arched window behind a dais, a
    claw-footed desk covered in whirring silver instruments, the high-backed chair, a phoenix on a golden perch, the
    stone basin of silvery memories, an old patched hat on a shelf, a sword in a glass case, a big round rug.
@@ -12122,15 +12122,6 @@ function t2DirBg(){
   objects=SCENES.andar2;
   add({id:'dirPortaCorr',name:'Sala da diretora',wall:true,cx:DIR_X0-4,oy:DIR_DOOR_Y+34,top:DIR_DOOR_Y-14,zone:{x:DIR_X0,y:DIR_DOOR_Y+2,w:24,h:56},draw:()=>{},
     act:()=>goScene('salaDiretor',W-30,124,'left','SALA DA DIRETORA')});
-  const gx=DIR_X0+14,gb=DIR_DOOR_Y+92;
-  add({id:'dirGargula',name:'Gárgula de pedra',cx:gx,top:gb-30,base:gb,solid:{x:gx-7,y:gb-6,w:14,h:6},zone:{x:gx-14,y:gb-14,w:28,h:24},draw:()=>{
-      r(gx-7,gb-8,14,8,'#5e564c');r(gx-7,gb-8,14,1,'#776f63'); // pedestal
-      pxEllipse(gx,gb-14,5,6,'#857c6f');pxEllipse(gx,gb-23,4,4,'#958b7e'); // body, head
-      r(gx-10,gb-24,4,10,'#776f63');r(gx+6,gb-24,4,10,'#776f63');px(gx-11,gb-25,'#776f63');px(gx+10,gb-25,'#776f63'); // folded wings
-      px(gx-3,gb-27,'#776f63');px(gx+3,gb-27,'#776f63'); // horns
-      px(gx-2,gb-23,'#1d1612');px(gx+1,gb-23,'#1d1612');r(gx-1,gb-20,3,1,'#4a4239');},
-    act:()=>say([{t:'Uma gárgula de pedra, feiosa, guardando a porta da diretora. Ela abre um olho.'},
-                 {who:'GÁRGULA',t:'Senha? ...Ah, deixa. Hoje a porta está aberta. Mas da próxima vez eu quero ouvir o nome de uma enzima.'}])});
   t2Finish();
   objects=SCENES.terreo;
 }
@@ -12481,13 +12472,15 @@ const miniOnde=P=>aulaOn?P.t.replace('na Sala 101','no laboratório do térreo')
    The students of Sala 101 and Prof. Kiko go to the lab; each one makes a blood smear at the benches. As at lunch, whoever
    the player sees walks; the side quests go on where the students are. Neto and Rosa stay in Sala 101, grading. */
 const AULA_MIN=14*60,AULA_END=16*60;
+const AULA3_MIN=9*60,AULA3_END=11*60; // (v3.04) the four days: Wednesday's practical class (Kiko + Neto) in the morning; an old save keeps it at 14h00
+const aulaIni=()=>flags&&!flags.diaAntigo?AULA3_MIN:AULA_MIN,aulaFim=()=>flags&&!flags.diaAntigo?AULA3_END:AULA_END;
 const AULA_SP={bia:[60,140],rafael:[120,140],julia:[256,140],caio:[316,140],ana:[172,122],davi:[212,122],marina:[192,150]};
 const AULA_FALAS={bia:'Pingar, deslizar a lâmina, secar. O Prof. Kiko faz parecer fácil.',rafael:'Vou só olhar hoje. Melhor não mexer com sangue, com a cabeça rodando.',
   julia:'Olha as hemácias no microscópio: discos sem núcleo. Por isso não têm mitocôndria.',caio:'Meu esfregaço ficou grosso demais. Vou tentar outra lâmina.',
   ana:'Passei marca-texto até no roteiro da aula prática.',davi:'Cada hemácia depende da glicólise e da via das pentoses. Dá para acreditar?',marina:'Esta lâmina ficou boa! Quero ver o que acontece com as hemácias da bolsa velha.'};
 var aulaOn=false,aulaAlu=null;
 const isAula=()=>{if(!flags)return false;if(flags.diaAntigo?!flags.graded||!flags.pass:diaN()!==3)return false; // (the four days: Wednesday; an old save: after a pass)
-  const m=gameMinutes();return m>=AULA_MIN&&m<AULA_END;};
+  const m=gameMinutes();return m>=aulaIni()&&m<aulaFim();};
 const kikoOnde=()=>aulaOn?'no laboratório do térreo':'no 1º andar';
 function aulaMake(){
   if(aulaAlu)return;aulaAlu={};
@@ -12715,7 +12708,7 @@ function diraConversa(){
     {t:'Só vim dar bom dia.',fn:()=>say([{who:W_,t:'Bom dia para você também, '+nome1()+'! Conte comigo para o que precisar.'}])}]}]);
   if(!flags.diraVista){flags.diraVista=true;
     return say([{who:W_,t:'Olá, '+nome1()+'! Que bom ver você. Sou a Profa. Ana Carolina Arcanjo, diretora da Uninogwarts.'},
-      {who:W_,t:'Minha porta está sempre aberta, e a gárgula só finge que é brava.'}],()=>menu('Posso ajudar em alguma coisa?'));}
+      {who:W_,t:'Minha porta está sempre aberta. Pode entrar quando quiser.'}],()=>menu('Posso ajudar em alguma coisa?'));}
   menu(flags.graded&&flags.pass?'Fiquei sabendo da sua aprovação, '+nome1()+'! Parabéns! Quer conversar um pouco?':'Olá de novo, '+nome1()+'! Sobre o que vamos conversar?');
 }
 diraReset();
@@ -13030,11 +13023,11 @@ const FOFOCAS=[
   {k:'cad',ok:()=>flags.tiagoQ>=1&&flags.tiagoQ<=5,fora:['tiago'],L:[['Viu o Tiago? Perdeu o caderno laranja.','E nem pode sair do corredor, coitado!'],
     ['Alguém está procurando o caderno do Tiago.','Tomara que ache antes da prova!']]},
   {k:'cadFim',ok:()=>flags.tiagoQ===6,fora:['tiago'],L:[['O Tiago recuperou o caderno!','Deu até a Glicose de Ouro de presente!']]},
-  {k:'kiko',ok:()=>!flags.bolsaQ&&!!flags.saiu101&&gameMinutes()<AULA_MIN,fora:['kido'],L:[['O Prof. Kiko está atrás de alguém para ajudar.','É para a aula prática da tarde!'],
+  {k:'kiko',ok:()=>!flags.bolsaQ&&!!flags.saiu101&&gameMinutes()<aulaIni(),fora:['kido'],L:[['O Prof. Kiko está atrás de alguém para ajudar.','É para a aula prática da tarde!'],
     ['Soube que o Prof. Kiko precisa de ajuda?','Ele fica no corredor do 1º andar.']]},
-  {k:'bol',ok:()=>flags.bolsaQ>=1&&flags.bolsaQ<=6&&gameMinutes()<AULA_MIN,L:[['O Prof. Kiko anda atrás de bolsas de sangue?','É para a aula prática da tarde.'],
+  {k:'bol',ok:()=>flags.bolsaQ>=1&&flags.bolsaQ<=6&&gameMinutes()<aulaIni(),L:[['O Prof. Kiko anda atrás de bolsas de sangue?','É para a aula prática da tarde.'],
     ['Vai ter esfregaço de sangue hoje à tarde?','Vai! Cada aluno faz o seu.']]},
-  {k:'bolFim',ok:()=>flags.bolsaQ===7&&gameMinutes()<AULA_MIN,L:[['A aula do Prof. Kiko hoje vai ser boa!','Dizem que vai juntar Histologia e Bioquímica.']]},
+  {k:'bolFim',ok:()=>flags.bolsaQ===7&&gameMinutes()<aulaIni(),L:[['A aula do Prof. Kiko hoje vai ser boa!','Dizem que vai juntar Histologia e Bioquímica.']]},
   {k:'duel',ok:()=>flags.duelTold&&!flags.duelWin,fora:['gabriel'],L:[[()=>'O Gabriel desafiou '+gen('mais um calouro','mais uma caloura')+'.','Ninguém ganha dele no Duelo Relâmpago!']]},
   {k:'duelFim',ok:()=>flags.duelWin,fora:['gabriel'],L:[['Soube? Venceram o Gabriel no Duelo Relâmpago!','Sério? Queria ter visto a cara dele!']]},
   {k:'mRaf',ok:()=>!flags.m_raf&&!!flags.saiu101&&miniDia('raf'),fora:['rafael'],L:[['Viu como o Rafael está pálido hoje?','Disse que comeu fava ontem à noite.']]},
@@ -13912,14 +13905,14 @@ var DIA_TROCAS=[ // (var: updateObjective runs at load, before this line) [piece
     'Mas só vamos recolher a lição '+diaEntrega()+', a partir das 9h30. Até lá, as manhãs são para tirar as dúvidas da turma.'],
   ['Os professores só recebem a partir das 9h30.',()=>diaFinal()?null:'Os professores só recebem '+diaEntrega()+', a partir das 9h30.'],
   // Prof. Kiko's practical class is on Wednesday afternoon (asked on Tuesday; on Thursday it is over)
-  ['À tarde eu dou',()=>diaKiko('Amanhã à tarde eu dou','Na próxima aula eu dou')],
-  ['À tarde cada aluno',()=>diaKiko('Amanhã à tarde cada aluno','Na próxima aula cada aluno')],
-  ['na aula de hoje à tarde',()=>diaKiko('na aula de amanhã à tarde','na próxima aula')],
-  ['A aula prática é hoje à tarde!',()=>diaKiko('A aula prática é amanhã à tarde!','A próxima aula prática depende disso!')],
-  ['Vai ter esfregaço de sangue hoje à tarde?',()=>diaKiko('Vai ter esfregaço de sangue amanhã à tarde?',null)],
-  ['É para a aula prática da tarde',()=>diaKiko('É para a aula prática de amanhã à tarde',null)],
+  ['À tarde eu dou',()=>diaKiko('Amanhã de manhã eu dou','Na próxima aula eu dou','Hoje, às 9h, eu dou')],
+  ['À tarde cada aluno',()=>diaKiko('Amanhã de manhã cada aluno','Na próxima aula cada aluno','Às 9h cada aluno')],
+  ['na aula de hoje à tarde',()=>diaKiko('na aula de amanhã de manhã','na próxima aula','na aula das 9h')],
+  ['A aula prática é hoje à tarde!',()=>diaKiko('A aula prática é amanhã de manhã!','A próxima aula prática depende disso!','A aula prática é hoje, às 9h!')],
+  ['Vai ter esfregaço de sangue hoje à tarde?',()=>diaKiko('Vai ter esfregaço de sangue amanhã de manhã?',null,'Vai ter esfregaço de sangue hoje, às 9h?')],
+  ['É para a aula prática da tarde',()=>diaKiko('É para a aula prática de amanhã de manhã',null,'É para a aula prática das 9h')],
   ['A aula do Prof. Kiko hoje vai ser boa!',()=>diaKiko('A aula do Prof. Kiko amanhã vai ser boa!',null)],
-  ['ajudar a preparar a aula prática de hoje à tarde.',()=>diaKiko('ajudar a preparar a aula prática de amanhã à tarde.','ajudar a preparar a próxima aula prática.')],
+  ['ajudar a preparar a aula prática de hoje à tarde.',()=>diaKiko('ajudar a preparar a aula prática de amanhã de manhã.','ajudar a preparar a próxima aula prática.','ajudar a preparar a aula prática de hoje, às 9h.')],
   // the blood bags: separated on Monday afternoon, bag C out all Monday night, put away on Tuesday at 6h
   ['Deixei ontem na geladeira',()=>diaSeg()&&'Deixei '+diaSeg()+' na geladeira'],
   ['Eu separei as três ontem à tarde',()=>diaSeg()&&'Eu separei as três '+diaSeg()+' à tarde'],
@@ -13964,7 +13957,7 @@ function diaActive(add_,L){
   const depois=k=>(k==='alost2'&&!diaMin(2))||(k==='alost5'&&!diaMin(3)&&!(flags.portas||0));
   if(!L.some(e=>storyKey(e.k)&&!depois(e.k)))add_('diaFim'+d,'Por hoje é só! Hora de ir para a sala comunal');
 }
-function diaKiko(terca,quinta){const d=diaN();return d===1?terca.replace('amanhã','na quarta').replace('Amanhã','Na quarta'):d===2?terca:d===3?null:quinta;}
+function diaKiko(terca,quinta,quarta){const d=diaN();return d===1?terca.replace('amanhã','na quarta').replace('Amanhã','Na quarta'):d===2?terca:d===3?(gameMinutes()>=aulaIni()?quinta:quarta||null):quinta;} // (v3.04) Wednesday: the class is at 9h00
 for(const [k,d0] of [['kiko',2],['bol',1],['bolFim',1]]){const f=FOFOCAS.find(x=>x.k===k);if(f){const o=f.ok;f.ok=()=>o()&&diaMin(d0)&&(!!flags.diaAntigo||diaN()<=3);}} // (Kiko asks from Tuesday; no talk of the class on Thursday)
 function diaTxt(t){
   if(typeof t!=='string'||!flags||flags.diaAntigo||!DIA_TROCAS)return t;
@@ -14054,9 +14047,10 @@ function diaMarcas(){
   add(CLASS_MIN,'7h50: o começo da aula');
   if(diaFinal()&&!flags.graded&&flags.diaAntigo)add(DELIVER_MIN,'9h30: a entrega das folhas'); // (v3.01: the four days take the sheets any time)
   add(LUNCH_MIN,'12h00: o almoço');
-  if(flags.diaAntigo?flags.graded&&flags.pass:diaN()===3)add(AULA_MIN,'14h00: a aula prática do Prof. Kiko');
+  if(flags.diaAntigo?flags.graded&&flags.pass:diaN()===3)add(aulaIni(),(flags.diaAntigo?'14h00':'9h00')+': a aula prática do Prof. Kiko');
   add(DIA_TARDE,'16h00: o fim da tarde');
   if(!diaFinal())add(DIA_FIM,'18h00: a hora de ir para a sala comunal');
+  L.sort((a,b)=>a[0]-b[0]); // (v3.04: Wednesday's class at 9h00)
   return L;
 }
 function diaEspera(h){
@@ -14121,7 +14115,7 @@ const DIA_FEITOS=[
   ['frutose',()=>(flags.lgF||0)===5,'terminei o desafio da frutose do Prof. Malvar'],
   ['caca',()=>!!flags.caca,'completei o caça-palavras da Camila']];
 const DIA_HOJE={2:'O prazo das folhas é quinta, às 11h30, e a prova, na sexta. Dá para ir entregando aos poucos. Até lá, tem muita coisa para descobrir.',
-  3:'Hoje tem aula prática do Prof. Kiko, às 14h, no laboratório.',
+  3:'Hoje tem aula prática do Prof. Kiko, às 9h, no laboratório.',
   4:'Hoje termina o prazo das folhas: até as 11h30, na Sala 101. E, no fim do dia, a reunião da Liga.'};
 const DIA_TINTA={2:'"Dez passos. Nenhum deles está no chão."',3:'"Atrás do ferro, as páginas que faltam."',4:'"Hoje, alguém vai querer o que é seu. Fique de olho."'};
 function diaPagina(n){
@@ -14206,7 +14200,7 @@ TRILHA=[
    pista:'Mais alto ainda, onde se fala baixinho: entre lombadas que ninguém lê, uma folha dorme deitada.'},
   {n:5,dia:1,em:[['salaBib','bibEstante2']],xy:[[112,162]],
    achar:'Deitada atrás de uma fileira de livros de Fisiologia, cheios de poeira, uma folha amassada. É a sua folha da reação 5!',
-   pista:'Por hoje basta. Amanhã, onde muitos ouvem e um só fala, olhe a última fileira.'},
+   futuro:true,pista:'Por hoje basta. Amanhã, onde muitos ouvem e um só fala, olhe a última fileira.'},
   {n:6,dia:2,em:[['salaAud','audFilaD20']],xy:[[26,208]],
    achar:'Na última fileira do auditório, embaixo de uma poltrona, uma folha amassada. É a sua folha da reação 6!',
    pista:'Desça um andar e lave as mãos: a pia de quem é como você esconde mais um pedaço do caminho.'},
@@ -14215,12 +14209,12 @@ TRILHA=[
    pista:'Na sala duzentos e um, o cesto que engole rascunhos engoliu também a sua folha.'},
   {n:8,dia:2,em:[['sala201','mesaProf201']],xy:[[243,86]],
    achar:'No cesto de papel ao lado da mesa do professor, por baixo de uns rascunhos, uma folha amassada. É a sua folha da reação 8!',
-   pista:'Onde você guarda o que veste para entrar no laboratório... mas só quando o sol nascer de novo.'},
+   futuro:true,pista:'Onde você guarda o que veste para entrar no laboratório... mas só quando o sol nascer de novo.'},
   {n:9,dia:3,em:[['terreo','locker42']],xy:[[64,46]],
    achar:'Você abre o armário. Lá no fundo, uma folha dobrada que alguém enfiou pela fresta da porta. Está amassada, mas alguém tentou alisá-la. É a sua folha da reação 9!',
-   pista:'Esta não foi atirada: foi devolvida, por alguém que ainda não sabe por quê. A da reação três nunca saiu do lugar mais escuro do prédio, ao lado do caldeirão de quem nunca sorri.'},
+   futuro:true,pista:'Esta não foi atirada: foi devolvida, por alguém que ainda não sabe por quê. A da reação três espera quem primeiro ouvir a aula do laboratório, às 9h. Depois, procure no lugar mais escuro do prédio, ao lado do caldeirão de quem nunca sorri.'},
   {n:3,dia:3,list:MALVAR_SHEETS,
-   pista:'Nove encontradas. A última não está perdida: está guardada por quem mais queria que você não chegasse aqui.'},
+   futuro:true,pista:'Nove encontradas. A última não está perdida: está guardada por quem mais queria que você não chegasse aqui.'},
   {n:10,dia:4,list:TRILHA10,em:[['andar1','sala101']],xy:[[62,58]],
    achar:'No chão, rente à porta da Sala 101, uma folha amassada que alguém empurrou por baixo da porta. É a sua folha da reação 10!'}];
 for(const e of TRILHA){
@@ -14261,7 +14255,10 @@ function trilhaGuarda(e,surf){
     got.push(flags.trTinta?{t:'No verso da folha, a tinta prateada aparece outra vez, letra por letra:'}
       :{t:'Quando você termina, uma tinta prateada começa a surgir no verso da folha, letra por letra, como se alguém escrevesse do outro lado.',run:()=>{flags.trTinta=true;}},
       {who:'NO VERSO DA FOLHA',t:'"'+e.pista+'"',run:()=>{try{sfx.item();}catch(_){}}});
-    if(!flags.trTinta2)got.push({who:me(),t:'Uma adivinhação... Deve ser a pista de onde está a próxima folha!',run:()=>{flags.trTinta2=true;}});
+    if(!flags.trTinta2)got.push({who:me(),t:'Uma adivinhação... Deve ser a pista de onde está a próxima folha!'},
+      {t:'Você se lembra do aviso do Prof. Neto no começo do ano: as folhas da lição são impressas com tinta mágica de Uninogwarts. Quando o dono responde uma delas, a tinta o ajuda a encontrar as outras.',run:()=>{flags.trTinta2=true;}});
+    if(e.futuro&&!flags.trFuturo)got.push({who:me(),t:'Espera... Essa pista fala de uma coisa que ainda nem aconteceu.'}, // (v3.04) why a riddle can speak of what is still to come
+      {t:'É a tinta mágica: às vezes ela mostra um acontecimento do futuro, para o dono da folha saber quando e onde procurar a próxima.',run:()=>{flags.trFuturo=true;}});
   }else if(e.n===10&&!flags.td7Folha)got.push({who:me(),t:'Alguém empurrou a folha por baixo da porta. Quem será que estava com ela esse tempo todo?'});
   updateObjective();
   if(answered()===QUIZ_N&&!flags.seated)return say(got.concat([{t:'Agora você está com as '+QUIZ_N+' folhas da lição de casa.'}].concat(sheetsReadyLines())),sheetsReadyEnd);
@@ -14467,7 +14464,7 @@ var AD_DIA={
      par:['aldair','heloisa'],pos:[[146,100],[238,100]],fala:'PROFA. ROSA'},
   2:{sc:'salaAud',min:14*60,hora:'14h00',porta:['andar2','auditorio'],onde:'no auditório (2º andar)',nome:'Poções e Fisiologia',dupla:'o Prof. Malvar e a Diretora',
      par:['malvar','diretora'],pos:[[170,94],[214,94]],fala:DIRA_W,plateia:true,eu:[192,150]},
-  3:{sc:'salaLab',min:AULA_MIN+3,hora:'14h00',porta:['terreo','lab'],onde:'no laboratório do térreo',nome:'Histologia e Bioquímica',dupla:'o Prof. Kiko e o Prof. Neto',
+  3:{sc:'salaLab',min:AULA3_MIN+3,hora:'9h00',porta:['terreo','lab'],onde:'no laboratório do térreo',nome:'Histologia e Bioquímica',dupla:'o Prof. Kiko e o Prof. Neto',
      par:['kido','aldair'],pos:[[208,86],[176,86]],fala:KW},
   4:{sc:'sala101',min:CLASS_MIN,hora:'7h50',porta:['andar1','sala101'],onde:'na Sala 101 (1º andar)',nome:'Bioquímica e Fisiologia',dupla:'a Profa. Rosa e a Diretora',
      par:['heloisa','diretora'],fora:['aldair'],pos:[[146,100],[238,100]],fala:'PROFA. ROSA'}};
@@ -14576,7 +14573,7 @@ function adTick(){
   if(!adOn()||adCena||state!=='play'||diaTelaOn||diaVirando||dia18||!startTime||flags.graded||flags.timeUp||!flags.cracha)return;
   const d=diaN(),A=AD_DIA[d];if(!A||adFeita(d)||scene!==A.sc)return;
   const m=gameMinutes();if(m<A.min)return;
-  if(d===3&&!aulaOn&&m<AULA_END)return; // the students are still on their way to the lab
+  if(d===3&&!aulaOn&&m<AULA3_END)return; // the students are still on their way to the lab
   adStart(d);
 }
 function adEsconde(){ // a real professor of the pair walking in during the class scene (Prof. Kiko comes to the lab late): out of sight until it ends
@@ -14631,7 +14628,7 @@ DIA_FEITOS.splice(DIA_FEITOS.findIndex(x=>x[0]==='cracha')+1,0, // (right after 
   ['aula4',()=>adOn()&&!!(flags.aulaD||{})[4],'tive aula sobre o ciclo de Cori com a Profa. Rosa e a Diretora']);
 // the page of a new day tells the class of that day
 var AD_HOJE={2:'Hoje, às 14h, tem aula de Poções e Fisiologia com o Prof. Malvar e a Diretora, no auditório. O prazo das folhas é quinta, às 11h30, e a prova, na sexta. Dá para ir entregando aos poucos.',
-  3:'Hoje, às 14h, tem aula de Histologia e Bioquímica com o Prof. Kiko e o Prof. Neto, no laboratório.',
+  3:'Hoje, às 9h, tem aula de Histologia e Bioquímica com o Prof. Kiko e o Prof. Neto, no laboratório.',
   4:'Hoje tem aula da Profa. Rosa com a Diretora, às 7h50, na Sala 101. E termina o prazo das folhas: até as 11h30. No fim do dia, a reunião da Liga.'};
 {const dp=diaPagina;diaPagina=function(n){const pg=dp(n);try{if(adOn()&&AD_HOJE[n]&&DIA_HOJE[n])pg.hoje=pg.hoje.replace(DIA_HOJE[n],AD_HOJE[n]);}catch(_){}return pg;};}
 updateObjective();
