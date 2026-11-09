@@ -8711,6 +8711,10 @@ const TD_Q=[
   {k:'livro',q:'Como você sabia do livro?',a:['O Malvar me contou, no 1º ano. "Ainda não." Três anos esperando uma palavra virar outra.']},
   {k:'porta',q:'E aquela conversa no corredor, sobre os três anos?',a:['Tudo o que eu te contei era verdade. Os três anos, a parede morna, tudo. Eu só não te contei o resto.']},
   {k:'quer',q:'O que você quer com o livro?',a:['Estar nele. E, se ele não me aceitar... que ninguém mais esteja.']},
+  {k:'bilhetes',q:'E os bilhetes assinados T.?',novo:true,ok:()=>!!flags.trBil&&Object.keys(flags.trBil).length>0,a:[ // (v3.05)
+    'Meus. Lápis número 2, a mesma letra do meu caderno.',
+    'Eu queria que você soubesse que alguém estava olhando. E queria ver se você ia desconfiar de mim.',
+    'Você desconfiou do Tiago, da Dona Tati, até de fantasma... Menos de mim. Isso foi o que mais me irritou.']},
   {k:'folhas',q:'E as minhas folhas da glicólise?',novo:true,a:[ // (the four days: the confession; not in an old save)
     '...As folhas. Achei que você nunca ia perguntar.',
     'Na sexta, no fim da tarde, eu passei pela sala do Malvar e ouvi ele dizer à Larissa que alguém do 1º ano, da Sala 101, ia receber o convite este ano.',
@@ -8737,7 +8741,8 @@ const TD_MV={
   folhas:{p:[[230,128]],d:'left',pre:[{t:'O Tadeo para. Pela primeira vez, ele desvia o olhar.'}],
     react:()=>{setMood('tadeo','worried',8);setMood('player','angry',6);},
     after:()=>[{who:me(),t:'Você me fez procurar as minhas próprias folhas pela faculdade inteira.'},{who:TW_,t:(answered()>=QUIZ_N||flags.graded?'E você achou todas.':'E mesmo assim você não desistiu.')+' É por isso que eu te odeio um pouco, '+nome1()+'.',run:()=>setMood('tadeo','smug',20)}]
-      .concat(tdFantasmas())},
+      .concat(tdTesteFala(),tdFantasmas())},
+  bilhetes:{p:[[240,134]],d:'left',pre:[{t:'O Tadeo dá um meio-sorriso, quase orgulhoso.'}],react:()=>setMood('tadeo','smug',10)},
   quer:{p:[[214,140]],d:'left',pre:[{t:'Ele dá a volta na mesa e chega mais perto.'}],
     react:()=>{setMood('gabriel','angry',5);setMood('larissa','worried',5);tdPeek(tdOc.G,'G',3.5);tdPeek(tdOc.L,'L',3.5);}}};
 // (v3.05) the ones who wrote the riddles: the two little ghosts, through the west wall of the old lab
@@ -8748,6 +8753,13 @@ function tdGhostNpc(id,draw,x,y){
 }
 function tdGhostOut(o){
   tdMove(o,[[-20,o.y]],30,()=>{const i=SCENES.salaOculta.indexOf(o);if(i>=0)SCENES.salaOculta.splice(i,1);const j=tdTemp.indexOf(o);if(j>=0)tdTemp.splice(j,1);});
+}
+function tdTesteFala(){ // (v3.05) the monitor's tests, remembered
+  const T=flags.trTq||{},n=Object.keys(T).length,k=Object.values(T).filter(Boolean).length;
+  if(flags.diaAntigo||!n)return [];
+  return [{who:TW_,t:k===n?(n>1?'E ainda acertou todos os meus testes no corredor. Eu odiei cada um.':'E ainda acertou o meu teste no corredor. Eu odiei.')
+    :k?'E ainda acertou '+k+' dos meus testes no corredor. Eu queria ver se você era tão bom quanto o Malvar achava.'
+    :'Pelo menos nos meus testes você errou. Era o que me deixava dormir.'}];
 }
 function tdFantasmas(){
   if(flags.diaAntigo)return [];
@@ -8767,7 +8779,7 @@ function tdFantasmas(){
     {who:TW_,t:'...Isso não muda nada.',run:()=>setMood('tadeo','angry',20)}];
 }
 function tdAsk(){
-  const left=TD_Q.filter(q=>!tdOc.asked.has(q.k)&&!(q.novo&&flags.diaAntigo));
+  const left=TD_Q.filter(q=>!tdOc.asked.has(q.k)&&!(q.novo&&flags.diaAntigo)&&!(q.ok&&!q.ok()));
   if(!left.length)return tdProposta();
   say([{who:TW_,t:tdOc.asked.size?'Mais alguma pergunta?':'Pergunte o que quiser.',choices:left.map(q=>({t:q.q,fn:()=>{tdOc.asked.add(q.k);
       const mv=TD_MV[q.k],T=tdOc.T;
@@ -14150,8 +14162,8 @@ const DIA_HOJE={2:'O prazo das folhas é quinta, às 11h30, e a prova, na sexta.
 const DIA_TINTA={2:'"Dez passos. Nenhum deles está no chão."',3:'"Atrás do ferro, as páginas que faltam."',4:'"Hoje, alguém vai querer o que é seu. Fique de olho."'};
 const DIA_QUEM={ // (v3.05) the diary wonders who writes the riddles: never the ghosts, until the confession
   2:()=>'E quem escreve as adivinhações no verso das folhas? '+((flags.alost||0)>=2?'Seria a garota de jaleco que esbarrou em mim? Alguém deixou um bilhete no meu armário... Talvez seja a mesma pessoa.':'Alguém da minha turma? A letra é tremida, e a tinta, fria.'),
-  3:()=>((flags.alost||0)>=2?'A letra das adivinhações não é a mesma do bilhete do armário. ':'Ninguém da turma escreve com tinta prateada. ')+'O Prof. Malvar escreve com tinta viva... mas ele não teria paciência para adivinhações.',
-  4:()=>'Quem escreve as adivinhações sabe de coisas que acontecem de noite, quando a faculdade está vazia. Quem anda por aqui de madrugada?'};
+  3:()=>(flags.trBil&&flags.trBil[2]?'E quem é o T. dos bilhetes? O Tiago? A Dona Tati? O Tibúrcio, aquele fantasma medroso? Nenhum deles parece do tipo que provoca. ':'')+((flags.alost||0)>=2?'A letra das adivinhações não é a mesma do bilhete do armário. ':'Ninguém da turma escreve com tinta prateada. ')+'O Prof. Malvar escreve com tinta viva... mas ele não teria paciência para adivinhações.',
+  4:()=>(flags.trBil&&(flags.trBil[2]||flags.trBil[3])?'Duas letras: quem me ajuda escreve em prata; o T. escreve a lápis, e só provoca. ':'')+'Quem escreve as adivinhações sabe de coisas que acontecem de noite, quando a faculdade está vazia. Quem anda por aqui de madrugada?'};
 function diaPagina(n){
   const viu=new Set(flags.diaSnap||[]),nov=DIA_FEITOS.filter(([k,ok])=>!viu.has(k)&&ok());
   flags.diaSnap=[...viu,...nov.map(f=>f[0])];
@@ -14374,9 +14386,32 @@ function trTdGhosts(){const L=[];
   if(ghT.st.sc===scene&&ghT.alpha>.6)L.push({t:'Do outro lado do corredor, o Tibúrcio some dentro da parede, depressa.'});
   if(ghZ.st.sc===scene&&ghZ.alpha>.6)L.push({t:'O Zeca, que flutuava por ali, para de sorrir e fica olhando para o Tadeo.'});
   return L;}
-function trTdTalk(L,then){
+function trTdTalk(L,d,tail,then){
   const o=tadeo;stopChat(o);o.wait=12;o.dir=faceTo(o,player);player.dir=faceTo(player,o);keys.clear();tGo=null;
-  say(trTdIntro().concat(L),then);
+  say(trTdIntro().concat(L,trTdTeste(d,tail||[],then)),then);
+}
+/* (v3.05) the monitor's test: one question a day on the poisons he admires (no grade, no help from the friend);
+   flags.trTq[d] keeps right/wrong, and the confession remembers it */
+const TR_TQ={
+  1:{q:'O arsenato toma o lugar do fosfato na reação 6. O que a célula deixa de ganhar?',
+     o:[['O NADH da reação 6',0],['O ATP da reação 7',1],['O piruvato da reação 10',0]],
+     ok:'...Correto. O 1-arseno-3-fosfoglicerato se desfaz sozinho e pula a reação 7. Nada de ATP.',
+     no:'Errado. O NADH continua saindo. O que some é o ATP da reação 7: o arsenato se desfaz antes de entregar o fosfato.'},
+  2:{q:'O fluoreto trava a enolase, a reação 9. O que se acumula antes do bloqueio?',
+     o:[['O 2-fosfoglicerato',1],['O fosfoenolpiruvato',0],['O lactato',0]],
+     ok:'Hm. Correto. A enolase transformaria o 2-fosfoglicerato em fosfoenolpiruvato. Sem ela, ele se acumula.',
+     no:'Errado. O fosfoenolpiruvato é o que a enolase faria. Sem ela, quem se acumula é o 2-fosfoglicerato.'},
+  3:{q:'Sem a GAPDH, a reação 6, o que acontece com o saldo de ATP da glicólise?',
+     o:[['Continua em 2 ATP por glicose',0],['Aumenta, porque sobra glicose',0],['Fica negativo: os 2 ATP do investimento não voltam',1]],
+     ok:'...Correto. A GAPDH abre a fase de pagamento. Sem ela, a célula gasta e não recebe nada de volta.',
+     no:'Errado. A GAPDH abre a fase de pagamento. Sem ela, os 2 ATP gastos no investimento nunca voltam: o saldo fica negativo.'}};
+function trTdTeste(d,tail,then){
+  const Q=TR_TQ[d],TW='TADEO (3º ANO)';if(!Q)return tail;
+  const res=ok=>{(flags.trTq||(flags.trTq={}))[d]=!!ok;
+    say([ok?{t:'O Tadeo aperta os lábios por um instante.',run:()=>setMood('tadeo','angry',4)}:{t:'O meio-sorriso do Tadeo volta, maior.',run:()=>setMood('tadeo','smug',8)},
+      {who:TW,t:ok?Q.ok:Q.no}].concat(tail),then);};
+  return [{who:TW,t:'Já que está aqui: um teste de monitor. Sem ajuda, '+gen('calouro','caloura')+'.'},
+    {who:TW,t:Q.q,choices:Q.o.map(([t,ok])=>({t,fn:()=>res(ok)}))}];
 }
 function trTdTick(){
   if(trTdOff()||state!=='play'||fade||dialog||tdCut||!startTime)return;
@@ -14386,8 +14421,8 @@ function trTdTick(){
     return trTdTalk([{t:'Perto do cesto de papel, o Tadeo se endireita depressa, como quem foi pego.'},
       {who:TW,t:'Ah. '+nome1()+'.'},
       {who:TW,t:'Ronda de monitor. Alguém anda deixando papel amassado pelas salas do andar. Uma sujeira.',run:()=>setMood('tadeo','smug',8)},
-      {who:TW,t:'Se achar alguma coisa sua por aí... guarde melhor, desta vez.'},
-      {t:'Ele passa por você e sai pela porta sem olhar para trás.'}],()=>{
+      {who:TW,t:'Se achar alguma coisa sua por aí... guarde melhor, desta vez.'}],2,
+      [{t:'Ele passa por você e sai pela porta sem olhar para trás.'}],()=>{
         tadeo.wait=60;tdMove(tadeo,[[192,206],[192,226]],44,()=>{wOff(tadeo);tadeo._dep={sc:'sala201',t:tdClock};tadeo.wait=2;});});}
   if(scene!=='andar2'||!flags.trTinta||Math.hypot(tadeo.x-player.x,tadeo.y-player.y)>46)return;
   if(d===1&&!flags.trTd1){flags.trTd1=true;
@@ -14396,7 +14431,7 @@ function trTdTick(){
       {who:me(),t:'São. E alguém escreveu adivinhações no verso, mostrando onde estão as outras.'},
       {t:'Por um instante, o meio-sorriso do Tadeo some.',run:()=>setMood('tadeo','surprised',4)},
       {who:TW,t:'...Adivinhações. Tem gente com tempo livre demais nesta faculdade.'}].concat(trTdGhosts(),[
-      {who:TW,t:'Boa caçada, '+nome1()+'. Quem guarda bem as próprias coisas não precisa procurar por elas.',run:()=>setMood('tadeo','smug',8)}]));}
+      {who:TW,t:'Boa caçada, '+nome1()+'. Quem guarda bem as próprias coisas não precisa procurar por elas.',run:()=>setMood('tadeo','smug',8)}]),1);}
   if(d===3&&!flags.trTd3&&answered()>0){flags.trTd3=true;
     return trTdTalk([{t:'O Tadeo para na sua frente e estende a mão.'},
       {who:TW,t:'Uma das suas famosas folhas. Posso ver?',run:()=>setMood('tadeo','smug',6)},
@@ -14405,9 +14440,25 @@ function trTdTick(){
       {who:me(),t:'Não sei. Elas já aparecem assim.'},
       {who:TW,t:'Letra tremida. Tinta fria... Ninguém nesta faculdade escreve desse jeito.',run:()=>setMood('tadeo','worried',6)}].concat(trTdGhosts(),[
       {t:'Ele devolve a folha mais depressa do que pegou.'},
-      {who:TW,t:'Cuidado com quem te ajuda sem mostrar o rosto, '+nome1()+'.',run:()=>setMood('tadeo','smug',8)}]));}
+      {who:TW,t:'Cuidado com quem te ajuda sem mostrar o rosto, '+nome1()+'.',run:()=>setMood('tadeo','smug',8)}]),3);}
 }
-{const u0=update;update=function(dt){u0(dt);trTdTick();};}
+const TR_BIL={2:'Achou mais algumas? Parabéns. Quem procura demais acaba achando o que não quer. — T.',
+  3:'Quem te ajuda escondido não vai estar lá quando você precisar. — T.',
+  4:'Último dia. Boa sorte com as folhas... e com o resto. — T.'};
+function trBilTick(){ // (v3.05) Tadeo's notes: plain pencil, never a word about where a sheet is (he does not know)
+  if(!trilhaOn()||(typeof DUO!=='undefined'&&DUO.on)||(flags.td||0)>=7||scene!=='sala101'||state!=='play'||fade||dialog||tdCut||!startTime)return;
+  const d=diaN(),B=flags.trBil||(flags.trBil={});
+  if(!TR_BIL[d]||B[d]||!flags.trTinta)return;
+  B[d]=true;keys.clear();tGo=null;
+  const pri=!Object.keys(B).some(k=>+k!==d);
+  say([{t:'Em cima da sua carteira, alguém deixou um bilhete dobrado ao meio.',run:()=>{try{sfx.item();}catch(_){}}},
+    {who:'BILHETE',t:'"'+TR_BIL[d]+'"'}].concat(pri?[
+    {who:me(),t:'T.? Quem será?',run:()=>setMood('player','worried',4)},
+    {t:'A letra é de lápis comum, firme e inclinada. Nada a ver com a tinta prateada das adivinhações.'},
+    {who:me(),t:'Então são duas pessoas: uma que me ajuda... e outra que só provoca.'}]:[
+    {who:me(),t:'O tal T. de novo. A mesma letra a lápis.',run:()=>setMood('player','angry',3)}]));
+}
+{const u0=update;update=function(dt){u0(dt);trTdTick();trBilTick();};}
 // a save from the four days with sheets answered on a desk but never picked up: they go with the player
 {const l0=loadGame;loadGame=function(){const res=l0.apply(this,arguments);
   try{if(trilhaOn()&&!flags.graded){const h=flags.held||(flags.held=[]);let k=0;
