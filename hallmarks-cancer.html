@@ -17,9 +17,12 @@
   --font-serif:'Cinzel',serif;
   --font-pixel:'Press Start 2P',monospace;
   /* largura padrao dos cartoes/encaixes (padronizado como no morte.html) */
-  --card-w:clamp(60px, 12vw, 76px);
-  /* cartas do acervo (mao): 15% maiores que os encaixes do tabuleiro */
-  --card-w-mao:calc(var(--card-w) * 1.15);
+  /* 10/nov: miniaturas do tabuleiro maiores p/ leitura (original clamp(60px, 12vw, 76px); 1º ajuste 75/15vw/95) */
+  --card-w:clamp(90px, 18vw, 114px);
+  /* base da carta em jogo do Desafio e do monte (cada um tem seu multiplicador) */
+  --card-w-mao:clamp(69px, 13.8vw, 87.4px);
+  /* 10/nov: cartas da mão do Single Player maiores (original = --card-w-mao; 1º ajuste 86/17.25vw/109) */
+  --card-w-acervo:clamp(104px, 20.7vw, 131px);
   /* cores dos jogadores no modo Desafio */
   --jog0:#3E86C4; --jog0-soft:#8FC8F6; --jog1:#C9524C; --jog1-soft:#F0A9A4;
   --jog2:#3E9E5E; --jog2-soft:#8FD7AB; --jog3:#E0982E; --jog3-soft:#F2C88C;
@@ -157,7 +160,7 @@ body{
   }
   .mao{
     display:grid; gap:9px; justify-content:center;
-    grid-template-columns:repeat(auto-fit,var(--card-w-mao));
+    grid-template-columns:repeat(auto-fit,var(--card-w-acervo));
   }
   .mao:empty::after{
     content:"Todas as definições foram posicionadas no campo.";
@@ -596,10 +599,10 @@ body{
   .chal-monte .rot{ text-align:center; line-height:1.25; }
   .chal-carta-atual{
     display:flex; flex-direction:column; align-items:center; gap:8px;
-    min-height:calc(var(--card-w-mao) * 1.6 * 2176 / 1632 + 40px);
+    min-height:calc(var(--card-w-mao) * 2 * 2176 / 1632 + 40px);   /* 10/nov: era * 1.6 (+25%) */
     justify-content:center; cursor:pointer;
   }
-  .chal-carta-atual .carta-def{ width:calc(var(--card-w-mao) * 1.6); }
+  .chal-carta-atual .carta-def{ width:calc(var(--card-w-mao) * 2); }   /* 10/nov: era * 1.6 (+25%) */
   .chal-carta-atual.aguardando .carta-def{ opacity:.55; animation:chalPulsa 1s ease-in-out infinite; }
   @keyframes chalPulsa{ 50%{ opacity:.85; } }
   .chal-carta-atual .instr{
@@ -995,6 +998,64 @@ body{
   .onl-pto{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; background:#3E9E5E; }
   .onl-pto.nao{ background:#C9524C; }
   .onl-off{ color:#F5B4B0; }
+
+  /* ---------- 10/nov: RANKING DO FIM DO DESAFIO (caixa na frente do tabuleiro) ---------- */
+  #chalResultado{ display:none; }
+  #chalResultado.on{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 16px;
+    margin:14px auto; max-width:1180px; padding:12px 16px; border:2px solid var(--gold); border-radius:12px;
+    background:linear-gradient(180deg, rgba(60,44,8,.55), rgba(10,20,36,.75)); color:#F4E7B8; text-align:center;
+    box-shadow:0 0 22px -6px rgba(212,175,55,.6); }
+  #chalResultado .grande{ font-size:clamp(16px,2.6vw,21px); color:#fff; font-weight:700; }
+  #chalResultado .res-pts{ font-size:14px; color:rgba(244,231,184,.85); }
+  .rk-ov{ position:fixed; inset:0; z-index:140; display:none; align-items:center; justify-content:center;
+    padding:16px; background:radial-gradient(circle at 50% 30%, rgba(80,60,10,.55), rgba(4,6,14,.88) 65%);
+    backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); overflow-y:auto; }
+  .rk-ov.on{ display:flex; animation:rkFade .35s ease both; }
+  @keyframes rkFade{ from{ opacity:0; } to{ opacity:1; } }
+  .rk-cx{ position:relative; width:min(560px,100%); margin:auto; padding:26px clamp(14px,4vw,30px) 22px;
+    border:3px solid var(--gold); border-radius:18px; text-align:center; overflow:hidden;
+    background:linear-gradient(180deg, #1B2740 0%, #0D1526 60%, #0A101E 100%);
+    box-shadow:0 0 0 4px rgba(6,10,20,.9), 0 0 0 6px rgba(212,175,55,.45), 0 24px 60px rgba(0,0,0,.7), inset 0 0 50px rgba(212,175,55,.08);
+    animation:rkPop .6s cubic-bezier(.16,1.25,.3,1) both; }
+  @keyframes rkPop{ from{ transform:scale(.7) translateY(30px); opacity:0; } to{ transform:none; opacity:1; } }
+  .rk-raios{ position:absolute; left:50%; top:100px; width:520px; height:520px; transform:translate(-50%,-50%);
+    border-radius:50%; pointer-events:none; opacity:.22; color:#F7D774;
+    background:repeating-conic-gradient(from 0deg, currentColor 0 6deg, transparent 6deg 24deg);
+    -webkit-mask:radial-gradient(circle, #000 20%, transparent 62%); mask:radial-gradient(circle, #000 20%, transparent 62%);
+    animation:rkGira 26s linear infinite; }
+  @keyframes rkGira{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+  .rk-confete{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .rk-confete i{ position:absolute; top:-12px; width:7px; height:12px; border-radius:2px; opacity:.9;
+    animation:rkCai linear forwards; }
+  @keyframes rkCai{ to{ transform:translateY(720px) rotate(540deg); opacity:0; } }
+  .rk-fim{ position:relative; font-family:var(--font-pixel); font-size:11px; letter-spacing:.12em; color:var(--gold-soft); }
+  .rk-trofeu-top{ position:relative; width:96px; height:108px; margin:8px auto 2px; display:block;
+    filter:drop-shadow(0 0 18px rgba(247,215,116,.55)) drop-shadow(0 8px 14px rgba(0,0,0,.6));
+    animation:rkFlutua 3s ease-in-out infinite; }
+  @keyframes rkFlutua{ 50%{ transform:translateY(-6px); } }
+  .rk-tit{ position:relative; margin:4px 0 2px; font-size:clamp(20px,5vw,28px); font-weight:700; color:#fff;
+    text-shadow:0 2px 0 #000, 0 0 18px rgba(247,215,116,.5); line-height:1.2; }
+  .rk-sub{ position:relative; font-size:13px; color:rgba(232,238,247,.7); margin-bottom:16px; }
+  .rk-lista{ position:relative; list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .rk-lin{ --cor:#888; display:flex; align-items:center; gap:12px; padding:9px 14px 9px 10px; border-radius:12px; text-align:left;
+    border:2px solid color-mix(in srgb, var(--cor) 70%, transparent);
+    background:linear-gradient(90deg, color-mix(in srgb, var(--cor) 30%, #0B1322), #0B1322 75%);
+    opacity:0; animation:rkEntra .5s cubic-bezier(.2,1.2,.4,1) forwards; }
+  @keyframes rkEntra{ from{ opacity:0; transform:translateX(-26px); } to{ opacity:1; transform:none; } }
+  .rk-lin.jog0{ --cor:var(--jog0); } .rk-lin.jog1{ --cor:var(--jog1); } .rk-lin.jog2{ --cor:var(--jog2); } .rk-lin.jog3{ --cor:var(--jog3); }
+  .rk-lin.r1{ padding-top:12px; padding-bottom:12px; box-shadow:0 0 0 2px rgba(247,215,116,.55), 0 0 24px -4px rgba(247,215,116,.6); }
+  .rk-ico{ flex:0 0 auto; width:50px; height:56px; display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.55)); }
+  .rk-lin.r1 .rk-ico{ width:60px; height:68px; }
+  .rk-pos{ flex:0 0 auto; min-width:2.6em; font-family:var(--font-pixel); font-size:15px; color:#fff; }
+  .rk-lin.r1 .rk-pos{ color:#F7D774; font-size:18px; }
+  .rk-quem{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; }
+  .rk-nome{ font-size:clamp(15px,3.6vw,19px); font-weight:700; color:#fff; overflow-wrap:anywhere; line-height:1.2; }
+  .rk-premio{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:color-mix(in srgb, var(--cor) 45%, #fff); }
+  .rk-pts{ flex:0 0 auto; text-align:right; font-family:var(--font-pixel); font-size:16px; color:#fff; line-height:1.3; }
+  .rk-pts small{ display:block; font-family:var(--font-serif); font-size:11px; color:rgba(232,238,247,.7); }
+  .rk-botoes{ position:relative; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; }
+  @media (max-width:420px){ .rk-ico{ width:40px; height:45px; } .rk-lin.r1 .rk-ico{ width:48px; height:54px; } .rk-pos{ font-size:12px; } .rk-pts{ font-size:13px; } }
+  @media (prefers-reduced-motion:reduce){ .rk-raios, .rk-trofeu-top, .rk-confete{ animation:none; display:none; } }
 </style>
 <style>/* enquanto as fontes chegam, a tela de carregamento já cobre tudo, só com o fundo */.aguarda-fontes>*{visibility:hidden!important}</style>
 </head>
@@ -1299,6 +1360,24 @@ body{
 
 </div>
 
+<!-- ---------- 10/nov: RANKING DO FIM DO DESAFIO ---------- -->
+<div class="rk-ov" id="chalRanking" role="dialog" aria-modal="true" aria-labelledby="rkTit">
+  <div class="rk-cx">
+    <div class="rk-raios"></div>
+    <div class="rk-confete" id="rkConfete"></div>
+    <div class="rk-fim">🏁 FIM DE JOGO</div>
+    <div id="rkTopo"></div>
+    <div class="rk-tit" id="rkTit"></div>
+    <div class="rk-sub">Classificação pelo número de cartas conquistadas</div>
+    <ol class="rk-lista" id="rkLista"></ol>
+    <div class="rk-botoes">
+      <button class="btn-board" id="rkFechar" type="button">Ver o tabuleiro</button>
+      <button class="btn-board" id="rkRevisar" type="button">🔍 Revisar a atividade</button>
+      <button class="btn-board principal" id="rkRecomecar" type="button">↻ Jogar de novo</button>
+    </div>
+  </div>
+</div>
+
 <!-- ---------- VEREDITO DO TURNO (acerto / erro da jogada anterior) ---------- -->
 <div class="chal-vd" id="chalVeredito" aria-hidden="true">
   <div class="chal-vd-cx">
@@ -1589,8 +1668,17 @@ body{
   }
   /* sequência das cartas do Single Player para as setas da carta ampliada (ordem da tela) */
   function seqSolo(qual){
-    const sel = qual === 'cat' ? '#campo .mini img' : '#campo .slot img, #mao .carta-def img';
-    return [].map.call(document.querySelectorAll(sel), function(i){ return i.src; });
+    /* 10/nov: Desafio (local e online) também navega — cartas visíveis do mesmo tipo
+       (tabuleiro + carta em jogo/área do jogador), na ordem da tela */
+    const sel = qual === 'cat' ? '#campo .mini img'
+      : qual === 'def' ? '#campo .slot img, #mao .carta-def img'
+      : qual === 'chal-cat' ? '#chalTabuleiro .slot.tipo-cat img, #chalTabuleiro .carta-def.cat img'
+      : '#chalTabuleiro .slot.tipo-def img, #chalTabuleiro .carta-def.def img';
+    const vistos = {};
+    return [].filter.call(document.querySelectorAll(sel), function(i){
+      if (!i.src || vistos[i.src] || !i.offsetParent) return false;
+      vistos[i.src] = 1; return true;
+    }).map(function(i){ return i.src; });
   }
   function fazerLupa(src, tipo, seq){
     const l = document.createElement('div');
@@ -1687,17 +1775,9 @@ body{
 
   function clicarSlot(slot){
     if (revAtiva) return;
-    // slot já conferido como errado → devolve a carta ao acervo (não pode mais ser movida direto)
-    if (slot.dataset.posto && slot.classList.contains('errado')){
-      const num = esvaziarSlot(slot);
-      const par = PARES.find(function(p){ return String(p[0]) === String(num); });
-      elMao.appendChild(criarCartaDef(par));
-      atualizar();
-      somClique();
-      return;
-    }
-
-    // slot ocupado e ainda não conferido → marca (ou desmarca, devolvendo ao acervo)
+    // 10/nov: carta conferida como errada se comporta como as outras (marca, troca direto,
+    // 2º toque nela devolve ao acervo) — antes um toque já a devolvia ao acervo
+    // slot ocupado (não travado) → marca (ou desmarca, devolvendo ao acervo)
     if (slot.dataset.posto){
       if (slotMarcado === slot){
         const num = esvaziarSlot(slot);
@@ -1706,6 +1786,17 @@ body{
         elMao.appendChild(criarCartaDef(par));
         atualizar();
         somClique();
+        return;
+      }
+      /* 10/nov: outra carta já marcada → as duas trocam de lugar direto (como no Desafio) */
+      if (slotMarcado){
+        const origem = slotMarcado;
+        const numA = origem.dataset.posto, numB = slot.dataset.posto;
+        desmarcarSlot();
+        preencherSlot(origem, numB);
+        preencherSlot(slot, numA);
+        atualizar();
+        somEncaixe();
         return;
       }
       marcarSlot(slot);
@@ -1785,7 +1876,7 @@ body{
       elResultado.innerHTML = '<span class="grande">✗ ' + errados.length +
         ' associação(ões) incorreta(s)</span>' +
         'As cartas marcadas em <b>vermelho</b> estão no lugar errado. ' +
-        'Toque nelas para devolver ao Acervo e tentar de novo. ' +
+        'Toque em uma e depois em outra para trocá-las de lugar, ou toque duas vezes na mesma para devolvê-la ao Acervo. ' +
         '(' + acertos + ' de ' + PARES.length + ' corretas)';
       somErro();
       rodada++;
@@ -2061,7 +2152,7 @@ body{
     img.src = arquivo(tipo, num); img.loading = 'lazy';
     img.alt = (tipo === 'cat' ? 'Categoria: ' : 'Definição: ') + (par ? par[2] : '');
     d.appendChild(img);
-    d.appendChild(fazerLupa(img.src, tipo));
+    d.appendChild(fazerLupa(img.src, tipo, 'chal-' + tipo));
     return d;
   }
 
@@ -2295,7 +2386,7 @@ body{
     img.src = arquivo(tipo, num);
     img.alt = 'Carta encaixada';
     slot.appendChild(img);
-    slot.appendChild(fazerLupa(img.src, tipo));
+    slot.appendChild(fazerLupa(img.src, tipo, 'chal-' + tipo));
   }
   function chalDesmarcarSlot(){
     if (CHAL.slotMarcado) CHAL.slotMarcado.classList.remove('marcado');
@@ -2523,14 +2614,98 @@ body{
     else { ico = '🤝'; tit = 'Empate entre ' + lideres.map(function(j){ return j.nome; }).join(', ').replace(/, ([^,]*)$/, ' e $1') + '!'; }
     chalResultado.className = 'on vitoria';
     chalResultado.innerHTML = '<span class="grande">' + ico + ' ' + chalEsc(tit) + '</span>' +
-      jogadores.map(function(j){ return chalEsc(j.nome) + ': ' + j.pontos + ' carta' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '.';
+      '<span class="res-pts">' + jogadores.map(function(j){ return chalEsc(j.nome) + ': ' + j.pontos + ' carta' + (j.pontos === 1 ? '' : 's'); }).join(' · ') + '</span>' +
+      '<button class="btn-board principal" type="button" id="rkReabrir">🏆 Ver ranking</button>';
+    document.getElementById('rkReabrir').addEventListener('click', function(){ somClique(); chalRankingAbrir(tit, false); });
     chalRenderVez('🏁 Fim de jogo!');
     if (ONL.ativo && ONL.papel !== 'prof') chalReiniciarBtn.disabled = true;   /* online: só o professor recomeça */
     onlFimPartida();
     chalRenderPlacar();
     somVitoria();
-    chalResultado.scrollIntoView({behavior:'smooth', block:'nearest'});
+    chalRankingAbrir(tit, true);
   }
+
+  /* ---------- 10/nov: ranking caprichado (ouro / prata / bronze / participação) ---------- */
+  const chalRankingEl = document.getElementById('chalRanking');
+  let rkSvgN = 0;
+  const RK_METAIS = {
+    ouro:   ['#FFF3B8', '#F2C94C', '#B8860B', '#6E4E05'],
+    prata:  ['#FFFFFF', '#D5DBE3', '#98A2B0', '#4E5664'],
+    bronze: ['#FFD9B0', '#D98A4A', '#9A5524', '#55290C'],
+    part:   ['#E4F1FF', '#8EC0EC', '#4F86BE', '#23466E']
+  };
+  /* troféu (1º–3º) em SVG, com a posição gravada na base */
+  function rkTrofeu(metal, n){
+    const c = RK_METAIS[metal], id = 'rkg' + (++rkSvgN);
+    return '<svg class="rk-ico" viewBox="0 0 64 72" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + c[2] + '"/><stop offset=".35" stop-color="' + c[0] + '"/><stop offset=".6" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + c[2] + '"/></linearGradient></defs>' +
+      '<path d="M15 10 H6 v6 c0 9 6 15 13 16" fill="none" stroke="' + c[2] + '" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M49 10 H58 v6 c0 9 -6 15 -13 16" fill="none" stroke="' + c[2] + '" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M13 5 H51 V18 C51 31 43 39 32 40 C21 39 13 31 13 18 Z" fill="url(#' + id + ')" stroke="' + c[3] + '" stroke-width="1.6"/>' +
+      '<path d="M19 9 V18 C19 25 22 30 26 33" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<rect x="28" y="39" width="8" height="10" fill="url(#' + id + ')" stroke="' + c[3] + '" stroke-width="1.2"/>' +
+      '<path d="M22 49 H42 L45 55 H19 Z" fill="url(#' + id + ')" stroke="' + c[3] + '" stroke-width="1.2"/>' +
+      '<rect x="15" y="55" width="34" height="13" rx="2.5" fill="#3A2A12" stroke="' + c[3] + '" stroke-width="1.4"/>' +
+      '<text x="32" y="65.5" text-anchor="middle" font-family="Cinzel,serif" font-weight="700" font-size="11" fill="' + c[1] + '">' + n + 'º</text>' +
+      '<path d="M32 13 l2.3 4.7 5.2 .8 -3.8 3.6 .9 5.1 -4.6 -2.4 -4.6 2.4 .9 -5.1 -3.8 -3.6 5.2 -.8 Z" fill="' + c[0] + '" stroke="' + c[3] + '" stroke-width=".8"/>' +
+    '</svg>';
+  }
+  /* medalha de participação (4º lugar) */
+  function rkMedalha(){
+    const c = RK_METAIS.part, id = 'rkg' + (++rkSvgN);
+    return '<svg class="rk-ico" viewBox="0 0 64 72" aria-hidden="true"><defs>' +
+      '<radialGradient id="' + id + '" cx=".35" cy=".35" r=".75"><stop offset="0" stop-color="' + c[0] + '"/><stop offset=".55" stop-color="' + c[1] + '"/><stop offset="1" stop-color="' + c[2] + '"/></radialGradient></defs>' +
+      '<path d="M18 2 H30 L38 30 H26 Z" fill="#7B4FB8" stroke="#3E2466" stroke-width="1.2"/>' +
+      '<path d="M46 2 H34 L26 30 H38 Z" fill="#9C6FD8" stroke="#3E2466" stroke-width="1.2"/>' +
+      '<circle cx="32" cy="46" r="20" fill="url(#' + id + ')" stroke="' + c[3] + '" stroke-width="2"/>' +
+      '<circle cx="32" cy="46" r="14.5" fill="none" stroke="' + c[3] + '" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="2 2"/>' +
+      '<path d="M32 36 l3 6.1 6.7 1 -4.85 4.7 1.15 6.7 -6 -3.15 -6 3.15 1.15 -6.7 -4.85 -4.7 6.7 -1 Z" fill="#fff" fill-opacity=".9" stroke="' + c[3] + '" stroke-width=".9"/>' +
+    '</svg>';
+  }
+  function chalRankingAbrir(tit, festa){
+    const js = CHAL.jogadores.map(function(j, i){ return { nome:j.nome, pontos:j.pontos, i:i }; });
+    js.sort(function(a, b){ return b.pontos - a.pontos || a.i - b.i; });
+    const rank = function(p){ return 1 + js.filter(function(o){ return o.pontos > p; }).length; };  /* empate divide a posição */
+    const PREMIO = { 1:'Troféu de ouro', 2:'Troféu de prata', 3:'Troféu de bronze' };
+    const METAL = { 1:'ouro', 2:'prata', 3:'bronze' };
+    document.getElementById('rkTopo').innerHTML = rkTrofeu('ouro', 1).replace('class="rk-ico"', 'class="rk-trofeu-top"');
+    document.getElementById('rkTit').textContent = tit;
+    document.getElementById('rkLista').innerHTML = js.map(function(o, k){
+      const r = rank(o.pontos);
+      return '<li class="rk-lin jog' + o.i + ' r' + r + '" style="animation-delay:' + (0.35 + k * 0.28) + 's">' +
+        (r <= 3 ? rkTrofeu(METAL[r], r) : rkMedalha()) +
+        '<span class="rk-pos">' + r + 'º</span>' +
+        '<span class="rk-quem"><span class="rk-nome">' + chalEsc(o.nome) + '</span>' +
+          '<span class="rk-premio">' + (PREMIO[r] || 'Medalha de participação') + '</span></span>' +
+        '<span class="rk-pts">' + o.pontos + '<small>carta' + (o.pontos === 1 ? '' : 's') + '</small></span>' +
+      '</li>';
+    }).join('');
+    /* confete só na abertura automática (não ao reabrir) */
+    const cf = document.getElementById('rkConfete');
+    cf.innerHTML = '';
+    if (festa){
+      const cores = ['#F7D774', '#F2C94C', '#FFFFFF', '#8FC8F6', '#F0A9A4', '#8FD7AB', '#C9A8E8'];
+      for (let k = 0; k < 46; k++){
+        const e = document.createElement('i');
+        e.style.left = (Math.random() * 100) + '%';
+        e.style.background = cores[k % cores.length];
+        e.style.animationDuration = (2.6 + Math.random() * 2.4) + 's';
+        e.style.animationDelay = (Math.random() * 1.4) + 's';
+        cf.appendChild(e);
+      }
+    }
+    const recom = document.getElementById('rkRecomecar');
+    recom.style.display = chalReiniciarBtn.disabled ? 'none' : '';   /* online: só o professor recomeça */
+    document.getElementById('rkRevisar').style.display = chalRevisarBtn.disabled ? 'none' : '';
+    chalRankingEl.classList.add('on');
+    document.getElementById('rkFechar').focus({ preventScroll:true });
+  }
+  function chalRankingFechar(){ chalRankingEl.classList.remove('on'); document.getElementById('rkConfete').innerHTML = ''; }
+  document.getElementById('rkFechar').addEventListener('click', function(){ somClique(); chalRankingFechar(); });
+  document.getElementById('rkRevisar').addEventListener('click', function(){ chalRankingFechar(); chalRevisarBtn.click(); });
+  document.getElementById('rkRecomecar').addEventListener('click', function(){ chalRankingFechar(); chalReiniciarBtn.click(); });
+  chalRankingEl.addEventListener('click', function(e){ if (e.target === chalRankingEl){ somClique(); chalRankingFechar(); } });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && chalRankingEl.classList.contains('on')) chalRankingFechar(); });
 
   /* ---------- sorteio animado de quem começa (~5 s) ---------- */
   let chalSorteioToken = 0;
@@ -2887,17 +3062,19 @@ body{
 
 
   /* ---------- distribuição inicial: parte das cartas já começa posicionada ----------
-     Sorteia ~CHAL_PREPOSICIONADAS das cartas de CATEGORIA (só desse monte) e põe cada uma numa
+     Sorteia (total − nº de jogadores) cartas de CATEGORIA (só desse monte) e põe cada uma numa
      estação DIFERENTE, também sorteada — assim nenhum par/trio começa pronto. As cartas
      não têm dono: entram no par/trio de quem o completar. Animação: cada carta cai do alto
      no seu encaixe, antes da 1ª vez (padrão da família de jogos de associação). */
-  const CHAL_PREPOSICIONADAS = 0.70;   /* fração das cartas de CATEGORIA que já começam no tabuleiro */
+  /* (até 10/nov: CHAL_PREPOSICIONADAS = 0.70 das categorias; agora depende do nº de jogadores) */
   const CHAL_TIPO_CATEGORIA = 'cat';      /* só a categoria é pré-posicionada; os outros tipos vêm todos dos montes */
   let chalDistTok = 0;
   function chalDistribuirIniciais(cb){
     const meu = ++chalDistTok;
     const todas = CHAL.montes[CHAL_TIPO_CATEGORIA].slice();   /* só as cartas de categoria */
-    const n = Math.round(todas.length * CHAL_PREPOSICIONADAS);
+    /* 10/nov: ficam no monte tantas categorias quantos forem os jogadores (2→2, 3→3, 4→4);
+       o resto começa no tabuleiro — vale no Desafio local e no online */
+    const n = Math.max(0, todas.length - CHAL.jogadores.length);
     const escolhidas = embaralhar(todas).slice(0, n);
     escolhidas.forEach(function(c){ const m = CHAL.montes[c.tipo]; m.splice(m.indexOf(c), 1); });
     const livres = {};                             /* estações livres de cada grupo, embaralhadas */
@@ -2979,6 +3156,7 @@ body{
     chalAtualizarHud();
     chalResultado.className = '';
     chalResultado.innerHTML = '';
+    chalRankingFechar();
     chalReiniciarBtn.disabled = true;
     chalRevisarBtn.disabled = true;
     chalTrocarModoBtn.disabled = true;
@@ -2993,7 +3171,7 @@ body{
       chalRenderVez();
       chalMostrarCarta();
       chalAtualizarBotoes();
-      /* ~25% das cartas já começam no tabuleiro (sorteadas a cada partida) */
+      /* categorias iniciais no tabuleiro: todas menos uma por jogador (sorteadas a cada partida) */
       chalDistribuirIniciais(function(){ chalAnunciarVez(function(){ CHAL.transicao = false; chalRenderVez(); chalMostrarCarta(); chalAtualizarBotoes(); }); });
     });
     });
