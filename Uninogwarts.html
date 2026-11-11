@@ -611,6 +611,16 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 .sg-row button.m.on{background:#2a1c16;color:#f3ead2;border-color:#2a1c16}
 .sg-row button.cur{outline:2px solid #2d6fb5;outline-offset:1px}
 #dz-ok.kb{outline:3px solid #2a1c16;outline-offset:2px}
+#emp{background:rgba(16,10,8,.8)} /* (v3.13) pushing the glucose: which molecule comes out */
+#emp-txt{margin:8px 0}#emp-txt b{display:block;font-family:var(--f-display);font-weight:400;font-size:10px;letter-spacing:.06em;color:#7a2e3e;margin:4px 0 3px}
+#emp-entra{display:none;justify-content:center;margin:4px 0 10px}#emp-entra svg{background:#1d1612;border:3px solid #7a2e3e;width:min(42%,230px);height:auto;padding:4px}
+#emp-ops{display:grid;grid-template-columns:repeat(2,1fr);gap:10px} /* (v3.16) four options: side by side on large screens, 2×2 on small ones */
+@media (min-width:760px){#emp-ops{grid-template-columns:repeat(4,1fr)}}
+.emp-op{min-width:0;background:#1d1612;border:4px solid #5d646a;padding:6px;cursor:pointer}
+.emp-op svg{display:block;width:100%;height:auto}
+.emp-nome{display:block;margin-top:6px;font-family:var(--f-display);font-size:9px;line-height:1.6;color:#efe3c8;text-align:center}
+.emp-op.sel{border-color:#f2c94c;box-shadow:0 0 0 3px #2a1c16}
+#emp-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}
 #dz-msg{flex:1 1 260px;font-family:var(--f-display);font-size:10px;line-height:1.7;color:#7a522f}#dz-msg.err{color:#b3261e}
 #duelo-msg.ok{color:#1f7a43}#duelo-msg.err{color:#b3261e}
 /* Page footer (same information as the other games); it takes its own row below the game, so the game area shrinks instead of the page scrolling */
@@ -943,7 +953,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.05 &middot; Última atualização: 8 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.36 &middot; Última atualização: 11 de novembro de 2026</span>
   </div>
 </footer>
 <script>
@@ -1065,6 +1075,24 @@ body:not(.kb) .caca-grid div.cur{outline:none}
       <div class="sh-foot">
         <span id="dz-msg" aria-live="polite"></span>
         <span class="sh-btns"><button class="mbtn" id="dz-close" type="button">SAIR</button><button class="mbtn primary" id="dz-ok" type="button">LANÇAR A GLICOSE</button></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="emp" hidden role="dialog" aria-label="Escolha a molécula">
+  <div class="modal-bar">
+    <span class="mt">SIMULADOR · QUAL MOLÉCULA SAI DA ENZIMA?</span>
+    <span class="mh"><span data-gp="<span class=&quot;gpb d&quot;><i>✚</i></span> escolher"><kbd>A</kbd><kbd>D</kbd> escolher</span><span data-gp="<span class=&quot;gpb a&quot;>A</span> confirmar"><kbd>ENTER</kbd> confirmar</span><span data-gp="<span class=&quot;gpb x&quot;>X</span> voltar"><kbd>ESC</kbd> voltar</span></span>
+  </div>
+  <div class="quiz-body" id="emp-body">
+    <div class="sheet sg-sheet">
+      <div class="sh-head"><span id="emp-head"></span><span id="emp-aluno"></span></div>
+      <div id="emp-txt"></div>
+      <div id="emp-entra"></div>
+      <div id="emp-ops"></div>
+      <div class="sh-foot">
+        <span id="emp-msg" aria-live="polite"></span>
+        <span class="sh-btns"><button class="mbtn" id="emp-close" type="button">VOLTAR</button><button class="mbtn primary" id="emp-ok" type="button">CONFIRMAR</button></span>
       </div>
     </div>
   </div>
@@ -1350,7 +1378,7 @@ function reset(){
   inspected=new Set();provas={};if(typeof caca!=='undefined')caca=null; // provas: answered exam sheets, {reaction:{sel,ok}}
   player={x:44,y:118,dir:'right',moving:false,anim:0};
   if(typeof SCENES!=='undefined'&&SCENES.terreo){scene='terreo';objects=SCENES.terreo;fade=null;banner=null;}
-  dialog=null;if($('laudo-mini'))$('laudo-mini').hidden=true;labOpen=false;startTime=0;rideSt=null;simPage='main';dz=null;if($('dz'))$('dz').hidden=true;endTime=0;gameMin=0;
+  dialog=null;if($('laudo-mini'))$('laudo-mini').hidden=true;labOpen=false;startTime=0;rideSt=null;simPage='main';dz=null;if($('dz'))$('dz').hidden=true;if($('emp'))$('emp').hidden=true;emp=null;endTime=0;gameMin=0;
   ['jaleco','cracha','folhas','caderno','adesivo','trofeu','bolsas','enigma','convite','distintivo','chapeu','ligafolhas','chave'].forEach(k=>$('slot-'+k).classList.remove('got'));$('folhas-cnt').textContent='';$('ligafolhas-cnt').textContent='';
   if(typeof pedro!=='undefined')resetPedro();
   if(typeof jan!=='undefined')janReset();
@@ -1993,13 +2021,14 @@ function paperSpec(who,outfit,crop){
   if(PAL_FIX[who])pal=palFixed[who]||(palFixed[who]=Object.assign({},pal,PAL_FIX[who]));
   const me_=who==='player',hair=me_?{m:'messy',f:lab?'bun':'bushy',r:'curtains',g:lab?'pony':'wavy',d:'slick',p:'bob'}[avatar]:HAIR_STYLE[who]||(HEAD[who]===HEAD.pedro?'curly':'short');
   const out=OUTFIT_FIX[who]||outfit,badge=!me_||!!flags.cracha;
+  const diary=me_&&out==='coat'&&(amDrawing?!diarioEu:diarioEu)&&scene!=='simGlic'&&scene!=='salaSim'; // (v3.30) no diary in hand inside the simulator
   const noPin=who==='tadeo'&&!!flags&&((flags.td||0)>=7||(typeof tdOc!=='undefined'&&!!tdOc&&!!tdOc.broche)); // he lost the monitor's badge
   return {pal,hair,outfit:out,crop,badge,tr:me_?(avatar==='r'||avatar==='g'?{freckles:1}:{}):noPin?{}:TRAITS[who]||{},look:lookOf(who,out,girl,pal),
     pack:out!=='coat'&&!!pal.R&&pal.R!==pal.T&&who!=='zelador',
-    diary:me_&&out==='coat'&&(amDrawing?!diarioEu:diarioEu), // no backpack with the lab coat: the player carries the diary in hand (only the player: not the adventure friend)
+    diary, // no backpack with the lab coat: the player carries the diary in hand (only the player: not the adventure friend)
     scarf:false,harry:me_&&avatar==='m',
     phones:false,bow:false,scrunchie:me_&&avatar==='f'&&lab,glasses:me_&&avatar==='m'?'#7a5c27':GLASSES[who]||null,
-    key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||'',noPin?'np':''].join(':')};
+    key:[who,me_?avatar:'',lab?'L':'',who==='player'?pele:'',out,hair,badge?'b':'',crop||'',noPin?'np':'',diary?'':'nd'].join(':')};
 }
 // mood: 'normal' | 'happy' | 'worried' | 'angry' | 'smug' | 'surprised'; talk: mouth open
 function paperGrid(sp,view,f,blink,mood,talk){
@@ -2353,7 +2382,7 @@ function npcFrame(q,o){ // q: what personSprite was asked for; o: the scene obje
   if(X(k)==null)k=q.talk?'Neutro falando · '+vs:'Neutro · '+vs;
   return {A,img:A.im,i:X(k),m:left};
 }
-function hiOn(){const A=AVHI[avatar];return !!A&&A.ok&&!(typeof DUO!=='undefined'&&DUO.on);}
+function hiOn(){const A=AVHI[avatar];return !!A&&A.ok&&!(typeof DUO!=='undefined'&&DUO.on)&&scene!=='simGlic'&&scene!=='salaSim';} // (v3.17) in the simulator: always the old paper avatars
 function amigoFalando(){ // the adventure friend's own lines (tagged with their name)
   if(state!=='dialog'||!dialog)return false;const L=dialog.lines[dialog.i];
   return !!L&&!!L.who&&dialog.shown<L.t.length&&L.who===String(amigoNome()||'').toUpperCase();
@@ -2490,9 +2519,9 @@ const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noSha
   act:()=>{
     // first talk: the player asks about the lost sheets; Marina points to the professors and to the new badges
     if(!flags.marina) return say([
-      {who:me(),t:'Bom dia, Marina! Você viu as minhas folhas da atividade de glicólise? Ontem a gente estudou junto nas salas em que fomos tendo aula, e depois eu não vi mais.'},
+      {who:me(),t:'Bom dia, Marina! Você viu minhas folhas de glicólise? Ontem estudamos nas mesmas salas, e depois não as vi mais.'},
       {who:'MARINA',t:'Bom dia! Não vi, não... Mas os professores Neto e Rosa passaram nas salas depois das aulas. Talvez eles tenham visto.'},
-      {who:'MARINA',t:'E não esquece: hoje a gente tem que entregar as folhas de glicólise para os professores, na Sala 101. Eles recebem a partir das 9h30, até o fim da aula, às 11h30.'},
+      {who:'MARINA',t:'E não esqueça: hoje entregamos as folhas de glicólise aos professores, na Sala 101. Das 9h30 até o fim da aula, às 11h30.'},
       {who:'MARINA',t:'Ah! Chegaram os crachás novos. Sem ele, a porta das salas não abre. Antes de ir para a sala, pega o seu com a Dona Tati, na secretaria.'}
     ],()=>{flags.marina=true;updateObjective();});
     let l;
@@ -2517,7 +2546,7 @@ add({id:'planta2',name:'Planta',cx:683,top:178,base:210,solid:{x:676,y:200,w:14,
 add({id:'mapa',name:'Mapa do térreo',cx:55,top:55,base:88,solid:{x:46,y:82,w:19,h:6},draw:drawTotem,
   fx:t=>{if(Math.floor(t*2)%2)r(48,70,2,2,'#ef6a5c');},
   act:()=>say([{who:'MAPA DO TÉRREO',t:'VOCÊ ESTÁ AQUI: Corredor da Secretaria.'},
-               {who:'MAPA DO TÉRREO',t:'Entrada · Secretaria · Almoxarifado · Escada para o 1º andar · Laboratório multidisciplinar, no fim do corredor · Banheiros, no corredor em frente ao laboratório.'}])});
+               {who:'MAPA DO TÉRREO',t:'Entrada · Secretaria · Almoxarifado · Escada (1º andar) · Laboratório (fim do corredor) · Banheiros (em frente ao laboratório)'}])});
 add({id:'escada',name:'Escada',deco:true,cx:352,top:0,mark:{x:352,y:24},base:0,solid:{x:329,y:46,w:45,h:88},
   solids:[{x:329,y:44,w:8,h:92},{x:369,y:44,w:6,h:92}],
   fx:t=>{const f=Math.floor(t*8+2)%3,tx=331;r(tx,18-f%2,4,4,'#e8913a');r(tx+1,15+(f===2?1:0),2,4,'#f2c94c');px(tx+1+(f===1?1:0),14,'#fff27a');},noShadow:true,draw:drawStairs});
@@ -3232,7 +3261,8 @@ function drawStudentDesk(x,base,extra,seat){
   }
   if(seat){
     // seated student seen from behind: head and back over the chair, backrest drawn in front
-    const c=personSprite(seat[0],seat[2],'up',0,false).c;
+    const d_=drawAs;if(seat[4])drawAs=seat[4]; // (v3.35) the adventure friend sitting: drawn with their look
+    let c;try{c=personSprite(seat[0],seat[2],'up',0,false).c;}finally{drawAs=d_;}
     g.drawImage(c,0,0,PW,18+POY,x+7-POX,base-23-POY,PW,18+POY);
     r(x+8,base-5,14,3,'#4a3020');r(x+8,base-5,14,1,'#5a3d24');
   }
@@ -3414,7 +3444,7 @@ const aldair=add({id:'aldair',name:'Prof. Neto',talk:0,cx:150,top:78,base:104,so
        ...(flags.profs?[]:sheetsTalk('PROF. NETO')),
        ...(flags.viaTip?[]:[ // the lab simulator: an optional way to review the pathway, suggested right away
          {who:'PROF. NETO',t:'Ah, e uma dica para a prova: no laboratório do térreo tem um simulador de metabolismo. Escolha a atividade "Percorrer a via".'},
-         {who:'PROF. NETO',t:'O trilho do carrinho só se completa quando você acerta a pergunta de cada reação. Não é obrigatório, mas é o melhor jeito de revisar as 10 reações. Vá de jaleco, senão não entra no laboratório!'},
+         {who:'PROF. NETO',t:'O trilho só se completa quando você acerta a pergunta de cada reação.'},{who:'PROF. NETO',t:'Não é obrigatório, mas é a melhor revisão das 10 reações. E vá de jaleco, ou não entra no laboratório!'},
          {who:'PROF. NETO',t:'Aceita o desafio de percorrer a via inteira? Depois me conte como foi.',choices:[
            {t:'Aceito, professor',oferta:1,fn:()=>{flags.viaTip=true;flags.viaNeto=true;flags.profs=true;updateObjective();updatePauseExtra();}},
            {t:'Agora não',fn:()=>{flags.profs=true;updateObjective();say([{who:'PROF. NETO',t:'Sem problema. O simulador continua lá, se mudar de ideia.'}]);}}]}])],
@@ -3562,15 +3592,15 @@ const MARINA_DESK=4,MARINA_SEAT=['marina','MARINA','coat','Também vim tirar dú
 [132,162,192].forEach((base,ri)=>[44,98,232,286].forEach((x,ci)=>{
   const k=ri*4+ci,extra=k===2?'book':k===7?'paper':null;
   if(k===MARINA_DESK){
-    const o=add({id:'carteira'+k,cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},key:()=>marinaDesk()?1:0,
-      draw:()=>drawStudentDesk(x,base,null,marinaDesk()?MARINA_SEAT:null),
+    const o=add({id:'carteira'+k,cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},key:()=>(marinaDesk()?1:0)+(aulaPSit(k)?'p':'')+(aulaASit(k)?'a'+lead:''),
+      draw:()=>drawStudentDesk(x,base,null,marinaDesk()?MARINA_SEAT:aulaPSit(k)?['player','',flags.jaleco?'coat':'shirt']:aulaASit(k)?aulaASeat():null),
       act:()=>say(marinaDesk()?[{who:'MARINA',t:MARINA_SEAT[3]}]:[{t:DESK_LINES[k%DESK_LINES.length]}])});
     Object.defineProperty(o,'name',{get:()=>marinaDesk()?'Marina':'Carteira'});
     return;
   }
   const st=SEATED[k],sit=()=>!!st&&!recessOut(k); // before 7h50 the students arrive and move about (see RECESS)
-  const o=add({id:'carteira'+k,cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},key:()=>sit()?'s':'e',
-    draw:()=>drawStudentDesk(x,base,sit()?null:st?null:extra,sit()?st:null),
+  const o=add({id:'carteira'+k,cx:x+15,top:base-24,base,solid:{x,y:base-20,w:30,h:20},key:()=>(sit()?'s':'e')+(aulaPSit(k)?'p':'')+(aulaASit(k)?'a'+lead:''),
+    draw:()=>drawStudentDesk(x,base,sit()||aulaPSit(k)||aulaASit(k)?null:st?null:extra,sit()?st:aulaPSit(k)?['player','',flags.jaleco?'coat':'shirt']:aulaASit(k)?aulaASeat():null), // (v3.31) the player sitting for the class
     act:()=>sit()&&miniFala(st[0])?0:say(sit()?[{who:st[1],t:flags.bell8?seatFala(st):RECESS_LINES[st[0]]}]:st&&recByDesk(k).stage===3?[{t:'A carteira '+(/a$/i.test(st[1])?'da ':'do ')+st[1].charAt(0)+st[1].slice(1).toLowerCase()+'. A mochila está pendurada na cadeira.'}]:[{t:DESK_LINES[k%DESK_LINES.length]}])});
   Object.defineProperty(o,'name',{get:()=>sit()?st[1].charAt(0)+st[1].slice(1).toLowerCase():'Carteira'});
 }));
@@ -4289,18 +4319,18 @@ add({id:'mesaCaca',name:'Caça-palavras',cx:80,top:180,base:208,solid:{x:54,y:19
   key:()=>flags&&flags.caca?1:0,draw:drawCacaTable,act:()=>openCaca()});
 // simulator console (bottom right): works like a door to the computer-screen room
 function drawSimConsole(){
-  // seen from behind: the screen faces the spectrophotometer bench (with the bonus sheet), so the keyboard
-  // sits on the far edge of the desk and we see the back of the monitor
+  // (v3.31) turned round: the screen faces the room (the player sees the simulator on it), keyboard on the near edge
   const x=300;
-  r(x,186,40,10,'#9aa2a9');r(x,186,40,1,'#b9c2c8');
+  r(x,186,40,10,'#9aa2a9');r(x,186,40,1,'#b9c2c8'); // desk top
   r(x,196,40,12,'#4a5055');r(x,196,40,1,'#2c3236');r(x+2,198,16,8,'#2c3236');r(x+22,198,16,8,'#2c3236');
   r(x+3,208,3,2,'#1d2226');r(x+34,208,3,2,'#1d2226');
-  r(x+2,186,36,4,'#d8dee2');r(x+2,186,36,1,'#efe3c8');for(let k=4;k<36;k+=3)px(x+k,188,'#9aa2a9');
-  r(x+15,190,10,4,'#3a4045');r(x+18,186,4,4,'#4a5055');
-  r(x+6,168,28,20,'#2c3236');r(x+7,169,26,18,'#5d646a');r(x+7,169,26,1,'#7b8186');
-  for(let k=0;k<4;k++)r(x+10,172+k*3,20,1,'#4a5055');
-  r(x+15,183,10,3,'#efe3c8');pxText('SIM',x+20,184,'#1f4a33','center');
-  pxLine(x+20,194,x+24,207,'#1d2226');
+  r(x+17,184,6,4,'#3a4045');r(x+14,187,12,1,'#2c3236'); // the stand
+  r(x+5,166,30,19,'#1d1612');r(x+6,167,28,17,'#3a4045');r(x+6,167,28,1,'#5d646a'); // bezel
+  r(x+8,169,24,13,'#0b1220');r(x+8,169,24,2,'#2d6fb5'); // screen with its title bar
+  r(x+10,178,20,1,'#b9c2c8');r(x+12,176,4,2,'#ef6a5c'); // the track and the cart, on the screen
+  px(x+11,172,'#f2c94c');px(x+13,172,'#efe3c8');px(x+15,172,'#efe3c8');px(x+17,172,'#efe3c8');
+  r(x+5,190,26,4,'#d8dee2');r(x+5,190,26,1,'#efe3c8');for(let k=2;k<26;k+=3)px(x+5+k,192,'#9aa2a9'); // keyboard
+  r(x+33,191,3,3,'#d8dee2');px(x+34,191,'#9aa2a9'); // mouse
 }
 // sample fridge (blood bags side quest): on the floor between the door and the simulator
 add({id:'geladeira',name:'Geladeira de amostras',cx:250,top:166,base:210,solid:{x:236,y:198,w:28,h:12},zone:{x:226,y:176,w:48,h:36},
@@ -4318,7 +4348,7 @@ add({id:'geladeira',name:'Geladeira de amostras',cx:250,top:166,base:210,solid:{
   act:()=>bolsaFridge()});
 add({id:'simulador',name:'Simulador',cx:320,top:166,base:210,solid:{x:300,y:198,w:40,h:12},zone:{x:274,y:164,w:78,h:48},
   draw:drawSimConsole,
-  fx:t=>{const on=Math.floor(t*2)%2;px(331,185,on?'#5aa865':'#1f4a33');if(on){px(312,167,'#86aebb');px(318,167,'#86aebb');px(325,167,'#86aebb');}},
+  fx:t=>{const on=Math.floor(t*2)%2;px(332,183,on?'#5aa865':'#1f4a33');px(310+Math.floor((t*6)%18),177,'#f2c94c');}, // (v3.31) power light; a dot runs along the track on the screen
   act:()=>{tone(880,.06,'square',.04);tone(1320,.08,'square',.04,.07);simSel=0;goScene('salaSim',192,182,'up','SIMULADOR');}});
 objects.forEach(o=>{if(o.deco)o.zone={x:-99,y:-99,w:0,h:0};else if(!o.wall&&!o.zone)o.zone=expand(o.solid,10);});
 objects=SCENES.terreo;
@@ -5252,7 +5282,7 @@ function updateObjective(){
     :flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp?'Busque a questão bônus no laboratório (térreo) e entregue até 11h30'
     :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
     :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, na Sala 101, até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, na Sala 101')
-    :!flags.profs&&!answered()?(flags.profsIn?'Pergunte aos professores, na Sala 101, pelas suas folhas':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
+    :!flags.profs&&!answered()?(flags.profsIn?'Pergunte aos professores, na Sala 101, pelas suas folhas':profCafe&&!flags.cafeVisto?'Os professores tomam café na sala dos professores (1º andar): bata na porta':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
     :trilhaOn()?trilhaObj() // (v2.99) the trail of crumpled sheets
     :(()=>{const m=[3,10].filter(n=>!provas[n]);return m.length&&answered()===QUIZ_N-m.length;})()
       ?(!provas[3]&&!provas[10]?'Faltam as folhas das reações 3 e 10: elas não estavam com as outras. Onde será que foram parar?'
@@ -5267,7 +5297,9 @@ function needsMarker(o){
   if(!flags.cracha)return o.id===(flags.marina?'secretaria':'marina');
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
   if(flags.seated)return o===aldair||o===heloisa||o.id==='sala101';
-  if(!flags.profs&&!answered())return flags.profsIn?(o===aldair||o===heloisa||o.id==='sala101'):o.id==='sala101'; // before 7h47 they are having coffee: wait in the room
+  if(!flags.profs&&!answered())return flags.profsIn?(o===aldair||o===heloisa||o.id==='sala101')
+    :profCafe&&!flags.cafeVisto?(o.id==='professores'||o.id==='pc_heloisa'||o.id==='pc_aldair') // (v3.24) before 7h47 they are having coffee: knock at the teachers' room
+    :o.id==='sala101';
   if(o.provas)return !trilhaOn()&&o.provas.some(n=>!provas[n]); // (v2.99: the trail sheets have no "!")
   return false; // (v2.94: the doors of the rooms with sheets no longer get the "!": only the piles themselves)
 }
@@ -5421,7 +5453,11 @@ function endAction(){
 }
 function interact(){
   if(scene==='salaSim'){simSelect();return;}
-  if(scene==='simGlic'&&rideSt&&rideSt.mode==='desafio')return;
+  if(aulaAssento)return; // (v3.31) sitting in class
+  if(aulaEspera()){const st=aulaSentaPerto(player.x,player.y,20);if(st&&aulaSentar(st))return;}
+  if(empOn()){empEnter();return;} // (v3.13)
+  if(scene==='simGlic'&&rideSt&&rideSt.fall)return; // (v3.14) falling
+  if(scene==='simGlic'&&rideSt&&(rideSt.mode==='desafio'||rideSt.mode==='reg'))return;
   const o=nearest();
   if(!o)return;
   inspected.add(o.id);sfx.blip();o.act();
@@ -6229,7 +6265,7 @@ const TIAGO_FALA={
     if(q===0&&!flags.tiagoNo)return say([{who:TW,t:'Ei! Desculpa te parar... Você não viu um caderno de capa laranja, cheio de adesivos?'},
       {who:TW,t:'É o meu caderno de Bioquímica, com todos os resumos da glicólise! Ontem estudei no 2º andar e acho que esqueci lá.'},
       ...(tiagoSem()?[{who:TW,t:'Eu mesmo iria buscar, mas acabei de apresentar o meu seminário na Sala 102, e o professor de Fisiologia pediu para eu esperar aqui na porta.'}]
-        :[{who:TW,t:'Eu mesmo iria buscar, mas não posso sair deste corredor: estou esperando o professor de Fisiologia me chamar para apresentar o meu seminário, aqui na Sala 102.'},
+        :[{who:TW,t:'Eu mesmo iria buscar, mas estou esperando o professor de Fisiologia me chamar para o seminário, aqui na Sala 102.'},
       {who:TW,t:'Sou o próximo da lista! Se ele chamar meu nome e eu não estiver na porta, perco a vez e fico sem nota.'}]),
       {who:TW,t:'E sem o caderno eu estou perdido para a prova de amanhã... Você me ajuda a procurar?',choices:help}]);
     if(q===0&&this.rem++%2===0)return say([{who:TW,t:tiagoSem()?'Ainda nada do meu caderno laranja... Você pode me ajudar a procurar?':'Ainda nada do meu caderno laranja... E eu continuo preso aqui, esperando chamarem para o seminário. Você pode me ajudar a procurar?',choices:help}]);
@@ -6338,7 +6374,7 @@ function bolsaKiko(o,jokeLines){
     3:[[[{who:me(),t:'A professora Rosa me mandou ler o Manual de Hemoterapia, com a Dona Lúcia.'},
         {who:KW,t:'Boa! Se a Rosa recomendou, vale a leitura. Depois volte a ela com o que aprendeu.'}]],
       ['O manual está com a Dona Lúcia!']],
-    4:[[[{who:KW,t:'A bolsa C com cara de bolsa velha? Estranho... Eu separei as três ontem à tarde na bancada do laboratório e guardei na geladeira. Pelo menos achei que tinha guardado as três.'}],
+    4:[[[{who:KW,t:'A bolsa C com cara de velha? Estranho... Ontem à tarde, separei as três na bancada e as guardei na geladeira.'},{who:KW,t:'Pelo menos, achei que tinha guardado.'}],
         [{who:KW,t:'Se alguém viu essa bolsa fora do lugar, foi o Seu Antônio. Ele limpa o laboratório toda noite.'}]],
       ['Pergunte ao Seu Antônio!']],
     5:[[[{who:me(),t:'O Seu Antônio achou a bolsa C na bancada, ontem à noite. Ela passou a noite fora da geladeira!'},
@@ -6350,7 +6386,7 @@ function bolsaKiko(o,jokeLines){
     {who:me(),t:'Sem ATP, o potássio escapa. E a bolsa C passou a noite fora da geladeira: no calor, a glicólise acelerou.'},
     {who:KW,t:'Sensacional! Agora eu entendo o que vejo no microscópio: na bolsa velha, as hemácias perdem a forma de disco e ficam arredondadas e cheias de espículas.'},
     {who:KW,t:'Sem ATP, a membrana não se mantém. É Histologia e Bioquímica juntas! Vou contar essa história na aula de hoje à tarde.'},
-    {who:KW,t:'E a bolsa C... Ih, agora lembrei! Ontem eu separei a C na bancada para mostrar à turma da tarde e esqueci de guardar. A culpa foi minha, não do Seu Antônio.'},
+    {who:KW,t:'E a bolsa C... Ih, lembrei! Ontem deixei a C na bancada para mostrar à turma da tarde e não a guardei.'},{who:KW,t:'A culpa foi minha, não do Seu Antônio.'},
     {who:KW,t:'Ainda bem que ele guardou hoje cedo. Pode deixar as bolsas comigo. Muito obrigado, '+nome1()+'!',run:()=>{bolsaUpd(7);sfx.item();}}]);
   return null;
 }
@@ -6376,7 +6412,7 @@ function bolsaAsk(Q,onRight){
   say([{who:RW,t:Q.q,laudo:true,choices:order.map(c=>({t:c.t,fn:()=>{
     if(c.i===Q.c){sfx.item();return say([{who:RW,t:Q.ok,laudo:true}],onRight);}
     sfx.bump();flags.bolsaErr=(flags.bolsaErr||0)+1;
-    if(flags.bolsaErr>=2&&!flags.bolsaManual&&flags.bolsaQ===2)return say([{who:RW,t:'Hum, ainda não. Vamos fazer diferente: a Dona Lúcia, da biblioteca, tem o "Manual de Hemoterapia". Leia o capítulo das bolsas de sangue e volte aqui.',run:()=>bolsaUpd(3)}]);
+    // (v3.34) the manual is read by everybody before the questions: a wrong answer only gets a hint
     say([{who:RW,t:'Quase! '+Q.hint,laudo:true}],()=>bolsaAsk(Q,onRight));}}))}]);
 }
 function bolsaRosaNext(){
@@ -6393,10 +6429,17 @@ function bolsaRosa(o){
       {who:RW,t:'Então ela passou a noite toda fora da geladeira! Última pergunta, '+nome1()+'.'}],()=>bolsaAsk(BOLSA_C,()=>say([
       {who:RW,t:'Você resolveu o caso inteiro. Leve essa explicação ao professor Kiko: ele vai adorar contar isso na aula prática.',run:()=>bolsaUpd(6)}]))),true;
   const first=!flags.bolsaRosa;flags.bolsaRosa=true;
+  const intro=[{who:me(),t:'Professora, o professor Kiko pediu ajuda com o laudo das bolsas de sangue da aula prática dele. Pode me ajudar a entender?'},
+      {who:RW,t:'Bolsas de sangue? Adoro esse assunto! A hemácia guardada é um ótimo exemplo de glicólise. Deixa eu ver o laudo...',laudo:true},
+      {who:RW,t:'Não vou te dar a resposta pronta. Vou te fazer umas perguntas, e você me diz o que acha.'}];
+  if(!flags.bolsaManual&&!(flags.bolsaStep||0)){ // (v3.34) everybody reads the Manual de Hemoterapia first (a step of the quest)
+    say((first?intro:[]).concat([{who:RW,t:'Mas, antes das perguntas, uma leitura.'},
+      {who:RW,t:'A Dona Lúcia, na biblioteca (2º andar), tem o "Manual de Hemoterapia". Leia o capítulo das bolsas de sangue e volte aqui.',run:()=>bolsaUpd(3)}]));
+    return true;}
   say(first?[{who:me(),t:'Professora, o professor Kiko pediu ajuda com o laudo das bolsas de sangue da aula prática dele. Pode me ajudar a entender?'},
       {who:RW,t:'Bolsas de sangue? Adoro esse assunto! A hemácia guardada é um ótimo exemplo de glicólise. Deixa eu ver o laudo...',laudo:true},
       {who:RW,t:'Não vou te dar a resposta pronta. Vou te fazer umas perguntas, e você me diz o que acha.'}]
-    :flags.bolsaManual&&flags.bolsaQ===2&&!flags.bolsaBack?[{who:RW,t:'Leu o manual? Ótimo, agora fica mais fácil. Vamos continuar de onde paramos.',run:()=>{flags.bolsaBack=true;}}]
+    :flags.bolsaManual&&flags.bolsaQ===2&&!flags.bolsaBack?[{who:RW,t:'Leu o manual? Ótimo! Agora fica mais fácil. Vamos às perguntas.',run:()=>{flags.bolsaBack=true;}}]
     :[{who:RW,t:'Vamos continuar com o laudo das bolsas.'}],bolsaRosaNext);
   return true;
 }
@@ -6447,9 +6490,9 @@ function bolsaRosa(o){
     if(flags.bolsaQ!==3)return l0.call(this);
     say([{who:me(),t:'Dona Lúcia, a professora Rosa me mandou ler o "Manual de Hemoterapia". O capítulo das bolsas de sangue.'},
       {who:LW,t:'Esse sai bastante na época de prova! Está aqui. Pode ler, mas é só para consulta, viu? Não sai da biblioteca.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'Bolsas de hemácias com CPDA-1: o citrato prende o cálcio e evita a coagulação; o fosfato é tampão; a dextrose (glicose) alimenta a glicólise; a adenina ajuda a refazer o ATP.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'A hemácia não tem mitocôndrias: na bolsa, ela continua fazendo glicólise, consome glicose e acumula lactato. Com o tempo, cai o ATP, cai o 2,3-BPG e o potássio sai para o plasma.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'A refrigeração (2 a 6 °C) deixa as enzimas lentas e prolonga a vida da bolsa. Sem 2,3-BPG, a hemoglobina retém o oxigênio e o entrega menos aos tecidos.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'Bolsas de hemácias com CPDA-1: o citrato prende o cálcio e evita a coagulação.'},{who:'MANUAL DE HEMOTERAPIA',t:'O fosfato é tampão; a dextrose (glicose) alimenta a glicólise; a adenina ajuda a refazer o ATP.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'A hemácia não tem mitocôndrias: na bolsa, ela continua fazendo glicólise, consome glicose e acumula lactato.'},{who:'MANUAL DE HEMOTERAPIA',t:'Com o tempo, cai o ATP, cai o 2,3-BPG e o potássio sai para o plasma.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'A refrigeração (2 a 6 °C) deixa as enzimas lentas e prolonga a vida da bolsa.'},{who:'MANUAL DE HEMOTERAPIA',t:'Sem 2,3-BPG, a hemoglobina retém o oxigênio e o entrega menos aos tecidos.'},
       {who:me(),t:'Agora sim! Vou voltar para a professora Rosa.',run:()=>{flags.bolsaManual=true;bolsaUpd(2);}}]);
   };
 }
@@ -7335,7 +7378,17 @@ function buildBgSim(){
    10 reaction posters (the same ones from Salas 101, 103 and 201); ENTER in front of one opens it. At the far
    end the ride ends and the player is back at the computer screen. */
 const RIDE_Y=172,GLIC_W=1440,RIDE_END=GLIC_W-32,POSTER_DY=106; // posters drawn 106 px lower: at the player's height
-const [bgGlic,bgGlicctx]=mk(GLIC_W,H);
+const [bgGlic,bgGlicctx]=mk(GLIC_W,H),[bgCito,bgCitoctx]=mk(GLIC_W,212);
+// (v3.09) the ride's background: "Panorama do Citoplasma em Corte Transversal.png", scaled to the ride's height
+// (212 px) and scrolled slower than the track, so the whole picture passes once from the start to the finish
+const GLIC_PANO={c:null};
+{const im=new Image();im.onload=()=>{const h=212,w=Math.round(im.width*h/im.height),[c,cx_]=mk(w,h);
+  cx_.imageSmoothingEnabled=true;cx_.imageSmoothingQuality='high';cx_.drawImage(im,0,0,w,h);GLIC_PANO.c=c;};
+  im.src='uninogwarts-panorama-citoplasma.jpg';} // (v3.10) a lighter copy of "Panorama do Citoplasma em Corte Transversal.png" (1272×424)
+function drawGlicPano(){
+  const c=GLIC_PANO.c;if(!c){fctx.drawImage(bgCito,0,0);return;}
+  const f=Math.max(0,Math.min(1,(c.width-W)/(GLIC_W-W)));fctx.drawImage(c,Math.round(camX*(1-f)),0);
+}
 const glicX=n=>80+(n-1)*128; // left edge of the poster of reaction n (128 px apart)
 const GLIC_ENZ=['','Hexocinase','Fosfo-hexose-isomerase','Fosfofrutocinase-1','Aldolase','Triose-fosfato-isomerase',
   'Gliceraldeído-3-fosfato-desidrogenase','Fosfoglicerato-cinase','Fosfoglicerato-mutase','Enolase','Piruvato-cinase'];
@@ -7348,8 +7401,17 @@ const molTxt=m=>m.replace(/-\n/g,'-').replace(/\n/g,' '); // the name in one lin
 function molBox(m){const L=m.split('\n'),w=Math.max(...L.map(pxW))+6,h=L.length*8+2;return {L,w,h,y:100-h};}
 let rideDone=false;
 SCENES.simGlic=[];SCENE_W.simGlic=GLIC_W;TORCHES.simGlic=[];STAIRS.simGlic=[];
+// (v3.23) the simulator's plates are a little see-through (the letters stay solid: they are drawn afterwards)
+const PLATE_A=.55; // (v3.24: more see-through, as asked)
+function plateR(x,y,w,h,c){const a=g.globalAlpha;g.globalAlpha=a*PLATE_A;g.fillStyle=c;g.fillRect(x,y,w,h);g.globalAlpha=a;}
+function plateBox(x,y,w,h,bd,fill,hi){ // border, fill and a top light line that never overlap (no darker double layer)
+  plateR(x,y,w,1,bd);plateR(x,y+h-1,w,1,bd);plateR(x,y+1,1,h-2,bd);plateR(x+w-1,y+1,1,h-2,bd);
+  if(hi){plateR(x+1,y+1,w-2,1,hi);plateR(x+1,y+2,w-2,h-3,fill);}else plateR(x+1,y+1,w-2,h-2,fill);
+}
 function buildBgGlic(){
-  g=bgGlicctx;const R=rng(307);
+  // (v3.09) the cytoplasm panorama (an image in the folder) is drawn behind this layer, with parallax (drawGlicPano);
+  // the old drawn cytosol stays in its own canvas, only for when the image cannot be loaded
+  g=bgCitoctx;const R=rng(307);
   // the cytosol, in black and white so it does not compete with the posters: a dark watery matrix with
   // cytoskeleton filaments, endoplasmic reticulum, mitochondria, vesicles and ribosomes
   r(0,0,GLIC_W,212,'#161616');
@@ -7366,22 +7428,23 @@ function buildBgGlic(){
     pxEllipse(cx,cy,rr,rr,'#2a2a2a');pxEllipse(cx,cy,rr-1,rr-1,'#181818');}
   for(let i=0;i<GLIC_W*.6;i++){const x=(R()*GLIC_W)|0,y=(R()*212)|0;px(x,y,'#3c3c3c');if(R()<.3)px(x+1,y,'#3c3c3c');}
   for(let x=60;x<GLIC_W;x+=300)pxText('CITOSOL',x,8,'#3a3a3a');
+  g=bgGlicctx;
   // phase banners
   const b1=glicX(1)-30,e1=glicX(5)+58,b2=glicX(6)-30,e2=glicX(10)+58;
-  r(b1,20,e1-b1,22,'#5a2230');r(b1,20,e1-b1,1,'#a12a22');r(b1,41,e1-b1,1,'#3a1820');
+  plateR(b1,20,e1-b1,1,'#a12a22');plateR(b1,21,e1-b1,20,'#5a2230');plateR(b1,41,e1-b1,1,'#3a1820');
   for(let n=1;n<=5;n++){pxText('FASE PREPARATÓRIA',glicX(n)+14,25,'#f2c94c','center');pxText('GASTA 2 ATP',glicX(n)+14,33,'#efe3c8','center');}
-  r(b2,20,e2-b2,22,'#1f4a33');r(b2,20,e2-b2,1,'#3f8a4c');r(b2,41,e2-b2,1,'#123020');
+  plateR(b2,20,e2-b2,1,'#3f8a4c');plateR(b2,21,e2-b2,20,'#1f4a33');plateR(b2,41,e2-b2,1,'#123020');
   for(let n=6;n<=10;n++){pxText('FASE DE PAGAMENTO',glicX(n)+14,25,'#f2c94c','center');pxText('FORMA 4 ATP E 2 NADH',glicX(n)+14,33,'#efe3c8','center');}
   // the molecule on the line between reactions (glucose first, pyruvate last)
   // between the posters, at the same height, the molecule of that stretch (glucose first, pyruvate last)
   GLIC_MOL.forEach((m,i)=>{
     const cx=i?glicX(i)+14+64:40,{L,w,h,y}=molBox(m),last=i===10;
     r(cx,y+h,1,RIDE_Y+3-y-h,'#4a5055');
-    r(Math.round(cx-w/2),y,w,h,last?'#1f4a33':i?'#2b4a6f':'#5a2230');r(Math.round(cx-w/2),y,w,1,last?'#5aa865':i?'#5fb4f0':'#ef6a5c');
+    plateR(Math.round(cx-w/2),y,w,1,last?'#5aa865':i?'#5fb4f0':'#ef6a5c');plateR(Math.round(cx-w/2),y+1,w,h-1,last?'#1f4a33':i?'#2b4a6f':'#5a2230');
     L.forEach((l,k)=>pxText(l,cx,y+3+k*8,'#ffffff','center'));
-    if(i<10)pxText('→',cx,150,'#5fb4f0','center');
+    if(i<10)pxText('→',cx,150,'#f2c94c','center'); // (v3.12) brighter colours over the panorama
   });
-  for(let n=1;n<=10;n++)pxText('REAÇÃO '+n,glicX(n)+14,POSTER_DY+3,'#a9c7d2','center');
+  for(let n=1;n<=10;n++)pxText('REAÇÃO '+n,glicX(n)+14,POSTER_DY+3,'#ffffff','center');
   // the rail: two rails, sleepers and supports down to the floor
   const ry=RIDE_Y+3;
   for(let x=0;x<GLIC_W;x+=48){r(x+20,ry+5,3,212-ry-5,'#2c3236');pxLine(x+21,ry+8,x+45,210,'#2c3236');pxLine(x+21,210,x+45,ry+8,'#2c3236');}
@@ -7445,28 +7508,6 @@ const ENZ_TXT={hk:'hexocinase',gk:'glicocinase',pfk:'fosfofrutocinase-1',pk:'pir
 const MOL_CHIP={ATP:'ATP',AMP:'AMP',CITRATO:'CITRATO',G6P:'GLICOSE-\n6-FOSFATO',F26BP:'FRUTOSE-\n2,6-BISFOSFATO',F16BP:'FRUTOSE-\n1,6-BISFOSFATO',ALANINA:'ALANINA',FOSFATO:'FOSFATO',GKRP:'PROTEÍNA\nREGULADORA'};
 const MOL_TXT={ATP:'ATP',AMP:'AMP',CITRATO:'citrato',G6P:'glicose-6-fosfato',F26BP:'frutose-2,6-bisfosfato',F16BP:'frutose-1,6-bisfosfato',ALANINA:'alanina',FOSFATO:'fosfato'};
 const MOL_BTN={ATP:'ATP',AMP:'AMP',CITRATO:'CITRATO',G6P:'GLICOSE-6-FOSFATO',F26BP:'FRUTOSE-2,6-BISFOSFATO',F16BP:'FRUTOSE-1,6-BISFOSFATO',ALANINA:'ALANINA'};
-const SIM_SC=[
-  {k:'rep',nome:'MÚSCULO EM REPOUSO',low:'músculo em repouso',musc:1,d1:'ATP E CITRATO ALTOS',d2:'AMP BAIXO',
-   tun:{1:['hk',.35,[['G6P','-']],'A glicose-6-fosfato acumulada inibe a hexocinase.'],
-        3:['pfk',.3,[['ATP','-'],['CITRATO','-']],'ATP e citrato sobrando inibem a fosfofrutocinase-1.'],
-        10:['pk',.4,[['ATP','-']],'O ATP sobrando também inibe a piruvato-cinase.']},
-   fim:'Com energia sobrando, a célula freia a glicólise nas reações que não têm volta.'},
-  {k:'cor',nome:'MÚSCULO NA CORRIDA',low:'músculo na corrida',musc:1,d1:'ATP CAINDO',d2:'AMP SUBINDO',
-   tun:{1:['hk',1.3,[],'A glicose-6-fosfato é consumida logo: nada inibe a hexocinase.'],
-        3:['pfk',1.6,[['AMP','+']],'O AMP alto desfaz a inibição pelo ATP e acelera a fosfofrutocinase-1.'],
-        10:['pk',1.5,[['F16BP','+']],'A frutose-1,6-bisfosfato da reação 3 ativa a piruvato-cinase por antecipação.']},
-   fim:'Com a energia caindo, a célula acelera a glicólise nos três pontos de controle.'},
-  {k:'alm',nome:'FÍGADO APÓS ALMOÇO',low:'fígado após o almoço',d1:'INSULINA ALTA',d2:'FRUTOSE-2,6-BISFOSFATO ALTA',
-   tun:{1:['gk',1.4,[],'No fígado, a reação 1 é da glicocinase: muita glicose chegando, e a glicose-6-fosfato não a inibe.'],
-        3:['pfk',1.8,[['F26BP','+']],'A insulina eleva a frutose-2,6-bisfosfato, o ativador mais potente da fosfofrutocinase-1.'],
-        10:['pk',1.5,[['F16BP','+']],'A frutose-1,6-bisfosfato ativa a piruvato-cinase.']},
-   fim:'Depois da refeição, o fígado acelera a glicólise mesmo com energia sobrando: o excesso de glicose vira reserva.'},
-  {k:'jej',nome:'FÍGADO EM JEJUM',low:'fígado em jejum',d1:'GLUCAGON ALTO',d2:'FRUTOSE-2,6-BISFOSFATO BAIXA',
-   tun:{1:['gk',.45,[['GKRP','0']],'A proteína reguladora prende a glicocinase no núcleo. Ficha cinza: não é regulação alostérica.'],
-        3:['pfk',.3,[['ATP','-']],'Sem frutose-2,6-bisfosfato, o ATP mantém a fosfofrutocinase-1 inibida.'],
-        10:['pk',.25,[['ALANINA','-'],['FOSFATO','0']],'A alanina inibe a piruvato-cinase. O fosfato, posto pelo glucagon, é regulação covalente.']},
-   fim:'Em jejum, o fígado freia a glicólise para que a glicose vá para o sangue e chegue ao cérebro.'}];
-function scTun(sc){const T={};for(const n of [1,3,10]){const [key,open,mols,note]=sc.tun[n];T[n]={key,name:ENZ_NAME[key],open,mols,note};}return T;}
 const pct=o=>Math.round(o*100);
 const rideFlux=()=>Math.min(rideSt.tun[1].open,rideSt.tun[3].open,rideSt.tun[10].open);
 /* the first scenario: the whole pathway with broken rail, no regulation. The 4 cell states (allosteric
@@ -7481,16 +7522,7 @@ function startVia(){
   if(!first)return go();
   say([{who:'SIMULADOR',t:'Primeiro, conheça a via inteira: da glicose até o piruvato, são 10 reações.'},
     {who:'SIMULADOR',t:'Depois de cada reação falta um pedaço do trilho. Abra o cartaz da reação e responda à pergunta do simulador para completar o caminho.'},
-    {who:'SIMULADOR',t:'Depois, nos quatro estados da célula, você vê como a via é regulada.'}],go);
-}
-function startRide(sc){
-  rideSt={mode:'livre',sc,tun:scTun(sc),inT:0,toast:null};glicPosters(false);
-  const first=!flags.rideTut;flags.rideTut=true;
-  const go=()=>{rideDone=false;goScene('simGlic',24,RIDE_Y,'right',sc.nome);};
-  if(!first)return go();
-  say([{who:'SIMULADOR',t:'Nas reações 1, 3 e 10 a glicose passa por dentro da enzima. Cada montanha é uma enzima. Túnel grande: enzima estimulada, o carrinho acelera. Túnel pequeno: enzima inibida, o carrinho se arrasta.'},
-    {who:'SIMULADOR',t:'As fichas no nicho da montanha são as moléculas ligadas ao sítio alostérico, longe do túnel: verde ativa, vermelha inibe. Ficha cinza é regulação que não é alostérica.'},
-    {who:'SIMULADOR',t:'Aqui o trilho está inteiro: repare na velocidade do carrinho em cada túnel.'}],go);
+    {who:'SIMULADOR',t:'Depois, você aprende a acelerar e a frear a via.'}],go);
 }
 function rideFactor(x){
   if(!rideSt||!rideSt.tun)return 1;
@@ -7510,7 +7542,8 @@ function tunVis(n){const V=rideSt.vis||(rideSt.vis={});return V[n]||(V[n]={t0:nu
 function tunShown(n,now){
   const T=rideSt.tun[n],v=tunVis(n);if(v.t0==null)return 1;
   let k=Math.max(0,Math.min(1,(now-v.t0-TUN_GLOW)/TUN_MOVE));k=k*k*(3-2*k);
-  return 1+(T.open-1)*k;
+  const a=v.from!=null?v.from:1; // (v3.07) the regulation rides: the bore moves from its last size
+  return a+(T.open-a)*k;
 }
 // the gap after reaction n closes only when the player opens that poster and answers its quick question
 const glicVisto=n=>!rideSt||rideSt.mode!=='trilho'||!!(flags.glicOk&&flags.glicOk[n]);
@@ -7542,8 +7575,7 @@ function glicPergunta(n){
       rideSt.toast={t:'Correto! O trilho se completou: '+molTxt(GLIC_MOL[n])+'.',until:now+4};
       tone(523,.07,'square',.04);setTimeout(()=>tone(784,.09,'square',.04),90);
     }else{
-      player.x=24;player.dir='right';keys.clear();rideSt.blk=0;flags.glicVistos[n]=false;tone(196,.15,'square',.05);setTimeout(()=>tone(147,.25,'square',.05),160); // wrong answer: back to the very start of the ride
-      rideSt.toast={t:'Resposta errada: o carrinho voltou ao início do percurso. Os trechos já completos continuam no lugar; pare de novo no cartaz da reação '+n+', releia e responda outra vez.',until:now+8};
+      rideSt.blk=0;flags.glicVistos[n]=false;viaQueda(n); // (v3.14) wrong answer: the rail breaks, everybody falls, back to the very start
     }}})).concat([{t:'↩ Voltar ao cartaz',cls:'volta',fn:()=>{rideSt.pend=n;rideSt.blk=n;openPoster(n);}}])}]);
 }
 // how far right the car can go: up to the first gap not yet filled
@@ -7565,7 +7597,7 @@ function drawGlicGaps(){
     // the product, still unknown
     if(p<.5){
       const {w,h,y}=molBox(GLIC_MOL[n]),bx=Math.round(cx-w/2),hot=n===next;
-      r(bx-1,y-1,w+2,h+2,'#161616');r(bx,y,w,h,'#2b2b2b');r(bx,y,w,1,hot&&Math.floor(now*3)%2?'#f2c94c':'#5a5a5a');
+      plateBox(bx-1,y-1,w+2,h+2,'#161616','#2b2b2b',hot&&Math.floor(now*3)%2?'#f2c94c':'#5a5a5a');
       pxText('???',cx,y+h/2-2,hot?'#f2c94c':'#9a9a9a','center');
     }
   }
@@ -7573,6 +7605,7 @@ function drawGlicGaps(){
 function rideTick(){
   if(scene!=='simGlic'||!rideSt||!rideSt.tun)return;
   const now=performance.now()/1000;
+  if(rideSt.mode==='reg')return regTick(now); // (v3.07)
   let k=0;for(const n of [1,3,10]){const G_=tunGeo(n,1),v=tunVis(n);
     if(v.t0==null&&player.x>=G_.x0-90){v.t0=now;tone(990,.06,'square',.03);tone(55,.6,'sawtooth',.04,TUN_GLOW);tone(82,.45,'triangle',.05,TUN_GLOW+.05);}
     if(player.x>=G_.x0-6&&player.x<=G_.x1+2)k=n;}
@@ -7614,14 +7647,15 @@ function drawEnzPlates(){
   for(let n=1;n<=10;n++){if(n===1||n===3||n===10)continue;
     const cx=glicX(n)+14,L=wrapHy(GLIC_ENZ[n].toUpperCase(),56),w=Math.max(...L.map(pxW))+8,h=L.length*7+5,x=cx-Math.round(w/2),y=120;
     r(cx,y+h,1,175-y-h,'#4a5055');
-    r(x,y,w,h,'#1d1612');r(x+1,y+1,w-2,h-2,'#3a2414');r(x+1,y+1,w-2,1,'#d9a441');
+    plateBox(x,y,w,h,'#1d1612','#3a2414','#d9a441');
     L.forEach((l,k)=>pxText(l,cx,y+4+k*7,'#efe3c8','center'));}
 }
 function drawTunnels(front){
   if(!rideSt||!rideSt.tun)return;g=fctx;const t=performance.now()/1000;
   if(!front)drawEnzPlates();
   for(const n of [1,3,10]){
-    const T=rideSt.tun[n],o=tunShown(n,t),v=tunVis(n),{x0,x1,w,top,ti}=tunGeo(n,o),lc=tunCol(o);
+    const rgN=rideSt.mode==='reg'; // (v3.11) accelerate/brake: only the bore's size changes; lamps and gauge stay neutral
+    const T=rideSt.tun[n],o=tunShown(n,t),v=tunVis(n),{x0,x1,w,top,ti}=tunGeo(n,o),lc=rgN?'#f2c94c':tunCol(o);
     const since=v.t0==null?-1:t-v.t0,moving=since>=TUN_GLOW&&since<TUN_GLOW+TUN_MOVE;
     const sx=moving?((Math.floor(t*30)%2)?1:-1):0; // the massif shakes while the bore changes
     if(!front){ // foothills on both sides (behind the rail), then the inside of the bore
@@ -7633,10 +7667,11 @@ function drawTunnels(front){
       const nl=Math.floor((w-8)/9);
       for(let i=0;i<nl;i++){const lx=x0+6+i*9;
         let on=true;
-        if(o>1.05)on=(Math.floor(t*16)-i)%3!==0;      // fast chase: speed
+        if(rgN)on=true;
+        else if(o>1.05)on=(Math.floor(t*16)-i)%3!==0;      // fast chase: speed
         else if(o<.9)on=Math.floor(t*1.5+i*.15)%2===0; // slow blink: brake
         r(lx,ti,2,2,on?lc:'#3a3a3a');if(on){px(lx-1,ti+1,'#2a2a2a');px(lx+2,ti+1,'#2a2a2a');}}
-      const X=player.x;if(o>1.05&&X>=x0-6&&X<=x1+2)for(let k=0;k<3;k++){const len=6+((t*40+k*7)%10)|0;r(Math.round(X-18-len-k*3),RIDE_Y-20+k*6,len,1,'#5aa865');}
+      const X=player.x;if(o>1.05&&X>=x0-6&&X<=x1+2)for(let k=0;k<3;k++){const len=6+((t*40+k*7)%10)|0;r(Math.round(X-18-len-k*3),RIDE_Y-20+k*6,len,1,rgN?'#c9c9c9':'#5aa865');}
       continue;
     }
     // the rock: above the bore and under the rail
@@ -7651,21 +7686,26 @@ function drawTunnels(front){
     if(moving)for(let k=0;k<8;k++)px(x0+4+((k*23+Math.floor(t*60))%(w-8)),top+2+((k*7+Math.floor(t*90))%20),'#9a9a9a');
     // the sign: enzyme name and an activity gauge (100% = basal)
     const cx=Math.round((x0+x1)/2)+sx,nm=ENZ_SHORT[T.key],pw=Math.max(pxW(nm),52)+8,pxx=cx-Math.round(pw/2);
-    r(pxx,74,pw,16,'#1d1612');r(pxx+1,75,pw-2,14,'#3a2414');r(pxx+1,75,pw-2,1,'#d9a441');
+    plateBox(pxx,74,pw,16,'#1d1612','#3a2414','#d9a441');
     pxText(nm,cx,77,'#efe3c8','center');
     const bw=28,bx=pxx+5,fill=Math.round(bw*Math.min(1,o/1.8));
-    r(bx,84,bw,3,'#1d1612');r(bx,84,fill,3,lc);px(bx+Math.round(bw/1.8),83,'#efe3c8');
-    pxText(pct(o)+'%',pxx+pw-4,83,lc,'right');
+    r(bx,84,bw,3,'#1d1612');
+    if(rgN)pxText('?',pxx+pw-4,83,'#9aa2a9','right'); // (v3.11) neutral gauge: no fill, no colour, no percentage
+    else{r(bx,84,fill,3,lc);px(bx+Math.round(bw/1.8),83,'#efe3c8');pxText(pct(o)+'%',pxx+pw-4,83,lc,'right');}
     // the allosteric niche: a recess in the rock with the bound molecules (green activates, red inhibits, grey: not allosteric)
     const mols=T.mols.filter(m=>m[1]!=='x').slice(0,3);
-    const chips=mols.map(m=>{const L=(NICHE_TXT[m[0]]||MOL_CHIP[m[0]]).split('\n');if(m[1]==='+'||m[1]==='-')L[L.length-1]+=' '+m[1];
-      return {L,c:m[1]==='+'?'#3f8a4c':m[1]==='-'?'#a12a22':'#4a5055',w:Math.max(...L.map(pxW))+4,h:L.length*6+1};});
+    const hide=rideSt.mode==='reg'; // (v3.09) accelerate/brake: the chips never tell whether they activate or inhibit
+    const chips=mols.map(m=>{const L=(NICHE_TXT[m[0]]||MOL_CHIP[m[0]]).split('\n');if(!hide&&(m[1]==='+'||m[1]==='-'))L[L.length-1]+=' '+m[1];
+      return {m:m[0],L,c:hide||m[1]==='n'?'#2b4a6f':m[1]==='+'?'#3f8a4c':m[1]==='-'?'#a12a22':'#4a5055',w:Math.max(...L.map(pxW))+4,h:L.length*6+1};});
     const nw=Math.max(30,...chips.map(c_=>c_.w))+6,nh=chips.length?chips.reduce((a_,c_)=>a_+c_.h+1,0)+5:11,nx=cx-Math.round(nw/2),ny=93;
     const glow=since>=0&&since<1.4&&Math.floor(since*8)%2===0;
-    r(nx-1,ny-1,nw+2,nh+2,glow?'#fff27a':'#1d1612');r(nx,ny,nw,nh,'#0b0806');r(nx,ny,nw,1,'#2c3236');r(nx,ny,1,nh,'#2c3236');
+    const rg=rideSt.mode==='reg',sel=rg&&rideSt.fase==='monta'&&rideSt.en===n,bad=rg&&!!rideSt.crash&&rideSt.bad===n; // (v3.07)
+    if(sel){const c=Math.floor(t*3)%2?'#f2c94c':'#fff27a';r(nx-3,ny-3,nw+6,nh+6,c);r(nx-2,ny-2,nw+4,nh+4,'#1d1612');}
+    r(nx-1,ny-1,nw+2,nh+2,bad&&Math.floor(t*8)%2?'#ef6a5c':glow?'#fff27a':'#1d1612');r(nx,ny,nw,nh,'#0b0806');r(nx,ny,nw,1,'#2c3236');r(nx,ny,1,nh,'#2c3236');
     let cy=ny+3;
     if(!chips.length)pxText('VAZIO',cx,ny+3,'#5d646a','center');
-    for(const c_ of chips){const xx=cx-Math.round(c_.w/2);r(xx,cy,c_.w,c_.h,c_.c);r(xx,cy,c_.w,1,'#ffffff33');
+    if(rg)(rideSt.nRc||(rideSt.nRc={}))[n]=chips;
+    for(const c_ of chips){const xx=cx-Math.round(c_.w/2);c_.x=xx;c_.y=cy;r(xx,cy,c_.w,c_.h,c_.c);r(xx,cy,c_.w,1,'#ffffff33');
       c_.L.forEach((l,k)=>pxText(l,xx+2,cy+1+k*6,'#ffffff'));cy+=c_.h+1;}
     // brake sparks at the wheels in an inhibited enzyme
     const X=Math.round(player.x);
@@ -7682,32 +7722,27 @@ function drawRideHud(){
     const F=DZ_FASES[rideSt.fase];
     hudRow('FASE '+(rideSt.fase+1)+': '+F.tit,1,'#2a1018','#ef6a5c','#efe3c8');
     hudRow('META: '+F.metaHud+' · FLUXO DA VIA '+flux+'%',12,'#0b1220','#5fb4f0','#efe3c8');
-  }else{
-    hudRow(rideSt.sc.nome+' · FLUXO DA VIA '+pct(rideFlux())+'%',1,'#0b1220','#5fb4f0','#efe3c8');
-  }
+  }else if(rideSt.mode==='emp')hudRow('PERCORRER A VIA · FASE 2 · REAÇÕES: '+rideSt.stage+' DE 10',1,'#0b1220','#5fb4f0','#efe3c8'); // (v3.13)
+  else if(rideSt.mode==='reg')drawRegHud(performance.now()/1000); // (v3.07)
   const ts=rideSt.toast;
   if(ts&&ts.until>performance.now()/1000){
-    const L=pxWrap(ts.t.toUpperCase(),W-24).slice(0,3),w=Math.max(...L.map(pxW))+10,x=camX+Math.round((W-w)/2),y=180;
+    const L=pxWrap(ts.t.toUpperCase(),W-24).slice(0,3),w=Math.max(...L.map(pxW))+10,x=camX+Math.round((W-w)/2),y=rideSt.mode==='reg'||rideSt.mode==='emp'?26:180;
     r(x,y,w,L.length*8+3,'#0b0806');r(x,y,w,1,'#f2c94c');L.forEach((l,i)=>pxText(l,x+5,y+3+i*8,'#efe3c8'));
   }
-  const s2=rideSt.mode==='desafio'?(padOn?'A GLICOSE CORRE SOZINHA · X DESISTIR':'A GLICOSE CORRE SOZINHA · ESC DESISTIR')
+  const s2=rideSt.mode==='reg'&&rideSt.fase==='monta'?(padOn?'✚ ESCOLHER E TROCAR A ENZIMA · A ENCAIXAR · X SAIR':'← → FICHA · ↑ ↓ ENZIMA · ENTER ENCAIXAR OU TIRAR · ESC SAIR')
+    :rideSt.mode==='desafio'||rideSt.mode==='reg'?(padOn?'A GLICOSE CORRE SOZINHA · X DESISTIR':'A GLICOSE CORRE SOZINHA · ESC DESISTIR')
     :(padOn?'← → MOVER · X SAIR':'← → MOVER · ESC SAIR');
-  pxText(s2,camX+W/2,215,'#5fb4f0','center');
+  pxText(s2,camX+W/2,215,'#efe3c8','center');
 }
 function rideEnd(){
   rideDone=true;keys.clear();sfx.open();
   if(rideSt&&rideSt.mode==='desafio')return dzResult();
+  if(rideSt&&rideSt.mode==='reg')return regResult(); // (v3.07)
+  if(rideSt&&rideSt.mode==='emp')return empResult(); // (v3.13)
   if(rideSt&&rideSt.mode==='trilho'){const first=!flags.viaOk;flags.viaOk=true;updatePauseExtra();
     return say([{who:'SIMULADOR',t:'Via completa! A glicose virou 2 piruvatos: a fase preparatória gastou 2 ATP e a de pagamento formou 4 ATP e 2 NADH. Saldo: 2 ATP e 2 NADH.'}]
-      .concat(first?[{who:'SIMULADOR',t:'Agora experimente os quatro estados da célula. Neles, as reações 1, 3 e 10 viram túneis: veja como a célula acelera ou freia a via.'}]:[]),
-      ()=>{simPage='estado';simSel=first?1:0;goScene('salaSim',192,182,'up','SIMULADOR');});}
-  const sc=rideSt.sc,flux=pct(rideFlux()),T=rideSt.tun;
-  (flags.simFlux||(flags.simFlux={}))[sc.k]=flux;
-  let slow=1;for(const n of [3,10])if(T[n].open<T[slow].open)slow=n;
-  const outros=SIM_SC.filter(x=>x!==sc&&flags.simFlux[x.k]!=null).map(x=>x.low+' '+flags.simFlux[x.k]+'%');
-  say([{who:'SIMULADOR',t:'Fluxo da via: '+flux+'%. A via anda no ritmo da enzima mais lenta; aqui, a '+ENZ_TXT[T[slow].key]+'. '+sc.fim}]
-       .concat(outros.length?[{who:'SIMULADOR',t:'Para comparar: '+outros.join(' · ')+'.'}]:[]),
-      ()=>{simPage='estado';simSel=1+SIM_SC.indexOf(sc);goScene('salaSim',192,182,'up','SIMULADOR');});
+      .concat(first?[{who:'SIMULADOR',t:'Agora, aprenda a acelerar e a frear a via: as reações 1, 3 e 10 viram túneis.'}]:[]),
+      ()=>{simPage='estado';simSel=first?2:0;goScene('salaSim',192,182,'up','SIMULADOR');});}
 }
 /* the simulator room is a screen, not a place to walk: no avatar, just a menu.
    Arrows / W-A-S-D / d-pad move the selection, ENTER (A) confirms, ESC (X) leaves or goes back; mouse and touch work too. */
@@ -7715,8 +7750,8 @@ let simSel=0;
 const inSim=()=>scene==='salaSim'&&state==='play';
 function simItems(){
   const exit={id:'sair',name:'Sair',rc:{x:168,y:196,w:48,h:18}};
-  if(simPage==='estado')return [{id:'via',rc:{x:16,y:90,w:110,h:86}}]
-    .concat(SIM_SC.map((sc,i)=>({id:'sc',sc,rc:{x:130+(i%2)*122,y:90+((i/2)|0)*44,w:118,h:42}})),[exit]);
+  if(simPage==='estado')return [{id:'via',rc:{x:16,y:90,w:110,h:42}},{id:'emp',rc:{x:16,y:134,w:110,h:42}}] // (v3.13) phase 2: push the glucose
+    .concat(REG_SC.map((sc,i)=>({id:'reg',sc,rc:{x:130,y:90+i*44,w:240,h:42}})),[exit]); // (v3.07) accelerate / brake
   const L=[{id:'iniciar',rc:{x:119,y:119,w:146,h:19}}];
   if(flags.dzOn)L.push({id:'desafio',rc:{x:119,y:154,w:146,h:16}});
   return L.concat([exit]);
@@ -7730,11 +7765,12 @@ function simSelect(){
   const it=simItems()[simSel];if(!it)return;sfx.blip();
   if(it.id==='iniciar'){simPage='estado';simSel=0;}
   else if(it.id==='via')startVia();
-  else if(it.id==='sc')startRide(it.sc);
+  else if(it.id==='emp')startEmp(); // (v3.16) free: phase 1 or phase 2 first, as the player likes
+  else if(it.id==='reg')startReg(it.sc);
   else if(it.id==='desafio')openDz();
   else simExit();
 }
-function simBack(){keys.clear();if(rideSt&&rideSt.mode==='desafio'){simPage='main';simSel=1;}else{simPage='estado';simSel=rideSt&&rideSt.mode==='livre'?1+SIM_SC.indexOf(rideSt.sc):0;}goScene('salaSim',192,182,'up','SIMULADOR');}
+function simBack(){keys.clear();if(rideSt&&rideSt.mode==='desafio'){simPage='main';simSel=1;}else{simPage='estado';simSel=rideSt&&rideSt.mode==='reg'?2+REG_SC.indexOf(rideSt.sc):rideSt&&rideSt.mode==='emp'?1:0;}goScene('salaSim',192,182,'up','SIMULADOR');}
 function simHit(e){ // screen position -> menu item (or -1)
   const b=cv.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*W,y=(e.clientY-b.top)/b.height*H;
   return simItems().findIndex(it=>x>=it.rc.x&&x<=it.rc.x+it.rc.w&&y>=it.rc.y&&y<=it.rc.y+it.rc.h);
@@ -7749,24 +7785,30 @@ function drawSimMenu(t){
   g=fctx;
   const its=simItems();if(simSel>=its.length)simSel=0;
   if(simPage==='estado'){
-    const x=8,y=66,w=368,h=126;simWindow(x,y,w,h,'ESTADO DA CÉLULA');
+    const x=8,y=66,w=368,h=126;simWindow(x,y,w,h,'REGULAÇÃO DA VIA');
     pxText('1º PERCORRA A VIA',71,y+15,'#7a2e3e','center');
-    pxText('2º COMO A CÉLULA ESTÁ AGORA?',252,y+15,'#7a2e3e','center');
+    pxText('2º REGULE A VIA',252,y+15,'#7a2e3e','center');
     its.forEach(it=>{const rc=it.rc,cx=rc.x+rc.w/2;
       if(it.id==='via'){
         r(rc.x,rc.y,rc.w,rc.h,'#1d1612');r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,'#1f4a33');r(rc.x+1,rc.y+1,rc.w-2,1,'#5aa865');
         pxText('PERCORRER A VIA',cx,rc.y+5,'#f2c94c','center');
-        ['GLICOSE → 2 PIRUVATO','10 REAÇÕES','','RESPONDA À PERGUNTA','DE CADA CARTAZ PARA','COMPLETAR O TRILHO'].forEach((l,i)=>pxText(l,cx,rc.y+17+i*8,'#efe3c8','center'));
+        ['FASE 1: RESPONDA AOS','CARTAZES'].forEach((l,i)=>pxText(l,cx,rc.y+14+i*8,'#efe3c8','center'));
         const k=viaFeitas();
-        pxText(flags.viaOk?'VIA COMPLETA':k?'REAÇÕES: '+k+' DE 10':'COMECE POR AQUI',cx,rc.y+74,flags.viaOk?'#5aa865':'#f2c94c','center');
+        pxText(flags.viaOk?'VIA COMPLETA':k?'REAÇÕES: '+k+' DE 10':'COMECE POR AQUI',cx,rc.y+32,flags.viaOk?'#5aa865':'#f2c94c','center');
         return;}
-      if(it.id!=='sc')return;const sc=it.sc;
+      if(it.id==='emp'){const ok=true; // (v3.13; v3.16: always open)
+        r(rc.x,rc.y,rc.w,rc.h,'#1d1612');r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,ok?'#1f4a33':'#3a3a3a');r(rc.x+1,rc.y+1,rc.w-2,1,ok?'#5aa865':'#5d646a');
+        pxText('PERCORRER A VIA',cx,rc.y+5,ok?'#f2c94c':'#9aa2a9','center');
+        ['FASE 2: PUXE A','GLICOSE'].forEach((l,i)=>pxText(l,cx,rc.y+14+i*8,ok?'#efe3c8':'#9aa2a9','center'));
+        pxText(flags.via2Ok?'CONCLUÍDA':'NOVA!',cx,rc.y+32,!ok?'#9aa2a9':flags.via2Ok?'#5aa865':'#f2c94c','center');
+        return;}
+      if(it.id!=='reg')return;const sc=it.sc,ac=sc.k==='acel';
       r(rc.x,rc.y,rc.w,rc.h,'#1d1612');
-      r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,sc.musc?'#2b4a6f':'#5a2230');r(rc.x+1,rc.y+1,rc.w-2,1,sc.musc?'#5b8dba':'#a12a22');
-      pxText(sc.nome,cx,rc.y+4,'#f2c94c','center');
-      pxText(sc.d1,cx,rc.y+14,'#efe3c8','center');pxText(sc.d2,cx,rc.y+22,'#efe3c8','center');
-      const fv=flags.simFlux&&flags.simFlux[sc.k];
-      pxText(fv!=null?'FLUXO VISTO: '+fv+'%':'AINDA NÃO TESTADO',cx,rc.y+32,fv!=null?'#5aa865':'#9aa2a9','center');});
+      r(rc.x+1,rc.y+1,rc.w-2,rc.h-2,ac?'#2b4a6f':'#5a2230');r(rc.x+1,rc.y+1,rc.w-2,1,ac?'#5b8dba':'#a12a22');
+      pxText(sc.nome,cx,rc.y+6,'#f2c94c','center');
+      pxText(sc.q,cx,rc.y+17,'#efe3c8','center');
+      const ok=!!(flags.regOk&&flags.regOk[sc.k]);
+      pxText(ok?'CONCLUÍDO':'AINDA NÃO CONCLUÍDO',cx,rc.y+30,ok?'#5aa865':'#9aa2a9','center');});
     pxText(padOn?'✚ ESCOLHER · A COMEÇAR · X VOLTAR':'SETAS ESCOLHER · ENTER COMEÇAR · ESC VOLTAR',x+w/2,y+h-8,'#2a1a10','center');
   }else{
     const x=112,y=76,w=160,h=72;simWindow(x,y,w,h,'SIMULADOR DE GLICÓLISE');
@@ -7908,6 +7950,493 @@ function dzResult(){
     L.push({who:'SIMULADOR',t:'Monte a célula de novo e tente outra vez.'});
   }
   say(L,()=>{simPage='main';simSel=1;goScene('salaSim',192,182,'up','SIMULADOR');});
+}
+
+/* ---------- (v3.07) accelerate / brake the pathway: the regulators go in on the ride screen itself ----------
+   Two rides replace the four cell states. The car waits at the start while the player fits molecules into the
+   allosteric niche of each control enzyme (up to 2 each); the bores open or close at once. LARGAR: the car runs
+   alone. The player wins only if every niche holds exactly the right regulators (an empty niche is right for the
+   hexokinase when accelerating). A wrong niche: the car loses control inside that enzyme's bore and falls off the
+   track; the friend makes fun of the driving, and the player tries again (no explanation) or leaves. */
+const REG_SC=[
+  {k:'acel',nome:'ACELERAR A VIA',q:'COMO ACELERAMOS ESTA VIA?',certo:{1:[],3:['AMP','F26BP'],10:['F16BP']},
+   ok:['Via acelerada! A glicose chegou ao piruvato a toda a velocidade.',
+     'O AMP e a frutose-2,6-bisfosfato ativam a fosfofrutocinase-1; a frutose-1,6-bisfosfato ativa a piruvato-cinase.',
+     'A hexocinase não tem ativador alostérico: ela fica livre quando a glicose-6-fosfato é consumida.']},
+  {k:'frear',nome:'FREAR A VIA',q:'COMO FREAMOS ESTA VIA?',certo:{1:['G6P'],3:['ATP','CITRATO'],10:['ATP','ALANINA']},
+   ok:['Via freada! A glicose atravessou devagar as três enzimas de controle.',
+     'A glicose-6-fosfato inibe a hexocinase; o ATP e o citrato inibem a fosfofrutocinase-1.',
+     'O ATP e a alanina inibem a piruvato-cinase.']}];
+const REG_EN=[1,3,10],REG_KEY={1:'hk',3:'pfk',10:'pk'};
+const regOn=()=>scene==='simGlic'&&!!rideSt&&rideSt.mode==='reg';
+const regMonta=()=>regOn()&&rideSt.fase==='monta'&&state==='play';
+// the friend's jokes about the driving, one pair for each personality (never in the online duo)
+const REG_PIADA={
+  m:['Estou com você para o que der e vier... mas, da próxima vez, quem dirige sou eu!','Caímos juntos, como bons amigos. Agora, por favor, aprenda a dirigir.'],
+  f:['Pelos meus cálculos, a chance de cairmos era de cem por cento.','Li o manual do carrinho inteiro. Em nenhuma página estava escrito "saia da pista".'],
+  r:['Perdi o sanduíche que estava no meu bolso! Quem vai me pagar outro?','Meu estômago ficou de cabeça para baixo. E vazio, o que é pior!'],
+  g:['Assim você nunca vai ganhar de mim numa corrida! Passe o comando para cá.','Até um carrinho de supermercado faria essa curva melhor.'],
+  d:['Lá em casa, um motorista assim seria demitido no primeiro dia.','Sujei o meu sapato novo. Espero que você saiba limpar couro.'],
+  p:['Espere só até a escola inteira saber dessa barbeiragem!','Que pilotagem linda! Vou contar para todo mundo, com detalhes.']};
+function regTun(){ // the tunnels from the niches: basal 100%, each molecule adds its effect
+  const T={};
+  for(const n of REG_EN){const key=REG_KEY[n];let o=1;
+    const mols=rideSt.pick[n].map(m=>{const e=DZ_EFF[key][m]||0;o+=e;return [m,e>0?'+':e<0?'-':'n'];});
+    T[n]={key,name:ENZ_NAME[key],open:Math.max(.15,Math.min(1.8,o)),mols,note:''};}
+  return T;
+}
+function regSync(n){ // a niche changed: its bore moves from where it is to the new size (the massif shakes)
+  const now=performance.now()/1000,v=tunVis(n),from=tunShown(n,now);
+  rideSt.tun=regTun();v.from=from;v.t0=now-TUN_GLOW;
+}
+function startReg(sc){
+  rideSt={mode:'reg',sc,fase:'monta',pick:{1:[],3:[],10:[]},en:1,ti:0,tun:null,inT:0,toast:null,cam:null};
+  rideSt.tun=regTun();glicPosters(false);
+  const first=!flags.regTut;flags.regTut=true;
+  const go=()=>{rideDone=false;goScene('simGlic',24,RIDE_Y,'right',sc.nome);};
+  if(!first)return go();
+  say([{who:'SIMULADOR',t:'As reações 1, 3 e 10 são os pontos de controle da via. Cada montanha é uma dessas enzimas.'},
+    {who:'SIMULADOR',t:'Escolha uma ficha na bandeja e encaixe-a no nicho da enzima. Cada nicho aceita até 2 fichas.'},
+    {who:'SIMULADOR',t:'O túnel muda na hora: maior, a enzima foi ativada; menor, foi inibida.'},
+    {who:'SIMULADOR',t:'Depois, aperte LARGAR. Se algum encaixe estiver errado, o carrinho sai da pista!'}],go);
+}
+function regTray(){ // the tray at the bottom of the screen (screen coordinates): the 7 chips and LARGAR
+  if(rideSt.trayRc)return rideSt.trayRc;
+  const L=DZ_MOLS.map(m=>{const t_=(NICHE_TXT[m]||MOL_CHIP[m]).split('\n');return {m,L:t_,w:Math.max(...t_.map(pxW))+6,h:t_.length*6+4};});
+  L.push({m:'LARGAR',L:['LARGAR'],w:pxW('LARGAR')+12,h:16});
+  const gap=5,tot=L.reduce((a_,c_)=>a_+c_.w,0)+gap*(L.length-1);let x=Math.round((W-tot)/2);
+  for(const c_ of L){c_.x=x;c_.y=206-c_.h;x+=c_.w+gap;}
+  return rideSt.trayRc=L;
+}
+function regEn(d){const R=rideSt,i=REG_EN.indexOf(R.en);R.en=REG_EN[(i+d+3)%3];sfx.blip();}
+function regToggle(n,m){
+  const R=rideSt,P=R.pick[n],i=P.indexOf(m);
+  if(i>=0){P.splice(i,1);sfx.blip();}
+  else if(P.length>=2){R.toast={t:'Cada nicho aceita no máximo 2 fichas.',until:performance.now()/1000+3};sfx.bump();return;}
+  else{P.push(m);tone(660,.05,'square',.04);}
+  regSync(n);
+}
+function regUse(i){const c_=regTray()[i];if(!c_)return;if(c_.m==='LARGAR')return regLargar();regToggle(rideSt.en,c_.m);}
+function regKey(c,rep){
+  const R=rideSt,n=regTray().length;
+  if(c==='KeyA'||c==='ArrowLeft'){R.ti=(R.ti+n-1)%n;sfx.blip();}
+  else if(c==='KeyD'||c==='ArrowRight'){R.ti=(R.ti+1)%n;sfx.blip();}
+  else if(c==='KeyW'||c==='ArrowUp')regEn(-1);
+  else if(c==='KeyS'||c==='ArrowDown')regEn(1);
+  else if(!rep)regUse(R.ti);
+}
+function regClick(e){
+  const b=cv.getBoundingClientRect(),x=(e.clientX-b.left)/b.width*W,y=(e.clientY-b.top)/b.height*H,R=rideSt;
+  for(const a_ of R.arRc||[])if(x>=a_.x&&x<=a_.x+a_.w&&y>=a_.y&&y<=a_.y+a_.h)return regEn(a_.d);
+  const L=regTray(),i=L.findIndex(c_=>x>=c_.x-2&&x<=c_.x+c_.w+2&&y>=c_.y-2&&y<=c_.y+c_.h+2);
+  if(i>=0){R.ti=i;return regUse(i);}
+  const wx=x+camX;
+  for(const n of REG_EN){
+    for(const c_ of (R.nRc&&R.nRc[n])||[])if(wx>=c_.x&&wx<=c_.x+c_.w&&y>=c_.y&&y<=c_.y+c_.h){R.en=n;return regToggle(n,c_.m);}
+    const G_=tunGeo(n,1);if(wx>=G_.x0-4&&wx<=G_.x1+4&&y>=56&&y<=184){if(R.en!==n){R.en=n;sfx.blip();}return;}}
+}
+function regLargar(){
+  const R=rideSt;
+  R.bad=REG_EN.find(n=>{const C=R.sc.certo[n],P=R.pick[n];return C.length!==P.length||C.some(m=>!P.includes(m));})||0;
+  R.fase='corre';R.toast=null;keys.clear();tone(523,.07,'square',.04);setTimeout(()=>tone(784,.09,'square',.04),90);
+}
+// the camera: on the chosen enzyme while the player fits the chips, then back on the car
+function regCam(){
+  const R=rideSt;if(!regOn())return null;
+  const now=performance.now()/1000,dt=Math.min(.1,now-(R.camT||now));R.camT=now;
+  const want=R.fase==='monta'?glicX(R.en)+14:player.x;
+  if(R.cam==null)R.cam=player.x;
+  R.cam+=(want-R.cam)*Math.min(1,dt*5);
+  return R.cam;
+}
+function regTick(now){
+  const R=rideSt;
+  if(R.fase==='corre'&&R.bad){const G_=tunGeo(R.bad,1);
+    if(player.x>=G_.x0+G_.w*.4){R.fase='crash';R.crash={t0:now,x0:player.x,x1:G_.x1};
+      tone(880,.25,'sawtooth',.03);tone(660,.25,'sawtooth',.03,.15);tone(440,.3,'sawtooth',.03,.3);}}
+  if(R.fase!=='crash')return;
+  const C=R.crash,s_=now-C.t0;
+  player.x=s_<.6?C.x0+s_*25:C.x0+15+(s_-.6)*110;
+  if(!C.exitT&&player.x>C.x1+4){C.exitT=now;tone(220,.12,'square',.05);}
+  if(C.exitT&&!C.boom&&now-C.exitT>.7){C.boom=now;tone(70,.4,'square',.06);tone(50,.5,'triangle',.06,.05);}
+  if(s_>2.6&&!C.done){C.done=1;regCrashTalk();}
+}
+function regCrashTalk(){
+  const R=rideSt,n=R.bad,L=[];
+  if(!amigoX&&!duoHist){const J=REG_PIADA[amigoAv]||REG_PIADA.f,k=flags.regPiada=(flags.regPiada||0)+1;
+    L.push({who:String(amigoNome()).toUpperCase(),t:J[k%J.length]});}
+  // (v3.08) no explanation: the player finds the mistake by trying again; the answer comes only with the win (regResult)
+  L.push({who:'SIMULADOR',t:'O carrinho saiu da pista. Algum encaixe está errado.',choices:[
+    {t:'Tentar de novo',fn:()=>{R.fase='monta';R.crash=null;R.en=n;player.x=24;player.dir='right';rideDone=false;keys.clear();}},
+    {t:'Sair da simulação',fn:()=>simBack()}]});
+  say(L);
+}
+function regResult(){
+  const R=rideSt,sc=R.sc;(flags.regOk||(flags.regOk={}))[sc.k]=true;updatePauseExtra();
+  say(sc.ok.map(t_=>({who:'SIMULADOR',t:t_})),()=>{simPage='estado';simSel=2+REG_SC.indexOf(sc);goScene('salaSim',192,182,'up','SIMULADOR');});
+}
+// the crash: the car shakes inside the bore, is thrown out of the exit portal, tumbles and falls off the track
+{const dr0=drawRide;drawRide=function(t){
+  const R=rideSt,C=R&&R.mode==='reg'&&R.crash;
+  if(!C)return dr0(t);
+  const now=performance.now()/1000,s_=now-C.t0,te=C.exitT?now-C.exitT:0;
+  const dy=C.exitT?Math.round(260*te*te-45*te):0,rot=C.exitT?te*5:(s_<.6?Math.sin(s_*45)*.12:.15);
+  const X=player.x,Y=player.y;
+  if(dy<130){g=fctx;g.save();g.translate(X,Y-8+dy);g.rotate(rot);g.translate(-X,-(Y-8));try{dr0(t);}finally{g=fctx;g.restore();}}
+  g=fctx;
+  if(!C.exitT)for(let k=0;k<6;k++)px(Math.round(X-10+Math.random()*20),RIDE_Y+((Math.random()*4)|0)-2,Math.random()<.5?'#f2c94c':'#ef6a5c');
+  if(C.exitT)for(let k=0;k<6;k++){const a_=te-k*.12;if(a_<=0||a_>1.6)continue;
+    pxEllipse(Math.round(C.x1+6+k*3),Math.round(RIDE_Y-2-a_*18),Math.round(2+a_*4),Math.round(2+a_*3),'rgba(170,170,170,'+Math.max(0,.55-a_*.33).toFixed(2)+')');}
+  if(C.boom){const a_=now-C.boom;if(a_<1.2)for(let k=0;k<5;k++)pxEllipse(Math.round(X-14+k*7),Math.round(206-a_*10-(k%2)*3),Math.round(3+a_*5),Math.round(2+a_*3),'rgba(150,150,150,'+Math.max(0,.6-a_*.5).toFixed(2)+')');}
+};}
+{const dr1=drawRide;drawRide=function(t){if(empOn())return drawEmp(t);return dr1(t);};} // (v3.13) pushing: the molecule, no car
+function drawRegTray(t){
+  const R=rideSt,L=regTray(),P=R.pick[R.en],bl=Math.floor(t*3)%2;
+  r(camX,184,W,26,'#0b0806');r(camX,184,W,1,'#f2c94c');
+  L.forEach((c_,i)=>{const x=camX+c_.x,y=c_.y;
+    if(c_.m==='LARGAR'){r(x,y,c_.w,c_.h,'#1d1612');r(x+1,y+1,c_.w-2,c_.h-2,'#3f8a4c');r(x+1,y+1,c_.w-2,1,'#5aa865');pxText('LARGAR',x+Math.round(c_.w/2),y+5,'#ffffff','center');}
+    else{const on=P.includes(c_.m);r(x,y,c_.w,c_.h,on?'#5b8dba':'#2b4a6f');r(x,y,c_.w,1,'#ffffff33');c_.L.forEach((l,k)=>pxText(l,x+3,y+2+k*6,'#ffffff'));}
+    if(i===R.ti){const c=bl?'#f2c94c':'#fff27a';r(x-2,y-2,c_.w+4,1,c);r(x-2,y+c_.h+1,c_.w+4,1,c);r(x-2,y-2,1,c_.h+4,c);r(x+c_.w+1,y-2,1,c_.h+4,c);}
+  });
+}
+function drawRegHud(t){
+  const R=rideSt;
+  hudRow(R.sc.nome+' · '+R.sc.q,1,'#0b1220','#5fb4f0','#efe3c8');
+  if(R.fase!=='monta'){hudRow('FLUXO DA VIA '+pct(rideFlux())+'%',12,'#0b1220','#5fb4f0','#efe3c8');R.arRc=null;return;}
+  const n=R.en,s_='REAÇÃO '+n+': '+ENZ_NAME[REG_KEY[n]]+' · NICHO: '+R.pick[n].length+' DE 2';
+  hudRow(s_,12,'#2a1a10','#f2c94c','#efe3c8');
+  const w=pxW(s_)+10,x0=Math.round((W-w)/2);R.arRc=[{x:x0-14,y:12,w:12,h:10,d:-1},{x:x0+w+2,y:12,w:12,h:10,d:1}];
+  for(const a_ of R.arRc){r(camX+a_.x,a_.y,a_.w,a_.h,'#2a1a10');r(camX+a_.x,a_.y,a_.w,1,'#f2c94c');pxText(a_.d<0?'←':'→',camX+a_.x+6,a_.y+3,'#f2c94c','center');}
+  drawRegTray(t);
+}
+
+/* ---------- (v3.13) "Percorrer a via · fase 2": the player pushes the glucose along the pathway ----------
+   On foot, behind the molecule (no car). At each enzyme the molecule stops and a sheet asks which structure comes
+   out (3 structures, no names). Right: a cloud of explosion wraps the molecule and the next one comes out of it.
+   Wrong: the enzyme pushes it back and the player tries again. Always open (v3.16: free order with phase 1); done:
+   flags.via2Ok. The structures come from the SimuladorJoao9 (simMolSVG), redrawn here. */
+const EMP_TRI={ // the groups on each carbon of a triose: =O above, P/OH/CH3 below, COO- above
+  dhap:{n:'DHAP',c:[['OH'],['=O'],['P']]},g3p:{n:'G3P',c:[['=O'],['OH'],['P']]},bpg:{n:'1,3-BPG',c:[['=O','P'],['OH'],['P']]},
+  pg3:{n:'3-PG',c:[['COO⁻'],['OH'],['P']]},pg2:{n:'2-PG',c:[['COO⁻'],['P'],['OH']]},pep:{n:'PEP',c:[['COO⁻'],['P'],[]],dup:1},
+  pir:{n:'PIRUVATO',c:[['COO⁻'],['=O'],['CH₃']]}};
+const EMP_ETAPA=[['ring6',[]],['ring6',[6]],['ring5',[6]],['ring5',[1,6]],['tri','dhap','g3p'],['tri','g3p','g3p'],['tri','bpg','bpg'],
+  ['tri','pg3','pg3'],['tri','pg2','pg2'],['tri','pep','pep'],['tri','pir','pir']];
+const EMP_CURTO=['GLICOSE','GLICOSE-6-FOSFATO','FRUTOSE-6-FOSFATO','FRUTOSE-1,6-BIFOSFATO','DHAP + G3P','2 G3P','2 (1,3-BPG)','2 (3-PG)','2 (2-PG)','2 PEP','2 PIRUVATO'];
+const EMP_NOME=['Glicose','Glicose-6-fosfato','Frutose-6-fosfato','Frutose-1,6-bifosfato','Di-hidroxiacetona-fosfato e gliceraldeído-3-fosfato',
+  '2 gliceraldeído-3-fosfato','2 (1,3-bifosfoglicerato)','2 (3-fosfoglicerato)','2 (2-fosfoglicerato)','2 fosfoenolpiruvato','2 piruvato'];
+const EMP_FX=['','gastou 1 ATP','','gastou 1 ATP','a hexose se partiu em duas trioses','a DHAP virou gliceraldeído-3-fosfato','formou 2 NADH',
+  'formou 2 ATP','o fosfato mudou de carbono','saiu água','formou 2 ATP'];
+function empSVG(i,col){
+  const m=EMP_ETAPA[i];col=col||'#5fb4f0';
+  const C=(x,y,n)=>'<circle cx="'+x+'" cy="'+y+'" r="8" fill="#1d1612" stroke="'+col+'" stroke-width="2.5"/><text x="'+x+'" y="'+(y+3)+'" font-size="8" text-anchor="middle" fill="#fff" font-family="monospace">'+n+'</text>';
+  const O=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="8" fill="#d0352b" stroke="#fff" stroke-width="1.5"/><text x="'+x+'" y="'+(y+3.5)+'" font-size="9" text-anchor="middle" fill="#fff" font-family="monospace" font-weight="bold">O</text>';
+  const P=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="9" fill="#f2c94c" stroke="#1d1612" stroke-width="2"/><text x="'+x+'" y="'+(y+4)+'" font-size="11" text-anchor="middle" fill="#1d1612" font-family="monospace" font-weight="bold">P</text>';
+  const L=(x1,y1,x2,y2,d)=>{const s='stroke="#f4f6f4" stroke-width="3" stroke-linecap="round"';if(!d)return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" '+s+'/>';
+    const a=Math.atan2(y2-y1,x2-x1)+Math.PI/2,ox=3.2*Math.cos(a),oy=3.2*Math.sin(a);
+    return '<line x1="'+(x1+ox)+'" y1="'+(y1+oy)+'" x2="'+(x2+ox)+'" y2="'+(y2+oy)+'" '+s+'/><line x1="'+(x1-ox)+'" y1="'+(y1-oy)+'" x2="'+(x2-ox)+'" y2="'+(y2-oy)+'" '+s+'/>';};
+  const T=(x,y,t)=>'<text x="'+x+'" y="'+y+'" font-size="11" text-anchor="middle" fill="#f4f6f4" font-family="monospace" font-weight="bold" paint-order="stroke" stroke="#1d1612" stroke-width="3">'+t+'</text>';
+  const svg=(w,body)=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' 112" width="'+(w*2)+'" height="224">'+body+'</svg>';
+  if(m[0]==='tri'){
+    const tri=(x0,y0,k)=>{const d=EMP_TRI[k],xs=[x0,x0+34,x0+68];let b=L(xs[0],y0,xs[1],y0)+L(xs[1],y0,xs[2],y0,d.dup&&1),a='';
+      d.c.forEach((gs,i_)=>gs.forEach(gp=>{const x=xs[i_];
+        if(gp==='=O'){b+=L(x,y0,x,y0-26,1);a+=O(x,y0-30);}
+        else if(gp==='P'){b+=L(x,y0,x,y0+24);a+=P(x,y0+30);}
+        else if(gp==='COO⁻'){b+=L(x,y0,x,y0-20);a+=T(x,y0-24,'COO⁻');}
+        else{b+=L(x,y0,x,y0+18);a+=T(x,y0+31,gp);}}));
+      xs.forEach((x,i_)=>a+=C(x,y0,i_+1));return b+a;};
+    return svg(232,tri(22,48,m[1])+tri(142,48,m[2]));
+  }
+  // ring: pyranose (6 corners: C1–C5 + O) or furanose (5 corners: C2–C5 + O, with C1 and C6 outside)
+  const cx=82,cy=56,r_=30,six=m[0]==='ring6',n=six?6:5,ang=k=>(-90+k*360/n)*Math.PI/180,pt=k=>[cx+r_*Math.cos(ang(k)),cy+r_*Math.sin(ang(k))];
+  const lab=six?['O','1','2','3','4','5']:['O','2','3','4','5'];
+  let b='',a='';
+  for(let k=0;k<n;k++){const [x1,y1]=pt(k),[x2,y2]=pt((k+1)%n);b+=L(x1,y1,x2,y2);}
+  for(let k=0;k<n;k++){const [x,y]=pt(k);a+=lab[k]==='O'?O(x,y):C(x,y,lab[k]);}
+  const fora=(k,num,comP)=>{const [x,y]=pt(k),dx=x-cx,dy=y-cy,dl=Math.hypot(dx,dy),ex=x+dx/dl*24,ey=y+dy/dl*24;b+=L(x,y,ex,ey);a+=C(ex,ey,num);
+    const fx=ex+dx/dl*22,fy=ey+dy/dl*22;if(comP){b+=L(ex,ey,fx,fy);a+=P(fx,fy);}else a+=T(fx,fy+4,'OH');};
+  if(six)fora(5,'6',m[1].includes(6));
+  else{fora(1,'1',m[1].includes(1));fora(4,'6',m[1].includes(6));}
+  return svg(164,b+a);
+}
+const EMP_IMG=EMP_ETAPA.map((_,i)=>{const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(empSVG(i));return im;});
+const EMP_H=14; // (v3.15) the molecule's height on the cart (game pixels; half of the first version)
+const empW=i=>Math.round((EMP_ETAPA[i][0]==='tri'?232:164)*EMP_H/112);
+const empOn=()=>scene==='simGlic'&&!!rideSt&&rideSt.mode==='emp';
+// (v3.15) the player walks in front, tied to a rope; the rope pulls a small cart with the molecule on it, and the
+// adventure friend rides on top of everything, cheering. EMP_ROPE: from the player to the cart's front
+const EMP_ROPE=26,EMP_CW=32,empCartX=()=>Math.round(player.x)-EMP_ROPE-EMP_CW; // the cart's left edge
+const empLim=()=>{const R=rideSt,n=R.stage+1;return n>10?1e9:glicX(n)+14-3+EMP_ROPE;}; // the player's x where the cart's front meets enzyme n
+// the friend's cheering, one set per personality (short: a balloon); never in the online duo
+const EMP_TORCIDA={ // (v3.22) ten lines each
+  m:['Puxe com força! Eu confio em você!','Vá em frente! Estou bem aqui atrás!','Nenhuma enzima vai nos parar!','Que time! Você puxa, e eu torço!',
+    'Estou com você até o piruvato!','Uma enzima de cada vez. Nós conseguimos!','Nenhum amigo meu desiste no meio da via!',
+    'Herói não é quem não erra; é quem continua!','Se cansar, eu puxo. Mentira: eu fico aqui.','Coragem! Cada passo é uma reação a menos!'],
+  f:['Pelos meus cálculos, faltam poucas reações!','Lembre: o que entra e o que sai!','Eu anotei tudo. Pode continuar!','Excelente! Exatamente como no livro!',
+    'Dez reações. Eu sei todas de cor, só para constar.','Pense na estrutura antes de escolher!','Isso, com método! Como manda a ciência.',
+    'Fato curioso: a glicólise acontece no citoplasma.','Repare nos fosfatos: eles contam a história!','Quase lá! Vou anotar tudo no meu caderno.'],
+  r:['Vá rápido! Eu estou com fome!','Se chegar ao piruvato, tem lanche?','Puxe, que eu sigo... sentado!','Mais rápido que a fila da cantina!',
+    'Esse carrinho tem lugar para um lanche?','Piruvato tem gosto de quê, será?','Puxe mais rápido! A cantina fecha cedo!',
+    'Eu torço melhor de barriga cheia, sabia?','Se a glicose é açúcar, posso dar uma mordida?','Daqui de cima a vista é ótima. A fome também.'],
+  g:['Mais rápido! Aposto que eu puxaria melhor!','Vamos bater o recorde da turma!','Isso! Ninguém nos alcança!','Força! Ganhar é o que importa!',
+    'Aposto que a turma inteira está atrás de nós!','Mais força nesse braço! Quero o primeiro lugar!','Recorde da escola, aí vamos nós!',
+    'Nenhuma enzima é páreo para nós dois!','Isso! Agora acelere, que o pódio é nosso!','Já disse que eu ganharia? Mas vá em frente.'],
+  d:['Puxe com elegância, por favor.','Um carrinho destes merecia um motorista.','Nada mau... para um iniciante.','Cuidado com os buracos: meu sapato é novo.',
+    'Na minha família ninguém puxa carrinho. Mas tudo bem.','Admito: você está indo melhor do que eu esperava.','Este monitor é antigo. Lá em casa temos um melhor.',
+    'Continue. Não vou dizer que estou orgulhoso.','Hum. Aceitável. Siga em frente.','Puxe com dignidade, ao menos.'],
+  p:['Que esforço! Vou contar para todo mundo!','Ninguém vai acreditar quando eu contar!','Que bonito: você puxando, e eu descansando.','Força! A escola inteira vai saber disso!',
+    'Vou contar que você fez tudo isso sem ajuda!','Que esforço lindo! Já estou escrevendo a fofoca.','Uau, que velocidade... de lesma!',
+    'Ninguém sabe, mas eu torço muito por você.','Quando eu contar isso, vão pedir até autógrafo!','Isso vai virar assunto no intervalo, pode apostar.']};
+function empTorcer(now){
+  const R=rideSt;if(amigoX||duoHist)return;
+  const L=EMP_TORCIDA[amigoAv]||EMP_TORCIDA.f;let k=(Math.random()*L.length)|0;if(k===R.torLast)k=(k+1)%L.length;R.torLast=k; // (never the same line twice in a row)
+  R.tor={t:L[k],until:now+4}; // (v3.30) 4 s: time to read itR.torNext=now+4+30; // (v3.31) a line only after 30 s of silence
+}
+function startEmp(){
+  rideSt={mode:'emp',stage:0,armed:true,cloud:null,toast:null,tun:null,inT:0,tor:null,torNext:performance.now()/1000+30};glicPosters(false);
+  const first=!flags.empTut;flags.empTut=true;
+  const go=()=>{rideDone=false;goScene('simGlic',84,RIDE_Y,'right','PERCORRER A VIA · FASE 2');};
+  if(!first)return go();
+  say([{who:'SIMULADOR',t:'Agora é você quem puxa a glicose pela via, reação por reação.'},
+    {who:'SIMULADOR',t:'Em cada enzima, o carrinho para. Aperte ENTER e escolha a molécula que ela forma.'},{who:'SIMULADOR',t:'Se acertar, a molécula se transforma.'},
+    {who:'SIMULADOR',t:'Se errar, você volta ao início da via e corre de novo até a enzima em que errou.'}],go);
+}
+function empTick(){
+  const R=rideSt,now=performance.now()/1000;
+  if(R.tor&&now>R.tor.until)R.tor=null;
+  if(R.cloud){player.x=R.cloud.px;const s_=now-R.cloud.t0;
+    if(!R.cloud.swap&&s_>=.45){R.cloud.swap=true;R.stage++;tone(784,.09,'square',.04);setTimeout(()=>tone(1046,.12,'square',.04),90);
+      R.toast={t:EMP_CURTO[R.stage]+(EMP_FX[R.stage]?' · '+EMP_FX[R.stage]:''),until:now+4};}
+    if(s_>=1.05)R.cloud=null;
+    return;}
+  if(!R.tor&&player.moving&&now>=(R.torNext||0))empTorcer(now);
+  const lim=empLim(); // (v3.15) the cart waits at the enzyme: the sheet opens only when the player asks (ENTER, a tap)
+  if(player.x>lim)player.x=lim;
+}
+const empNaPorta=()=>{const R=rideSt;return !!R&&!R.cloud&&R.stage<10&&player.x>=empLim()-1;};
+function empEnter(){if(empNaPorta())openEmp();}
+// the sheet: what goes in, and three structures to choose from
+var emp=null;const empEl=$('emp');
+function openEmp(){
+  const R=rideSt,n=R.stage+1;
+  // (v3.16) four structures: the right one and three neighbours on the pathway; the right one's place follows a
+  // plan made at the start, spread as evenly as possible over the four places (each one 2 or 3 times in 10)
+  if(!R.plano)R.plano=empPlano();
+  if(!R.ops)R.ops={};
+  if(!R.ops[n]){const alt=[n-1,n+1,n+2,n-2,n+3,n-3].filter(k=>k>=0&&k<=10&&k!==n).slice(0,3).sort(()=>Math.random()-.5);
+    alt.splice(R.plano[n-1],0,n);R.ops[n]=alt;}
+  const ops=R.ops[n];
+  emp={n,ops,sel:0,msg:''};
+  $('emp-head').textContent='SIMULADOR · PERCORRER A VIA · FASE 2 · REAÇÃO '+n+' DE 10';
+  $('emp-aluno').textContent=gen('ALUNO: ','ALUNA: ')+(jogHist()||'—');
+  const tx=$('emp-txt');tx.textContent='';
+  const b=document.createElement('b');b.textContent='Reação '+n+' · '+GLIC_ENZ[n];tx.appendChild(b);
+  const p=document.createElement('span');p.textContent='Entra: '+EMP_NOME[n-1].toLowerCase()+'. Qual molécula sai desta enzima?';tx.appendChild(p);
+  $('emp-entra').textContent=''; // (v3.26) no picture of what goes in: it is already on the monitor, and a fifth structure confused
+  const box=$('emp-ops');box.textContent='';
+  ops.forEach((k,i)=>{const bt=document.createElement('button');bt.type='button';bt.className='emp-op';bt.innerHTML=empSVG(k);{const nm=document.createElement('span');nm.className='emp-nome';nm.textContent=EMP_NOME[k];bt.appendChild(nm);} // (v3.18) the name under each structure
+    bt.setAttribute('aria-label',EMP_NOME[k]);
+    bt.addEventListener('click',e=>{e.stopPropagation();if(!emp)return;if(emp.sel===i)return empConfirm();emp.sel=i;sfx.blip();renderEmp();});box.appendChild(bt);});
+  keys.clear();state='emp';empEl.hidden=false;renderEmp();tone(523,.08,'square',.04);
+}
+function renderEmp(){
+  if(!emp)return;
+  [...$('emp-ops').children].forEach((bt,i)=>bt.classList.toggle('sel',i===emp.sel));
+  $('emp-msg').textContent=emp.msg;
+}
+function empMove(d){if(!emp)return;emp.sel=(emp.sel+d+4)%4;sfx.blip();renderEmp();}
+function empPlano(){ // the place (0-3) of the right answer in each of the 10 reactions: 2 or 3 times each, never twice in a row
+  for(let t=0;t<200;t++){const P=[0,1,2,3,0,1,2,3],x=[0,1,2,3].sort(()=>Math.random()-.5);P.push(x[0],x[1]);P.sort(()=>Math.random()-.5);
+    if(P.every((v,i)=>!i||v!==P[i-1]))return P;}
+  return [0,1,2,3,0,1,2,3,0,1];
+}
+function closeEmp(back){
+  if(state!=='emp')return;empEl.hidden=true;emp=null;state='play';keys.clear();
+  if(back&&rideSt)keys.clear(); // (the cart stays at the enzyme)
+}
+function empConfirm(){
+  if(!emp)return;const R=rideSt,ok=emp.ops[emp.sel]===emp.n,now=performance.now()/1000;
+  closeEmp(false);
+  if(ok){R.cloud={t0:now,px:player.x,swap:false};tone(90,.3,'sawtooth',.05);tone(60,.4,'square',.05,.05);return;}
+  // (v3.27) wrong: the enzyme rejects it, the friend makes fun of the choice, and everything starts again from the glucose
+  R.shake=now;R.tor=null;tone(196,.15,'square',.05);setTimeout(()=>tone(147,.25,'square',.05),160);
+  const volta=()=>{const t0=performance.now()/1000;R.cloud=null;player.x=84;player.dir='right';keys.clear(); // (v3.31) back to the start, but the molecule stays the last right one: run straight back to the enzyme
+    R.torNext=t0+30;R.toast={t:'Estrutura errada: volte até a '+GLIC_ENZ[R.stage+1].toLowerCase()+' e tente de novo.',until:t0+5};};
+  if(amigoX||duoHist)return volta();
+  const J=EMP_CRITICA[amigoAv]||EMP_CRITICA.f;let k=(Math.random()*J.length)|0;if(k===R.criLast)k=(k+1)%J.length;R.criLast=k;
+  say([{who:String(amigoNome()).toUpperCase(),t:J[k]}],volta);
+}
+// the friend's remarks on a wrong structure (by personality)
+const EMP_CRITICA={
+  m:['Eu confio em você... mas essa estrutura nem eu escolheria!','Tudo bem: a gente recomeça junto. Mas preste atenção nos fosfatos!','Coragem não falta. Falta olhar a molécula com calma.'],
+  f:['Essa estrutura? Sério? Estava no livro, no capítulo da glicólise!','Contei os carbonos três vezes. Você não contou nenhuma.','Errado! Mas não se preocupe: depois eu explico tudo.'],
+  r:['Voltar tudo? Minhas pernas e o meu estômago protestam!','Errou! Agora vou correr tudo de novo... com fome.','Essa molécula não existe nem no cardápio da cantina!'],
+  g:['Errou! Assim a outra turma ganha da gente!','Recomeçar? Tudo bem, mas agora vamos bater o recorde!','Eu teria acertado de olhos fechados.'],
+  d:['Que escolha deselegante.','Na minha família, ninguém erra uma estrutura dessas.','Vou fingir que não vi. Mas eu vi.'],
+  p:['Ah, essa eu vou contar para todo mundo!','Parabéns! Você inventou uma molécula nova. Pena que está errada.','A escola inteira vai adorar saber disso.']};
+$('emp-close').addEventListener('click',e=>{e.stopPropagation();closeEmp(true);});
+$('emp-ok').addEventListener('click',e=>{e.stopPropagation();empConfirm();});
+function empResult(){
+  flags.via2Ok=true;updatePauseExtra();
+  say([{who:'SIMULADOR',t:'Via completa! Você levou uma glicose até ela virar 2 piruvatos.'},
+    {who:'SIMULADOR',t:'Na fase preparatória, a célula gastou 2 ATP; na de pagamento, formou 4 ATP e 2 NADH.'}],
+    ()=>{simPage='estado';simSel=1;goScene('salaSim',192,182,'up','SIMULADOR');});
+}
+// the enzymes' name plates (all ten: no mountains in this phase), behind the player
+function drawEmpPlates(){
+  for(let n=1;n<=10;n++){
+    const cx=glicX(n)+14,L=wrapHy(GLIC_ENZ[n].toUpperCase(),56),w=Math.max(...L.map(pxW))+8,h=L.length*7+5,x=cx-Math.round(w/2),y=120;
+    const prox=rideSt&&rideSt.stage+1===n;
+    r(cx,y+h,1,175-y-h,'#4a5055');
+    plateBox(x,y,w,h,'#1d1612',prox?'#5a2230':'#3a2414',prox?'#f2c94c':'#d9a441');
+    L.forEach((l,k)=>pxText(l,cx,y+4+k*7,'#efe3c8','center'));}
+}
+// (v3.15) the cart behind the player: the rope, the molecule on the cart, its name below the rail, the friend on top
+// cheering, and the cloud when the molecule changes
+function drawEmp(t){
+  const R=rideSt,now=performance.now()/1000;g=fctx;
+  const C=R.cloud,s_=C?now-C.t0:9,hide=C&&s_>.12&&s_<.62;
+  const i=R.stage,w=empW(i),sh=R.shake&&now-R.shake<.4?Math.round(Math.sin((now-R.shake)*60)*2):0;
+  const Y=RIDE_Y,cx0=empCartX()+sh,ccx=cx0+EMP_CW/2,top=Y-12,bob=player.moving&&Math.floor(t*10)%2?1:0;
+  // (v3.30) no rope, no bar: the player drives the cart with a remote control (drawn at the end, over the player)
+  // (v3.21) a little monitor standing on the cart shows the molecule; the friend sits on top of the monitor
+  const MW_=36,MH_=EMP_H+8,mox=Math.round(ccx-MW_/2),moy=top-3-MH_,my=moy; // monitor frame (my: its top)
+  r(Math.round(ccx)-2,top-3,4,3,'#2c3236');r(Math.round(ccx)-4,top-1,8,1,'#5d646a'); // the stand
+  r(mox,moy,MW_,MH_,'#1d1612');r(mox+1,moy+1,MW_-2,MH_-2,'#4a5055');r(mox+1,moy+1,MW_-2,1,'#7b8186'); // the bezel
+  r(mox+3,moy+3,MW_-6,MH_-6,'#0b0806'); // the screen
+  px(mox+MW_-4,moy+MH_-2,'#5aa865'); // power light
+  if(!hide){ // the molecule on the screen, drawn on the screen canvas at full resolution: the same picture as in the sheet
+    const mx=Math.round(ccx-w/2),im=EMP_IMG[i];
+    if(im.complete&&im.naturalWidth){const qx=mx,qy=moy+4;splitHere(c=>{const k=cv.width/W,sm=c.imageSmoothingEnabled;c.imageSmoothingEnabled=true;
+      c.drawImage(im,(qx-camX)*k,(qy-camY)*k,w*k,EMP_H*k);c.imageSmoothingEnabled=sm;});g=fctx;}
+  }
+  // (v3.25) the friend runs behind the cart (no rope), full body, old paper drawing
+  const fx_=cx0-12,fy_=Y; // feet on the rail, just behind the cart
+  {const as=lead==='a'?'eu':'amigo',d_=drawAs;drawAs=as;
+    if(player.moving&&(player.dir==='left'||player.dir==='right'))R.amDir=player.dir; // (v3.28) faces the way the cart goes: behind it going right, ahead of it going left
+    try{const c=personSprite('player',lookCoat(as)?'coat':'shirt',R.amDir||'right',player.moving?Math.floor(player.anim):0,blinkAt(t,1.7));blit({c:c.c,x:fx_-8,y:fy_-23});}finally{drawAs=d_;}}
+  // the cart
+  r(cx0,top,EMP_CW,10,'#1d1612');r(cx0+1,top+1,EMP_CW-2,8,'#3a5a7a');r(cx0+1,top+1,EMP_CW-2,2,'#5b8dba');r(cx0+1,top+7,EMP_CW-2,2,'#2b4a6f');
+  r(cx0+3,top+4,EMP_CW-6,1,'#f2c94c');
+  const sp=Math.floor(player.x/3)%2;
+  for(const wx of [cx0+7,cx0+EMP_CW-7]){pxEllipse(wx,Y,3,3,'#b9c2c8');pxEllipse(wx,Y,2,2,'#2c3236');px(wx,Y,'#e9ece6');
+    if(sp){px(wx-1,Y,'#9aa2a9');px(wx+1,Y,'#9aa2a9');}else{px(wx,Y-1,'#9aa2a9');px(wx,Y+1,'#9aa2a9');}}
+  // (v3.19) no name under the cart: the names are only in the sheet
+  if(C&&s_<1.05){ // the cloud: puffs grow over the molecule, hide it, and thin out
+    const k=Math.min(1,s_/.25),fade=s_>.7?Math.max(0,1-(s_-.7)/.35):1,cy=moy+4+EMP_H/2;
+    fctx.globalAlpha=fade;
+    for(let j=0;j<10;j++){const a=j*2.4+.6,d=(4+(j%3)*3)*k+s_*4,rr=Math.round((3+(j%4))*k+(s_>.3?1:0));
+      const px1=Math.round(ccx+Math.cos(a)*d*1.4),py1=Math.round(cy+Math.sin(a)*d*.8);
+      pxEllipse(px1,py1,rr+1,rr+1,'#1d1612');pxEllipse(px1,py1,rr,rr,j%3?'#efe3c8':'#c9c9c9');}
+    if(s_<.5)for(let j=0;j<8;j++){const a=j*.785+s_*3,d=8+s_*36;px(Math.round(ccx+Math.cos(a)*d),Math.round(cy+Math.sin(a)*d*.7),j%2?'#f2c94c':'#ef6a5c');}
+    fctx.globalAlpha=1;
+  }
+  { // (v3.33) the remote control held in the player's hand: the hand of each walking frame of the paper avatar
+    // (sprite 21×30 drawn at x-10, y-26; the hand is a 2×2 patch of skin), the fingers drawn over the grip
+    const lf=player.dir==='left',fr_=Math.floor(player.anim)%4,X=Math.round(player.x),Yp=Math.round(player.y);
+    const H=lf?[[-2,-4],[4,-7],[-2,-4],[-6,-7]][fr_]:[[0,-4],[-6,-7],[0,-4],[4,-7]][fr_]; // hand (top-left of the 2×2 patch)
+    const hx=X+H[0],hy=Yp+H[1],rx=hx,ry=hy-3; // the remote: 2 wide, from 3 px above the hand down into the fist
+    r(rx-1,ry-1,4,7,'#1d1612');r(rx,ry,2,5,'#3a4045');px(rx,ry+1,'#ef6a5c');px(rx+1,ry+1,'#5fb4f0');
+    const sk=SKINS[pele][0];r(hx,hy,2,2,sk);px(lf?hx-1:hx+2,hy,sk); // the fingers round it
+    const axx=lf?rx:rx+1;r(axx,ry-3,1,2,'#9aa2a9');px(axx,ry-4,Math.floor(t*4)%2?'#ef6a5c':'#5a2230');
+    if(player.moving){fctx.globalAlpha=.55;for(let k=0;k<2;k++){const ph=(t*1.6+k/2)%1,wx=Math.round(axx+(ccx-axx)*ph),wy=Math.round(ry-4+(top+4-(ry-4))*ph);px(wx,wy,'#7fd4ff');}fctx.globalAlpha=1;} // discreet, to the cart
+  }
+  // (v3.15) at the enzyme: how to open the sheet
+  if(empNaPorta()&&state==='play'){const k1=padOn?'A':'ENTER',k2=' ESCOLHER A MOLÉCULA',kw=pxW(k1),tw=kw+pxW(k2)+8,lx=Math.min(camX+W-tw-2,Math.round(player.x)+10),ly=Math.round(player.y)-28; // (to the right of the player: never over the friend)
+    R.portaRc={x:lx,y:ly,w:tw,h:10};r(lx,ly,tw,10,'#1d1612');r(lx,ly,tw,1,'#f2c94c');pxText(k1,lx+4,ly+3,'#f2c94c');pxText(k2,lx+4+kw,ly+3,'#efe3c8');}
+  else R.portaRc=null;
+  // the friend's balloon
+  if(R.tor&&state==='play'&&!empNaPorta()){const L=pxWrap(R.tor.t.toUpperCase(),110),bw=Math.max(...L.map(pxW))+6,bh=L.length*7+3;
+    const bx=Math.max(camX+2,Math.min(camX+W-bw-2,Math.round(fx_-bw/2))),by=fy_-23-bh-6,a=Math.min(1,(R.tor.until-now)/.3);
+    fctx.globalAlpha=Math.max(0,a);
+    r(bx-1,by-1,bw+2,bh+2,'#1d1612');r(bx,by,bw,bh,'#f4f6f4');const tx=Math.max(bx+2,Math.min(bx+bw-5,fx_-1));r(tx,by+bh,3,2,'#f4f6f4');px(tx+1,by+bh+2,'#1d1612');
+    L.forEach((l,k)=>pxText(l,bx+3,by+3+k*7,'#3a2414'));fctx.globalAlpha=1;}
+}
+
+/* ---------- (v3.14) "Percorrer a via", a wrong answer: the rail breaks under the car and everybody falls ----------
+   The friend makes fun of the player (by personality; never in the online duo), then the car is back at the start,
+   with the stretches already completed still in place. */
+const VIA_PIADA={
+  m:['Eu pulo no fogo por você... mas não precisava pular do trilho!','Tudo bem, a gente cai junto. Mas, da próxima vez, leia o cartaz com calma.'],
+  f:['Estava escrito no cartaz! Eu li enquanto a gente caía.','Tecnicamente, a resposta certa estava a três linhas do seu nariz.'],
+  r:['O trilho quebrou, e o meu lanche voou. Hoje não é o meu dia!','Se errar dá queda, acertar deve dar lanche. Acerte a próxima, por favor!'],
+  g:['Eu teria acertado de olhos fechados. Quer que eu responda a próxima?','Um a zero para o trilho. Vamos virar esse placar!'],
+  d:['Que vergonha. Espero que ninguém da minha família tenha visto isso.','Eu nunca tinha caído de um trilho antes de conhecer você.'],
+  p:['Ótimo! Agora tenho uma história nova para contar no intervalo.','Parabéns! Você conseguiu quebrar até o trilho. Vou contar para todo mundo.']};
+function viaQueda(n){
+  const R=rideSt;R.fall={t0:performance.now()/1000,x:player.x,n};R.toast=null;keys.clear();tGo=null;
+  tone(330,.08,'square',.04);tone(220,.08,'square',.04,.12); // the rail creaks...
+}
+function viaQuedaTick(){
+  const R=rideSt,F=R.fall,s_=performance.now()/1000-F.t0;player.x=F.x;
+  if(!F.crack&&s_>=.35){F.crack=1;tone(90,.25,'sawtooth',.06);tone(140,.2,'square',.05,.03);} // ...and breaks
+  if(!F.boom&&s_>=1.25){F.boom=1;tone(70,.4,'square',.06);tone(50,.5,'triangle',.06,.05);}
+  if(s_<1.9||F.talk)return;F.talk=1;
+  const volta=()=>{const now=performance.now()/1000;R.fall=null;player.x=24;player.dir='right';keys.clear();
+    R.toast={t:'Resposta errada: o carrinho voltou ao início. Os trechos completos continuam no lugar; releia o cartaz da reação '+F.n+' e responda de novo.',until:now+8};};
+  if(amigoX||duoHist)return volta();
+  const J=VIA_PIADA[amigoAv]||VIA_PIADA.f,k=flags.viaPiada=(flags.viaPiada||0)+1;
+  say([{who:String(amigoNome()).toUpperCase(),t:J[k%J.length]}],volta);
+}
+{const dr2=drawRide;drawRide=function(t){ // the broken rail and the car falling through it
+  const R=rideSt,F=R&&R.mode==='trilho'&&R.fall;if(!F)return dr2(t);
+  const s_=performance.now()/1000-F.t0,fa=Math.max(0,s_-.35),dy=Math.round(320*fa*fa),rot=fa*2.2,X=player.x,Y=player.y,ry=RIDE_Y+3;g=fctx;
+  if(s_>=.35){r(Math.round(X-16),ry-1,32,9,'#0b0806'); // the hole in the rail, with the broken ends
+    for(const ex of [X-17,X+15]){r(Math.round(ex),ry-2,2,3,'#b9c2c8');px(Math.round(ex)+(ex<X?1:0),ry+2,'#7b8186');}
+    for(const [ox,sp] of [[-10,1],[3,-1]]){const py=Math.round(ry+fa*fa*260+fa*10),pxx=Math.round(X+ox+sp*fa*14); // the two pieces of rail falling
+      if(py<230){r(pxx,py,8,2,'#b9c2c8');r(pxx,py+2,8,1,'#5d646a');}}}
+  const jit=s_<.35?(Math.floor(s_*40)%2?1:-1):0;
+  if(dy<140){g.save();g.translate(X+jit,Y-8+dy);g.rotate(rot);g.translate(-X,-(Y-8));try{dr2(t);}finally{g=fctx;g.restore();}}
+  g=fctx;
+  if(s_<.4)for(let k=0;k<5;k++)px(Math.round(X-12+Math.random()*24),ry+((Math.random()*3)|0),Math.random()<.5?'#f2c94c':'#efe3c8'); // sparks of the cracking rail
+  if(F.boom){const a_=performance.now()/1000-F.t0-1.25;if(a_<1.2)for(let k=0;k<5;k++)pxEllipse(Math.round(X-14+k*7),Math.round(206-a_*10-(k%2)*3),Math.round(3+a_*5),Math.round(2+a_*3),'rgba(150,150,150,'+Math.max(0,.6-a_*.5).toFixed(2)+')');}
+};}
+
+/* ---------- (v3.31) the classes wait for the player to sit down ----------
+   From 10 game minutes before a class, in its room, the free seats get a "!": empty desks of Sala 101, free seats of
+   rows A and B in the auditorium, the stools of the lab benches. The player walks to one and presses ENTER (or taps
+   it); the class starts only then (the professors wait). At the end the player stands up by themselves.
+   Desks: the player is drawn sitting inside the desk, like the classmates. Auditorium: standing in the row, the seat
+   backs hide the legs. Lab: the upper body over the stool. */
+var aulaAssento=null;
+const AUD_LIVRES=[[30,132],[70,132],[110,132],[150,132],[234,132],[274,132],[314,132],[354,132],[30,156],[130,156],[254,156],[314,156]];
+function aulaSeats(sc){
+  const L=[];
+  if(sc==='sala101'){[132,162,192].forEach((base,ri)=>[44,98,232,286].forEach((x,ci)=>{const k=ri*4+ci;
+    if(SEATED[k]||(k===MARINA_DESK&&marinaDesk()))return;L.push({mode:'desk',k,x:x+15,y:base+4,mx:x+15,my:base-36});}));}
+  else if(sc==='salaAud'){for(const [x,base] of AUD_LIVRES)L.push({mode:'aud',x,y:base-4,mx:x,my:base-34});}
+  else if(sc==='salaLab'){for(const b of BENCHES)for(let k=0;k<4;k++){const sx=b.x+12+k*32;L.push({mode:'stool',x:sx,y:b.base+13,mx:sx,my:b.base-8});}}
+  return L;
+}
+const aulaPSit=k=>!!aulaAssento&&aulaAssento.mode==='desk'&&aulaAssento.k===k;
+var aulaAmigo=null; // (v3.35) the adventure friend sits too: the free seat closest to the player's
+const aulaASit=k=>!!aulaAmigo&&aulaAmigo.mode==='desk'&&aulaAmigo.k===k&&!aulaAmigo.anda;
+const aulaASeat=()=>{const as=lead==='p'?'amigo':'eu';return ['player','',lookCoat(as)?'coat':'shirt',null,as];};
+function aulaEspera(){ // the class of the day can be sat for now (in its room, from 10 minutes before)
+  if(typeof adOn!=='function'||!adOn()||adCena||aulaAssento||!startTime||!flags||flags.graded||flags.timeUp||!flags.cracha)return null;
+  const d=diaN(),A=AD_DIA[d];if(!A||adFeita(d)||scene!==A.sc)return null;
+  if(gameMinutes()<A.min-10)return null;
+  return A;
+}
+function aulaSentar(st){
+  const A=aulaEspera();if(!A)return false;
+  aulaAssento=st;keys.clear();tGo=null;sfx.blip();
+  if(typeof amigoVis==='function'&&amigoVis()){ // the friend takes the free seat closest to the player's
+    let best=null,bd=1e9;for(const q of aulaSeats(scene)){if(q.x===st.x&&q.y===st.y)continue;const d=Math.hypot(q.x-st.x,q.y-st.y);if(d<bd){bd=d;best=q;}}
+    if(best){aulaAmigo=Object.assign({anda:true},best); // (v3.36) round the desks and benches: a path to just in front of the seat
+      const ax=best.x,ay=best.mode==='aud'?best.y+10:best.mode==='stool'?best.y+8:best.y,P=findPath(buddy,ax,ay)||[[ax,ay]];
+      if(best.mode!=='desk')P.push([best.x,best.y]);aulaAmigo.path=P;}}
+  tdMove(player,[[st.x,st.y]],44,()=>{player.dir='up';player.moving=false;});
+  return true;
+}
+function aulaSentaPerto(px_,py_,raio){ // the free seat closest to a point, if close enough
+  let best=null,bd=1e9;for(const st of aulaSeats(scene)){const d=Math.hypot(st.x-px_,st.y-py_);if(d<bd){bd=d;best=st;}}
+  return best&&bd<=raio?best:null;
+}
+function aulaLevanta(){
+  if(aulaAmigo){const q=aulaAmigo;aulaAmigo=null;buddy.trail=[];if(q.mode==='stool'||q.mode==='aud')buddy.y=q.mode==='aud'?q.y+10:q.y+2;buddy.dir='down';}
+  if(!aulaAssento)return;const st=aulaAssento;aulaAssento=null;
+  if(st.mode==='stool'||st.mode==='aud'){player.y=st.mode==='aud'?st.y+10:st.y+2;} // a step back into the aisle
+  player.dir='down';
 }
 
 // Larissa waits in the room after the third door opens (until the player leaves)
@@ -8213,7 +8742,7 @@ function brunoVisitTick(dt){
     say([{who:BW,t:'Psiu! Aqui, '+nome1()+'! A Larissa me avisou que você ia sair por esta parede. Eu também sou da Liga, desde o começo do ano.'},
       {who:BW,t:'E '+amigoGen('o ','a ')+amigoNome()+' também, claro: o convite vale para vocês dois.'},
       {who:BW,t:'O convite é só o primeiro passo. Para ser '+gen('aceito','aceita')+' de verdade, todo membro novo passa por uma contraprova: o Desafio da Liga, no simulador do laboratório, lá no térreo.'},
-      {who:BW,t:'São três fases. Em cada uma, você coloca moléculas no sítio alostérico da enzima da reação 1, da fosfofrutocinase-1 e da piruvato-cinase. Depois, a glicose corre sozinha pela via.'},
+      {who:BW,t:'São três fases. Em cada uma, você põe moléculas no sítio alostérico de uma enzima.'},{who:BW,t:'Primeiro a da reação 1, depois a fosfofrutocinase-1 e, por fim, a piruvato-cinase.'},{who:BW,t:'Em seguida, a glicose percorre a via sozinha.'},
       {who:BW,t:'Não vale nota, mas é ele que mostra se você entendeu onde a via se decide. E a Liga inteira fica sabendo. Topa?',choices:dzAsk(then)}]);};
   bru.rem=0;
   bru.act=function(){
@@ -9599,7 +10128,7 @@ function ligaGrade(set){
         {who:MW,t:'...Ignore isso.'},
         {who:MW,t:need>7?'Pelas suas contas, nem acertando as sete da frutose você chega ao sete. Faça assim mesmo. Por dignidade.'
           :'Sete de nota final. Pelas minhas contas, você precisa de pelo menos '+need+' acertos na frutose. Faça as contas, se não confia nas minhas.'},
-        {who:MW,t:'Frutose: as quatro primeiras folhas estão aqui. Nesta sala. Dentro do livro que nenhum aluno desta faculdade jamais abriu: o "Mil Ervas e Enzimas Mágicas", na pilha junto à parede.'},
+        {who:MW,t:'As quatro primeiras folhas da frutose estão nesta sala, dentro do livro que nenhum aluno jamais abriu.'},{who:MW,t:'O "Mil Ervas e Enzimas Mágicas", na pilha junto à parede.'},
         {who:MW,t:'Não dobre as páginas.',run:()=>{flags.lgF=1;flags.lgLivro=false;}});
     }else if(os&&os!==5)L.push({who:MW,t:'Ainda falta a '+ligaVia(o)+'. Não me faça esperar.'});
     else if(os===5){ // both done: the final grade decides the prize
@@ -10179,6 +10708,14 @@ function onKey(e){
     if((e.code==='Enter'||e.code==='NumpadEnter'||e.code==='Space')&&!e.repeat)tdDuelHit();
     return;
   }
+  if(state==='emp'){ // (v3.13)
+    e.preventDefault&&e.preventDefault();
+    if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)empConfirm();}
+    else if(e.code==='Escape'){if(!e.repeat)closeEmp(true);}
+    else if(e.code==='KeyA'||e.code==='ArrowLeft'||e.code==='KeyW'||e.code==='ArrowUp')empMove(-1);
+    else if(e.code==='KeyD'||e.code==='ArrowRight'||e.code==='KeyS'||e.code==='ArrowDown')empMove(1);
+    return;
+  }
   if(state==='dz'){
     e.preventDefault&&e.preventDefault();
     if(e.code==='Enter'||e.code==='NumpadEnter'){if(!e.repeat)dzEnter();}
@@ -10253,6 +10790,7 @@ function onKey(e){
     else if(e.code==='KeyZ'&&!posterEl.classList.contains('fixed')){togglePosterZoom();}
     return;
   }
+  if(regMonta()&&(MOVE[e.code]||e.code==='Enter'||e.code==='NumpadEnter')){e.preventDefault&&e.preventDefault();unlockAudio();regKey(e.code,e.repeat);return;} // (v3.07)
   if(scene==='simGlic'&&state==='play'&&e.code==='Escape'){e.preventDefault&&e.preventDefault();if(!e.repeat)simBack();return;}
   if(inSim()&&(MOVE[e.code]||e.code==='Escape')){ // the simulator screen is a menu
     e.preventDefault&&e.preventDefault();unlockAudio();
@@ -10275,7 +10813,7 @@ let touchOn=false,lastPtr='';addEventListener('pointerdown',e=>{lastPtr=e.pointe
 const tapped=e=>(e.pointerType||lastPtr)==='touch';
 $('dialog').addEventListener('click',e=>{if(e.target.closest('button'))return;if(state==='dialog'&&!dialogChoices()){unlockAudio();advance();}});
 cv.addEventListener('mousemove',e=>{if(!inSim())return;const i=simHit(e);if(i>=0&&i!==simSel)simSel=i;});
-cv.addEventListener('click',e=>{if(state==='tdDuel'){unlockAudio();tdDuelHit();return;}if(inSim()){const i=simHit(e);if(i>=0){simSel=i;unlockAudio();simSelect();}return;}if(tapped(e))return;unlockAudio();if(state==='play')interact();});
+cv.addEventListener('click',e=>{if(state==='tdDuel'){unlockAudio();tdDuelHit();return;}if(inSim()){const i=simHit(e);if(i>=0){simSel=i;unlockAudio();simSelect();}return;}if(regOn()){if(!tapped(e)&&regMonta()){unlockAudio();regClick(e);}return;}if(tapped(e))return;unlockAudio();if(state==='play')interact();});
 let tGo=null,tDrag=null; // tGo: where the player is walking to {x,y,o,sc}; tDrag: the finger still on the screen
 function tWorld(e){const b=cv.getBoundingClientRect();return{x:camX+(e.clientX-b.left)/b.width*W,y:camY+(e.clientY-b.top)/b.height*H};}
 const inRc=(p,r_,m=0)=>r_&&p.x>=r_.x-m&&p.x<=r_.x+r_.w+m&&p.y>=r_.y-m&&p.y<=r_.y+r_.h+m;
@@ -10309,6 +10847,10 @@ cv.addEventListener('pointerdown',e=>{
   if(state==='tdDuel'){tdDuelHit();return;}
   if(state==='dialog'){if(!dialogChoices())advance();return;}
   if(state!=='play'||inSim())return; // the simulator menu answers to the click (simHit)
+  if(aulaAssento)return; // (v3.31)
+  if(aulaEspera()){const p_=tWorld(e),st=aulaSentaPerto(p_.x,p_.y+10,22);if(st){if(Math.hypot(st.x-player.x,st.y-player.y)<60){aulaSentar(st);return;}tSetGoal({x:st.x,y:st.y+8},null);return;}}
+  if(regOn()){if(regMonta())regClick(e);return;} // (v3.07)
+  if(empOn()&&empNaPorta()){const p_=tWorld(e);if(Math.abs(p_.x-player.x)<60&&p_.y>RIDE_Y-80&&p_.y<RIDE_Y+20){empEnter();return;}} // (v3.15)
   if(scene==='simGlic'&&rideSt&&rideSt.mode==='desafio')return;
   const p=tWorld(e),near=nearest();
   // the "ENTER · NAME" label over the player, or the player himself: talk to whoever is next to him
@@ -10361,7 +10903,7 @@ function padKey(code,repeat){
     return;
   }
   if(code==='KeyX'&&state==='play'&&(scene==='salaSim'||scene==='simGlic'))code='Escape';
-  if(code==='KeyX'&&['quiz','review','caca','poster','laudo','pause','duelo','segredo','dz'].includes(state))code='Escape'; // X: leave the sheet, back, close
+  if(code==='KeyX'&&['quiz','review','caca','poster','laudo','pause','duelo','segredo','dz','emp'].includes(state))code='Escape'; // X: leave the sheet, back, close
   if(code==='Menu'){
     if(state==='play'||state==='dialog')openPause();
     else if(state==='pause')closePause();
@@ -10552,8 +11094,9 @@ function update(dt){
   if(keys.has('KeyS')||keys.has('ArrowDown'))vy+=1;
   const tv=vx||vy?null:touchSteer(dt); // touch screens: walking towards the finger
   if(tv){vx=tv.vx;vy=tv.vy;}
-  if(scene==='simGlic'){vy=0;if(rideSt&&rideSt.mode==='desafio')vx=rideDone?0:1;}
-  const spd=scene==='simGlic'&&rideSt?(rideSt.mode==='desafio'?110:SPEED)*rideFactor(player.x):SPEED;
+  if(aulaAssento){vx=0;vy=0;} // (v3.31) sitting in class
+  if(scene==='simGlic'){vy=0;if(rideSt&&rideSt.mode==='desafio')vx=rideDone?0:1;if(rideSt&&rideSt.mode==='reg')vx=rideSt.fase==='corre'&&!rideDone?1:0;if(rideSt&&rideSt.fall)vx=0;}
+  const spd=scene==='simGlic'&&rideSt?(rideSt.mode==='desafio'||rideSt.mode==='reg'?110:SPEED)*rideFactor(player.x):SPEED;
   if(vx||vy){
     const n=Math.hypot(vx,vy);vx/=n;vy/=n;
     if(Math.abs(vx)>Math.abs(vy))player.dir=vx<0?'left':'right';else player.dir=vy<0?'up':'down';
@@ -10574,8 +11117,10 @@ function update(dt){
       else if(rideSt.blk!==n){rideSt.blk=n;tone(196,.12,'square',.04);
         rideSt.toast={t:'O trilho à frente está incompleto. Abra o cartaz da reação '+n+' e responda à pergunta.',until:performance.now()/1000+6};}}
   }
+  if(empOn())empTick(); // (v3.13)
+  if(scene==='simGlic'&&rideSt&&rideSt.fall)viaQuedaTick(); // (v3.14)
   rideTick();
-  if(scene==='simGlic'&&!rideDone&&player.x>=RIDE_END)rideEnd();
+  if(scene==='simGlic'&&!rideDone&&player.x>=RIDE_END&&!(rideSt&&rideSt.crash))rideEnd();
   checkStairs();
 }
 
@@ -10597,9 +11142,10 @@ function splitHere(fn){if(splits.length>=HI_LAYERS.length)HI_LAYERS.push(mk(FW,H
 let camX=0,camY=0,camFocus=()=>[player.x,player.y]; // (online: between the two players, see the duo block)
 function render(t){
   fctx=fctx0;g=fctx;splits=[];
-  const [fx_,fy_]=camFocus();
+  let [fx_,fy_]=camFocus();{const c_=typeof regCam==='function'?regCam():null;if(c_!=null)fx_=c_;} // (v3.07) the regulation rides
   camX=Math.max(0,Math.min(SCENE_W[scene]-W,Math.round(fx_-W/2)));
   camY=T2_EXR[scene]?Math.max(0,Math.min(T2_EXT,Math.round(fy_-154))):0; // the new area: the camera goes down with the player
+  if(scene==='simGlic')drawGlicPano(); // (v3.09) the panorama under the track layer
   fctx.drawImage({terreo:bgT2,andar1:bg1T2,andar2:bg2T2,sala101:bgS,sala103:bgS3,sala201:bgS201,sala204:bgS204,salaLab:bgLab,salaOculta:bgOc,salaCorredor:BG_COR[0][0],salaCorredor2:BG_COR[1][0],salaSim:bgSim,simGlic:bgGlic,salaBib:bgBib,salaAud:bgAud,salaAlx:bgAlx,salaSec:bgSec}[scene]||T2_BG[scene],0,0);
   if(scene==='terreo')drawClock();
   drawJanitorFloor();
@@ -10617,18 +11163,22 @@ function render(t){
     if(fa<=0)continue;if(fa<1)fctx.globalAlpha=fa;shadow(s.x+s.w/2,o.base+1,o.id==='pedro'?10:s.w);fctx.globalAlpha=1;}
   const sim=scene==='salaSim',ride=scene==='simGlic';
   const topV=isCor();
-  if(!sim&&!ride&&!topV)shadow(px_,py_+1,10);
-  if(!topV&&amigoVis())shadow(Math.round(buddy.x),Math.round(buddy.y)+1,10);
+  const emp_=ride&&empOn(); // (v3.13) pushing the glucose: the player walks on the track
+  const deskSit=!!aulaAssento&&aulaAssento.mode==='desk'; // (v3.31) drawn inside the desk
+  if(!sim&&(!ride||emp_)&&!topV&&!deskSit&&!aulaAssento)shadow(px_,py_+1,10);
+  const amDesk=!!aulaAmigo&&aulaAmigo.mode==='desk'&&!aulaAmigo.anda; // (v3.35) drawn inside the desk
+  if(!topV&&amigoVis()&&!aulaAmigo)shadow(Math.round(buddy.x),Math.round(buddy.y)+1,10);
   g=fctx;tdVelaChao(t);trilhaDraw(t);g=fctx; // (v2.99) the crumpled sheets on the floor
+  if(emp_){drawEmpPlates();g=fctx;}
   const list=items.map(o=>({y:o.base,o}));
-  if(!sim&&!ride)list.push({y:py_,o:null});
-  if(amigoVis())list.push({y:Math.round(buddy.y),o:buddy}); // the adventure friend
+  if(!sim&&(!ride||emp_)&&!deskSit)list.push({y:py_,o:null});
+  if(amigoVis()&&!amDesk)list.push({y:Math.round(buddy.y),o:buddy}); // the adventure friend
   list.sort((a,b)=>a.y-b.y);
   for(const it of list){
     if(it.o===cat){splitHere(c=>catDraw(c,cv.width/W,t));continue;} // from here on: the layer above him
     if(it.o===buddy&&!isCor()){ // the adventure friend in high resolution
       const fr=asLook(lead==='p'?'amigo':'eu',()=>hiFrame(buddy.dir,Math.floor(buddy.anim),buddy.moving,t,1.7,lead==='p'));
-      if(fr){const fa=stairFade(scene,buddy.x,buddy.y),bx=Math.round(buddy.x),by=Math.round(buddy.y);splitHere(c=>drawHi(c,cv.width/W,fr,bx,by,fa));g=fctx;buddy.fx(t);continue;}
+      if(fr){const fa=stairFade(scene,buddy.x,buddy.y),bx=Math.round(buddy.x),by=Math.round(buddy.y);if(aulaAmigo&&aulaAmigo.mode==='stool'&&!aulaAmigo.anda)fr.clipY=by-8;splitHere(c=>drawHi(c,cv.width/W,fr,bx,by,fa));g=fctx;buddy.fx(t);continue;}
     }
     if(it.o){
       const jo=it.o===zelObj||it.o===cartObj||it.o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):it.o.sprite&&it.o.x!=null?stairFade(scene,it.o.x,it.o.y):1; // fading on the last steps of a flight
@@ -10648,8 +11198,9 @@ function render(t){
     }
     else if(topV)drawTopPlayer(px_,py_,player.dir,player.anim,player.moving);
     else{const f_=Math.floor(player.anim),fr=asLook(drawAs||(lead==='a'?'amigo':'eu'),()=>hiFrame(player.dir,f_,player.moving,t,0,lead==='a'));
-      if(fr)splitHere(c=>drawHi(c,cv.width/W,fr,px_,py_)); // in high resolution
-      else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,f_,blinkAt(t,0));blit({c:c.c,x:px_-8,y:py_-23});}
+      const stool=!!aulaAssento&&aulaAssento.mode==='stool'&&!player.moving; // (v3.31) on a lab stool: only the upper body shows
+      if(fr){if(stool)fr.clipY=py_-8;splitHere(c=>drawHi(c,cv.width/W,fr,px_,py_));} // in high resolution
+      else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,f_,blinkAt(t,0),stool?15:undefined);blit({c:c.c,x:px_-8,y:py_-23});}
       if(flags.chapeu&&diaryAtPlayer())drawHat(px_,py_-23-(f_%2),player.dir);}
   }
   g=fctx;
@@ -10663,6 +11214,8 @@ function render(t){
     const mx=Math.round(o.mark?o.mark.x:o.cx),my=(o.mark?o.mark.y:Math.max(2,o.top-13))+bob;
     r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,MARK[kind]);r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
   }
+  if(aulaEspera())for(const st of aulaSeats(scene)){const mx=Math.round(st.mx),my=Math.round(st.my)+bob; // (v3.31) the free seats
+    r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,MARK.vai);r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');}
   if(!sim&&!ride){drawDiaryNote(...protXY(px_,py_));drawScorePop(px_,py_);} // (the diary glows where the player's own avatar is)
   // interaction prompt
   tLabel=null;
@@ -12168,6 +12721,125 @@ function t2DirBg(){
   objects=SCENES.terreo;
 }
 
+/* ---------- (v3.24) the teachers' room (1st floor): a meeting room ----------
+   Until 7h47 (PROFS_MIN) Prof. Neto, Profa. Rosa, Prof. Kiko and Prof. Malvar have their coffee here (stand-ins:
+   the real Kiko leaves the corridor and the real Malvar leaves Sala 204 meanwhile, so nobody is in two places).
+   The badge does not open the door: the player knocks and Profa. Rosa calls them in; a short talk ("see you in
+   101") and the gold "!" moves on to Sala 101. At 7h47 everybody goes out (Neto and Rosa by the corridor, as
+   before). The big table has 10 chairs: room for the four professors still to come (not created yet).
+   Not in the online duo (there the door stays as it was). */
+const PROF_GRADE=[['SEG','7h50','BIOQUÍMICA','SALA 101'],['TER','14h00','POÇÕES E FISIOLOGIA','AUDITÓRIO'],
+  ['QUA','9h00','HISTOLOGIA E BIOQUÍMICA','LABORATÓRIO'],['QUI','7h50','BIOQUÍMICA E FISIOLOGIA','SALA 101']];
+function t2ProfBg(){
+  const [c,cx]=mk(W,H);g=cx;const R=rng(147),pick=a=>a[(R()*a.length)|0];
+  r(0,0,W,4,'#1d1612');r(0,3,W,1,'#4a3020');
+  r(0,4,W,30,'#cdd6c4');for(let i=0;i<160;i++)px((R()*W)|0,4+((R()*30)|0),R()<.5?'#c3ccba':'#d8e0cf'); // sage-green plaster
+  r(0,34,W,1,'#c99a3c');r(0,35,W,17,'#4a3020');for(let x=0;x<W;x+=24){r(x+2,37,20,13,'#5a3d24');r(x+2,37,20,1,'#6e4a2a');}
+  r(0,52,W,1,'#3a2414');r(0,53,W,8,'#2a1a10');r(0,61,W,3,'#141010');
+  // floor: parquet
+  r(0,64,W,148,'#6e4a2a');
+  for(let y=64;y<212;y+=8)for(let x=((y/8)%2)*12;x<W;x+=24){r(x,y,23,7,pick(['#7a522f','#80582f','#74502b']));r(x,y,23,1,'#8a6238');}
+  r(0,64,W,1,'#1d1612');
+  // a long rug under the table
+  r(72,94,240,70,'#2b4a6f');r(74,96,236,66,'#3a5a7a');for(let x=78;x<306;x+=6)px(x,98,'#c99a3c'),px(x,159,'#c99a3c');
+  t2Glow(cx,[[120,110,80,40,.45],[264,110,80,40,.45]],[18,14,6]);
+  g=cx;
+  r(0,64,10,148,'#3e372f');for(let yy=66;yy<212;yy+=8)r(0,yy,9,1,'#2e241d');r(9,64,1,148,'#5e564c');
+  r(W-10,64,10,148,'#3e372f');for(let yy=70;yy<212;yy+=8)r(W-9,yy,9,1,'#2e241d');r(W-10,64,1,148,'#5e564c');
+  // the bottom wall, with the doorway to the corridor in the middle
+  r(0,212,W,12,'#2e241d');r(0,212,W,1,'#5e564c');r(0,213,W,1,'#1d1612');
+  r(178,206,28,18,'#1d1612');r(180,206,24,18,'#3a2414');r(182,208,20,3,'#a12a22');
+  g=fctx;return c;
+}
+var profCafe=false,profCafeNpcs=[],profMalvarFora=false;
+const profCafeOn=()=>!!startTime&&!!flags&&!flags.profsIn&&gameMinutes()<PROFS_MIN&&!(typeof DUO!=='undefined'&&DUO.on);
+{
+  const id='salaProf';T2_BG[id]=t2ProfBg();
+  objects=[];SCENES[id]=objects;SCENE_W[id]=W;TORCHES[id]=[];SCENE_ZONE[id]='andar1';
+  STAIRS[id]=[{x0:182,x1:202,up:false,edge:206,to:['andar1',306,70,'down','1º ANDAR']}];
+  TD_POS[id]=[1,3];
+  add({id:'profGrade',name:'Quadro com a grade das aulas',wall:true,cx:192,top:6,zone:{x:118,y:64,w:148,h:22},draw:()=>{
+      r(116,6,152,44,'#9aa2a9');r(118,8,148,40,'#f4f6f4');r(118,8,148,1,'#ffffff');r(116,50,152,2,'#7b8186');
+      pxText('GRADE DA SEMANA',192,10,'#2d6fb5','center');r(124,17,136,1,'#b9c2c8');
+      PROF_GRADE.forEach(([d,h],k)=>{const y=20+k*7;pxText(d,126,y,'#a12a22');pxText(h,146,y,'#3a2414');r(170,y+2,84,1,k%2?'#b9c2c8':'#d8dee2');});
+      r(250,44,10,2,'#d0352b');r(238,44,10,2,'#2d6fb5');}, // markers on the tray
+    act:()=>say([{who:'QUADRO',t:'GRADE DA SEMANA: aulas obrigatórias do 1º ano.'}].concat(PROF_GRADE.map(([d,h,m,l])=>({who:'QUADRO',t:({SEG:'Segunda',TER:'Terça',QUA:'Quarta',QUI:'Quinta'})[d]+', '+h+': '+m.charAt(0)+m.slice(1).toLowerCase()+', '+(l==='SALA 101'?'na Sala 101':l==='AUDITÓRIO'?'no auditório':'no laboratório')+'.'}))))});
+  add({id:'profEstante',name:'Estante',wall:true,cx:56,top:6,zone:{x:14,y:64,w:84,h:22},draw:()=>{
+      r(16,6,80,46,'#4a3020');r(18,8,76,42,'#2a1a10');
+      for(const y of [9,30]){t2Books(19,93,y+19,17,y);r(17,y+19,78,2,'#7a522f');}},
+    act:()=>say([{t:'Livros de Bioquímica, Histologia, Fisiologia... e um volume grosso de Poções com um aviso: "NÃO EMPRESTE".'}])});
+  add({id:'profJanela',name:'Janela',wall:true,cx:318,top:8,zone:{x:286,y:64,w:66,h:22},draw:()=>{
+      r(290,8,56,32,'#5a3d24');r(292,10,52,28,'#86aebb');r(317,10,2,28,'#5a3d24');r(292,23,52,1,'#5a3d24');
+      r(296,13,10,2,'#e9ece6');r(324,28,12,2,'#e9ece6');r(288,39,60,3,'#a87445');},
+    act:()=>say([{t:'Da janela se vê o pátio da faculdade. Um grupo de alunos corre para não perder o sinal.'}])});
+  add({id:'profRelogio',name:'Relógio',wall:true,cx:276,top:10,zone:{x:268,y:64,w:16,h:22},draw:()=>{
+      pxEllipse(276,18,6,6,'#3a2414');pxEllipse(276,18,5,5,'#efe3c8');r(276,14,1,4,'#1d1612');r(276,18,3,1,'#1d1612');},
+    act:()=>say([{t:'O relógio da sala dos professores está sempre dois minutos adiantado. Dizem que é de propósito.'}])});
+  add({id:'profCafeAparador',name:'Aparador do café',cx:40,top:150,base:196,solid:{x:16,y:184,w:50,h:12},draw:()=>{
+      r(16,178,50,18,'#5a3d24');r(16,178,50,1,'#7a522f');r(18,182,22,12,'#4a3020');r(42,182,22,12,'#4a3020');px(38,188,'#c99a3c');px(44,188,'#c99a3c');
+      r(22,162,14,16,'#2c3236');r(24,164,10,6,'#5d646a');r(23,172,12,6,'#1d1612');r(26,173,6,4,'#6e4a2a'); // the coffee machine
+      for(const [x,cl] of [[42,'#a12a22'],[49,'#2d6fb5'],[56,'#3f8a4c']]){r(x,172,5,6,cl);r(x+5,174,1,2,cl);}},
+    act:()=>say([{t:'Uma cafeteira, um pote de açúcar quase vazio e canecas com nomes: NETO, ROSA, KIKO, MALVAR.'},{t:'Há também quatro canecas novas, ainda sem nome.'}])});
+  add({id:'profMesa',name:'Mesa de reunião',cx:192,top:96,base:140,solid:{x:96,y:112,w:192,h:26},draw:()=>{
+      const cad=(x,y,frente)=>{r(x-5,y,10,frente?4:10,'#2b4a6f');r(x-5,y,10,1,'#3a5a7a');r(x-6,y+(frente?4:10),12,3,'#4a3020');}; // a chair (back high when seen from the front)
+      for(const x of [120,160,224,264])cad(x,98,false); // the far side: backs behind the table
+      cad(84,118,true);cad(300,118,true); // the two ends
+      r(96,112,192,6,'#a87445');r(96,112,192,1,'#c38f5c');r(98,118,188,18,'#7a522f');for(let x=104;x<284;x+=30)r(x,121,24,12,'#6e4a2a');
+      for(const [x,cl] of [[124,'#a12a22'],[160,'#2d6fb5'],[228,'#3f8a4c'],[262,'#5a2230']]){r(x,108,4,5,cl);r(x+4,109,1,2,cl);} // the four mugs in use
+      r(176,106,30,6,'#efe3c8');r(178,105,26,1,'#f4f6f4');r(190,104,10,3,'#efe3c8');}, // papers in the middle
+    act:()=>say([{t:'Uma mesa comprida, com dez cadeiras. Quatro delas ainda nem foram usadas.'}])});
+  add({id:'profCadeiras',name:'Cadeiras',cx:192,top:146,base:158,solid:{x:112,y:150,w:160,h:6},draw:()=>{
+      for(const x of [120,160,224,264]){r(x-6,146,12,10,'#2b4a6f');r(x-6,146,12,1,'#3a5a7a');r(x-5,156,2,2,'#1d1612');r(x+3,156,2,2,'#1d1612');}}, // the near side: backs towards us
+    act:()=>say([{t:'Cadeiras vazias, à espera de quem chegar.'}])});
+  add({id:'profPlanta',name:'Planta',cx:357,top:172,base:204,solid:{x:350,y:194,w:14,h:10},draw:()=>drawPlant(350),
+    act:()=>say([{t:'Uma samambaia que alguém rega com o resto do café. Ela parece aguentar firme.'}])});
+  t2Finish();
+  objects=SCENES.terreo;
+}
+// the stand-ins having coffee: where they stand and what each one says (a short talk)
+const PROF_CAFE=[
+  ['heloisa','Profa. Rosa','PROFA. ROSA',150,100,'down',2.4,['A gente vai para a Sala 101 uns minutinhos antes das 7h50. Encontre a gente lá!']],
+  ['aldair','Prof. Neto','PROF. NETO',234,100,'down',.9,['Já vou, já vou! Só vou terminar o café.','Nos vemos na 101!']],
+  ['kido','Prof. Kiko (Histologia)','PROF. KIKO (HISTOLOGIA)',320,128,'left',1.1,['Café sem açúcar? Nunca! A hemácia também vive de glicose.','Depois passe no laboratório: lá sempre tem alguma bolsa de sangue para olhar.']],
+  ['malvar','Prof. Malvar (Poções)','PROF. MALVAR (POÇÕES)',66,128,'right',1.7,['Café preto, sem açúcar. Como a minha paciência.','Não toque na minha caneca.']]];
+function profCafeEntra(){ // into the room: the stand-ins; the real Kiko and Malvar leave their places
+  profCafe=true;
+  if(tdWhere(kido))wOff(kido);
+  {const i=SCENES.sala204.indexOf(malvar);if(i>=0){SCENES.sala204.splice(i,1);profMalvarFora=true;}}
+  const L=SCENES.salaProf;
+  profCafeNpcs=PROF_CAFE.map(([k,name,who,x,y,dir,bl,falas])=>{let n=0;
+    const o=tdNpc('pc_'+k,name,k,'coat',x,y,dir,bl,function(){this.dir=faceTo(this,player);say([{who,t:falas[n++%falas.length]}]);});
+    const j=tdTemp.indexOf(o);if(j>=0)tdTemp.splice(j,1); // (not a scene's stand-in: nobody else clears them)
+    o.zone={x:x-14,y:y-24,w:28,h:34};L.push(o);return o;});
+  updateObjective();
+}
+function profCafeSai(){ // 7h47: everybody leaves (by the door if the player is watching)
+  profCafe=false;
+  const L=SCENES.salaProf,fora=o=>{const i=L.indexOf(o);if(i>=0)L.splice(i,1);};
+  profCafeNpcs.forEach((o,k)=>{if(scene==='salaProf')adLater(k*.5,()=>tdMove(o,[[o.x,170],[192,170],[192,232]],34,()=>fora(o)));else fora(o);});
+  profCafeNpcs=[];
+  const kv=()=>{if(scene==='andar1')wOn(kido,'andar1',306,72,'down',true);else wLane(kido,'andar1');};
+  if(scene==='salaProf')adLater(3,kv);else kv();
+  updateObjective();
+}
+function profCafeTick(){
+  if(!startTime||!flags)return;
+  const on=profCafeOn();
+  if(on&&!profCafe)profCafeEntra();
+  else if(!on&&profCafe)profCafeSai();
+  if(profMalvarFora&&!profCafe&&scene!=='sala204'&&!SCENES.sala204.includes(malvar)&&!tdMalOut){SCENES.sala204.push(malvar);profMalvarFora=false;}
+  // the first time in, each morning: Rosa calls the player in, Neto says where to meet them
+  if(profCafe&&scene==='salaProf'&&state==='play'&&!fade&&!flags.cafeVisto){flags.cafeVisto=true;
+    say([{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! Entre, entre.'},{who:'PROF. NETO',t:'Estamos terminando o café. Encontre a gente na Sala 101, pouco antes das 7h50.'}],()=>{updateObjective();try{saveGame();}catch(_){}});}
+}
+{const u0=update;update=function(dt){u0(dt);try{profCafeTick();}catch(_){}};}
+// the door: knock (while they are inside)
+{const d=SCENES.andar1.find(o=>o.id==='professores');if(d){const a0=d.act;d.mark={x:306,y:22};
+  d.act=function(){
+    if(!profCafe)return a0.call(this);
+    sfx.bump();setTimeout(()=>sfx.bump(),160);
+    say([{t:'Você bate na porta: toc, toc, toc.'},{who:'VOZ DA PROFA. ROSA',t:'Pode entrar!'}],()=>goScene('salaProf',192,196,'up','SALA DOS PROFESSORES'));};}}
+
 /* Dona Lúcia works inside the library now, at the end of the loan desk; the library door gets the blue "!"
    whenever a side quest needs her */
 {
@@ -12189,9 +12861,9 @@ const manualMesa=()=>SCENES.salaBib.find(o=>o.id==='bibMesa2');
   M.act=function(){
     if(flags.bolsaQ!==3)return say([{t:'Outra mesa de leitura. Sobre o tampo, um livro grosso de capa vermelha com uma cruz branca: "Manual de Hemoterapia". Só para consulta.'}]);
     say([{t:'Sobre a mesa de leitura, um livro grosso de capa vermelha com uma cruz branca: "MANUAL DE HEMOTERAPIA". Uma fita marca o capítulo das bolsas de sangue.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'Bolsas de hemácias com CPDA-1: o citrato prende o cálcio e evita a coagulação; o fosfato é tampão; a dextrose (glicose) alimenta a glicólise; a adenina ajuda a refazer o ATP.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'A hemácia não tem mitocôndrias: na bolsa, ela continua fazendo glicólise, consome glicose e acumula lactato. Com o tempo, cai o ATP, cai o 2,3-BPG e o potássio sai para o plasma.'},
-      {who:'MANUAL DE HEMOTERAPIA',t:'A refrigeração (2 a 6 °C) deixa as enzimas lentas e prolonga a vida da bolsa. Sem 2,3-BPG, a hemoglobina retém o oxigênio e o entrega menos aos tecidos.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'Bolsas de hemácias com CPDA-1: o citrato prende o cálcio e evita a coagulação.'},{who:'MANUAL DE HEMOTERAPIA',t:'O fosfato é tampão; a dextrose (glicose) alimenta a glicólise; a adenina ajuda a refazer o ATP.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'A hemácia não tem mitocôndrias: na bolsa, ela continua fazendo glicólise, consome glicose e acumula lactato.'},{who:'MANUAL DE HEMOTERAPIA',t:'Com o tempo, cai o ATP, cai o 2,3-BPG e o potássio sai para o plasma.'},
+      {who:'MANUAL DE HEMOTERAPIA',t:'A refrigeração (2 a 6 °C) deixa as enzimas lentas e prolonga a vida da bolsa.'},{who:'MANUAL DE HEMOTERAPIA',t:'Sem 2,3-BPG, a hemoglobina retém o oxigênio e o entrega menos aos tecidos.'},
       {t:'Você fecha o manual e o deixa sobre a mesa, como a Dona Lúcia pediu.'},
       {who:me(),t:'Agora sim! Vou voltar para a professora Rosa.',run:()=>{flags.bolsaManual=true;bolsaUpd(2);}}]);
   };
@@ -12418,7 +13090,7 @@ var MINI={
     passos:[null,{alvo:'kido',t:'pergunte ao Prof. Kiko, no 1º andar, o que o Rafael pode ter'},
       {alvo:'mesaProf103',t:'complete a defesa antioxidante da hemácia na folha sobre a mesa da Sala 103',tar:'hemacia'},
       {alvo:'rafael',t:'conte ao Rafael o que o Prof. Kiko disse',entrega(){
-        say([{who:me(),t:'Rafael, o Prof. Kiko acha que é crise hemolítica: suas hemácias estão se rompendo. Montei o esquema. A fava traz oxidantes, e a hemácia precisa de NADPH para se defender.'}],
+        say([{who:me(),t:'Rafael, o Prof. Kiko acha que é crise hemolítica: suas hemácias estão se rompendo.'},{who:me(),t:'A fava traz oxidantes, e a hemácia precisa de NADPH para se defender. Montei o esquema.'}],
           ()=>miniPerg(QM_RA,{q:'E qual enzima deve estar faltando em mim?',o:['Glicose-6-fosfato-desidrogenase','6-fosfogliconato-desidrogenase','Piruvato-cinase eritrocitária'],c:0,
             dica:'É a enzima que abre a via das pentoses-fosfato, a primeira a produzir NADPH.',
             ok:'Faz sentido! Vou ligar agora para a minha mãe: ela me leva ao médico ainda hoje. E vou avisar a minha avó: nada de fava. Obrigado de verdade!'},()=>mqSet('raf',4)));}}],
@@ -12505,7 +13177,7 @@ const miniAlvo=id=>{for(const k in MINI){const P=MINI[k].passos[mq(k)];if(mq(k)&
     say([{who:me(),t:'Professor, o Rafael comeu muito feijão-fava ontem. Hoje está pálido, sem força e com a urina escura.'},
       {who:QM_KI,t:'Palidez e urina escura depois de fava? Isso parece crise hemolítica: as hemácias dele estão se rompendo.'},
       {who:QM_KI,t:'Existe uma deficiência bem comum, a da glicose-6-fosfato-desidrogenase. A fava traz oxidantes, e a hemácia sem NADPH não consegue se defender.'},
-      {who:QM_KI,t:'Comecei o esquema dessa defesa numa folha e a deixei sobre a mesa da Sala 103. Complete, explique ao Rafael e diga para ele procurar um médico hoje mesmo.',run:()=>mqSet('raf',2)}]);
+      {who:QM_KI,t:'Comecei o esquema dessa defesa numa folha, que está na mesa da Sala 103.'},{who:QM_KI,t:'Complete-o, explique ao Rafael e diga a ele que procure um médico hoje mesmo.',run:()=>mqSet('raf',2)}]);
   };
 }
 // at lunch the students are not in Sala 101
@@ -13253,6 +13925,13 @@ function amigoTick(dt){
   }
   amLast.x=player.x;amLast.y=player.y;
   if(buddy.sc!==scene)return;
+  if(aulaAmigo){ // (v3.35) sitting in class: to the seat, and there it stays
+    const q=aulaAmigo;buddy.trail=[];
+    const alvo=q.path&&q.path.length?q.path[0]:[q.x,q.y],dx=alvo[0]-buddy.x,dy=alvo[1]-buddy.y,d=Math.hypot(dx,dy);
+    if(d<=.8&&q.path&&q.path.length){q.path.shift();if(q.path.length||Math.hypot(q.x-buddy.x,q.y-buddy.y)>.8)return;}
+    if(d>.8){const st_=Math.min(d,44*dt);buddy.x+=dx/d*st_;buddy.y+=dy/d*st_;buddy.moving=true;buddy.anim+=dt*7;buddy.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');}
+    else{buddy.x=q.x;buddy.y=q.y;buddy.moving=false;buddy.dir='up';q.anda=false;}
+    return;}
   // following the trail of the player's steps, ~34 px behind (about one person of room between them)
   const T=buddy.trail,L=T[T.length-1];
   if(!L||Math.hypot(player.x-L.x,player.y-L.y)>=1.5)T.push({x:player.x,y:player.y});
@@ -13279,6 +13958,7 @@ function amigoTick(dt){
 }
 function amSay(kind,delay=0,text=null,force=false){ // a balloon over the friend, now and then (not over the player's own avatar: they have no lines)
   if(DUO.on||!force&&(amCool>0||ghBusy()))return; // (online the friend is a person: no lines of their own)
+  if(scene==='salaSim'||scene==='simGlic')return; // (v3.12) in the simulator the friend keeps quiet: the balloons hid the screen
   const P=AM_FALA[amigoAv];let l=text||P[kind];
   if(Array.isArray(l))l=l[(Math.random()*l.length)|0];if(typeof l==='function')l=l();if(!l)return;
   if(lead==='a'&&kind!=='troca'&&kind!=='volta'&&kind!=='espera'&&!text&&Math.random()<.5)return; // in front, they talk a little less
@@ -13876,7 +14556,7 @@ var diaTelaGer=0,diaTelaOn=false,diaTelaPronta=false,diaTelaFim=null,diaVirando=
 const DIAS={1:['Segunda-feira','O desaparecimento das folhas'],2:['Terça-feira','As primeiras pistas'],
   3:['Quarta-feira','O segredo da Liga'],4:['Quinta-feira','A verdade por trás das folhas']};
 const DIA_TARDE=16*60,DIA_FIM=18*60;
-const DIA_ROTINA=['bell8','call930','warn11','timeUp','profsIn','seated','lunchVisto','aulaVista','mr1','mr2']; // what each morning starts again
+const DIA_ROTINA=['bell8','call930','warn11','timeUp','profsIn','seated','lunchVisto','aulaVista','mr1','mr2','cafeVisto']; // what each morning starts again
 // (function declarations: gameMinutes() needs them before this part of the script has run)
 function diaN(){return flags&&flags.dia||4;}
 function diaFinal(){return diaN()>=4;}
@@ -13908,15 +14588,15 @@ var DIA_TROCAS=[ // (var: updateObjective runs at load, before this line) [piece
   // the homework is handed in on Thursday
   ['A lição de casa deve ser entregue aos professores das 9h30 até o fim da aula de hoje, às 11h30.',()=>
     'A lição de casa pode ser entregue aos professores aos poucos, a qualquer hora, até '+diaPrazo()+'. A nota sai quando chegarem as 10 folhas.'],
-  ['Eles recebem a partir das 9h30, até o fim da aula, às 11h30.',()=>'Eles recebem aos poucos, a qualquer hora, até '+diaPrazo()+'.'],
-  ['E não esquece: hoje a gente tem que entregar',()=>diaFinal()?null:'E não esquece: a gente tem que entregar'],
+  ['Das 9h30 até o fim da aula, às 11h30.',()=>'Eles recebem aos poucos, a qualquer hora, até '+diaPrazo()+'.'],
+  ['E não esqueça: hoje entregamos',()=>diaFinal()?null:'E não esqueça: temos de entregar'],
   ['Responda tudo e traga para nós a partir das 9h30, até 11h30. Antes disso a manhã é para tirar dúvidas.',()=>diaFinal()?null:
     'Responda tudo e traga para nós '+diaEntrega()+', a partir das 9h30, até 11h30. Até lá, as manhãs são para tirar dúvidas.'],
   ['corrigimos aqui na mesa, a partir das 9h30. O prazo',()=>diaFinal()?null:'corrigimos aqui na mesa '+(diaN()===3?'amanhã':'na quinta')+', a partir das 9h30. O prazo'],
   ['As minhas estão prontas para entregar às 9h30,',()=>'Já entreguei algumas das minhas para os professores,'],
   ['As folhas da lição são recebidas a partir das 9h30,',()=>diaFinal()?null:'As folhas da lição são recebidas '+diaEntrega()+', a partir das 9h30,'],
   // the sheets went missing on Friday (the classes, the study with Marina, the bonus sheet of the practical class)
-  ['Ontem a gente estudou junto nas salas',()=>cap1(diaSexta())+' a gente estudou junto nas salas'],
+  ['Ontem estudamos nas mesmas salas',()=>cap1(diaSexta())+' estudamos nas mesmas salas'],
   ['nas salas em que teve aula ontem.',()=>'nas salas em que teve aula '+diaSexta()+'.'],
   ['Ontem vocês tiveram aula na 103 e na 201.',()=>cap1(diaSexta())+' vocês tiveram aula na 103 e na 201.'],
   ['passaram pelas salas ontem, depois das aulas.',()=>'passaram pelas salas '+diaSexta()+', depois das aulas.'],
@@ -13957,11 +14637,11 @@ var DIA_TROCAS=[ // (var: updateObjective runs at load, before this line) [piece
   ['ajudar a preparar a aula prática de hoje à tarde.',()=>diaKiko('ajudar a preparar a aula prática de amanhã de manhã.','ajudar a preparar a próxima aula prática.','ajudar a preparar a aula prática de hoje, às 9h.')],
   // the blood bags: separated on Monday afternoon, bag C out all Monday night, put away on Tuesday at 6h
   ['Deixei ontem na geladeira',()=>diaSeg()&&'Deixei '+diaSeg()+' na geladeira'],
-  ['Eu separei as três ontem à tarde',()=>diaSeg()&&'Eu separei as três '+diaSeg()+' à tarde'],
+  ['Ontem à tarde, separei as três',()=>diaSeg()&&cap1(diaSeg())+' à tarde, separei as três'],
   ['achou a bolsa C na bancada, ontem à noite.',()=>diaSeg()&&'achou a bolsa C na bancada, '+diaSeg()+' à noite.'],
   ['na bancada do laboratório ontem à noite e só guardou na geladeira hoje de manhã.',()=>diaSeg()&&
     'na bancada do laboratório '+diaSeg()+' à noite e só guardou na geladeira '+diaTer()+' de manhã.'],
-  ['Ontem eu separei a C na bancada',()=>diaSeg()&&cap1(diaSeg())+' eu separei a C na bancada'],
+  ['Ontem deixei a C na bancada',()=>diaSeg()&&cap1(diaSeg())+' deixei a C na bancada'],
   ['Ainda bem que ele guardou hoje cedo.',()=>diaSeg()&&'Ainda bem que ele guardou '+diaTer()+' cedo.'],
   ['Ontem à noite, limpando o laboratório',()=>diaSeg()&&cap1(diaSeg())+' à noite, limpando o laboratório'],
   ['Hoje cedinho, às 6h,',()=>diaSeg()&&cap1(diaTer())+' cedinho, às 6h,'],
@@ -14698,7 +15378,7 @@ function adStart(d){
   if(A.plateia)AD_PLATEIA.forEach(([k,ou,x,y],j)=>{ // the class of 101, in a line through the door, each one to a seat
     const T=tdNpc('adp_'+k,k,k,ou,a,250+j*18,'up',1.3+j*.4);T.adP=[x,y];L.push(T);adCena.atr.push(T);
     anda(T,[[a,y+24],[x,y+24],[x,y]],46,()=>{T.dir='up';});});
-  if(A.eu){const [ex,ey]=A.eu;anda(player,Math.abs(player.x-ex)+Math.abs(player.y-ey)>2?[[ex,ey]]:[],44,()=>{player.dir='up';});}
+  if(A.eu&&!aulaAssento){const [ex,ey]=A.eu;anda(player,Math.abs(player.x-ex)+Math.abs(player.y-ey)>2?[[ex,ey]]:[],44,()=>{player.dir='up';});}
   pronto();
 }
 function adGo(){
@@ -14733,7 +15413,7 @@ function adFim(){
       adLater(3.5,()=>{const T=tdNpc('adf_'+k,AD_NOME[k],k,'coat',a,236,'up',1.1);L.push(T);
         tdMove(T,[[a,206],[a,Math.max(e.y+14,130)]].concat(adDaMesa(A.sc,[e.x,e.y]).reverse(),[[e.x,e.y]]),36,()=>volta(k,T));});});
     if(A.plateia)adLater(14,()=>{if(!lunchOn&&!aulaOn)alunosVoltam();}); // (v3.05) back down to Sala 101: the walk from the auditorium takes a while
-    adCena=null;tdCut=false;state='play';keys.clear();
+    adCena=null;tdCut=false;state='play';keys.clear();aulaLevanta(); // (v3.31) up from the seat
     updateObjective();try{saveGame();}catch(_){}
   });
 }
@@ -14742,6 +15422,10 @@ function adTick(){
   const d=diaN(),A=AD_DIA[d];if(!A||adFeita(d)||scene!==A.sc)return;
   const m=gameMinutes();if(m<A.min)return;
   if(d===3&&!aulaOn&&m<AULA3_END)return; // the students are still on their way to the lab
+  if(!aulaAssento){ // (v3.31) the class waits for the player to sit down
+    const F=flags.aulaPede||(flags.aulaPede={});if(!F[d]){F[d]=1;say([{t:'Os professores esperam a turma se acomodar.'},{t:'Escolha um lugar livre (marcado com "!") e sente-se com ENTER: a aula só começa depois disso.'}]);}
+    return;}
+  if(tdMoving(player))return;
   adStart(d);
 }
 function adEsconde(){ // a real professor of the pair walking in during the class scene (Prof. Kiko comes to the lab late): out of sight until it ends
@@ -14781,7 +15465,14 @@ function adEsconde(){ // a real professor of the pair walking in during the clas
 // the trail waits for the class of the day (the locker's sheet and the 10 do not)
 {const tp=trilhaPode;trilhaPode=function(e){if(e&&adOn()&&e.dia===diaN()&&e.n!==9&&e.n!==10&&!adFeita(e.dia))return false;return tp(e);};}
 {const td=trilhaDiaOk;trilhaDiaOk=function(d){return td(d)&&(d>=4||d<diaN()||adFeita(d));};}
+// (v3.24) before 7h47 the professors of a class in Sala 101 are still having coffee: the "!" and the objective point
+// to the teachers' room (knock), and to Sala 101 only after that visit
+function adCafe(){
+  if(!adOn()||adCena||!flags.cracha||flags.graded||flags.timeUp||typeof profCafe==='undefined'||!profCafe||flags.cafeVisto)return false;
+  const d=diaN(),A=AD_DIA[d];return !!A&&!adFeita(d)&&A.sc==='sala101';
+}
 function adObj(){
+  if(adCafe())return 'Os professores tomam café na sala dos professores (1º andar): bata na porta';
   if(!adOn()||adCena||!flags.cracha||flags.graded||flags.timeUp)return null;
   const d=diaN(),A=AD_DIA[d];if(!A||adFeita(d))return null;
   if(d===3&&!trAchou(9))return null; // Wednesday morning: the locker first
@@ -14789,6 +15480,7 @@ function adObj(){
 }
 {const uo=updateObjective;updateObjective=function(){uo.apply(this,arguments);try{const t=adObj();if(t)curObj=t;}catch(_){}};}
 {const nm=needsMarker;needsMarker=function(o){
+  try{if(adCafe())return !!o&&(o.id==='professores'||o.id==='pc_heloisa'||o.id==='pc_aldair');}catch(_){}
   try{if(adObj()){const A=AD_DIA[diaN()];if(scene===A.porta[0]&&o&&o.id===A.porta[1])return true;}}catch(_){}
   return nm(o);};}
 {const dm=diaMarcas;diaMarcas=function(){const L=dm();
