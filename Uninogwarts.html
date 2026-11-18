@@ -1070,7 +1070,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 4.09 &middot; Última atualização: 17 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 4.12 &middot; Última atualização: 18 de novembro de 2026</span>
   </div>
 </footer>
 <script>
@@ -2493,10 +2493,25 @@ function speakerId(tag){
   }
   return speakerMap[tag];
 }
+/* (v4.10) who is speaking, as character keys: the stand-ins of the classes and cut scenes (ids like ad_aldair, pc_kido,
+   lunch_bia, named "Prof. Kiko" for "PROF. KIKO (HISTOLOGIA)") also move their mouths, not only the object whose id
+   was found first. Worked out once per line of the dialog. */
+let talkK_={d:null,i:-1,sc:null,n:-1,k:null};
+function talkKeys(L){
+  const S=SCENES[scene]||[];
+  if(talkK_.d===dialog&&talkK_.i===dialog.i&&talkK_.sc===scene&&talkK_.n===S.length)return talkK_.k;
+  const K=new Set(),tag=String(L.who),b=x=>String(x).replace(/\s*\(.*?\)\s*$/,'').trim().toUpperCase(),bt=b(tag);
+  if(tag===me())K.add('player');
+  const id=speakerId(tag);if(id)K.add(id);
+  const low=bt.toLowerCase();if(typeof CHAR_PAL!=='undefined'&&CHAR_PAL[low])K.add(low);
+  for(const o of S){if(!o||!o.name||!o.id)continue;const nb=b(o.name);
+    if(nb===bt||nb.startsWith(bt+' ')||bt.startsWith(nb+' ')){K.add(o.id);if(o.key)K.add(o.key);if(o.ck)K.add(o.ck);const m=/^[A-Za-z]+_(.+)$/.exec(o.id);if(m)K.add(m[1]);}}
+  talkK_={d:dialog,i:dialog.i,sc:scene,n:S.length,k:K};return K;
+}
 function talking(who){
   if(state!=='dialog'||!dialog)return false;
   const L=dialog.lines[dialog.i];
-  return !!L.who&&dialog.shown<L.t.length&&speakerId(L.who)===who;
+  return !!L&&!!L.who&&dialog.shown<L.t.length&&talkKeys(L).has(who);
 }
 function personSprite(who,outfit,dir,f,blink,crop){
   const sp=paperSpec(who,outfit,crop),view=dir==='up'?'back':dir==='down'?'front':'side';
@@ -2683,7 +2698,7 @@ const marinaT=add({id:'marina',name:'Marina',cx:445,top:72,base:121,oy:104,noSha
       :flags.profsIn?'Os professores já estão na Sala 101, no 1º andar. Depois da aula, pergunte a eles sobre as suas folhas!'
       :'Os professores ainda estão tomando café na sala dos professores, no 1º andar. Eles vão para a Sala 101 pouco antes das 7h50. Depois da aula, pergunte a eles sobre as suas folhas!'}];
     else if(answered()<QUIZ_N) l=[{who:'MARINA',t:'Achou as folhas? Então capricha nas respostas!'},{who:'MARINA',t:'Eu vou revisar as 10 reações da glicólise mais uma vez. Depois quero ver por onde a frutose e a galactose entram nela.'}];
-    else l=[{who:'MARINA',t:canDeliver()?'Já respondeu tudo? Corre entregar para os professores, '+(profSalaOn()?'na sala dos professores':'na Sala 101')+'!':'Já respondeu tudo? Os professores só recebem a partir das 9h30. Até lá, aproveita para explorar!'}];
+    else l=[{who:'MARINA',t:canDeliver()?'Já respondeu tudo? Corre entregar para os professores, '+(profNaSala()?'na sala dos professores':'na Sala 101')+'!':'Já respondeu tudo? Os professores só recebem a partir das 9h30. Até lá, aproveita para explorar!'}];
     say(l);
   }});
 {const Z={x:404,y:66,w:104,h:80},OFF={x:-99,y:-99,w:0,h:0};Object.defineProperty(marinaT,'zone',{get:()=>marinaSaiu()?OFF:Z});}
@@ -2988,7 +3003,7 @@ add({id:'professores',name:'Sala dos professores',wall:true,cx:306,top:2,zone:wa
   fx:doorLed(288,36,()=>false),
   act:()=>{sfx.bump();say([{t:'Placa: "SALA DOS PROFESSORES. Acesso restrito a docentes."'},
     {t:'Você aproxima seu crachá do leitor... BIP-BIP. Luz vermelha: ACESSO NEGADO.'}].concat(flags.profsIn
-      ?[{t:'Ninguém responde. Os professores Neto e Rosa já foram para a Sala 101.'}]
+      ?[{t:'Ninguém responde.'+(lunchOn?' É hora do almoço: o Prof. Neto está '+netoOnde()+', e a Profa. Rosa, '+rosaOnde()+'.':' Os professores Neto e Rosa estão '+netoOnde()+'.')}] // (v4.10) never "they went to 101" when they did not
       :[{who:'VOZ DO PROF. NETO',t:'Já vou, já vou! Só vou terminar o café.'},
         {who:'VOZ DA PROFA. ROSA',t:'A gente vai para a Sala 101 uns minutinhos antes das 7h50. Encontre a gente lá!'}]));}});
 add({id:'escadaDesce',name:'Escada para o térreo',deco:true,cx:352,top:110,base:126,solid:{x:329,y:128,w:45,h:84},
@@ -3611,7 +3626,7 @@ const aldair=add({id:'aldair',name:'Prof. Neto',talk:0,cx:150,top:78,base:104,so
     this.wait=Math.max(this.wait,4);if(!this.sat)this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
     if(answered()===QUIZ_N&&!flags.graded)return profSay(this,profsWaitLines('PROF. NETO'));
     const pedir=!flags.profs&&folhasOn();
-    const L=[[{who:'PROF. NETO',t:'Bom dia, '+nome1()+'! '+(profSalaOn()?'Hoje não tem aula de Bioquímica, mas estamos aqui para tirar dúvidas e receber as folhas.':'Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.')},
+    const L=[[{who:'PROF. NETO',t:'Bom dia, '+nome1()+'! '+(profSalaOn()?'Hoje não tem aula de Bioquímica, mas estamos aqui para tirar dúvidas e receber as folhas.':profTardeD1()?'À tarde ficamos aqui, na sala dos professores, para tirar dúvidas e receber as folhas.':'Hoje a aula é para tirar dúvidas da glicólise antes da prova de amanhã.')},
        ...(pedir?sheetsTalk('PROF. NETO'):[]),
        ...(flags.viaTip?[]:[ // the lab simulator: an optional way to review the pathway, suggested right away
          {who:'PROF. NETO',t:'Ah, e uma dica para a prova: no laboratório do térreo tem um simulador de metabolismo. Escolha a atividade "Percorrer a via".'},
@@ -3639,7 +3654,7 @@ const heloisa=add({id:'heloisa',name:'Profa. Rosa',talk:0,cx:214,top:78,base:104
     this.wait=Math.max(this.wait,4);if(!this.sat)this.dir=Math.abs(player.x-this.x)>Math.abs(player.y-this.y)?(player.x<this.x?'left':'right'):(player.y<this.y?'up':'down');
     if(answered()===QUIZ_N&&!flags.graded)return profSay(this,profsWaitLines('PROFA. ROSA'));
     const pedir=!flags.profs&&folhasOn();
-    const L=[[{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! '+(profSalaOn()?'Que bom te ver por aqui.':'Que bom te ver aqui na 101 hoje.')},
+    const L=[[{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! '+(profNaSala()?'Que bom te ver por aqui.':'Que bom te ver aqui na 101 hoje.')},
        ...(pedir?sheetsTalk('PROFA. ROSA'):[]),
        ...(flags.diaAntigo?[{who:'PROFA. ROSA',t:'Lembre: cada folha só pode ser respondida uma vez. Quando estiver com as 10, eu e o professor Neto corrigimos aqui na mesa, a partir das 9h30. O prazo é o fim da aula, 11h30.'}]
          :flags.profs?[{who:'PROFA. ROSA',t:'Lembre: o prazo das folhas encerra '+(diaN()>=4?'hoje':'quinta')+', às 11h30.'}]:[])], // (v3.68) short, and not right after the talk that already gives the deadline
@@ -5508,9 +5523,9 @@ function updateObjective(){
     :flags.graded?(!flags.pass?'Atividade corrigida'
       :!flags.alost?'Atividade entregue! Mas o dia não acabou: passe no laboratório do térreo':'Atividade entregue! Agora descubra o que a faculdade esconde')
     :flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp?'Busque a questão bônus no laboratório (térreo) e entregue até 11h30'
-    :flags.seated?'Entregue as folhas aos professores, na Sala 101, até 11h30'
-    :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, na Sala 101, até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, na Sala 101')
-    :!flags.profs&&!answered()?(flags.profsIn?(folhasOn()?'Pergunte aos professores, na Sala 101, pelas suas folhas':'Vá para a Sala 101 e sente-se: a aula de Bioquímica começa às 7h50'):profCafe&&!flags.cafeVisto?'Os professores tomam café na sala dos professores (1º andar): bata na porta':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
+    :flags.seated?'Entregue as folhas aos professores, '+netoOnde()+', até 11h30'
+    :answered()===QUIZ_N?(canDeliver()?'Entregue as folhas aos professores, '+netoOnde()+', até 11h30':'As 10 folhas estão prontas. Os professores só recebem a partir das 9h30, '+netoOnde())
+    :!flags.profs&&!answered()?(flags.profsIn?(folhasOn()?(lunchOn?'Pergunte pelas suas folhas ao Prof. Neto ('+netoOnde()+') ou à Profa. Rosa ('+rosaOnde()+')':'Pergunte aos professores, '+netoOnde()+', pelas suas folhas'):'Vá para a Sala 101 e sente-se: a aula de Bioquímica começa às 7h50'):profCafe&&!flags.cafeVisto?'Os professores tomam café na sala dos professores (1º andar): bata na porta':'Espere os professores na Sala 101 (1º andar): eles chegam pouco antes das 7h50')
     :trilhaOn()?trilhaObj() // (v2.99) the trail of crumpled sheets
     :(()=>{const m=[3,10].filter(n=>!provas[n]);return m.length&&answered()===QUIZ_N-m.length;})()
       ?(!provas[3]&&!provas[10]?'Faltam as folhas das reações 3 e 10: elas não estavam com as outras. Onde será que foram parar?'
@@ -5525,7 +5540,7 @@ function needsMarker(o){
   if(!flags.cracha)return o.id==='secretaria'&&!objAntesMarina(); // (v3.98) Marina: the opening scene; (v4.01) the "!" only after her talk
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
   if(flags.seated)return o===aldair||o===heloisa||o.id==='sala101';
-  if(!flags.profs&&!answered())return flags.profsIn?(folhasOn()?(o===aldair||o===heloisa||o.id==='sala101'):o.id==='sala101')
+  if(!flags.profs&&!answered())return flags.profsIn?(folhasOn()?(o===aldair||o===heloisa||(!lunchOn&&o.id===(profNaSala()?'professores':'sala101'))):o.id==='sala101')
     :profCafe&&!flags.cafeVisto?(o.id==='professores'||o.id==='pc_heloisa'||o.id==='pc_aldair') // (v3.24) before 7h47 they are having coffee: knock at the teachers' room
     :o.id==='sala101';
   if(o.provas)return !trilhaOn()&&o.provas.some(n=>!provas[n]); // (v2.99: the trail sheets have no "!")
@@ -5600,7 +5615,7 @@ function deliver(){
 function simAsk(next,pass){
   return {who:'PROF. NETO',t:'Uma curiosidade, '+nome1()+': você chegou a usar o simulador do laboratório para estudar?',choices:[
     {t:'Sim! Percorri a via inteira, reação por reação',fn:()=>say([
-      {who:'PROF. NETO',t:(pass?'Eu sabia! Dá para ver nas suas respostas.':'Muito bom! A nota de hoje não saiu como você queria, mas esse é o caminho certo.')+(flags.viaNeto?' Você seguiu a minha dica!':' Fui eu que sugeri essa atividade para os alunos do 1º ano.'),run:()=>{if(flags.viaTip){flags.viaEnt=true;updatePauseExtra();}}},
+      {who:'PROF. NETO',t:(pass?'Eu sabia! Dá para ver nas suas respostas.':'Muito bom! A nota de hoje não saiu como você queria, mas esse é o caminho certo.')+(flags.viaTip?' Você fez o que eu pedi!':' Fui eu que sugeri essa atividade para a turma.'),run:()=>{if(flags.viaTip){flags.viaEnt=true;updatePauseExtra();}}},
       {who:'PROFA. ROSA',t:'Que iniciativa bonita! Estudar além do que pedimos é coisa de quem vai longe. Parabéns, '+nome1()+'!',run:()=>setMood('heloisa','happy',4)},
       {who:'PROF. NETO',t:'Fazer as 10 reações uma a uma, sem pular nenhuma, é o melhor treino para a prova. Continue assim.'},next])},
     {t:'Não, não cheguei a usar',fn:()=>say([
@@ -6142,7 +6157,7 @@ function sideNeeds(o){
   if(o.id==='simulador')return (!!flags.dzOn&&!flags.dzDone)||(!!flags.viaTip&&!flags.viaOk);
   if(sideMarker(o))return true; // next step of Tiago's notebook
   if(o.id==='mesaCaca')return !!flags.cacaDica&&!flags.caca;
-  if(viaEntrega()&&o.id===(flags.viaNeto?'aldair':'tiago'))return true;
+  if(viaEntrega()&&o.id==='aldair')return true; // (v4.10) the pathway is always told to Prof. Neto
   if(o.id==='tiago')return !flags.tiagoQ&&diaMin(2); // he still has a request (also after a "not now")
   if(o.id==='camila')return (!flags.cacaTold&&(!!flags.saiu101||!!flags.cacaDica))||(!!flags.caca&&!flags.cacaThanks);
   if(o.id==='gabriel')return !flags.duelWin&&(!!flags.duelOn||diaMin(3));
@@ -6190,7 +6205,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(q>=1&&q<=5)add_('tiago'+q+(q===2?'_'+tiagoSub():''),'Caderno do Tiago: '+(q===2?TIAGO_SUB[tiagoSub()]:TIAGO_STEP[q]));
   if(flags.viaTip&&!flags.viaOk)add_('via','Simulador do laboratório (térreo): escolha "Percorrer a via" e complete as 10 reações');
   if(flags.cacaDica&&!flags.caca)add_('caca','Caça-palavras na mesinha do laboratório ('+cacaCount()+' de '+CACA_WORDS.length+')');
-  if(viaEntrega())add_('viaEnt','Simulador do laboratório: conte '+(flags.viaNeto?'ao Prof. Neto, '+netoOnde():'ao Tiago, no 1º andar,')+' que você percorreu a via inteira');
+  if(viaEntrega())add_('viaEnt','Simulador do laboratório: conte '+'ao Prof. Neto, '+netoOnde()+', que você percorreu a via inteira');
   if(flags.caca&&!flags.cacaThanks)add_('camila','Conte à Camila, no 1º andar, que achou todas as palavras');
   const a=flags.alost;
   if(a===2)add_('alost2',diaMin(2)?'Bilhete anônimo: ache as fichas com o selo dos três cadeados ('+fichaCount()+' de 10)':'Bilhete anônimo: amanhã, procure pelo prédio as fichas com o selo dos três cadeados');
@@ -6204,7 +6219,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
   if(flags.dzDone&&!flags.dzReward)add_('dzBruno','Desafio da Liga: conte ao Bruno que você venceu');
   const bq=flags.bolsaQ||0;
   if(bq>=1&&bq<=6)add_('bolsa'+bq,'Bolsas de sangue: '+['','busque as bolsas na geladeira do laboratório (térreo), de jaleco',
-    'leve o laudo à Profa. Rosa, '+rosaOnde()+(flags.profsIn||profSalaOn()?'':' (ela chega às 7h47)'),
+    'leve o laudo à Profa. Rosa, '+rosaOnde()+(flags.profsIn||profNaSala()?'':' (ela chega às 7h47)'),
     'leia o Manual de Hemoterapia com a Dona Lúcia, na biblioteca (2º andar)',
     'descubra por que a bolsa C parece velha (quem circula pelo prédio todo?)',
     'conte à Profa. Rosa o que aconteceu com a bolsa C',
@@ -6236,7 +6251,7 @@ function sideActive(){ // accepted and not finished yet: {k: key (a new key = a 
 function sideDone(){ // finished side quests, greyed out at the end of the diary
   const L=[];
   if(flags.tiagoQ===6)L.push({k:'tiago',t:'Caderno do Tiago devolvido: o Tiago agora é seu '+gen('amigo','amiga')});
-  if(flags.viaTip&&flags.viaOk&&flags.viaEnt)L.push({k:'via',t:'Simulador do laboratório: via da glicólise percorrida (dica do '+(flags.viaNeto?'Prof. Neto':'Tiago')+')'});
+  if(flags.viaTip&&flags.viaOk&&flags.viaEnt)L.push({k:'via',t:'Simulador do laboratório: via da glicólise percorrida (pedido do Prof. Neto)'});
   if(flags.caca&&flags.cacaThanks)L.push({k:'caca',t:'Caça-palavras completo: '+CACA_WORDS.length+' de '+CACA_WORDS.length+' palavras (e a Camila ficou sabendo)'});
   if(flags.alost===6)L.push({k:'alost',t:'A sala que não está lá: convite da Liga de Metabolismo recebido'});
   if(flags.fundador)L.push({k:'fundador',t:'O fundador da Liga: o "Prof. E. M." é o Prof. Edmundo Malvar, de Poções'});
@@ -6449,22 +6464,6 @@ function updatePauseExtra(){diaryCheck();}
    He cannot go himself: he is waiting at the Sala 102 door to be called for his seminar. Reward (symbolic): his
    "Glicose de Ouro" sticker, stuck on the badge; from then
    on Tiago calls the player "amigo/amiga" and now and then says they are "gente boa". */
-// Tiago's study tip (after the notebook comes back): the "Percorrer a via" activity in the lab simulator.
-// flags.viaTip: tip heard (side quest on until flags.viaOk, the whole pathway ridden)
-function viaTipLines(TW){
-  const run=()=>{flags.viaTip=true;flags.viaEnt=true;updatePauseExtra();};
-  if(flags.viaTip&&!flags.viaOk)return [{who:TW,t:'Ah, e o professor Neto já te falou do simulador do laboratório, né? Do "Percorrer a via"? Foi assim que eu estudei as 10 reações. Recomendo muito!'}];
-  if(flags.viaOk)return [{who:TW,t:'Ah, e uma dica de amigo: você conhece o simulador do laboratório, lá no térreo? A atividade "Percorrer a via"?'},
-    {who:me(),t:'Conheço! Já percorri a via inteira, respondendo a pergunta de cada reação.',run},
-    {who:TW,t:'Sério? Foi assim que eu estudei as 10 reações! Quem me recomendou foi o professor Neto. Ele vai gostar de saber.'}];
-  return [{who:TW,t:'Ah, e uma dica de amigo: sabe o simulador do laboratório, lá no térreo? Tem uma atividade nele chamada "Percorrer a via".'},
-    {who:TW,t:'O trilho do carrinho está quebrado depois de cada reação da glicólise. Ele só se completa quando você acerta a pergunta do cartaz daquela reação.'},
-    {who:TW,t:'Foi assim que eu estudei as 10 reações! Quem me recomendou foi o professor Neto: ele disse que é o melhor jeito de revisar a via antes da prova.'},
-    {who:TW,t:'Só não esquece o jaleco: sem ele, não deixam entrar no laboratório.'},
-    {who:TW,t:'Topa percorrer a via inteira? Depois me conta como foi.',choices:viaTipCh(TW)}];
-}
-const viaTipCh=TW=>[{t:'Topo!',oferta:1,fn:()=>{flags.viaTip=true;updatePauseExtra();say([{who:TW,t:'Boa! Lá no laboratório, no térreo. Depois me conta!'}]);}},
-  {t:'Agora não',fn:()=>say([{who:TW,t:'Tudo bem. Se quiser, é só me falar.'}])}];
 const kikoPronto=()=>!!flags.cracha&&!!flags.saiu101&&((flags.kikoConv||0)>=1||(flags.kikoVolta||0)>=2);
 const tiagoSem=()=>gameMinutes()>=14*60; // his seminar is over
 const QUEST_NEXT={1:'gabriel',2:'lucia',3:'zelador',4:'secretaria',5:'tiago'};
@@ -6525,10 +6524,7 @@ const TIAGO_FALA={
   tia.act=function(){
     stopChat(this);this.wait=4;this.dir=faceTo(this,player);
     const q=flags.tiagoQ||0,amigo=gen('amigo','amiga'),k=this.talk++;
-    if(viaEntrega()&&!flags.viaNeto&&!(q>=1&&q<=5))return say([{who:me(),t:'Tiago, percorri a via inteira no simulador! Acertei a pergunta de cada reação.'},
-      {who:TW,t:'Sério? As 10 reações? Agora a prova de amanhã é sua! Quem me recomendou foi o professor Neto. Ele vai gostar de saber.',run:()=>{flags.viaEnt=true;updatePauseExtra();}}]);
     if(q===0&&!diaMin(2))return say([{who:TW,t:'E aí, '+amigo+'! Estudando para a prova de sexta? Hoje à tarde eu vou para o 2º andar passar a limpo os meus resumos da glicólise.'}]); // (the four days: the notebook goes missing on Monday afternoon)
-    if(q===6&&!flags.viaTip&&!flags.viaOk&&k%2===0)return say([{who:TW,t:'E aí, '+amigo+'! Vai topar o "Percorrer a via", no simulador do laboratório?',choices:viaTipCh(TW)}]);
     const help=[{t:'Claro! Vou ficar de olho.',oferta:1,fn:()=>{flags.tiagoQ=1;updatePauseExtra();
         say([{who:TW,t:'Valeu demais! Alguém do 2º andar deve ter visto. O Gabriel, do 3º ano, vive por lá.'}]);}},
       {t:'Agora não dá, desculpa.',fn:()=>{flags.tiagoNo=true;say([{who:TW,t:'Tudo bem... Se mudar de ideia, estou por aqui.'}]);}}];
@@ -6548,8 +6544,7 @@ const TIAGO_FALA={
       {who:TW,t:'É o adesivo mais especial da minha coleção: a Glicose de Ouro. Eu só dou para quem é amigo de verdade.'},
       {t:'Você ganhou: ADESIVO GLICOSE DE OURO',item:'adesivo',run:()=>{flags.tiagoQ=6;updatePauseExtra();}},
       {t:'Você cola o adesivo no seu crachá. Ele brilha um pouquinho com a luz do corredor.'},
-      {who:TW,t:'Pronto: agora é oficial. Valeu mesmo, '+amigo+'! Você é gente boa.'}].concat(viaTipLines(TW)));
-    if(q===6&&flags.viaTip&&!flags.viaOk&&k%2===0)return say([{who:TW,t:'E aí, '+amigo+'! Já foi ao simulador do laboratório? Escolha "Percorrer a via": foi assim que eu aprendi as 10 reações.'}]);
+      {who:TW,t:'Pronto: agora é oficial. Valeu mesmo, '+amigo+'! Você é gente boa.'}]); // (v4.10) the pathway is Prof. Neto's mission, not Tiago's
     if(q===6)return say([{who:TW,t:'E aí, '+amigo+'! '+TIPS[k%TIPS.length]}]
       .concat(k%3===1?[{who:TW,t:BOA[Math.floor(k/3)%BOA.length]}]:[]));
     say([{who:TW,t:TIPS[k%TIPS.length]}]);
@@ -8694,7 +8689,7 @@ function aulaSeats(sc){
   if(sc==='sala101'){[132,162,192].forEach((base,ri)=>[44,98,232,286].forEach((x,ci)=>{const k=ri*4+ci;
     if(SEATED[k]||(k===MARINA_DESK&&(marinaDesk()||marinaReserva)))return;L.push({mode:'desk',k,x:x+15,y:base+4,mx:x+15,my:base-36,rect:{x,y:base-20,w:30,h:20}});}));}
   else if(sc==='salaAud'){for(const [x,base] of AUD_LIVRES)L.push({mode:'aud',x,y:base-4,mx:x,my:base-34,rect:{x:x-20,y:base-18,w:40,h:18}});}
-  else if(sc==='salaLab'){for(const b of BENCHES)for(let k=0;k<4;k++){const sx=b.x+12+k*32;L.push({mode:'stool',x:sx,y:b.base+13,mx:sx,my:b.base-8,rect:{x:sx-16,y:b.base-20,w:32,h:38}});}}
+  else if(sc==='salaLab'){for(const b of BENCHES)for(let k=0;k<4;k++){const sx=b.x+12+k*32;if(aulaOn&&aulaAlu&&Object.values(aulaAlu).some(o=>o.sx===sx&&o.sy===b.base+13))continue; /* (v4.10) a student's stool */L.push({mode:'stool',x:sx,y:b.base+13,mx:sx,my:b.base-8,rect:{x:sx-16,y:b.base-20,w:32,h:38}});}}
   return L;
 }
 const aulaPSit=k=>!!aulaAssento&&aulaAssento.mode==='desk'&&aulaAssento.k===k;
@@ -8854,7 +8849,7 @@ function renderSeg(){
     for(let i=1;i<=10;i++){const d=document.createElement('div');const lock=FICHA_LOCK.includes(i)&&sg.placed>=i;
       d.className='sg-slot'+(lock?' lock':'')+(sg.placed>=i?' got':'');d.innerHTML='<small></small><b></b>';
       d.firstChild.textContent=i+(lock?' 🔒':'');d.lastChild.textContent=sg.placed>=i?FICHAS[i][1]:'?';slots.appendChild(d);}
-    if(sg.ok){fb.lastChild.textContent='ALOSTÉRICO: regulado por moléculas que se ligam à enzima fora do sítio ativo. É assim que a célula controla as três reações que não têm volta, a 1, a 3 e a 10. No verso da última ficha, a mesma letra caprichada: "Diante da parede sem porta, caminhe três vezes pensando no que procura."';}
+    if(sg.ok){fb.lastChild.textContent='ALOSTÉRICO: regulado por moléculas que se ligam à enzima fora do sítio ativo. É assim que a célula controla as três reações que não têm volta, a 1, a 3 e a 10. Vire a última ficha: há algo escrito no verso.';} // (v4.10) the message itself comes on the parchment, letter by letter
     else sg.cards.forEach((n,i)=>{const b=document.createElement('button');b.type='button';b.className='qopt'+(i===sg.sel?' sel':'');
       b.innerHTML='<b></b><span></span>';b.firstChild.textContent=FICHAS[n][1];b.lastChild.textContent=FICHAS[n][0];
       b.addEventListener('click',e=>{e.stopPropagation();sg.sel=i;sgPick();});list.appendChild(b);});
@@ -8913,8 +8908,9 @@ function closeSegredo(){
   if(state!=='segredo')return;
   const s=sg;sg=null;sgEl.hidden=true;state='play';keys.clear();
   if(s.mode==='ordem'&&s.ok){flags.alost=4;syncEnigma();updatePauseExtra();
-    return say([{t:'As letras formam: A-L-O-S-T-É-R-I-C-O.'},{t:'No verso da última ficha: "Diante da parede sem porta, caminhe três vezes pensando no que procura."'},
-      {who:me(),t:'Parede sem porta... No fim do corredor do 2º andar, a parede da direita não tem nada. Nem quadro, nem porta.'}]);}
+    return say([{t:'As letras formam: A-L-O-S-T-É-R-I-C-O.'},{t:'No verso da última ficha, a mesma letra caprichada do bilhete vai surgindo aos poucos, como se alguém escrevesse do outro lado:'}],
+      ()=>versoFolha(0,'Diante da parede sem porta, caminhe três vezes pensando no que procura.',false,()=>say([ // (v4.10) the parchment of the sheets' riddles
+        {who:me(),t:'Parede sem porta... No fim do corredor do 2º andar, a parede da direita não tem nada. Nem quadro, nem porta.'}])));}
   if(s.mode==='porta'&&s.ok)portaFinal(s.n);
   if(s.T&&s.ok)s.T.fim();
 }
@@ -9135,7 +9131,7 @@ function tdMoversTick(dt){
 const tdMoving=o=>tdMovers.some(m=>m.o===o);
 // temporary people for the scenes (the hidden-room trap)
 function tdNpc(id,name,key,outfit,x,y,dir,blink,act){
-  const o={id,name,x,y,dir,anim:0,moving:false,down:false,
+  const o={id,name,ck:key,x,y,dir,anim:0,moving:false,down:false,
     sprite(t){
       if(this.sit){const c=personSprite(key,outfit,'down',0,blinkAt(t,blink),19).c; // sitting on the floor, knees up, shoes in front
         const k_=c;if(this._sitSrc!==k_){const s_=document.createElement('canvas');s_.width=c.width;s_.height=c.height+4;const q=s_.getContext('2d');q.drawImage(c,0,0);
@@ -9952,7 +9948,7 @@ const AM_REC=[
    L:()=>['Ei, ouvi uns veteranos conversando no corredor. Disseram que no laboratório do térreo sempre acontece alguma coisa estranha.','Vamos dar uma olhada?']},
   {k:'via',hist:1,ok:()=>viaDia1()&&!flags.viaTip&&!flags.viaOk, // (v4.09) mandatory on day 1: after the Biochemistry class
    L:()=>['O Prof. Neto pediu que a turma toda faça o "Percorrer a via", no simulador do laboratório do térreo, ainda hoje.','É a revisão das 10 reações antes da prova. Vamos?'],
-   sim:()=>{flags.viaTip=true;updatePauseExtra();}},
+   sim:()=>{flags.viaTip=true;flags.viaNeto=true;updatePauseExtra();}},
   {k:'dz',hist:1,ok:()=>flags.alost===6&&!flags.dzOn&&!flags.dzDone,
    L:()=>['Agora que a gente tem o convite da Liga... O Bruno, lá do térreo, vive falando de um tal Desafio da Liga, no simulador.','Vamos perguntar a ele?']},
   {k:'td',hist:1,ok:()=>!!flags.fundador&&(flags.td||0)<3,
@@ -9978,7 +9974,10 @@ function amRecTick(dt){
 {const u0=update;update=function(dt){u0(dt);try{amRecTick(dt);}catch(_){}};}
 function abordDraw(){
   if(!abord)return;const o=abord.o,x=Math.round(o.x),y=Math.round((o.sitting>0&&o.seat?o.seat.top+23:o.y)-37-Math.abs(Math.sin(abord.t*9))*2);
-  r(x-4,y,9,11,'#1d1612');r(x-3,y+1,7,9,'#5fb4f0');r(x-3,y+1,7,1,'#e6f8ff');r(x,y+2,1,4,'#1d2226');px(x,y+8,'#1d2226');
+  // (v4.10) the same colour as that person's "!" when standing still (it used to be always blue: a story mission, gold, turned blue while they came over)
+  let k=null;try{k=markKind(o);}catch(_){}k=k||({tiago:'nova',gabriel:'nova',kido:'nova'})[o.id]||'extra';
+  const cl=MARK[k],hl={nova:'#fff1c8',extra:'#e6f8ff',vai:'#e2f8e4'}[k];
+  r(x-4,y,9,11,'#1d1612');r(x-3,y+1,7,9,cl);r(x-3,y+1,7,1,hl);r(x,y+2,1,4,'#1d2226');px(x,y+8,'#1d2226');
 }
 function tdTick(dt){
   abordTick(dt);
@@ -10348,7 +10347,7 @@ function ligaActive(add_){
   if(G>=1&&G<=4)add_('ligaG'+G,'Desafio da galactose (Prof. Malvar): '+['',
     'busque as folhas 1 a 4 no armário trancado da Sala 101 (você está com a chave)',
     'entregue as folhas 1 a 4'+ent+' (e devolva a chave)',
-    'peça as folhas 5 a 8 ao Prof. Neto, '+netoOnde()+(flags.profsIn||profSalaOn()?'':' (ele chega à Sala 101 às 7h47)'),
+    'peça as folhas 5 a 8 ao Prof. Neto, '+netoOnde()+(flags.profsIn||profNaSala()?'':' (ele chega à Sala 101 às 7h47)'),
     'entregue as folhas 5 a 8'+ent][G]);
   if(F>=1&&F<=4)add_('ligaF'+F,'Desafio da frutose (Prof. Malvar): '+['',
     'as folhas 1 a 4 estão dentro do livro "Mil Ervas e Enzimas Mágicas", na Sala 204',
@@ -10448,7 +10447,7 @@ function ligaGrade(set){
       L.push({who:MW,t:'E não pense que vou esperar o dia inteiro.'});
     }else L.push({who:me(),t:'E as folhas 5 a 8 da galactose, professor?'},
       {who:MW,t:'Estão com o Prof. Neto. Ele insistiu em ler os casos antes. Diz que gosta de galactosemia. Cada um com as suas fraquezas.'},
-      {who:MW,t:'Peça a ele. Educadamente. O Neto é sentimental com alunos.'+(profSalaOn()?' Hoje ele está na sala dos professores.':flags.profsIn?'':' Ele chega à Sala 101 pouco antes das 7h50.')});
+      {who:MW,t:'Peça a ele. Educadamente. O Neto é sentimental com alunos.'+(profNaSala()?' Hoje ele está na sala dos professores.':flags.profsIn?'':' Ele chega à Sala 101 pouco antes das 7h50.')});
   }else{
     flags[key]=5;
     const tot=ligaTot(k);
@@ -11572,6 +11571,7 @@ function render(t){
   // quest markers
   const bob=Math.round(Math.sin(t*5)*1.5);
   for(const o of objects){
+    if(typeof abord!=='undefined'&&abord&&abord.o===o)continue; // (v4.10) coming over: only the bouncing "!" of the approach
     const kind=markKind(o);if(!kind)continue;
     const mx=Math.round(o.mark?o.mark.x:o.cx),my=(o.mark?o.mark.y:Math.max(2,o.top-13))+bob;
     r(mx-3,my,7,9,'#1d1612');r(mx-2,my+1,5,7,MARK[kind]);r(mx,my+2,1,3,'#1d2226');px(mx,my+6,'#1d2226');
@@ -13193,6 +13193,9 @@ function profCafeTick(){
   else if(!on&&profCafe)profCafeSai();
   if(profMalvarFora&&!profCafe&&scene!=='sala204'&&!SCENES.sala204.includes(malvar)&&!tdMalOut){SCENES.sala204.push(malvar);profMalvarFora=false;}
   // the first time in, each morning: Rosa calls the player in, Neto says where to meet them
+  if(profTardeD1()&&profSalaDentro()&&scene==='salaProf'&&state==='play'&&!fade&&!dialog&&!flags.tardeD1){flags.tardeD1=true;flags.cafeVisto=true; // (v4.10)
+    say([{who:'PROFA. ROSA',t:'Entre, '+nome1()+'! Estamos aqui trabalhando um pouco nos notebooks.'},
+      {who:'PROF. NETO',t:'À tarde ficamos na sala dos professores. Pode trazer as folhas que já respondeu, aos poucos.'}],()=>{updateObjective();try{saveGame();}catch(_){}});}
   if((profCafe||profSalaDentro())&&scene==='salaProf'&&state==='play'&&!fade&&!dialog&&!flags.cafeVisto){flags.cafeVisto=true;
     if(profSalaDentro())say([{who:'PROFA. ROSA',t:'Bom dia, '+nome1()+'! Entre, entre.'}, // (v3.87) days 2-3: no Biochemistry class, they stay here
       {who:'PROF. NETO',t:'Hoje não temos aula de Bioquímica. Ficamos aqui, na sala dos professores, o dia todo.'},
@@ -13207,19 +13210,34 @@ function profCafeTick(){
    game), they are back here. */
 const PROF_SALA=[[heloisa,150,100],[aldair,234,100]];
 function profSalaOn(){return !!startTime&&!!flags&&typeof adOn==='function'&&adOn()&&(diaN()===2||diaN()===3);}
-function profSalaDentro(){return profSalaOn()&&PROF_SALA.some(([o])=>SCENES.salaProf.includes(o));}
+// (v4.10) day 1, after lunch (13h30): Neto and Rosa work in the teachers' room, at their notebooks (no class in 101 in the afternoon)
+function profTardeD1(){return !!startTime&&!!flags&&typeof adOn==='function'&&adOn()&&diaN()===1&&!!flags.cracha&&typeof LUNCH_END!=='undefined'&&gameMinutes()>=LUNCH_END;}
+function profNaSala(){return profSalaOn()||profTardeD1();}
+function profSalaDentro(){return profNaSala()&&PROF_SALA.some(([o])=>SCENES.salaProf.includes(o));}
 function profSalaTick(){
-  if(!profSalaOn()){if(startTime)for(const [o] of PROF_SALA){const i=SCENES.salaProf.indexOf(o);if(i>=0)SCENES.salaProf.splice(i,1);}return;} // (day 4: back to the usual places)
+  if(!profNaSala()){if(startTime)for(const [o] of PROF_SALA){const i=SCENES.salaProf.indexOf(o);if(i>=0)SCENES.salaProf.splice(i,1);}return;} // (day 4: back to the usual places)
   for(const [o,x,y] of PROF_SALA){
     const naAula=typeof adCena!=='undefined'&&adCena&&AD_DIA[adCena.d]&&AD_DIA[adCena.d].par.includes(o===aldair?'aldair':'heloisa');
     const quer=!lunchOn&&!naAula,L=SCENES.salaProf,aqui=L.includes(o);
     if(quer)for(const k in SCENES){if(k==='salaProf')continue;const i=SCENES[k].indexOf(o);if(i>=0){SCENES[k].splice(i,1);tdMovers=tdMovers.filter(m=>m.o!==o);}} // (never in two places)
     if(quer&&!aqui){
-      o.sat=false;o.script=null;o.scriptEnd=null;o.detour=null;delete o.oy;o.noShadow=false;o.moving=false;o.wait=0;
-      o.x=x;o.y=y;o.dir='down';syncW(o);o.zone={x:x-26,y:84,w:52,h:92}; // (talked to from across the table)
-      L.push(o);
+      if(o._salaVem)continue; // (v4.10) on the way, on foot
+      const poe=()=>{o._salaVem=false;if(L.includes(o))return;
+        o.sat=false;o.script=null;o.scriptEnd=null;o.detour=null;delete o.oy;o.noShadow=false;o.moving=false;o.wait=0;
+        o.x=x;o.y=y;o.dir='down';syncW(o);o.zone={x:x-26,y:84,w:52,h:92}; // (talked to from across the table)
+        L.push(o);};
+      // (v4.10) continuity: the player watching sees them come, never pop in
+      if(scene==='salaProf'&&startTime&&tdClock>2){o._salaVem=true;const T=tdNpc('salaV_'+o.id,o.name,o.id,'coat',192,206,'up',o===aldair?.9:2.4,()=>{});L.push(T);
+        const P=profCafeRota({x,y}).reverse().slice(1).concat([[x,y]]);
+        tdMove(T,P,32,()=>{const i=L.indexOf(T);if(i>=0)L.splice(i,1);const j=tdTemp.indexOf(T);if(j>=0)tdTemp.splice(j,1);poe();});}
+      else if(scene==='andar1'&&startTime&&tdClock>2){o._salaVem=true;const e=o===aldair?[572,58]:[352,200];
+        lunchVai('salaA_'+o.id,o.id,'coat',o.name,o===aldair?.9:2.4,'andar1',e[0],e[1],[[e[0],110],[306,110],[306,64]]);
+        const w=()=>{if(scene==='salaProf'){o._salaVem=false;return;}poe();};adLater(Math.abs(e[0]-306)/32+3.5,w);}
+      else poe();
     }else if(naAula){for(const k in SCENES){const i=SCENES[k].indexOf(o);if(i>=0)SCENES[k].splice(i,1);}} // (giving his class: only the class scene's figure is seen)
-    else if(!quer&&aqui)L.splice(L.indexOf(o),1);
+    else if(!quer&&aqui){L.splice(L.indexOf(o),1);
+      if(scene==='salaProf'){const P=profCafeRota(o);lunchVai('salaS_'+o.id,o.id,'coat',o.name,o===aldair?.9:2.4,'salaProf',o.x,o.y,P);} // (v4.10) out by the door, on foot
+      else if(scene==='andar1')lunchVai('salaS_'+o.id,o.id,'coat',o.name,o===aldair?.9:2.4,'andar1',306,70,o===aldair?[[306,110],[572,110],[572,58]]:[[306,110],[352,110],[352,200]]);} // (Neto up to the auditorium, Rosa down to the ground floor)
   }
 }
 {const u0=update;update=function(dt){u0(dt);try{profSalaTick();}catch(_){}};}
@@ -13227,9 +13245,57 @@ function profSalaTick(){
 // the door: knock (while they are inside)
 {const d=SCENES.andar1.find(o=>o.id==='professores');if(d){const a0=d.act;d.mark={x:306,y:22};
   d.act=function(){
-    if(!profCafe&&!profSalaDentro())return a0.call(this);
+    if(!profCafe&&!profSalaDentro()&&!kikoAlmDentro())return a0.call(this);
     sfx.bump();setTimeout(()=>sfx.bump(),160);
-    say([{t:'Você bate na porta: toc, toc, toc.'},{who:'VOZ DA PROFA. ROSA',t:'Pode entrar!'}],()=>goScene('salaProf',192,196,'up','SALA DOS PROFESSORES'));};}}
+    say([{t:'Você bate na porta: toc, toc, toc.'},{who:kikoAlmDentro()&&!profSalaDentro()?'VOZ DO PROF. KIKO':'VOZ DA PROFA. ROSA',t:'Pode entrar!'}],()=>goScene('salaProf',192,196,'up','SALA DOS PROFESSORES'));};}}
+
+/* (v4.10) DAY 1, LUNCH (12h00-13h30): Neto and Rosa leave Sala 101 (Rosa to the ground floor with the students, Neto
+   to the auditorium, as before), and Prof. Kiko comes back to the teachers' room. Knocking at the door, he calls the
+   player in and says where to find each of them until 13h30. From 13h30 on Neto and Rosa work in the teachers' room,
+   at their notebooks (profTardeD1, profSalaTick). */
+const KIKO_ALM=[192,100];
+function kikoAlmOn(){return !!startTime&&!!flags&&typeof adOn==='function'&&adOn()&&diaN()===1&&lunchOn&&!aulaOn;}
+function kikoAlmDentro(){return kikoAlmOn()&&SCENES.salaProf.includes(kido);}
+let kikoAlm=false;
+function kikoAlmTick(){
+  if(!startTime||!flags||state!=='play')return;
+  const on=kikoAlmOn();
+  if(on&&!kikoAlm){kikoAlm=true;
+    const entra=()=>{if(!kikoAlmOn()){if(!tdWhere(kido))wLane(kido,'andar1');return;}wOn(kido,'salaProf',...KIKO_ALM,'down',false);kido.zone={x:KIKO_ALM[0]-26,y:84,w:52,h:92};};
+    if(scene==='salaProf'){ // (the player is inside: he comes in by the door, on foot)
+      if(tdWhere(kido))wOff(kido);const L=SCENES.salaProf,T=tdNpc('kidoAlmV','Prof. Kiko (Histologia)','kido','coat',192,206,'up',1.1,()=>{});L.push(T);
+      tdMove(T,profCafeRota({x:KIKO_ALM[0],y:KIKO_ALM[1]}).reverse().slice(1).concat([KIKO_ALM]),32,()=>{const i=L.indexOf(T);if(i>=0)L.splice(i,1);const j=tdTemp.indexOf(T);if(j>=0)tdTemp.splice(j,1);entra();});
+      return;}
+    const sc=tdWhere(kido);
+    if(sc===scene&&sc==='andar1'){const x=kido.x,y=kido.y;wOff(kido);lunchVai('kidoAlm','kido','coat',kido.name,1.1,'andar1',x,y,[[306,y],[306,64]]);lunchLater(4,entra);}
+    else entra();
+  }else if(!on&&kikoAlm){kikoAlm=false;
+    if(!SCENES.salaProf.includes(kido)){if(!tdWhere(kido)&&!tdMovers.some(m=>m.o&&m.o.id==='kidoAlmV'))wLane(kido,'andar1');return;} // (still on his way in: entra sends him back)
+    const x=kido.x,y=kido.y;wOff(kido);
+    if(scene==='salaProf')lunchVai('kidoAlm','kido','coat',kido.name,1.1,'salaProf',x,y,profCafeRota({x,y}));
+    if(scene==='andar1')wOn(kido,'andar1',306,72,'down',true);else wLane(kido,'andar1'); // (out of the door, back to the corridor)
+  }
+  if(kikoAlmDentro()&&scene==='salaProf'&&!fade&&!dialog&&!flags.kikoAlmVisto){flags.kikoAlmVisto=true;kido.dir=faceTo(kido,player);
+    say(kikoAlmFala(true),()=>{updateObjective();});}
+}
+function kikoAlmFala(primeira){
+  const KW='PROF. KIKO (HISTOLOGIA)';
+  return (primeira?[{who:KW,t:'Entre, '+nome1()+'! Vim almoçar aqui, longe do barulho do refeitório.'}]:[])
+    .concat([{who:KW,t:'Procurando o Prof. Neto ou a Profa. Rosa? Até as 13h30, eles estão fora.'},
+      {who:KW,t:'O Neto está no auditório, no 2º andar, ajudando a organizar o Simpósio de Metabolismo.'},
+      {who:KW,t:'A Rosa está no térreo, com os alunos: ou conversando por lá, ou descansando no sofá.'},
+      {who:KW,t:'Às 13h30 os dois voltam para cá e passam a tarde trabalhando nos notebooks.'}]);
+}
+{const k0=kido.act;kido.act=function(){
+  if(kikoAlmDentro()&&scene==='salaProf'){this.dir=faceTo(this,player);return say(kikoAlmFala(false));}
+  return k0.apply(this,arguments);};}
+{const u0=update;update=function(dt){u0(dt);try{kikoAlmTick();}catch(_){}};}
+// the two notebooks on the meeting table, while Neto and Rosa are in the room (seen from behind: the lid)
+SCENES.salaProf.push({id:'profNotebooks',name:'Notebooks',deco:true,cx:192,top:100,base:141,noShadow:true,zone:{x:-999,y:-999,w:0,h:0},solid:{x:-999,y:-999,w:0,h:0},draw:()=>{
+  for(const [o,x] of [[heloisa,148],[aldair,242]]){if(!SCENES.salaProf.includes(o))continue;
+    r(x-8,111,16,2,'#2c3236');r(x-7,101,14,10,'#7b8186');r(x-7,101,14,1,'#b9c2c8');r(x-6,102,12,8,'#9aa2a9');
+    px(x,105,'#efe3c8');px(x-1,106,'#efe3c8');px(x+1,106,'#efe3c8');px(x,107,'#efe3c8'); // a little star on the lid
+    if(Math.floor(performance.now()/700)%2===0)px(x+5,109,'#7fd38a');}}}); // the power light
 
 /* Dona Lúcia works inside the library now, at the end of the loan desk; the library door gets the blue "!"
    whenever a side quest needs her */
@@ -13296,17 +13362,17 @@ const VISIT={
    or vanishes in sight. At 13h30 everybody goes back to Sala 101 for the afternoon class. */
 const LUNCH_MIN=12*60,LUNCH_END=13*60+30,ROSA_LUNCH=[552,348],NETO_LUNCH=[192,94];
 const LUNCH_FALAS={
-  bia:['Finalmente, almoço! Hoje é pão de queijo e descanso.','Leite no café? Lá vai lactose: glicose e galactose. Olha eu estudando no almoço.','Depois do almoço a gente volta para a Sala 101. Ainda bem que dá tempo de jogar uma partida.'],
+  bia:['Finalmente, almoço! Hoje é pão de queijo e descanso.','Leite no café? Lá vai lactose: glicose e galactose. Olha eu estudando no almoço.','Ainda dá tempo de jogar uma partida antes de voltar a estudar.'],
   rafael:['Hoje eu só assisto à partida. Ainda estou sem força.','Açúcar de mesa é sacarose: glicose mais frutose. Duas colheres, por favor.'],
   caio:['Comi tanto que a minha glicólise está a mil.','Vou fechar os olhos só cinco minutinhos neste sofá.'],
-  julia:['A Profa. Rosa almoça com a gente. Ela conta cada história!','Hoje de tarde tem aula. Agora é só descanso.'],
+  julia:['A Profa. Rosa almoça com a gente. Ela conta cada história!','Agora é só descanso. Depois, de volta aos estudos.'],
   davi:['Estudar em grupo rende mais. Fizemos um resumo da regulação da PFK-1.','Agora estamos na xilulose-5-fosfato: é ela que avisa o fígado que tem glicose sobrando.','Amanhã tem prova. Almoço mais tarde.'],
-  marina:['Aproveitei o almoço para revisar as 10 reações com o Davi.','Depois da glicólise, passamos para o NADPH. Ele doa elétrons para construir ácidos graxos e colesterol.','Depois das 13h30 a gente volta para a Sala 101.'],
+  marina:['Aproveitei o almoço para revisar as 10 reações com o Davi.','Depois da glicólise, passamos para o NADPH. Ele doa elétrons para construir ácidos graxos e colesterol.','Depois das 13h30, a gente volta a estudar lá em cima.'],
   ana:['Psiu. A Dona Lúcia já me olhou feio duas vezes.','Este capítulo explica a catarata no diabetes: a aldose-redutase transforma glicose em sorbitol, e o sorbitol puxa água.','Na biblioteca o almoço é um sanduíche escondido e um capítulo de glicólise.']};
 const LUNCH_DEST={bia:'terreo',rafael:'terreo',caio:'terreo',julia:'terreo',davi:'andar2',marina:'andar2',ana:'salaBib'};
 var lunchOn=false,lunchFora=false,lunchQ=[],lunchAlu=null;
-const rosaOnde=()=>lunchOn?'na área de convivência do térreo':profSalaOn()?'na sala dos professores (1º andar)':'na Sala 101';
-const netoOnde=()=>lunchOn?'no auditório (2º andar)':profSalaOn()?'na sala dos professores (1º andar)':'na Sala 101';
+const rosaOnde=()=>lunchOn?'no térreo, com os alunos':profNaSala()?'na sala dos professores (1º andar)':'na Sala 101';
+const netoOnde=()=>lunchOn?'no auditório (2º andar)':profNaSala()?'na sala dos professores (1º andar)':'na Sala 101';
 const isLunch=()=>{if(!flags||!relogioLivre())return false;const m=gameMinutes();return m>=LUNCH_MIN&&m<LUNCH_END;}; // every day (on day 4, after a passing grade: before it the clock stops at 11h30)
 const lunchLater=(sec,fn)=>lunchQ.push({t:tdClock+sec,fn});
 function lunchMake(){
@@ -13345,7 +13411,45 @@ function lunchChega(o){
   wOn(o,sc,ex,ey,'down',true);o.sitCool=0;o.wait=0;
   if((o.study||o.quieto)&&st){st.by=o;o.seat=st;o.queue=st.go(o.y0);[o.tx,o.ty]=o.queue.shift();}
 }
+/* (v4.10) at lunch Profa. Rosa does not stand still in the lounge: she walks the ground floor like the students
+   (the same lane), stops to chat with them and now and then rests on one of the lounge sofas. */
+const ROSA_LANE=[440,676,134];
+function rosaVaga(on){
+  const W=WANDER.terreo,i=W.indexOf(heloisa),o=heloisa;
+  if(on){if(i<0)W.push(o);
+    Object.assign(o,{x0:ROSA_LANE[0],x1:ROSA_LANE[1],y0:ROSA_LANE[2],lunch:true,rosaVaga:true,meet:null,chat:0,role:0,queue:[],seat:null,sitting:0,
+      sitCool:6+Math.random()*10,cool:2+Math.random()*4,tx:null,ty:ROSA_LANE[2],homing:false,wait:1,sat:false,script:null});
+  }else{if(i>=0)W.splice(i,1);if(o.meet)stopChat(o);if(o.seat){o.seat.by=null;o.seat=null;}if(rosaPapo){rosaPapo.alu.chat=0;rosaPapo=null;}
+    Object.assign(o,{lunch:false,rosaVaga:false,sitting:0,noShadow:false,queue:[],tx:null,meet:null,chat:0});}
+}
+{const s0=heloisa.sprite;heloisa.sprite=function(t){
+    if(this.rosaVaga&&this.sitting>0&&this.seat){const st=this.seat,c=personSprite('heloisa','coat',st.dir||'down',0,blinkAt(t,2.4),st.crop);return {c:c.c,x:st.cx-8,y:st.top};}
+    return s0.call(this,t);};
+  const f0=heloisa.fx;heloisa.fx=function(t){if(f0)f0.call(this,t);if(this.rosaVaga&&this.chat>0&&!ghBub.some(b=>b.sc===scene&&b.delay<=0))chatBubble(this,t);};
+  const a0=heloisa.act;heloisa.act=function(){if(this.rosaVaga&&this.meet)stopChat(this);return a0.apply(this,arguments);};}
+// she also goes over to a student seated on a sofa and chats a while, standing beside them
+let rosaPapo=null;
+function rosaPapoTick(dt){
+  const o=heloisa;
+  if(!o.rosaVaga||state!=='play'){rosaPapo=null;return;}
+  if(rosaPapo){const p=rosaPapo,a=p.alu;
+    if(!(a.sitting>0)||!a.seat||o.seat){if(a.chat>0)a.chat=0;rosaPapo=null;return;}
+    if(p.fase==='ida'&&o.tx==null&&!o.queue.length){p.fase='papo';p.t=6+Math.random()*4;o.dir=faceTo(o,{x:a.seat.cx,y:a.seat.base});o.chat=p.t;o.role=0;a.chat=p.t;a.role=1;}
+    else if(p.fase==='papo'){p.t-=dt;a.chat=Math.max(0,p.t);
+      if(p.t<=0){a.chat=0;o.chat=0;o.queue=p.volta.slice();[o.tx,o.ty]=o.queue.shift();o.homing=true;o.cool=10+Math.random()*10;rosaPapo=null;}}
+    return;}
+  if(o.seat||o.meet||o.tx!=null||o.queue.length||o.chat>0||o.cool>0||o.wait>0||Math.random()>.01)return;
+  const S=(WANDER.terreo||[]).filter(q=>q!==o&&q.lunch&&q.sitting>0&&q.seat&&!q.chat);if(!S.length)return;
+  const a=S[(Math.random()*S.length)|0],P=a.seat.go(o.y0);if(P.length<2)return;
+  const ida=P.slice(0,-1);ida[ida.length-1]=[ida[ida.length-1][0]+(a.seat.cx<ida[ida.length-1][0]?4:-4),ida[ida.length-1][1]];
+  rosaPapo={alu:a,fase:'ida',volta:ida.slice().reverse().concat([[o.x,o.y0]])};
+  o.queue=ida.slice();[o.tx,o.ty]=o.queue.shift();
+}
+{const u0=update;update=function(dt){u0(dt);try{rosaPapoTick(dt||0);}catch(_){}};}
 function lunchProf(o,sc,x,y){ // Rosa in the lounge, Neto in the auditorium
+  if(o===heloisa&&sc==='terreo'){ // (v4.10) Rosa walks around
+    if(scene==='terreo'){o.x=352;o.y=60;syncW(o);SCENES.terreo.push(o);tdMove(o,[[352,134],[480,134]],34,()=>{if(lunchOn)rosaVaga(true);});return;}
+    o.x=ROSA_LANE[0]+Math.random()*(ROSA_LANE[1]-ROSA_LANE[0]);o.y=ROSA_LANE[2];o.dir='down';syncW(o);SCENES.terreo.push(o);rosaVaga(true);return;}
   if(scene===sc&&sc==='terreo'){o.x=352;o.y=60;syncW(o);SCENES.terreo.push(o);tdMove(o,[[352,134],[523,134],[523,240],[510,240],[510,y],[x,y]],34,()=>{o.dir='down';});return;}
   if(scene===sc)return lunchLater(3,()=>lunchProf(o,sc,x,y)); // (the door of the auditorium: not in front of the player)
   o.x=x;o.y=y;o.dir='down';syncW(o);SCENES[sc].push(o);
@@ -13374,6 +13478,7 @@ function lunchStart(force){
   updateObjective();updatePauseExtra();
 }
 function lunchVolta(o){ // back at the desk behind the teacher's table (in through the door if the player is in the room)
+  if(profNaSala())return; // (v4.10) profSalaTick puts them in the teachers' room
   if(!SCENES.sala101.includes(o))SCENES.sala101.push(o);
   const x=o===aldair?176:208,ex=o===aldair?146:238,senta=()=>{
     if(!flags.seated)return initWalker(o);
@@ -13391,10 +13496,13 @@ function lunchEnd(){
     const st=o.seat,P=(st?st.go(o.y0).reverse():o.y>200?[[523,o.y],[523,134]]:[[o.x,o.y0]]).concat(sc==='terreo'?[[352,134],[352,60]]:[[363,o.y0],[363,200]]);
     exit(o,sc,P);wOff(o);});
   { const i=SCENES.terreo.indexOf(heloisa);if(i>=0){if(tdMoving(heloisa))tdMovers=tdMovers.filter(m=>m.o!==heloisa);
-      if(scene==='terreo')lunchVai('heloisa','heloisa','coat',heloisa.name,2,'terreo',heloisa.x,heloisa.y,[[510,heloisa.y],[510,240],[523,240],[523,134],[352,134],[352,60]]);SCENES.terreo.splice(i,1);}
+      const st=heloisa.seat,hx=st?st.cx:heloisa.x,hy=st?st.base:heloisa.y; // (v4.10) from wherever she is: a sofa, the corridor or the lounge
+      const P=(st?st.go(ROSA_LANE[2]).reverse().slice(1):hy<200?[[hx,134]]:[[510,hy],[510,240],[523,240],[523,134]]).concat([[352,134],[352,60]]);
+      rosaVaga(false);
+      if(scene==='terreo')lunchVai('heloisa','heloisa','coat',heloisa.name,2,'terreo',hx,hy,P);SCENES.terreo.splice(i,1);}
     const j=SCENES.salaAud.indexOf(aldair);if(j>=0){if(scene==='salaAud')lunchVai('aldair','aldair','coat',aldair.name,1,'salaAud',aldair.x,aldair.y,[[192,206],[192,214]]);SCENES.salaAud.splice(j,1);} }
   lunchLater(4,()=>lunchVolta(heloisa));lunchLater(6,()=>lunchVolta(aldair));
-  alunosVoltam();
+  if(!livreDia())alunosVoltam(); // (v4.10) days 2-3: their own routines (livreTick)
   updateObjective();updatePauseExtra();
 }
 function lunchTick(){
@@ -13407,6 +13515,9 @@ function lunchTick(){
 }
 function lunchReset(){ // a new or loaded game: everybody back where the game starts
   lunchQ=[];
+  if(SCENES.salaProf&&SCENES.salaProf.includes(kido)){wLane(kido,'andar1');}try{kikoAlm=false;}catch(_){} // (v4.10)
+  if(heloisa.rosaVaga)rosaVaga(false);
+  try{livreFim(true);}catch(_){}
   if(aulaOn){aulaOn=false;Object.values(aulaAlu||{}).forEach(o=>{const i=SCENES.salaLab.indexOf(o);if(i>=0)SCENES.salaLab.splice(i,1);});if(tdWhere(kido)==='salaLab')wLane(kido,'andar1');}
   if(lunchOn||lunchFora){lunchOn=false;lunchFora=false;Object.values(lunchAlu||{}).forEach(o=>{const i=SCENES.salaBib.indexOf(o);if(i>=0)SCENES.salaBib.splice(i,1);if(o.dest!=='salaBib')wOff(o);});}
   for(const [o,sc] of [[heloisa,'terreo'],[aldair,'salaAud']]){const L=SCENES[sc],i=L?L.indexOf(o):-1;if(i>=0)L.splice(i,1);}
@@ -13414,13 +13525,13 @@ function lunchReset(){ // a new or loaded game: everybody back where the game st
 { // during lunch they talk about it (the missions go first)
   const h1=heloisa.act,a1=aldair.act;
   heloisa.act=function(){const q=flags.bolsaQ||0;
-    if(lunchOn&&q!==2&&q!==5){this.dir=faceTo(this,player);return say([{who:'PROFA. ROSA',t:'Hora do almoço, '+nome1()+'! Vim ficar um pouco com a turma. Às 13h30 a gente volta para '+(profSalaOn()?'a sala dos professores':'a Sala 101')+'.'}]);}
+    if(lunchOn&&q!==2&&q!==5){this.dir=faceTo(this,player);return say([{who:'PROFA. ROSA',t:'Hora do almoço, '+nome1()+'! Vim ficar um pouco com a turma. Às 13h30 a gente volta para '+(profSalaOn()||diaN()===1?'a sala dos professores':'a Sala 101')+'.'}]);}
     return h1.call(this);};
   aldair.act=function(){
-    if(viaEntrega()&&flags.viaNeto&&(!flags.seated||flags.graded)){if(!this.sat)this.dir=faceTo(this,player);
+    if(viaEntrega()&&(!flags.seated||flags.graded)){if(!this.sat)this.dir=faceTo(this,player);
       return say([{who:me(),t:'Professor, percorri a via inteira no simulador! Acertei a pergunta de cada reação.'},
         {who:'PROF. NETO',t:'As 10 reações, uma a uma? Esse é o melhor treino para a prova. Muito bem, '+nome1()+'!',run:()=>{flags.viaEnt=true;updatePauseExtra();}}]);}
-    if(lunchOn&&flags.lgG!==3){this.dir=faceTo(this,player);return say([{who:'PROF. NETO',t:'Estou ajudando a organizar o Simpósio de Metabolismo. O almoço fica para depois! Às 13h30 volto para '+(profSalaOn()?'a sala dos professores':'a Sala 101')+'.'}]);}
+    if(lunchOn&&flags.lgG!==3){this.dir=faceTo(this,player);return say([{who:'PROF. NETO',t:'Estou ajudando a organizar o Simpósio de Metabolismo. O almoço fica para depois! Às 13h30 volto para '+(profSalaOn()||diaN()===1?'a sala dos professores':'a Sala 101')+'.'}]);}
     return a1.call(this);};
 }
 
@@ -13612,19 +13723,19 @@ function juliaVolta(){ // back to her desk; seated again as before
   }catch(_){}};}
 {const r0=reset;reset=function(){r0();juliaCena=null;};}
 // at lunch the students are not in Sala 101
-const miniOnde=P=>aulaOn?P.t.replace('na Sala 101','no laboratório do térreo').replace('Prof. Kiko, no 1º andar','Prof. Kiko, no laboratório do térreo'):lunchOn&&LUNCH_DEST[P.alvo]?P.t.replace('na Sala 101',{terreo:'na convivência do térreo',andar2:'nas mesas de estudo do 2º andar',salaBib:'na biblioteca'}[LUNCH_DEST[P.alvo]]):P.t;
+const miniOnde=P=>livreOn_&&LIVRE_DEST[P.alvo]?P.t.replace('na Sala 101',LIVRE_ONDE[LIVRE_DEST[P.alvo]]):aulaOn?P.t.replace('na Sala 101','no laboratório do térreo').replace('Prof. Kiko, no 1º andar','Prof. Kiko, no laboratório do térreo'):lunchOn&&LUNCH_DEST[P.alvo]?P.t.replace('na Sala 101',{terreo:'na convivência do térreo',andar2:'nas mesas de estudo do 2º andar',salaBib:'na biblioteca'}[LUNCH_DEST[P.alvo]]):P.t;
 /* ---------- Prof. Kiko's practical class, 14h00 to 16h00 ----------
    The students of Sala 101 and Prof. Kiko go to the lab; each one makes a blood smear at the benches. As at lunch, whoever
    the player sees walks; the side quests go on where the students are. Neto and Rosa stay in Sala 101, grading. */
 const AULA_MIN=14*60,AULA_END=16*60;
 const AULA3_MIN=9*60,AULA3_END=11*60; // (v3.04) the four days: Wednesday's practical class (Kiko + Neto) in the morning; an old save keeps it at 14h00
 const aulaIni=()=>flags&&!flags.diaAntigo?AULA3_MIN:AULA_MIN,aulaFim=()=>flags&&!flags.diaAntigo?AULA3_END:AULA_END;
-const AULA_SP={bia:[60,140],rafael:[120,140],julia:[256,140],caio:[316,140],ana:[172,122],davi:[212,122],marina:[192,150]};
+const AULA_SP={bia:[42,131],ana:[74,131],davi:[300,131],julia:[332,131],rafael:[42,179],caio:[106,179],marina:[268,179]}; // (v4.10) everybody seated on a stool of the benches (y = bench base + 13), as the player
 const AULA_FALAS={bia:'Pingar, deslizar a lâmina, secar. O Prof. Kiko faz parecer fácil.',rafael:'Vou só olhar hoje. Melhor não mexer com sangue, com a cabeça rodando.',
   julia:'Olha as hemácias no microscópio: discos sem núcleo. Por isso não têm mitocôndria.',caio:'Meu esfregaço ficou grosso demais. Vou tentar outra lâmina.',
   ana:'Passei marca-texto até no roteiro da aula prática.',davi:'Cada hemácia depende da glicólise e da via das pentoses. Dá para acreditar?',marina:'Esta lâmina ficou boa! Quero ver o que acontece com as hemácias da bolsa velha.'};
 var aulaOn=false,aulaAlu=null;
-const isAula=()=>{if(!flags)return false;if(flags.diaAntigo?!flags.graded||!flags.pass:diaN()!==3)return false; // (the four days: Wednesday; an old save: after a pass)
+const isAula=()=>{if(!flags)return false;if(flags.diaAntigo?!flags.graded||!flags.pass:diaN()!==3)return false;if(!flags.diaAntigo&&flags.aula3Fim)return false; // (v4.10) over with the class scene: back to their routines // (the four days: Wednesday; an old save: after a pass)
   const m=gameMinutes();return m>=aulaIni()&&m<aulaFim();};
 const kikoOnde=()=>aulaOn?'no laboratório do térreo':'no 1º andar';
 function aulaMake(){
@@ -13632,7 +13743,7 @@ function aulaMake(){
   Object.values(SEATED).concat([MARINA_SEAT]).forEach(([key,NAME,outfit],i)=>{
     const [x,y]=AULA_SP[key],blink=1.2+i*.3,solid={x:x-5,y:y-4,w:10,h:4},nome=NAME.charAt(0)+NAME.slice(1).toLowerCase();
     aulaAlu[key]={id:'aula_'+key,key,outfit,nome,blink,sx:x,sy:y,name:nome,cx:x,top:y-26,base:y,solid,zone:expand(solid,10),
-      sprite:t=>({c:personSprite(key,outfit,'up',0,blinkAt(t,blink)).c,x:x-8,y:y-23}),
+      sprite:t=>({c:personSprite(key,outfit,'up',0,blinkAt(t,blink),15).c,x:x-8,y:y-23}),noShadow:true, // (v4.10) seated: only what shows above the stool
       act(){if(miniFala(key))return;say([{who:NAME,t:AULA_FALAS[key]}]);}};
   });
 }
@@ -13660,7 +13771,7 @@ function aulaEnd(){
     if(vis)lunchVai(o.key,o.key,o.outfit,o.nome,o.blink,'salaLab',o.sx,o.sy,[[192,156],[192,224]]);});
   if(tdWhere(kido)==='salaLab'){const x=kido.x,y=kido.y;wOff(kido);if(vis)lunchVai('kido','kido','coat',kido.name,1.1,'salaLab',x,y,[[192,156],[192,224]]);}
   const k=()=>{if(scene==='andar1')return lunchLater(3,k);wLane(kido,'andar1');};lunchLater(6,k);
-  alunosVoltam();
+  if(!livreDia())alunosVoltam(); // (v4.10) days 2-3: their own routines (livreTick)
   updateObjective();updatePauseExtra();
 }
 { // the class, in his words (his quests go first)
@@ -14272,7 +14383,9 @@ ghPlace(ghZ,'andar1');ghPlace(ghT,'andar2');ghSync(ghZ);ghSync(ghT);
   for(const b of ghBub){if(b.delay>0||b.sc!==scene)continue;
     const o=b.o,ox=Math.round(o.x??o.cx),top=(o===ghZ||o===ghT)?Math.round(o.y)-29:Math.round(o.top??(o.y-26));
     const L=pxWrap(b.text.toUpperCase(),92),w=Math.max(...L.map(pxW))+6,h=L.length*7+3;
+    if(ox<camX-6||ox>camX+W+6||top>camY+H||top+30<camY)continue; // (v4.10) the speaker is off the screen: the balloon stays with them, it does not follow the player's camera
     let bx=Math.max(camX+2,Math.min(camX+W-w-2,ox-Math.round(w/2))),by=Math.max(camY+2,top-h-5);
+    bx=Math.max(ox-w+4,Math.min(ox-4,bx)); // (v4.10) always over the speaker (the tail never leaves them)
     for(let k=0;k<4;k++){const q=placed.find(p_=>bx<p_.x+p_.w+2&&bx+w+2>p_.x&&by<p_.y+p_.h+4&&by+h+4>p_.y);if(!q)break;by=q.y-h-6;} // stacked above a balloon already there
     placed.push({x:bx,y:by,w,h});
     const a=Math.min(1,b.t/.15,(b.dur-b.t)/.3);fctx.globalAlpha=Math.max(0,a);
@@ -15951,7 +16064,7 @@ function adFimFalas(d,ok){
   L.push(...({
     1:[{who:N,t:'Por hoje é só de aula. Dúvidas sobre as folhas, estamos aqui na 101 a manhã toda.'}],
     2:[{who:D,t:'Obrigada, Prof. Malvar. Até a próxima, turma!'},{t:'A turma deixa o auditório aos poucos. O Prof. Malvar sai sem olhar para trás.'}],
-    3:[{who:KW,t:'Agora, mãos à obra: cada um faz o seu esfregaço!'},{who:N,t:'E eu volto para a sala dos professores. As folhas não se corrigem sozinhas.'}],
+    3:[{who:KW,t:'Por hoje é só, turma. Lavem as mãos e deixem as lâminas na bandeja.'},{who:N,t:'E eu volto para a sala dos professores. As folhas não se corrigem sozinhas.'}],
     4:[{who:R,t:'A aula acabou. O Prof. Neto já volta para receber as folhas.'},{t:'A Diretora deseja boa prova a todos e sai. O Prof. Neto volta logo depois.'}]}[d]));
   return L;
 }
@@ -15999,6 +16112,8 @@ function adPergunta(){
 }
 const AULA1_FIM=8*60+40; // (v3.64) the class of day 1 lasts 50 minutes: 7h50 to 8h40
 const AULA2_FIM=14*60+50; // (v3.86) the class of day 2 (auditorium) too: 14h00 to 14h50
+const AULA3_FIMX=9*60+50; // (v4.10) and the class of day 3 (lab): 9h00 to 9h50
+const AULA4_FIM=8*60+40; // (v4.12) and the class of day 4 (Sala 101): 7h50 to 8h40
 // (v3.86) the complementary exercise and the cut ("some minutes later"), on days 1 and 2: who speaks, the end of the class
 const AD_EXER={
   1:{fim:AULA1_FIM,res:1,ped:[['PROF. NETO','Antes de encerrarmos, um exercício complementar: desenhem o mapa metabólico da glicólise numa folha do caderno.'],
@@ -16006,7 +16121,13 @@ const AD_EXER={
     fecho:['PROFA. ROSA','Tempo esgotado! Guardem o mapa no caderno: ele vai ajudar muito nos estudos para a prova.']},
   2:{fim:AULA2_FIM,res:2,ped:[[MW,'Antes de saírem, um exercício. No caderno, desenhem a glicólise e marquem onde cada veneno trava a via: o fluoreto, o arsenato e o iodoacetato.'],
       [DIRA_W,'E, ao lado de cada um, escrevam o que a célula deixa de ganhar. Nós passamos pelas fileiras para tirar dúvidas.']],
-    fecho:[MW,'Tempo esgotado. Guardem esse mapa: venenos caem na prova com mais frequência do que vocês imaginam.']}};
+    fecho:[MW,'Tempo esgotado. Guardem esse mapa: venenos caem na prova com mais frequência do que vocês imaginam.']},
+  3:{fim:AULA3_FIMX,res:1,ped:[[KW,'Agora, mãos à obra: cada um faz o seu esfregaço e desenha no caderno as hemácias que vir no microscópio.'],
+      ['PROF. NETO','Ao lado do desenho, escrevam a glicólise da hemácia e marquem onde ela regenera o NAD+. Nós passamos pelas bancadas para tirar dúvidas.']],
+    fecho:[KW,'Tempo esgotado! Guardem o desenho: histologia e bioquímica andam juntas na prova.']},
+  4:{fim:AULA4_FIM,res:1,ped:[['PROFA. ROSA','Antes de encerrarmos, um exercício complementar: desenhem no caderno o ciclo de Cori, do glicogênio do músculo até a glicose que o fígado devolve.'],
+      [DIRA_W,'Marquem onde a célula gasta e onde produz ATP, como um arquiteto marca as colunas de um prédio. Nós passamos pelas carteiras para tirar dúvidas.']],
+    fecho:['PROFA. ROSA','Tempo esgotado! Guardem esse desenho: amanhã é a prova.']}};
 function adFimSay(d,ok,fim){ // days 1 and 2: the professors give a complementary exercise, a cut ("some minutes later"), and the class ends
   const L=adFimFalas(d,ok),X=AD_EXER[d];if(!X)return say(L,fim);
   const antes=L.slice(0,X.res),depois=L.slice(X.res),alvo=Math.max(X.fim,gameMinutes()+10); // (a class that began late still lasts a while)
@@ -16025,7 +16146,10 @@ function adJaPrepara(d){
   const A=AD_DIA[d];if(!A||adCena||scene!==A.sc)return false;
   const L=SCENES[A.sc];
   adCena={d,i:0,esc:[],atr:[],real:{},go:true,t:0}; // (go: no automatic start while the day screen is still up)
-  for(const k of A.par)for(const o of adReais(k)){const i=o?L.indexOf(o):-1;if(i>=0){L.splice(i,1);adCena.esc.push([o,i]);if(!adCena.real[k])adCena.real[k]={o,x:o.x,y:o.y,dir:o.dir};}}
+  if(A.sc==='sala101'){ // (v4.12) Sala 101: the class at the desks (Marina at hers), the professors at theirs
+    try{RECESS.forEach(o=>{recessUnplace(o);Object.assign(o,{stage:3,d:0,deskT:Infinity,going:false,path:[],chat:0,meet:null,solo:null,soloT:0,wait:0,moving:false});});}catch(_){}
+    if(d!==1)flags.marina101=diaN();flags.bell8=true;try{if(!SCENES.sala101.includes(heloisa))profsArrive(true);}catch(_){}}
+  for(const k of A.par.concat(A.fora||[]))for(const o of adReais(k)){const i=o?L.indexOf(o):-1;if(i>=0){L.splice(i,1);adCena.esc.push([o,i]);if(!adCena.real[k])adCena.real[k]={o,x:o.x,y:o.y,dir:o.dir};}} // (v4.12) the one who gave his class away too: he comes back at the end
   A.par.forEach((k,j)=>{const [x,y]=A.pos[j],T=tdNpc('ad_'+k,AD_NOME[k],k,'coat',x,y,'down',1.1+j*.7);T.adK=k;L.push(T);adCena.atr.push(T);});
   if(A.plateia){alunosSaem(false);lunchFora=true;
     AD_PLATEIA.forEach(([k,ou,x,y],j)=>{const T=tdNpc('adp_'+k,k,k,ou,x,y,'up',1.3+j*.4);T.adP=[x,y];L.push(T);adCena.atr.push(T);});}
@@ -16043,11 +16167,12 @@ function adFim(){
   state='tdcut';tdCut=true;
   adFimSay(d,ok,()=>{
     (flags.aulaD||(flags.aulaD={}))[d]=true;
+    if(d===3)adLater(5,()=>{flags.aula3Fim=true;}); // (v4.10) the lab class is over: once the professors are back in place, the class leaves (isAula)
     const A=AD_DIA[d],L=SCENES[A.sc],C=adCena,a=adLane(A.sc);
     // each real professor comes back into the room at the spot where the walk of his stand-in ends
     const volta=(k,T)=>{adTira(T);const e=C.real[k];if(!e||tdWhere(e.o))return;
       const i=(C.esc.find(x=>x[0]===e.o)||[0,L.length])[1];L.splice(Math.min(i,L.length),0,e.o);e.o.dir=e.dir;
-      if(A.sc==='sala101'&&profWait&&!flags.seated)try{profsStand();}catch(_){}}; // (v3.95) after the class, up from the desk: from student to student, answering questions
+      if(A.sc==='sala101'&&d===1&&profWait&&!flags.seated)try{profsStand();}catch(_){}}; // (v4.12) day 4: the class leaves, nobody to walk among // (v3.95) after the class, up from the desk: from student to student, answering questions
     for(const T of C.atr){
       if(T.adP){const [x,y]=T.adP,j=AD_PLATEIA.findIndex(p=>'adp_'+p[0]===T.id); // the audience: row by row, out by the door
         adLater(.6+j*.7,()=>tdMove(T,[[x,y+24],[a,y+24],[a,206],[a,244]],46,()=>adTira(T)));continue;}
@@ -16058,7 +16183,7 @@ function adFim(){
     (A.fora||[]).forEach(k=>{const e=C.real[k];if(!e)return; // the one who gave his class away comes back, a little later
       adLater(3.5,()=>{const T=tdNpc('adf_'+k,AD_NOME[k],k,'coat',a,236,'up',1.1);L.push(T);
         tdMove(T,[[a,206],[a,Math.max(e.y+14,130)]].concat(adDaMesa(A.sc,[e.x,e.y]).reverse(),[[e.x,e.y]]),36,()=>volta(k,T));});});
-    if(A.plateia)adLater(14,()=>{if(!lunchOn&&!aulaOn)alunosVoltam();}); // (v3.05) back down to Sala 101: the walk from the auditorium takes a while
+    if(A.plateia&&!livreDia())adLater(14,()=>{if(!lunchOn&&!aulaOn)alunosVoltam();}); // (v4.10) days 2-3: livreTick spreads them through the school // (v3.05) back down to Sala 101: the walk from the auditorium takes a while
     adCena=null;tdCut=false;state='play';keys.clear();aulaLevanta(); // (v3.31) up from the seat
     updateObjective();try{saveGame();}catch(_){}
   });
@@ -16088,6 +16213,79 @@ function adEsconde(){ // a real professor of the pair walking in during the clas
     if(!adCena.go&&(adCena.t+=dt||0)>14){tdMovers=tdMovers.filter(m=>!adCena.atr.includes(m.o)&&m.o!==player);adGo();} // (never stuck on the way in)
     return;}
   if((adChk-=dt||0)>0)return;adChk=.5;try{adTick();}catch(_){}};}
+
+/* (v4.10) DAYS 2 AND 3: THE CLASS OF 101 HAS ITS OWN ROUTINES. There is no Biochemistry class in Sala 101 on those
+   days, so outside the day's class and lunch the seven students do not go back to their desks: they spread through
+   the school (the ground floor's lounge, the 1st floor corridor, the study tables of the 2nd floor, the library),
+   walking, chatting with each other or studying. Seen by the player, they come in by the stairs (or leave by them),
+   never popping in or out. */
+const LIVRE_DEST={bia:'andar1',julia:'andar1',rafael:'terreo',caio:'terreo',davi:'andar2',marina:'andar2',ana:'salaBib'};
+const LIVRE_ONDE={terreo:'na convivência do térreo',andar1:'no corredor do 1º andar',andar2:'nas mesas de estudo do 2º andar',salaBib:'na biblioteca'};
+const LIVRE_LANE={terreo:[392,676,134],andar1:[392,688,108],andar2:[334,470,96]};
+const LIVRE_FALAS={
+  bia:[()=>(diaN()===1?'A aula de hoje foi de manhã. Agora aproveito':'Sem aula de Bioquímica hoje, aproveito')+' para revisar a regulação da PFK-1 andando. Dizem que ajuda a memorizar.','A frutose-2,6-bisfosfato ativa a PFK-1: é o sinal de que há glicose sobrando.'],
+  julia:['Finalmente achei um carregador! Agora o resumo está salvo.','Estou procurando a Camila: a monitoria dela ajuda muito.'],
+  rafael:['Vou descansar um pouco no sofá antes de voltar a estudar.','A sacarose é glicose mais frutose. Isso eu não esqueço mais.'],
+  caio:['Tomei a matéria do Rafael de novo. Desta vez ele acertou a PFK-2!','A convivência é o melhor lugar para estudar em grupo: ninguém pede silêncio.'],
+  davi:['A Marina e eu estamos montando um resumo da via das pentoses-fosfato.','A glicose-6-fosfato-desidrogenase é a enzima que controla a via das pentoses-fosfato.'],
+  marina:['O Davi e eu estamos revisando para a prova. Quer estudar com a gente?','O NADPH da via das pentoses-fosfato protege a hemácia contra o estresse oxidativo.'],
+  ana:['Psiu. A biblioteca é o único lugar onde eu consigo me concentrar.','Este capítulo explica a catarata no diabetes: a aldose-redutase transforma glicose em sorbitol.']};
+var livreOn_=false,livreAlu=null;
+function livreDia(){return !!startTime&&!!flags&&typeof adOn==='function'&&adOn()&&(diaN()===2||diaN()===3||diaN()===4||(diaN()===1&&gameMinutes()>=LUNCH_END));} // (v4.12) day 4: after the class // (v4.11) day 1 too, after lunch: no class in 101 in the afternoon
+function livreQuer(){return livreDia()&&!lunchOn&&!aulaOn&&!adCena&&adFeita(diaN())&&!diaVirando&&!diaTelaOn;}
+function livreMake(){
+  if(livreAlu)return;livreAlu={};
+  Object.values(SEATED).concat([MARINA_SEAT]).forEach(([key,NAME,outfit],i)=>{
+    const nome=NAME.charAt(0)+NAME.slice(1).toLowerCase(),dest=LIVRE_DEST[key]||'andar1',falas=LIVRE_FALAS[key]||['Oi!'],blink=1.2+i*.3;
+    if(dest==='salaBib'){const x=290,y=104;
+      livreAlu[key]={id:'livre_'+key,key,outfit,nome,blink,dest,name:nome,cx:x,top:y-26,base:y,solid:{x:x-5,y:y-4,w:10,h:4},zone:{x:x-16,y:y-14,w:32,h:44},talk:0,
+        sprite:t=>({c:personSprite(key,outfit,'down',0,blinkAt(t,blink)).c,x:x-8,y:y-23}),
+        act(){if(miniFala(key))return;say([{who:NAME,t:falas[this.talk++%falas.length]}]);}};
+      return;}
+    const [x0,x1,y]=LIVRE_LANE[dest],o=wanderer(dest,'livre_'+key,nome,x0,x1,y,walkLook(key,outfit,blink),falas);
+    wOff(o);Object.assign(o,{key,outfit,nome,blink,dest,lunch:dest==='terreo',study:dest==='andar2'});livreAlu[key]=o;
+    const a0=o.act;o.act=function(){if(miniFala(key,this))return;return a0.call(this);};
+  });
+}
+function livrePoe(o,visto){ // into its place; seen by the player: in by the stairs
+  const sc=o.dest;
+  if(sc==='salaBib'){if(!SCENES.salaBib.includes(o))SCENES.salaBib.push(o);return;}
+  if(scene!==sc||!visto){
+    wOn(o,sc,o.x0+Math.random()*(o.x1-o.x0),o.y0,'down',true);
+    if(o.study){const S=seatsOf(sc).filter(st=>!st.by&&st.crop===20),st=S.find(q=>seatsOf(sc).some(p=>p.by&&p.by.study&&Math.abs(p.cx-q.cx)<=24))||S[(Math.random()*S.length)|0];if(st)lunchSenta(o,st);}
+    return;}
+  const [ex,ey]=sc==='terreo'?[352,60]:sc==='andar1'?[352,200]:[363,200];
+  wOn(o,sc,ex,ey,'down',true);o.sitCool=8+Math.random()*10;o.wait=0;
+  const up=sc==='terreo'?[[352,o.y0]]:[[ex,o.y0]];o.queue=up.slice(1);[o.tx,o.ty]=up[0];
+  if(o.study){const S=seatsOf(sc).filter(st=>!st.by&&st.crop===20),st=S[(Math.random()*S.length)|0];if(st){st.by=o;o.seat=st;o.queue=o.queue.concat(st.go(o.y0));}}
+}
+function livreTira(o){ // out of its place; seen by the player: out by the stairs
+  const sc=tdWhere(o);if(!sc)return;
+  if(sc==='salaBib'){SCENES.salaBib.splice(SCENES.salaBib.indexOf(o),1);return;}
+  if(scene===sc){const st=o.seat,P=(st?st.go(o.y0).reverse():[[o.x,o.y0]]).concat(sc==='terreo'?[[352,o.y0],[352,60]]:[[sc==='andar1'?352:363,o.y0],[sc==='andar1'?352:363,200]]);
+    lunchVai('livreV_'+o.key,o.key,o.outfit,o.nome,o.blink,sc,st?st.cx:o.x,st?st.base:o.y,P);}
+  wOff(o);
+}
+function livreIni(){
+  livreMake();lunchMake();livreOn_=true;lunchFora=true;
+  try{alunosSaem(scene==='sala101');}catch(_){} // (nobody left at the desks of 101)
+  Object.values(livreAlu).forEach((o,i)=>{if(o.dest==='salaBib'&&scene==='salaBib')return lunchLater(3+i,()=>{if(livreOn_)livrePoe(o,false);});
+    if(scene===o.dest)lunchLater(4+i*2.5,()=>{if(livreOn_&&!tdWhere(o))livrePoe(o,true);});else livrePoe(o,false);});
+  updateObjective();
+}
+function livreFim(reset){
+  if(!livreOn_&&!reset)return;livreOn_=false;
+  Object.values(livreAlu||{}).forEach(o=>{if(reset){const sc=tdWhere(o);if(sc)SCENES[sc].splice(SCENES[sc].indexOf(o),1);wOff(o);}else livreTira(o);});
+}
+let livreChk=0;
+function livreTick(dt){
+  if(!startTime||!flags||state!=='play')return;
+  if((livreChk-=dt||0)>0)return;livreChk=.5;
+  const q=livreQuer();
+  if(q&&!livreOn_)livreIni();
+  else if(!q&&livreOn_&&!adCena)livreFim(false); // (lunch, the lab class, a new day: lunchStart/aulaStart take over)
+}
+{const u0=update;update=function(dt){u0(dt);try{livreTick(dt);}catch(_){}};}
 
 /* ---------- (v3.63) day 1: Marina goes to class, and comes to fetch a late player ----------
    After the first talk she packs up and walks to Sala 101 (round her study table, up the stairs, along the 1st floor
@@ -16287,7 +16485,7 @@ updateObjective();
 function diaIni(n){
   const P={2:{gm:14*60,sc:'salaAud',x:192,y:150,dir:'up',hora:'14h00'},  // (v3.86) the auditorium class is already going on
     3:{gm:AULA3_MIN+3,sc:'salaLab',x:192,y:150,dir:'up',hora:'9h00'},          // (v3.88) the practical class in the lab is already going on
-    4:{gm:7*60+40,sc:'andar1',x:52,y:66,dir:'up',hora:'7h40'}}[n];             // at the door of Sala 101
+    4:{gm:CLASS_MIN,sc:'sala101',x:192,y:182,dir:'up',hora:'7h50'}}[n];        // (v4.12) the class of Sala 101 is already going on (was 7h40 at the door)
   if(!P||!flags||flags.diaAntigo||(typeof DUO!=='undefined'&&DUO.on)||!trilhaOn())return {gm:0,sc:'terreo',x:44,y:118,dir:'right',hora:'7h30'};
   return Object.assign({},P,{gm:P.gm-START_MIN});
 }
