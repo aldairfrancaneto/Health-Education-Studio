@@ -1117,7 +1117,7 @@ body:not(.kb) .caca-grid div.cur{outline:none}
 <footer class="site-footer">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 4.32 &middot; Última atualização: 22 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 4.33 &middot; Última atualização: 22 de novembro de 2026</span>
   </div>
 </footer>
 <script>
@@ -1338,7 +1338,7 @@ const ctx=cv.getContext('2d');
 /* ---------- layers ----------
    Everything is drawn at native 384x224 on offscreen canvases, then copied to the
    screen with a whole-number zoom, so every pixel of the art has the same size. */
-function mk(w,h,read){const c=document.createElement('canvas');c.width=w;c.height=h;
+function mk(w,h,read){window.__mkN=(window.__mkN||0)+1;const c=document.createElement('canvas');c.width=w;c.height=h;
   if(w*h>=60000)c.addEventListener('contextlost',()=>{window.__gfxPerdido=true;}); // (v4.25) the browser threw away the drawing of a big canvas (a scene's background)
   return [c,c.getContext('2d',read?{willReadFrequently:true}:undefined)];}
 /* (v4.25) if that happens, the scenes would stay black (only the PixelLab figures, drawn on the screen, would show):
@@ -16993,7 +16993,7 @@ function noiteRestaura(){
   amCool=N.am.cool;amIdle=0;
   aulaAssento=null;aulaAmigo=null;buddy.sitTop=null;buddy.trail=[];buddy.wait=null;
   tdMovers=[];nQ=[];NOITE=null;hallSemCad=false;objects=SCENES[scene];
-  try{n1Cache.clear();}catch(_){}try{HI_LAYERS.length=Math.min(HI_LAYERS.length,3);}catch(_){}nMask=null; // (v4.27) the night's own drawings are freed
+  try{n1Cache.clear();}catch(_){}try{HI_LAYERS.length=Math.min(HI_LAYERS.length,3);}catch(_){}nMask=null;nGlow=null; // (v4.27) the night's own drawings are freed
   if(N.n===2)flags.noite1=true;else if(N.n===4)flags.noite2=true;
 }
 // the start: called by diaVirar (the next day's screen comes after the night)
@@ -17092,24 +17092,29 @@ function noiteUpdate(dt){
 {const a0=abordDraw;abordDraw=function(){if(NOITE)noiteLuz();a0();};} // (the night's light under the balloons)
 // the night's light: darkness with holes for the candles, the torches, the emergency lamp, the lantern
 let nMask=null;
-function noiteLuz(){
+function noiteLuz(){ // (v4.33) the darkness and the glows are worked out on small canvases (2 x the game) and stretched, smoothed, onto the screen:
+  // the light is soft, so it looks the same, at a fraction of the work and the memory (it was the size of the screen, every frame)
   if(!NOITE||!NOITE.luzes)return;
-  const L=NOITE.luzes(),esc=NOITE.escuro(),T=performance.now()/1000;
-  splitHere(c=>{const w=cv.width,h=cv.height,s=w/W;
-    if(!nMask||nMask.width!==w||nMask.height!==h){nMask=document.createElement('canvas');nMask.width=w;nMask.height=h;}
+  const L=NOITE.luzes(),esc=NOITE.escuro(),T=performance.now()/1000,s=2,w=W*s,h=H*s;
+  splitHere(c=>{
+    if(!nMask||nMask.width!==w){nMask=document.createElement('canvas');nMask.width=w;nMask.height=h;nGlow=document.createElement('canvas');nGlow.width=w;nGlow.height=h;}
     const m=nMask.getContext('2d');m.globalCompositeOperation='source-over';m.clearRect(0,0,w,h);m.fillStyle='rgba(8,10,30,'+esc+')';m.fillRect(0,0,w,h);
     m.globalCompositeOperation='destination-out';
     for(const l of L){const x=(l.x-camX)*s,y=(l.y-camY)*s,r=l.r*s*(l.tremula?1+.06*Math.sin(T*9+l.x):1);
+      if(x+r<0||y+r<0||x-r>w||y-r>h)continue; // (off the screen)
       const gr=m.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(0,0,0,'+(l.a??1)+')');gr.addColorStop(1,'rgba(0,0,0,0)');m.fillStyle=gr;
       m.save();if(l.cone){m.beginPath();m.moveTo(x,y);m.arc(x,y,r,l.cone-.5,l.cone+.5);m.closePath();m.clip();}
       m.beginPath();m.arc(x,y,r,0,7);m.fill();m.restore();}
-    m.globalCompositeOperation='source-over';c.drawImage(nMask,0,0);
-    c.save();c.globalCompositeOperation='lighter';
-    for(const l of L){if(!l.cor)continue;const x=(l.x-camX)*s,y=(l.y-camY)*s,r=l.r*s*.7,gr=c.createRadialGradient(x,y,0,x,y,r);
-      gr.addColorStop(0,l.cor);gr.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=gr;
-      if(l.cone){c.beginPath();c.moveTo(x,y);c.arc(x,y,r/.7,l.cone-.5,l.cone+.5);c.closePath();c.fill();}else{c.beginPath();c.arc(x,y,r,0,7);c.fill();}}
+    m.globalCompositeOperation='source-over';
+    const q=nGlow.getContext('2d');q.globalCompositeOperation='source-over';q.clearRect(0,0,w,h);q.globalCompositeOperation='lighter';let brilho=false;
+    for(const l of L){if(!l.cor)continue;const x=(l.x-camX)*s,y=(l.y-camY)*s,r=l.r*s*.7;if(x+r/.7<0||y+r/.7<0||x-r/.7>w||y-r/.7>h)continue;
+      const gr=q.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,l.cor);gr.addColorStop(1,'rgba(0,0,0,0)');q.fillStyle=gr;brilho=true;
+      if(l.cone){q.beginPath();q.moveTo(x,y);q.arc(x,y,r/.7,l.cone-.5,l.cone+.5);q.closePath();q.fill();}else{q.beginPath();q.arc(x,y,r,0,7);q.fill();}}
+    c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='low';c.drawImage(nMask,0,0,w,h,0,0,cv.width,cv.height);
+    if(brilho){c.globalCompositeOperation='lighter';c.drawImage(nGlow,0,0,w,h,0,0,cv.width,cv.height);}
     c.restore();});
 }
+let nGlow=null;
 
 /* ===== night 1: dinner in the Salão Principal (watched, not played) ===== */
 /* (v4.19) the dinner, revised: the students on paper (only the professors and the headmaster in PixelLab), seated
@@ -17889,6 +17894,15 @@ function noite2Tick(dt){
 }
 
 try{trEnvInstala();}catch(_){} // (v4.14)
+/* (v4.33) a hidden meter (F9): frames per second, time to draw a frame, layers, canvases made. It only watches. */
+{let on=false,box=null,n=0,ms=0,pior=0,t0=performance.now();const r0=render;
+  render=function(t){if(!on)return r0(t);const a=performance.now();r0(t);const d=performance.now()-a;n++;ms+=d;if(d>pior)pior=d;};
+  addEventListener('keydown',e=>{if(e.code!=='F9')return;e.preventDefault();on=!on;
+    if(on&&!box){box=document.createElement('div');box.style.cssText='position:fixed;left:8px;top:8px;z-index:2147483000;background:rgba(0,0,0,.78);color:#9f9;font:12px monospace;padding:6px 8px;border-radius:6px;pointer-events:none;white-space:pre';document.body.appendChild(box);}
+    if(box)box.hidden=!on;n=0;ms=0;pior=0;t0=performance.now();});
+  setInterval(()=>{if(!on||!box)return;const dt=(performance.now()-t0)/1000;
+    box.textContent='FPS '+(n/dt).toFixed(0)+' · quadro '+(ms/Math.max(1,n)).toFixed(1)+' ms (pior '+pior.toFixed(0)+')\ncamadas '+HI_LAYERS.length+' · telas criadas '+(window.__mkN||0)+' · tela '+cv.width+'×'+cv.height+(NOITE?' · noite':'');
+    n=0;ms=0;pior=0;t0=performance.now();},1000);}
 requestAnimationFrame(loop);
 })();
 </script>
