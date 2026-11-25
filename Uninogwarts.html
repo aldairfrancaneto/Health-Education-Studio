@@ -480,6 +480,9 @@ body.gp .tela-enredo .ctl-help{display:flex}
 .ag-texto{display:flex;flex-direction:column;gap:calc(var(--u)*1.6);width:100%}
 #agradecimento .ag-texto p{margin:0;max-width:none;font-size:calc(var(--u)*10);line-height:1.1;text-align:justify;text-indent:calc(var(--u)*10);hyphens:auto}
 #agradecimento .ag-assin{align-self:flex-end;margin-top:calc(var(--u)*1)}
+#agradecimento.so-carta{justify-content:center}#agradecimento.so-carta #ag-duelo{display:none}
+#agradecimento.so-duelo{justify-content:center;background:#07060b}#agradecimento.so-duelo .ag-carta{display:none}
+#agradecimento.so-duelo #ag-duelo{width:min(96%,calc(var(--u)*380));height:auto;aspect-ratio:384/80}
 #ag-duelo{display:block;width:calc(var(--u)*360);height:calc(var(--u)*75);image-rendering:pixelated;border:calc(var(--u)*.8) solid var(--line);box-shadow:0 0 calc(var(--u)*6) rgba(199,125,255,.35);flex:none}
 /* the theatre curtain that ends the game */
 #transFinal{position:absolute;inset:0;z-index:44;background:#0b0705;opacity:0;transition:opacity 2.6s ease;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u)*8);padding:0 calc(var(--u)*10)}
@@ -1540,7 +1543,21 @@ const sfx={
   coin:()=>[988,1319].forEach((f,i)=>tone(f,i?.22:.07,'square',.035,i*.07)),
   ink:()=>{[1568,1976,2349].forEach((f,i)=>tone(f,.35,'sine',.018,i*.11));for(let i=0;i<5;i++)tone(1700+Math.random()*900,.03,'sawtooth',.005,.3+i*.05);},
   pencil:()=>{for(let i=0;i<7;i++)tone(1700+Math.random()*900,.03,'sawtooth',.007,i*.05);tone(880,.08,'triangle',.03,.38);},
-  open:()=>[392,523,659,784,1046,1318].forEach((f,i)=>tone(f,.16,'triangle',.05,i*.07))
+  open:()=>[392,523,659,784,1046,1318].forEach((f,i)=>tone(f,.16,'triangle',.05,i*.07)),
+  // (v4.43) adhesive tape pulled off the roll, slowly: ~2 s of crackling noise (tiny tearing clicks), band-passed, that
+  // gets a little higher and faster as the strip comes off, with a last snap
+  fita:()=>{
+    if(muted||!ac||fxVol<=0)return;
+    const D=2.1,sr=ac.sampleRate,n=Math.floor(D*sr),buf=ac.createBuffer(1,n,sr),x=buf.getChannelData(0);
+    let env=0,next=0;
+    for(let i=0;i<n;i++){const p=i/n;
+      if(i>=next){env=.35+Math.random()*.65;next=i+Math.floor(sr*(.004+Math.random()*.012*(1-.6*p)));}
+      env*=.9993;const fade=Math.min(1,i/(sr*.06))*Math.min(1,(n-i)/(sr*.12));
+      x[i]=(Math.random()*2-1)*env*fade*(.55+.45*Math.sin(p*Math.PI*7)**2);}
+    const t=ac.currentTime,src=ac.createBufferSource(),bp=ac.createBiquadFilter(),gn=ac.createGain();
+    src.buffer=buf;bp.type='bandpass';bp.Q.value=.9;bp.frequency.setValueAtTime(1800,t);bp.frequency.linearRampToValueAtTime(3200,t+D);
+    gn.gain.value=.16*fxVol;src.connect(bp).connect(gn).connect(ac.destination);src.start(t);
+    tone(2600,.04,'square',.012,D-.05);tone(900,.06,'triangle',.02,D-.03);}
 };
 
 /* ---------- state ---------- */
@@ -2525,6 +2542,27 @@ function paperBuild(sp,view,f,blink,mirror,mood,talk){
 // moods: a short-lived one set by events (setMood), otherwise from the story flags
 const moodNow={};
 function setMood(who,m,sec){moodNow[who]={m,until:performance.now()/1000+sec};}
+/* (v4.47) THE PAPER FLASH: in a sudden fright or a burst of anger, the PixelLab figure turns for an instant into the
+   old paper drawing (its face says the mood), with a little white pop and a "boing" as it swaps in and out.
+   Each person at most once every PF_CD seconds, so it stays a surprise. Not during the classes (everyone is on paper there). */
+const PFLASH={},PF_ULT={},PF_DUR=.9,PF_CD=10; // PF_ULT: when each one last flashed (the cooldown)
+function pfNow(){return performance.now()/1000;}
+function pfGo(who){const n=pfNow();if(PF_ULT[who]!=null&&n-PF_ULT[who]<PF_CD)return;PF_ULT[who]=n;PFLASH[who]={t0:n,x:null,y:null,s1:false,s2:false};}
+function pfOn(who){const f=PFLASH[who];return !!f&&pfNow()-f.t0<PF_DUR&&!(typeof aulaPapelOn==='function'&&aulaPapelOn());}
+function pfPos(who,x,y){const f=PFLASH[who];if(f){f.x=x;f.y=y;}}
+function pfDraw(){ // on the top layer, after the people: the pops where each flash swaps
+  const n=pfNow();
+  for(const k in PFLASH){const f=PFLASH[k],u=n-f.t0;if(f.x==null){if(u>PF_DUR+.3)delete PFLASH[k];continue;}
+    let a=-1;if(u<.16){a=u/.16;if(!f.s1){f.s1=true;[784,1175].forEach((q,i)=>tone(q,.06,'square',.03,i*.05));tone(196,.12,'triangle',.04,.02);}}
+    else if(u>=PF_DUR&&u<PF_DUR+.16){a=(u-PF_DUR)/.16;if(!f.s2){f.s2=true;tone(988,.05,'square',.02);tone(262,.08,'triangle',.03,.03);}}
+    else if(u>PF_DUR+.3){delete PFLASH[k];continue;}
+    if(a<0)continue;
+    const cx=Math.round(f.x-camX),cy=Math.round(f.y-14-camY),R=6+a*9;fctx.save();fctx.globalAlpha=1-a;fctx.fillStyle='#fffbe6';
+    for(let i=0;i<8;i++){const g_=i*Math.PI/4,L=i%2?3:5;fctx.fillRect(Math.round(cx+Math.cos(g_)*R)-1,Math.round(cy+Math.sin(g_)*R)-1,i%2?2:3,i%2?2:3);
+      fctx.fillRect(Math.round(cx+Math.cos(g_)*(R+L))-1,Math.round(cy+Math.sin(g_)*(R+L))-1,2,2);}
+    fctx.restore();}
+}
+{const s0=setMood;setMood=function(who,m,sec){s0(who,m,sec);if(m==='surprised'||m==='angry')pfGo(who);};}
 function moodOf(who){
   const o=moodNow[who];if(o&&o.until>performance.now()/1000)return o.m;
   const q=flags.tiagoQ||0;
@@ -4397,7 +4435,9 @@ function malvarReveal(){
     {t:flags.jaleco?'O professor olha para o diário na sua mão. Por um instante, a tinta brilha mais forte.':'O professor olha para a sua mochila, onde está o diário. Por um instante, a tinta brilha através do tecido.'},
     {who:MW,t:'...E esse diário. Fazia muitos anos que eu não o via. Ele escolhe o dono. Não me pergunte como.'},
     {who:MW,t:'A Larissa sabe que as páginas são minhas e guarda o segredo. Ótima aluna. Melhor assim. Nem uma palavra, '+nome1()+'.'},
-    {who:MW,t:'E diga ao Bruno que ele pode escrever o seu nome no livro. Ele sabe qual.',run:()=>{flags.brunoAuth=true;}},
+    ...(flags.dzDone?[{who:MW,t:'E diga ao Bruno que ele pode escrever o seu nome no livro. Ele sabe qual.',run:()=>{flags.brunoAuth=true;}}]
+      :[{who:MW,t:'Mas falta o último teste: o Desafio da Liga, no simulador do laboratório. Só depois dele eu autorizo a sua entrada na Liga.'}, // (v4.43) Bruno's challenge not won yet
+        {who:MW,t:'Quando vencer as três fases, peça ao Bruno para escrever o seu nome no livro. Ele sabe qual.',run:()=>{flags.brunoAuth=true;}}]),
     {who:MW,t:'Hoje, no fim do dia. Não se atrase. Detesto atrasos quase tanto quanto detesto quem decora sem entender.',
       run:()=>{flags.fundador=true;updatePauseExtra();}}]);
 }
@@ -4416,11 +4456,13 @@ const MR_Q=[
   {q:'Pergunta de corredor. Qual enzima dita o ritmo da glicólise?',o:['A fosfofrutocinase-1','A triose-fosfato-isomerase','A fosfoglicerato-mutase'],c:0,
    ok:'Correto. Tente não se exibir.',bad:'A PFK-1. A porta mais pesada do caminho. Guarde isso.'}];
 let mr=null; // the round under way: {k,sc,path,i,wait,endMin,o}
+var malvarAssunto=()=>false; // (v4.43) set with Malvar's menu: a story step or an accepted challenge with him
 const malvarR={id:'malvarRonda',name:'Prof. Malvar (Poções)',x:0,y:0,dir:'down',anim:0,moving:false,
   sprite(t){const c=personSprite('malvar','coat',this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
   act(){
     if(!mr)return;mr.wait=Math.max(mr.wait,4);this.moving=false;this.dir=faceTo(this,player);
     const k=mr.k;
+    if(malvarAssunto())return malvar.act.call(malvar); // (v4.43) a challenge with him comes before the corridor questions
     if(flags['mrq'+k])return say([{who:MW,t:['Não tenho o dia todo.','Circulando. O corredor não é sala de estar.','O gato também acha que você devia estar estudando.'][(this.talk=(this.talk||0)+1)%3]}]);
     const Q=MR_Q[k];setMood('malvar','smug',4);
     say([{who:MW,t:Q.q,choices:Q.o.map((t,i)=>({t,fn:()=>{flags['mrq'+k]=true;
@@ -5640,6 +5682,7 @@ function updateObjective(){
 // golden "!": the main story only (side quests have their own blue "!", see sideNeeds)
 function needsMarker(o){
   if(flags.graded)return false;
+  if(o.id==='sala101'&&!flags.diaAntigo&&diaN()>=4)return false; // (v4.43) Thursday: no "!" on the door of Sala 101 (only the class of the day marks it, before 7h50: see adObj)
   if(o.id==='locker'+myLocker())return !!flags.wantJaleco&&!flags.jaleco;
   if(!flags.cracha)return o.id==='secretaria'&&!objAntesMarina(); // (v3.98) Marina: the opening scene; (v4.01) the "!" only after her talk
   if(flags.bonusAsked&&!provas.b&&!flags.bonusSkip&&!flags.timeUp&&(o.id==='bancada3'||o.id==='lab'))return true;
@@ -5769,7 +5812,9 @@ function showReview(){
   $('rev-done').classList.toggle('kb',reviewSel>=reviewIds().length);
   keys.clear();state='review';reviewEl.hidden=false;
 }
-function reviewMove(d){const n=reviewIds().length+1;reviewSel=(reviewSel+d+n)%n;sfx.blip(); // the sheets, then ENCERRAR CORREÇÃO
+function reviewMove(d,dx,dy){const n=reviewIds().length+1; // the sheets, then ENCERRAR CORREÇÃO
+  if(dx||dy){const E=[...$('rev-list').children,$('rev-done')];reviewSel=navEspacial(E.map(b=>b.getBoundingClientRect()),Math.min(reviewSel,n-1),dx||0,dy||0);} // (v4.43) free arrows, by the screen
+  else reviewSel=(reviewSel+d+n)%n;sfx.blip();
   [...$('rev-list').children].forEach((b,i)=>b.classList.toggle('on',i===reviewSel));$('rev-done').classList.toggle('kb',reviewSel===n-1);
   ($('rev-list').children[reviewSel]||$('rev-done')).scrollIntoView({block:'nearest'});}
 function reviewOpen(){if(reviewSel>=reviewIds().length)return reviewDone();reviewEl.hidden=true;openQuiz(reviewIds()[reviewSel]);}
@@ -6404,10 +6449,18 @@ const pauseBtnEl=()=>document.getElementById('btnPausa');
 const PZ_PENS=['#d8433b','#2f9c9a','#8a5bb8','#3f6fc4','#c9701a','#3f8a3a'],PZ_LISTA={prin:'Desafios principais',sec:'Desafios secundários',feito:'Concluídos'};
 var pzPage=0,pzOp=-1; // pzOp: the option row being changed (-1: the left menu has the keys)
 function pzEntradas(id){
+  if(id==='prin'&&NOITE&&NOITE.n===4)return rondaDiario(); // (v4.43) during the round: the plan made in the common room
   if(id==='prin')return (curObj?[{k:'main:'+curObj,t:curObj}]:[]).concat(sideActive().filter(e=>storyKey(e.k)).map(e=>({k:'x:'+e.k,t:e.t})));
   if(id==='sec')return sideActive().filter(e=>!storyKey(e.k)).map(e=>({k:'x:'+e.k,t:e.t}));
   const ptsOf=k=>SCORE_RULES.filter(r_=>r_.k===k).reduce((a,r_)=>a+(scoreGot.has(r_.k)?r_.pts:0),0);
   return sideDone().map(e=>({t:e.t,ok:true,pts:ptsOf(e.k)}));
+}
+function rondaDiario(){
+  const falta=[1,2,3,4,5,6,7,8,9,10].filter(n=>!trAchou(n)).length;
+  return [{m:'☾',t:'A ronda de quarta à noite: descer do 2º andar até o térreo, sem jaleco e escondido do Prof. Malvar, procurando pistas com '+amigoNome()+'.'},
+    {m:'?',t:falta>1?'Quem está com as '+falta+' folhas da glicólise que ainda faltam?':'Quem está com a folha da glicólise que ainda falta? O prazo termina amanhã, às 11h30.'},
+    {m:'?',t:'Quem jogou as minhas folhas fora? No jantar, desconfiamos do Seu Antônio, que passa a noite no térreo, e da Dona Tati, dos achados e perdidos.'},
+    {m:'?',t:'Quem está me ajudando a recuperar as folhas, com as adivinhações no verso?'+(trAchou(5)?' Alguém escreveu "levamos", no plural.':'')}];
 }
 function pzNo(e,i){
   const d=document.createElement('div');d.className='pz-li';d.style.setProperty('--pen',PZ_PENS[i%PZ_PENS.length]);
@@ -7095,7 +7148,8 @@ function alostScene(from,to){
     flags.secretOpen=false;secretAnim=-1;wallPass={n:0,side:null};secretClose=-.5; // the door is there as the player steps out, then turns back to bricks
     const bru=flags.alost===6&&!flags.dzAsked&&tdClock>=tdArrive('bruno','andar2'); // Bruno waits by the wall with the Liga challenge
     if(bru)brunoVisitIn();else if(flags.alost===6&&!flags.dzAsked)tdBruPend=true; // (he could not be up here yet: he comes up the stairs later)
-    onArrive=()=>say([{t:'Atrás de você, os tijolos voltam ao lugar, um a um. A parede está lisa de novo.'}],bru?brunoVisitTalk:undefined);
+    const jun=!!flags.larJunto;flags.larJunto=false;
+    onArrive=()=>{if(jun)tdLarissaJunto();say([{t:'Atrás de você, os tijolos voltam ao lugar, um a um. A parede está lisa de novo.'}],bru?brunoVisitTalk:undefined);};
   }
   if(to==='salaOculta'&&flags.alost===5)onArrive=ocReveal; // first time past the tenth door
   if(from==='salaOculta')larissaOut();
@@ -8268,9 +8322,28 @@ function dzToggle(){
   else{L.push(mol);tone(660,.05,'square',.04);}
   renderDz();
 }
+/* (v4.43) free arrows: from the button under the cursor to the nearest one in that direction, by where they are on
+   the screen (the molecules wrap into several lines; SAIR and LANÇAR sit side by side). Nothing that way: round to
+   the other end, in the same line or column. R: the rects; returns the index to go to (or i). */
+function navEspacial(R,i,dx,dy){
+  const a=R[i];if(!a)return 0;const ax=a.left+a.width/2,ay=a.top+a.height/2;
+  const C=R.map((r,j)=>{if(j===i||!r.width)return null;const vx=r.left+r.width/2-ax,vy=r.top+r.height/2-ay;
+    return {j,al:dx?vx*dx:vy*dy,pp:dx?Math.abs(vy):Math.abs(vx),lin:dx?Math.abs(vy)<Math.max(a.height,r.height)*.6:false};}).filter(Boolean);
+  const min=(L,f)=>L.reduce((b,q)=>b==null||f(q)<f(b)?q:b,null);
+  if(dx){ // sideways: the next one in the same line; at its end, round to the other end of the line; a line alone: the nearest that way
+    const L=C.filter(q=>q.lin);
+    const q=min(L.filter(q=>q.al>2),q=>q.al)||min(L.filter(q=>q.al<-2),q=>q.al)||min(C.filter(q=>q.al>2),q=>q.al+q.pp*4);
+    return q?q.j:i;}
+  const q=min(C.filter(q=>q.al>2),q=>q.al+q.pp*1.5)||min(C.filter(q=>q.al<-2),q=>q.al+q.pp*1.5); // up/down: the nearest that way; at the edge, round to the other side
+  return q?q.j:i;
+}
 function dzMove(dr,dc){ // three enzymes, LANÇAR A GLICOSE, then SAIR
-  if(dr){dz.row=(dz.row+dr+5)%5;}
-  if(dc&&dz.row<3){const n=DZ_FASES[dz.f].tray.length;dz.col=(dz.col+dc+n)%n;}
+  const rows=[...$('dz-list').children],E=[];
+  rows.forEach((d,ri)=>[...d.querySelectorAll('button.m')].forEach((b,ci)=>E.push({b,r:ri,c:ci})));
+  E.push({b:$('dz-ok'),r:3,c:0},{b:$('dz-close'),r:4,c:0});
+  const i=E.findIndex(q=>q.r===dz.row&&(dz.row>=3||q.c===dz.col));
+  const j=navEspacial(E.map(q=>q.b.getBoundingClientRect()),Math.max(0,i),dc,dr),q=E[j];
+  dz.row=q.r;if(q.r<3)dz.col=q.c;
   sfx.blip();renderDz();
 }
 function dzEnter(){if(dz.row===4)return closeDz();if(dz.row===3)dzLaunch();else dzToggle();}
@@ -8852,7 +8925,8 @@ function aulaLevanta(){
 const larissaOc={id:'larissaOc',name:'Larissa (2º ano)',cx:312,top:70,base:96,solid:{x:307,y:92,w:10,h:4},zone:{x:296,y:72,w:32,h:36},
   sprite:t=>{const c=personSprite('larissa','coat','down',0,blinkAt(t,.8));return {c:c.c,x:304,y:73};},
   act:()=>say([{who:LW,t:'A Liga se reúne aqui. Traga suas dúvidas de metabolismo... e nem uma palavra sobre a sala, combinado?'}])};
-function larissaIn(){const L=SCENES.salaOculta;if(!L.includes(larissaOc))L.push(larissaOc);}
+function larissaIn(){const L=SCENES.salaOculta;if(!L.includes(larissaOc))L.push(larissaOc);
+  if(flags.alost===5){wOff(larissa);flags.larJunto=true;}} // (v4.43) the real Larissa is nowhere else now: she leaves the old lab with the player (tdLarissaJunto)
 function larissaOut(){const L=SCENES.salaOculta,i=L.indexOf(larissaOc);if(i>=0)L.splice(i,1);}
 
 /* the three iron doors: an inscription, then a panel where each molecule goes to ATIVA or INIBE */
@@ -8917,7 +8991,9 @@ function ocPages(){
     {who:LW,t:'E quem descobre sozinho quem ele é... ouve dele a história inteira da Liga. Poucos ouviram. Eu ouvi.',run:()=>setMood('larissa','smug',6)},
     {t:'Você abre o diário na última página. Lá estão, a lápis, quase apagadas: E. M. As mesmas iniciais dos livros. A tinta em volta delas brilha de leve.',run:()=>setMood('player','surprised',4)},
     {who:me(),t:'O meu diário... já foi de alguém da Liga? Eu preciso descobrir quem é esse E. M.'},
-    {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'}],()=>music.duck(1));
+    {who:LW,t:'Ah, e a sala continua aqui. Sempre que você passar três vezes diante daquela parede.'},
+    {who:LW,t:'Agora vamos sair. O Bruno, também da Liga, espera vocês lá fora, no corredor, para apresentar a segunda parte do desafio de entrada na Liga de Metabolismo.'},
+    {who:LW,t:'Eu acompanho vocês até a parede.'}],()=>music.duck(1));
 }
 
 /* the modal: put the cards in order (mode 'ordem') or fill an iron door's slots (mode 'porta') */
@@ -9166,6 +9242,13 @@ $('sg-amigo-btn').addEventListener('click',e=>{e.stopPropagation();sgAjUsar();})
    he is waiting by the wall on the 2nd floor and proposes the challenge right away: the counter-proof that the new
    member really belongs in the Liga. Then he goes down the stairs (back to the lab wing, where he can be asked again). */
 let bruVis=null,dzConvite=null;
+// (v4.43) Larissa steps out of the wall right behind the player and walks to her place in front of the library (she
+// keeps walking while Bruno talks: andaFala)
+function tdLarissaJunto(){
+  if(tdWhere(larissa))wOff(larissa);
+  larissa.andaFala=true;
+  tdWalkIn(larissa,'andar2','salaCorredor',{laneL:[334,470,96],x:450,y:96,speed:34},()=>{larissa.andaFala=false;});
+}
 function brunoVisitIn(){
   const o={id:'brunoVisita',name:'Bruno (1º ano)',x:646,y:116,dir:'right',anim:0,moving:false,path:null,
     sprite(t){const c=personSprite('bruno','hoodie',this.dir,this.moving?Math.floor(this.anim):0,blinkAt(t,1.7));return {c:c.c,x:Math.round(this.x)-8,y:Math.round(this.y)-23};},
@@ -9275,9 +9358,9 @@ const wLane=(o,sc)=>wOn(o,sc,o.x0+Math.random()*(o.x1-o.x0),o.y0,'down',true);
 function tdMove(o,path,speed,then){ // scripted straight-line walk (no collisions), for real NPCs, temporary ones and the player
   tdMovers=tdMovers.filter(m=>m.o!==o);tdMovers.push({o,path:path.map(p=>p.slice()),speed:speed||28,then});
 }
-function tdMoversTick(dt){
+function tdMoversTick(dt,soFala){
   for(const m of tdMovers.slice()){
-    const o=m.o;if(!m.path.length){tdMovers.splice(tdMovers.indexOf(m),1);o.moving=false;if(m.then)m.then();continue;}
+    const o=m.o;if(soFala&&!o.andaFala)continue;if(!m.path.length){tdMovers.splice(tdMovers.indexOf(m),1);o.moving=false;if(m.then)m.then();continue;}
     const [tx,ty]=m.path[0],dx=tx-o.x,dy=ty-o.y,d=Math.hypot(dx,dy);
     if(d<.6){o.x=tx;o.y=ty;m.path.shift();if(o!==player)syncW(o);continue;}
     let sp_=m.speed;if(o.suave){m.tt=(m.tt||0)+dt;let rest=d,px0=tx,py0=ty;for(const q of m.path.slice(1)){rest+=Math.hypot(q[0]-px0,q[1]-py0);px0=q[0];py0=q[1];}
@@ -9421,7 +9504,9 @@ function tdSync(force){
   tdGo(tadeo,oc||tdNicho?null:td>=7?'sala204':trTd2Want()?'sala201':'andar2',td>=7?{x:318,y:92,dir:'up'}:trap?{x:30,y:112,dir:'right'}:trTd2Want()?{x:256,y:98,dir:'left'}:{lane:1},force);
   // Larissa
   const lw=tdWhere(larissa);
-  if(td===4&&!furto&&!flags.tdLarSai)tdGo(larissa,'salaLab',{x:282,y:196,dir:'right'},force);
+  if(force&&flags.larJunto)flags.larJunto=false; // (v4.43) a loaded game: she is simply at her place
+  if(flags.larJunto){if(lw&&lw!==scene)wOff(larissa);} // (v4.43) she is in the old lab with the player (larissaOc), nowhere else
+  else if(td===4&&!furto&&!flags.tdLarSai)tdGo(larissa,'salaLab',{x:282,y:196,dir:'right'},force);
   else if(td===4&&furto&&!flags.tdLarSai){ // up to light the candles (if she is with the player she says goodbye first: tdLarissaSai)
     if(force||lw!==scene){if(lw)wOff(larissa);flags.tdLarSai=true;tdLarUp=tdClock+TD_LAR[0];}}
   else if(td===4&&flags.tdAdia)tdGo(larissa,'andar2',{laneL:[334,470,96]},force); // waiting for the player's answer
@@ -9819,7 +9904,7 @@ function tdProposta(){
         tdMove(T,[[274,136]],30,()=>{T.dir='up';tdOc.vela.st='livro';tdOc.fogo=.01;tdHiss();
           say([{t:'Ele tira uma vela do candelabro e a aproxima do livro. A borda de uma página começa a escurecer.'}],()=>{state='tdcut';
             tdMove(L,[[300,162],[TD_DS.L[0]+8,TD_DS.L[1]]],60);tdMove(G,[[350,192],[TD_DS.G[0]+8,TD_DS.G[1]]],60,()=>{L.dir='left';G.dir='left';T.dir='right';
-              say([{who:LW,t:'Ouvimos tudo, Tadeo.',run:()=>music.special('duel')},{who:GW_,t:'Larga a vela. Você sabe que é dois contra um.'},
+              say([{who:LW,t:'Ouvimos tudo, Tadeo.'},{who:GW_,t:'Larga a vela. Você sabe que é dois contra um.'},
                 {who:TW_,t:'E '+gen('o calouro','a caloura')+' sem varinha conta como o quê? Plateia?'}],tdDuelPrep);});});});});});});
   say([{who:TW_,t:'Escuta. Eles escolhem pelas razões erradas. Eu e você entendemos onde a via se decide. Imagina uma Liga nossa, sem velhos decidindo quem merece.',
     choices:[{t:'Não.',fn:()=>say([{who:me(),t:'Não.',run:recua}],fim)},
@@ -9869,7 +9954,7 @@ function tdAcro(o,k){
   else if(k==='cambalhota')tdHop(o,bx+f*18,by,8,.45,1,()=>tdLater(.2,()=>{if(!o.down&&tdDuel&&tdDuel.ph==="luta")tdHop(o,bx,by,6,.34,0);})); // a forward roll and back
 }
 function tdDuelPrep(){ // the stage opens: Tadeo springs back across the rug with the candle; the two take their places
-  state='tdcut';const O=tdOc,T=O.T,L=O.L,G=O.G,V=O.vela;
+  state='tdcut';const O=tdOc,T=O.T,L=O.L,G=O.G,V=O.vela;music.special('flash'); // (v4.45) Flash Duel: only during the duel
   if(V&&V.st==='livro'){V.st='mao';O.fogo=0;O.queimado=true;tdSmoke(279,98,5);}
   T.dir='right';
   tdMove(player,[[player.x,186],TD_DS.P],60,()=>{player.dir='left';});
@@ -10102,6 +10187,7 @@ function tdScene(from,to){
   if(to==='salaOculta'&&flags.td===6&&flags.tdTrap&&!onArrive){onArrive=tdOcStart;return;}
   if(to==='andar2'&&flags.alost===6&&flags.fundador&&(flags.td||0)<3&&!onArrive&&from!=='salaCorredor'){onArrive=()=>tdConfissao(false);return;}
   if(to==='salaLab'&&flags.td===4&&!flags.tdFurto)flags.tdLabVi=true;
+  if(to==='salaOculta'&&flags.larJunto&&!SCENES.salaOculta.includes(larissaOc))SCENES.salaOculta.push(larissaOc); // (v4.43) back in the old lab before leaving: she is still there
 }
 /* NPCs who offer a side quest come to the player the first time the player passes close (after the badge): a "!"
    over the head, a few steps closer, and the offer (the player still chooses to accept it or not). Once each. */
@@ -10142,11 +10228,8 @@ const AM_REC=[
   {k:'via',hist:1,ok:()=>viaDia1()&&!flags.viaTip&&!flags.viaOk, // (v4.09) mandatory on day 1: after the Biochemistry class
    obrig:true, // (v4.36) mandatory: the friend tells, no choice
    L:()=>['O Prof. Neto pediu para eu te avisar: a turma toda precisa fazer o "Percorrer a via, fase 1", no simulador do laboratório do térreo, ainda hoje.','É a revisão das 10 reações antes da prova, e tem que ir de jaleco. Vamos?'],
-   sim:()=>{flags.viaTip=true;flags.viaNeto=true;updatePauseExtra();}},
-  {k:'dz',hist:1,ok:()=>flags.alost===6&&!flags.dzOn&&!flags.dzDone,
-   L:()=>['Agora que a gente tem o convite da Liga... O Bruno, lá do térreo, vive falando de um tal Desafio da Liga, no simulador.','Vamos perguntar a ele?']},
-  {k:'td',hist:1,ok:()=>!!flags.fundador&&(flags.td||0)<3,
-   L:()=>['Depois dessa conversa com o Prof. Malvar, fiquei com a sensação de que alguma coisa está acontecendo no 2º andar.','Vamos dar uma volta por lá?']}];
+   sim:()=>{flags.viaTip=true;flags.viaNeto=true;updatePauseExtra();}}
+  ]; // (v4.43) the friend no longer brings the Liga challenge (the Liga is secret: Bruno meets the player at the wall) nor "something on the 2nd floor"
 let amRecT=0;
 const amRecOff=()=>duoLigado();
 function amRecHist(){if(amRecOff()||!flags)return false;const R=flags.amRec||{};return AM_REC.some(r=>r.hist&&!R[r.k]&&r.ok());}
@@ -10184,6 +10267,7 @@ function tdTick(dt){
   {const B=tdBrunoObj;if(B){const w=tdWhere(B)==='salaOculta';if(w&&!B._inOc)B._inOc=tdClock;else if(!w)B._inOc=0;}}
   if(tdGlint>0){tdGlint-=dt;if(tdGlint<=0&&music.ducking()===.4)music.duck(tdMusicBase());} // the glint's short drop ends with it
   if(state==='play'||state==='tdcut'||tdOc&&(state==='dialog'||state==='tdDuel'))tdMoversTick(dt); // in the old lab people move while they talk
+  else if(state==='dialog')tdMoversTick(dt,true); // (v4.43) only those who walk during a talk (andaFala)
   if(state==='tdDuel')tdDuelTick(dt);
   tdFxTick(dt);
   if(state==='play'&&!tdCut){tdTheftTick(dt);tdSync(false);tdWalkIns();}
@@ -10903,17 +10987,23 @@ function ligaNeto(o){
     return null;
   }
   const ligaPend=()=>{const F=flags.lgF||0,G=flags.lgG||0;if(!G&&!diaMin(3))return false;return !G||ligaHeldSets().length||F<5||G<5||!flags.chapeuPego||(flags.chapeu&&!flags.lgHatLine);};
+  const revPend=()=>flags.alost===6&&!flags.fundador&&(flags.dzDone||!flags.diaAntigo); // (v4.43) the founder's revelation is waiting
+  // (v4.43) a challenge the player ACCEPTED that needs Malvar (sheets to hand in or to see corrected, the hat)
+  const ligaAceito=()=>{const F=flags.lgF||0,G=flags.lgG||0;return !!G&&(ligaHeldSets().length>0||ligaCorrigidas().length>0||(F===5&&G===5&&!flags.chapeuPego));};
+  malvarAssunto=()=>revPend()||ligaAceito();
   malvar.act=function(){
+    if(!flags.malvarQ&&revPend())flags.malvarQ=1; // (v4.43) the revelation comes before his first-visit question
     if(!flags.malvarQ)return a0.call(this);
     // more than one thing to talk about: the player chooses (like the other people with several subjects)
-    const T=[];
+    let T=[];
     if(flags.alost>=1&&flags.alost<=5&&!flags.malvarLenda)T.push({t:'A sala que não está lá',fn:()=>semVelas(()=>a0.call(this))});
-    if(flags.alost===6&&!flags.fundador&&(flags.dzDone||!flags.malvarConvite||!flags.diaAntigo))T.push({t:'A carta-convite',fn:()=>semVelas(()=>a0.call(this))});
+    if(flags.alost===6&&!flags.fundador&&(flags.dzDone||!flags.malvarConvite||!flags.diaAntigo))T.push({t:'A carta-convite',rev:1,fn:()=>semVelas(()=>a0.call(this))});
     if(velasOk())T.push({t:'O senhor parece irritado, professor...',fn:()=>{flags.tdVelas=true;setMood('malvar','angry',5);
       say([{who:MW,t:'Sumiram três velas do meu armário. Se eu descobrir quem foi, vai desejar ter sido o arsenato.'}]);}});
-    if(ligaPend())T.push({t:(flags.lgG||0)?'Os desafios da galactose e da frutose':'Algum desafio para mim, professor?',fn:()=>{if(ligaTalk()===null)semVelas(()=>a0.call(this));}});
-    if(ligaCorrigidas().length){T.push({t:'Ver a correção das folhas',fn:()=>ligaCorrecao(null)});
-      if(T.length<2)T.push({t:horaTxt('Só passei para dar bom dia'),fn:()=>semVelas(()=>a0.call(this))});}
+    if(ligaPend())T.push({t:(flags.lgG||0)?'Os desafios da galactose e da frutose':'Algum desafio para mim, professor?',aceito:!!(flags.lgG||0),fn:()=>{if(ligaTalk()===null)semVelas(()=>a0.call(this));}});
+    if(ligaCorrigidas().length){T.push({t:'Ver a correção das folhas',aceito:1,fn:()=>ligaCorrecao(null)});
+      if(T.length<2&&!revPend())T.push({t:horaTxt('Só passei para dar bom dia'),fn:()=>semVelas(()=>a0.call(this))});}
+    if(revPend())T=T.filter(c=>c.rev||c.aceito); // (v4.43) the revelation first: only the challenges already accepted share the menu
     if(T.length>=2){setMood('malvar','smug',4);
       return say([{who:MW,t:'Fale de uma vez. Sobre o quê?',choices:T.map(c=>({t:c.t,fn:c.fn}))}]);}
     if(T.length)return T[0].fn();
@@ -11090,14 +11180,16 @@ const MUSIC_DIRS=['Músicas dos jogos/',''];
 const TRACKS={lab:'Laboratory of the Archmage (MP3).mp3',cour:'Courtyard of Enchantment.mp3',
   alc:'Alchemy & Arcana Academy (MP3).mp3',whim:'Whimsical Courtyard Echoes.mp3',
   duel:'Duel of Arcana - V2.mp3', // the finale's wizards' duel (looped)
+  whisp:'Whispers in the Dark (MP3).mp3',spec:'Spectral Apparition.mp3', // (v4.46) the night round (Wednesday night), on all three floors
+  flash:'Flash Duel (1 Min MP3).mp3', // (v4.45) only while the duel with Tadeo lasts (from the leap to the victory)
   aow:'Academy Overworld Theme (MP3).mp3',dun:'Dimly Lit Dungeon Lab (MP3).mp3'}; // (v3.41) aow: only in the simulator (salaSim, simGlic); dun: the old lab and its candle corridors
-const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab'],oculta:['dun'],sim:['aow']}; // (v3.41) Academy Overworld Theme only in the simulator, alone
+const PLAYLISTS={terreo:['lab','cour'],andar1:['alc','whim'],andar2:['whim','lab'],oculta:['dun'],sim:['aow'],ronda:['whisp','spec']}; // (v4.46) ronda: one playlist for the whole round, it goes on across the floors // (v3.41) Academy Overworld Theme only in the simulator, alone
 const MUSIC_ZONE={salaOculta:'oculta',salaCorredor:'oculta',salaCorredor2:'oculta',salaSim:'sim',simGlic:'sim'}; // (the music only: SCENE_ZONE still says they are on the 2nd floor)
 const SCENE_ZONE={terreo:'terreo',salaLab:'terreo',andar1:'andar1',sala101:'andar1',sala103:'andar1',andar2:'andar2',sala201:'andar2',sala204:'andar2',salaOculta:'andar2',salaCorredor:'andar2',salaCorredor2:'andar2',salaSim:'terreo',simGlic:'terreo'};
 const music=(()=>{
   const FADE=.8; // seconds for a full fade
   let els={},dir=0,cur=null,vol=.15,zone=null,duck=1,fast=0,held=false; // held (v4.40): the pause menu stops the track where it is; duck: multiplies the volume (dramatic moments)
-  const pos={terreo:0,andar1:0,andar2:0,oculta:0,sim:0}; // current track of each playlist
+  const pos={terreo:0,andar1:0,andar2:0,oculta:0,sim:0,ronda:0}; // current track of each playlist
   const level=()=>muted?0:vol*duck;
   const track=z=>PLAYLISTS[z][pos[z]];
   function el(k){
@@ -11122,11 +11214,11 @@ const music=(()=>{
     try{const p=el(k).play();if(p&&p.catch)p.catch(()=>{});}catch(e){}
   }
   function preloadNext(){ // the next track of this zone and the current one of the other zone
-    for(const z in PLAYLISTS){if((z==='oculta'||z==='sim')&&zone!==z)continue; // (the old lab's track only loads when the player gets there)
+    for(const z in PLAYLISTS){if((z==='oculta'||z==='sim'||z==='ronda')&&zone!==z)continue; // (the old lab's track only loads when the player gets there)
       el(z===zone?PLAYLISTS[z][(pos[z]+1)%PLAYLISTS[z].length]:track(z));}
   }
   return {
-    scene(name){zone=MUSIC_ZONE[name]||SCENE_ZONE[name];if(!PLAYLISTS[zone])zone='terreo';play(track(zone));preloadNext();},
+    scene(name){zone=(typeof NOITE!=='undefined'&&NOITE&&NOITE.n===4)?'ronda':MUSIC_ZONE[name]||SCENE_ZONE[name];if(!PLAYLISTS[zone])zone='terreo';play(track(zone));preloadNext();},
     stop(){cur=null;},
     special(k){zone=null;duck=1;fast=1.2;const a=el(k);a.loop=true;try{a.currentTime=0;}catch(e){}cur=null;play(k);}, // a track of its own, looping (not part of a floor playlist)
     duck(f){if(f!==duck){duck=f;fast=1.2;}}, // quick drop/return of the volume
@@ -11229,7 +11321,8 @@ function onKey(e){
   if(state==='boot')return;
   if(state==='inv'){e.preventDefault&&e.preventDefault();if(!e.repeat&&(e.code==='Escape'||e.code==='KeyI'||e.code==='Enter'||e.code==='NumpadEnter'))invFecha();return;} // (v4.37) the inventory
   if(e.code==='KeyI'&&!e.repeat&&(state==='play')){invAbre();return;}
-  if(state==='finale'){if((e.code==='Enter'||e.code==='NumpadEnter')&&!e.repeat&&!$('btn-ag').hidden){e.preventDefault&&e.preventDefault();$('btn-ag').click();}return;} // opening screens own the keyboard (the name field needs W/A/S/D/M)
+  if(state==='finale'){if((e.code==='Enter'||e.code==='NumpadEnter')&&!e.repeat&&agFase&&performance.now()-agFase.t0>5000){e.preventDefault&&e.preventDefault();agSegue();return;} // (v4.44) the letter: Enter goes on to the credits
+    if((e.code==='Enter'||e.code==='NumpadEnter')&&!e.repeat&&!$('btn-ag').hidden){e.preventDefault&&e.preventDefault();$('btn-ag').click();}return;} // opening screens own the keyboard (the name field needs W/A/S/D/M)
   if(e.code==='Escape'&&volPanel.classList.contains('on')){closeVol();return;}
   if(e.target.closest&&e.target.closest('#painelVolume'))return; // the volume sliders use the arrow keys
   if(state==='pause'){
@@ -11311,8 +11404,10 @@ function onKey(e){
   if(state==='review'){
     if(e.code==='Enter'||e.code==='NumpadEnter'){e.preventDefault();if(!e.repeat)reviewOpen();}
     else if(e.code==='Escape'){e.preventDefault();reviewDone();}
-    else if(e.code==='KeyW'||e.code==='ArrowUp'||e.code==='KeyA'||e.code==='ArrowLeft'){e.preventDefault();reviewMove(-1);}
-    else if(e.code==='KeyS'||e.code==='ArrowDown'||e.code==='KeyD'||e.code==='ArrowRight'){e.preventDefault();reviewMove(1);}
+    else if(e.code==='KeyW'||e.code==='ArrowUp'){e.preventDefault();reviewMove(0,0,-1);} // (v4.43) free arrows
+    else if(e.code==='KeyS'||e.code==='ArrowDown'){e.preventDefault();reviewMove(0,0,1);}
+    else if(e.code==='KeyA'||e.code==='ArrowLeft'){e.preventDefault();reviewMove(0,-1,0);}
+    else if(e.code==='KeyD'||e.code==='ArrowRight'){e.preventDefault();reviewMove(0,1,0);}
     return;
   }
   if(state==='dialog'&&dialogChoices()&&(e.code==='KeyW'||e.code==='ArrowUp'||e.code==='KeyS'||e.code==='ArrowDown')){
@@ -11754,7 +11849,7 @@ function render(t){
   drawTorches(t);
   for(const o of objects)if(o.wall){
     if(o.sprite){lastPS=null;psCalls=0;const s_=spriteOf(o,t),q=lastPS; // (v2.95) a person drawn on the wall layer (Dona Tati at the window): PixelLab figure
-      const fr=s_&&q&&psCalls===1&&s_.c===q.c&&(!q.crop||HI_CROP[q.who])&&NPCHI[q.who]&&!(aulaPapelOn()&&!PROF_HI[q.who])?npcFrame(q,o):null;
+      const fr=s_&&q&&psCalls===1&&s_.c===q.c&&(!q.crop||HI_CROP[q.who])&&NPCHI[q.who]&&!pfOn(q.who)&&!(aulaPapelOn()&&!PROF_HI[q.who])?npcFrame(q,o):null;
       if(fr){if(q.crop)fr.clipY=s_.y+q.crop;const fx_=s_.x+8,fy_=s_.y+23;o._rc={x:s_.x-(s_.c._ox||0),y:s_.y-(s_.c._oy||0),w:s_.c.width,h:s_.c.height};
         splitHere(c=>drawHi(c,cv.width/W,fr,fx_,fy_));g=fctx;if(o.fx)o.fx(t);continue;}
       blit(s_);o._rc=s_?{x:s_.x-(s_.c._ox||0),y:s_.y-(s_.c._oy||0),w:s_.c.width,h:s_.c.height}:null;if(o.fx){g=fctx;o.fx(t);}continue;}
@@ -11790,14 +11885,15 @@ function render(t){
       const jo=it.o===zelObj||it.o===cartObj||it.o===signObj,fa=jo?stairFade(scene,jan.x,jan.y):it.o.sprite&&it.o.x!=null?stairFade(scene,it.o.x,it.o.y):1; // fading on the last steps of a flight
       if(it.o.sprite&&!topV){ // a professor drawn alone (not sitting, not inside a composed picture): PixelLab figure
         lastPS=null;psCalls=0;const s_=spriteOf(it.o,t),q=lastPS;
-        const fr=s_&&q&&psCalls===1&&s_.c===q.c&&(!q.crop||HI_CROP[q.who])&&NPCHI[q.who]&&!(aulaPapelOn()&&!PROF_HI[q.who])?npcFrame(q,it.o):null;
+        const fr=s_&&q&&psCalls===1&&s_.c===q.c&&(!q.crop||HI_CROP[q.who])&&NPCHI[q.who]&&!pfOn(q.who)&&!(aulaPapelOn()&&!PROF_HI[q.who])?npcFrame(q,it.o):null;
         if(fr&&q.crop)fr.clipY=s_.y+q.crop;
         const banq_=fr&&it.o.banq&&!it.o.moving; // (v4.40) on a lab stool (PixelLab): like the player, cut at the seat, the stool's legs below
         if(banq_)fr.clipY=Math.round(it.o.y)-LAB_DY;
         if(fr){const fx_=s_.x+8,fy_=banq_?Math.round(it.o.y):s_.y+23;it.o._rc={x:s_.x-(s_.c._ox||0),y:s_.y-(s_.c._oy||0),w:s_.c.width,h:s_.c.height};
           splitHere(c=>drawHi(c,cv.width/W,fr,fx_,fy_,fa));g=fctx;if(it.o.fx)it.o.fx(t);continue;}
         // (v4.40) a single person on paper (no PixelLab figure; not a professor): 82%, like the classmates in the classes
-        if(s_&&q&&psCalls===1&&s_.c===q.c&&!q.crop&&!PROF_HI[q.who]&&!it.o.papelInteiro){const ox_=s_.x+8,oy_=s_.y+23; // (scaled about the feet)
+        const pf_=s_&&q&&NPCHI[q.who]&&pfOn(q.who);if(pf_)pfPos(q.who,s_.x+8,s_.y+23); // (v4.47) the paper flash: the old drawing, whole size
+        if(!pf_&&s_&&q&&psCalls===1&&s_.c===q.c&&!q.crop&&!PROF_HI[q.who]&&!it.o.papelInteiro){const ox_=s_.x+8,oy_=s_.y+23; // (scaled about the feet)
           it.o._rc={x:s_.x-(s_.c._ox||0),y:s_.y-(s_.c._oy||0),w:s_.c.width,h:s_.c.height};
           hiQ.push(c=>{if(fa<1)c.globalAlpha=fa;paperHi(c,cv.width/W,s_,ox_,oy_,N1_ESCALA);c.globalAlpha=1;});if(it.o.fx){hiFlush();g=fctx;it.o.fx(t);}continue;}
         if(fa<1)fctx.globalAlpha=fa;
@@ -11810,16 +11906,16 @@ function render(t){
       fctx.globalAlpha=1;
     }
     else if(topV)drawTopPlayer(px_,py_,player.dir,player.anim,player.moving);
-    else{const f_=Math.floor(player.anim),fr=aulaPapelOn()?null:asLook(drawAs||(lead==='a'?'amigo':'eu'),()=>hiFrame(player.dir,f_,player.moving,t,0,lead==='a')); // (v4.35) on paper during a class
+    else{const f_=Math.floor(player.anim),pfP=pfOn('player'),fr=aulaPapelOn()||pfP?null:asLook(drawAs||(lead==='a'?'amigo':'eu'),()=>hiFrame(player.dir,f_,player.moving,t,0,lead==='a')); // (v4.35) on paper during a class
       const stool=!!aulaAssento&&aulaAssento.mode==='stool'&&!player.moving; // (v3.31) on a lab stool: only the upper body shows
       if(fr){if(stool)fr.clipY=py_-8;splitHere(c=>drawHi(c,cv.width/W,fr,px_,py_));} // in high resolution
       else{const c=personSprite('player',flags.jaleco?'coat':'shirt',player.dir,f_,blinkAt(t,0),stool?20:undefined),spr={c:c.c,x:px_-8,y:py_-(stool?21:23)}; // (v4.35) on a stool: the whole back, sitting
         const dyA=aulaAssento&&aulaAssento.mode==='aud'?5:stool?LAB_DY:0; // (v4.40) on a stool: up on the seatif(dyA)spr.y-=dyA;
-        hiQ.push(cc=>paperHi(cc,cv.width/W,spr,px_,py_-dyA,N1_ESCALA));} // (v4.36) during a class: smaller, like the classmates (v4.40: always, on paper)
+        if(pfP)pfPos('player',px_,py_);hiQ.push(cc=>paperHi(cc,cv.width/W,spr,px_,py_-dyA,pfP?1:N1_ESCALA));} // (v4.36) during a class: smaller, like the classmates (v4.40: always, on paper)
       if(flags.chapeu&&diaryAtPlayer())drawHat(px_,py_-23-(f_%2),player.dir);}
   }
   if(hiQ.length)hiFlush();
-  g=fctx;
+  g=fctx;pfDraw(); // (v4.47)
   if(!topV)drawPortaSulFrente(); // (v3.77) the door in the bottom wall covers whoever stands right behind it
   if(isCor()){drawSpiders(t);drawCorDark();}
   if(sim)drawSimMenu(t);
@@ -11971,7 +12067,7 @@ function finaleSoft(lines){
    in the old lab runs on and the five walk out (saidaSaem). Hand-in last: right after the result the dark screen carries
    the time to the evening and the Liga meets in the old lab (saidaFinal), then the same walk out. It all runs on the main
    character's device and the friend watches it (tdCut); only the last dark screen comes to both, through 'saida'. */
-const SAIDA_TXT=['Naquela noite, havia um nome novo no livro da Liga de Metabolismo.','Enquanto isso, os professores resolveram comemorar o fim do dia... do jeito deles.'];
+const SAIDA_TXT=['Naquela noite, havia um nome novo no livro da Liga de Metabolismo.']; // (v4.44) the professors' duel now comes after the credits
 var saidaOn=false;
 function saidaFinal(){ // the story ended away from the old lab (the arc came first, the hand-in after): the Liga meets at the end of the day
   if(saidaOn||flags.finale)return;
@@ -12022,10 +12118,21 @@ function finale(){
   const tudo=allDone();
   $('ag-tag').textContent=tudo?'✦ 100% DO JOGO COMPLETO ✦':'✦ HISTÓRIA CONCLUÍDA ✦';
   $('ag-titulo').textContent='Obrigado, '+nome1()+'!';
-  $('ag-p1').textContent=(tudo?'Você terminou a missão principal e desvendou todos os segredos da Uninogwarts.':'Você terminou a história deste dia na Uninogwarts.')+' Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
+  const sem=!flags.diaAntigo; // (v4.44) the story now takes four days, from Monday to Thursday
+  $('ag-p1').textContent=(tudo?(sem?'Em quatro dias, de segunda a quinta, você terminou a missão principal e desvendou todos os segredos da Uninogwarts.':'Você terminou a missão principal e desvendou todos os segredos da Uninogwarts.')
+    :(sem?'Você chegou ao fim da sua primeira semana na Uninogwarts: quatro dias de aulas, folhas perdidas, enigmas e mistérios.':'Você terminou a história deste dia na Uninogwarts.'))+' Fiquei muito feliz com a sua participação neste jogo e, mais ainda, com o seu esforço em querer aprender cada vez mais.';
   $('ag-p2').textContent=(tudo?'Cada sala, cada enigma e cada porta foram pensados para alunos como você.':'Alguns segredos ainda ficaram por descobrir: quem sabe em uma próxima visita?')+' Continue '+gen('curioso','curiosa')+': a Bioquímica ainda tem muitos caminhos esperando por você.';
   const foto=$('ag-foto'),src=document.querySelector('.creditos-loading .cl-foto');if(src&&!foto.src)foto.src=src.src;
-  $('agradecimento').hidden=false;wdStart();music.special('duel');
+  const AG=$('agradecimento');AG.classList.remove('so-duelo');AG.classList.add('so-carta');AG.hidden=false;music.special('duel');
+  agFase={t0:performance.now()};agTimer=setTimeout(agSegue,AG_MS); // (v4.44) the letter alone; then the curtain and the credits (the duel comes after them)
+}
+/* (v4.44) the end, in order: the author's letter -> curtain -> credits -> Tadeo in detention (if the arc got there) ->
+   the professors' duel -> curtain -> "Continua na próxima temporada..." and JOGAR DE NOVO */
+const AG_MS=35000;let agFase=null,agTimer=0;
+function agSegue(){if(!agFase)return;agFase=null;clearTimeout(agTimer);curtainClose();} // Enter (after 5 s) or the time
+function duelFinal(c){ // behind the closed curtain: the screen of the duel alone; the curtain opens on it
+  const AG=$('agradecimento');AG.classList.remove('so-carta');AG.classList.add('so-duelo');AG.hidden=false;
+  wdStart();setTimeout(()=>c.classList.remove('fecha'),400);
 }
 /* ---------- the grand finale: a wizards' duel on the thank-you screen ----------
    Profa. Rosa and Prof. Malvar cast from two high balconies at the sides (they lock beams over the stage); Prof. Neto
@@ -12218,14 +12325,19 @@ function wdFrame(now){
   const D=wd;if(!D||D.done)return;
   const dt=Math.min(.05,(now-D.last)/1000);D.last=now;
   wdUpdate(dt);wdDraw();
-  if(D.t>=WD_LEN+WD_BOW){D.done=true;curtainClose();return;}
+  if(D.t>=WD_LEN+WD_BOW){D.done=true;fimCortina();return;} // (v4.44) the duel is the last scene: the curtain closes for good
   requestAnimationFrame(wdFrame);
 }
 // the theatre curtain closes and opens again on the film credits ("to be continued" only comes after them, in creditsEnd)
 function curtainClose(){
   const c=$('cortina');c.hidden=false;void c.offsetWidth;c.classList.add('fecha');
   [392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
-  setTimeout(creditsStart,3600);
+  setTimeout(()=>{$('agradecimento').hidden=true;creditsStart();},3600);
+}
+function fimCortina(){ // (v4.44) after the professors' duel: "Continua na próxima temporada..." and JOGAR DE NOVO
+  const c=$('cortina');c.classList.add('fecha');[392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
+  setTimeout(()=>{$('agradecimento').hidden=true;c.classList.add('texto');
+    setTimeout(()=>{const b=$('btn-ag');b.hidden=false;c.appendChild(b);b.focus({preventScroll:true});},2700);},2900);
 }
 /* ---------- film credits after the curtain ----------
    The curtain closes, opens again on a starry night and the credits roll:
@@ -12317,8 +12429,7 @@ function creditsEnd(){ // the curtain closes for good
   if(!crRun||crRun.done)return;crRun.done=true;
   const c=$('cortina');c.classList.add('fecha');[392,349,330,294,262].forEach((f,i)=>tone(f,.5,'triangle',.03,i*.35));
   setTimeout(()=>{$('creditos').hidden=true;
-    posCreditos(c,()=>{c.classList.add('texto');
-      setTimeout(()=>{const b=$('btn-ag');b.hidden=false;c.appendChild(b);b.focus({preventScroll:true});},2700);});},2900);
+    posCreditos(c,()=>duelFinal(c));},2900); // (v4.44) Tadeo in detention, then the professors' duel
 }
 /* after the credits, before "Continua na próxima temporada...": Sala 204 at night, Tadeo in detention arranging
    Malvar's bottles; his hand stops at a label (CIANETO DE POTÁSSIO); the cat hisses at the door; the candle goes out */
@@ -15603,8 +15714,8 @@ function diaActive(add_,L){
   const on_=duoLigado(),rec=k=>on_||!!(flags.amRec||{})[k]; // (v3.89) single player: only after the friend brought it and the player said yes
   if(!a&&flags.cracha&&(d>=2||(trilhaOn()?trilhaDiaOk(1):answered()===QUIZ_N))&&rec('lab'))add_('diaLab','Passe no laboratório do térreo: dizem que lá sempre acontece alguma coisa');
   if(a===1)add_('diaArm','A garota de jaleco falou do "lugar que tem o seu nome". O seu armário, no térreo?');
-  if(a===6&&!flags.dzOn&&!flags.dzDone&&rec('dz'))add_('dz0','Desafio da Liga: fale com o Bruno!');
-  if(flags.fundador&&(flags.td||0)<3&&rec('td'))add_('diaTd','Volte ao 2º andar');
+  if(a===6&&!flags.dzOn&&!flags.dzDone)add_('dz0','Desafio da Liga: fale com o Bruno!');
+  if(flags.fundador&&(flags.td||0)<3)add_('diaTd','Volte ao 2º andar');
   // (v3.89) Tiago, Prof. Kiko and Gabriel come to the player with their offers; the simulator comes from the friend
   if(on_&&d>=2&&!flags.tiagoQ)add_('tiago0','Fale com o Tiago, no 1º andar, na porta da Sala 102: ele parece preocupado');
   if(on_&&d>=2&&!(flags.bolsaQ||0))add_('bolsa0','O Prof. Kiko, no corredor do 1º andar, procura alguém para ajudar na aula prática');
@@ -15700,6 +15811,129 @@ function diaTela(o){
 /* (v4.16) the night scene of the day screen: drawn on a canvas with pencil hatching (fixed random seeds, so the strokes
    do not crawl), about 6.5 s: dusk turns to night, the moon rises, the stars come out, the windows go dark one by one
    (the common room's last), and the sky turns to dawn. */
+/* (v4.43) before the round of Wednesday night: a short plan in scribbled drawings (colored pencil, a wobbly hand),
+   four panels in the common room, one at a time; the player turns each one when ready. The three questions of the
+   night: who has the missing sheet, who threw the sheets away (the suspects of Monday's dinner: Seu Antônio and
+   Dona Tati; Marina and the ghosts crossed out) and who is helping to get them back (the riddles, "levamos"). */
+const RAB_W=640,RAB_H=340;
+function rabPaineis(){
+  const EU='Você',A=amigoNome(),falta=[1,2,3,4,5,6,7,8,9,10].filter(n=>!trAchou(n)).length;
+  return [
+    {leg:'Quarta-feira, 22h. Na sala comunal, todo mundo já foi dormir... menos dois.',cena:'sala',
+     b:[[EU,falta>1?'Ainda faltam '+falta+' folhas da glicólise. Quem está com elas?':'Ainda falta uma folha da glicólise. Quem está com ela?'],
+        [A,'Alguém que não quer que você entregue tudo amanhã, até as 11h30.']]},
+    {leg:'No jantar de segunda, vocês dois tinham levantado alguns suspeitos.',cena:'quadro',
+     b:[[A,'E quem jogou as suas folhas fora? A gente desconfiou do Seu Antônio e da Dona Tati.'],
+        [EU,'Ele tem a chave de todas as portas. Ela guarda os achados e perdidos. A Marina, não: é minha amiga.']]},
+    {leg:'E ainda havia um mistério ao contrário: alguém estava ajudando.',cena:'folha',
+     b:[[EU,'E quem está me ajudando? Alguém deixa as folhas pelo caminho, com uma adivinhação no verso.'],
+        [A,trAchou(5)?'E escreve "levamos", no plural. São dois ajudantes... mas quem?':'Alguém que conhece cada canto da faculdade... mas quem?']]},
+    {leg:'O plano estava feito.',cena:'plano',
+     b:[[A,'Combinado: hoje a gente desce e procura pistas. O Seu Antônio passa a noite no térreo.'],
+        [EU,'Sem jaleco, para ninguém reconhecer a gente. E cuidado com a ronda do Prof. Malvar!']]}];
+}
+function rabDesenha(cv,P){
+  const c=cv.getContext('2d');let seed=7+P.cena.length*31;const R=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+  const j=(v,a)=>v+(R()-.5)*a;
+  const linha=(pts,col,lw,vezes)=>{c.strokeStyle=col;c.lineWidth=lw||2;c.lineCap='round';c.lineJoin='round';
+    for(let k=0;k<(vezes||2);k++){c.globalAlpha=k?.45:.9;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(j(x,2.2),j(y,2.2)):c.moveTo(j(x,2.2),j(y,2.2)));c.stroke();}c.globalAlpha=1;};
+  const circ=(x,y,rx,ry,col,lw)=>{const P_=[];for(let a=0;a<=6.5;a+=.35)P_.push([x+Math.cos(a)*rx,y+Math.sin(a)*(ry||rx)]);linha(P_,col,lw);};
+  const ret=(x,y,w,h,col,lw)=>linha([[x,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y]],col,lw);
+  const hach=(x,y,w,h,col,a,gap)=>{c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.strokeStyle=col;c.globalAlpha=a;c.lineWidth=1.4;
+    for(let k=-h;k<w;k+=gap||6){c.beginPath();c.moveTo(x+k+j(0,2),y+h);c.lineTo(x+k+h+j(0,2),y);c.stroke();}c.restore();c.globalAlpha=1;};
+  const hachC=(x,y,r_,col,a)=>{c.save();c.beginPath();c.arc(x,y,r_,0,7);c.clip();hach(x-r_,y-r_,r_*2,r_*2,col,a,4);c.restore();};
+  const texto=(t,x,y,tam,col,al)=>{c.font=(tam||18)+'px "Patrick Hand","Comic Sans MS",cursive';c.fillStyle=col||'#3a2c22';c.textAlign=al||'center';c.fillText(t,x,y);c.textAlign='left';};
+  // a person: head, hair, body in the top's colour, arms and legs as single strokes; dir 1 faces right, -1 left
+  const LK=k=>(typeof PLAYER_LOOK!=='undefined'&&PLAYER_LOOK[k])||{};
+  const pessoa=(x,y,av,pel,nome,dir,pose)=>{const L=LK(av),H=L.H||'#3a2c22',T=L.T||L.A||'#8a5bb8',S=(SKINS[pel]||SKINS[1])[0];
+    linha([[x,y-30],[x,y-4]],'#3a2c22',2.4); // the body line
+    hach(x-10,y-30,20,24,T,.75,4);ret(x-10,y-30,20,24,'#3a2c22',1.6);linha([[x,y-29],[x,y-18]],L.A||'#a12a22',2.4,1); // the tie
+    const br=pose==='aponta'?[[x+4*dir,y-26],[x+26*dir,y-38]]:pose==='psiu'?[[x+4*dir,y-26],[x+8*dir,y-44]]:[[x+6*dir,y-26],[x+12*dir,y-10]];
+    linha(br,'#3a2c22',2);linha([[x-6*dir,y-26],[x-12*dir,y-10]],'#3a2c22',2);
+    linha([[x-4,y-6],[x-7,y+16]],'#3a2c22',2.2);linha([[x+4,y-6],[x+7,y+16]],'#3a2c22',2.2);
+    hachC(x,y-42,11,S,.9);circ(x,y-42,11,11,'#3a2c22',1.8);
+    c.save();c.beginPath();c.arc(x,y-46,12,Math.PI,0);c.clip();hach(x-13,y-60,26,14,H,.95,3);c.restore();linha([[x-12,y-45],[x,y-55],[x+12,y-45]],H,2.4);
+    c.fillStyle='#3a2c22';c.fillRect(x+3*dir-1,y-43,2,2);c.fillRect(x+7*dir-1,y-43,2,2);linha([[x+2*dir,y-37],[x+6*dir,y-36]],'#3a2c22',1.4,1);
+    texto(nome,x,y+34,16,'#8a5a3c');};
+  const balao=(x,y,w,t,tx,ty,cor)=>{c.font='17px "Patrick Hand","Comic Sans MS",cursive';const ws=t.split(' '),L=[];let s='';
+    for(const w_ of ws){const n=s?s+' '+w_:w_;if(c.measureText(n).width>w-18&&s){L.push(s);s=w_;}else s=n;}L.push(s);
+    const h=L.length*19+14;c.fillStyle='rgba(255,252,240,.96)';c.beginPath();c.ellipse(x+w/2,y+h/2,w/2+6,h/2+4,0,0,7);c.fill();
+    circ(x+w/2,y+h/2,w/2+6,h/2+4,cor||'#3a2c22',1.8);
+    c.fillStyle='rgba(255,252,240,.96)';c.beginPath();c.moveTo(x+w/2-10,y+h-2);c.lineTo(tx,ty);c.lineTo(x+w/2+10,y+h-2);c.fill();
+    linha([[x+w/2-10,y+h+1],[tx,ty],[x+w/2+10,y+h+1]],cor||'#3a2c22',1.8,1);
+    L.forEach((l,i)=>texto(l,x+w/2,y+20+i*19,17,'#3a2c22'));return h;};
+  c.fillStyle='#f6ead0';c.fillRect(0,0,RAB_W,RAB_H);
+  const eu=[avatar,pele],am=[amigoAv,amigoX&&amigoX.pele!=null?amigoX.pele:(AMIGOS[amigoAv]||{}).pele||1];
+  const Y=262; // the feet of the two
+  const chao=()=>{linha([[0,Y+18],[RAB_W,Y+18]],'#8a5a3c',2);hach(0,Y+20,RAB_W,RAB_H-Y-20,'#c9a463',.3,9);};
+  let xs=[250,390];
+  if(P.cena==='sala'){ // the common room: window with the moon, the fire, the sofa
+    ret(285,110,70,62,'#3a2c22',2);hach(287,112,66,58,'#1a2350',.7,4);linha([[320,110],[320,172]],'#3a2c22',2);linha([[285,141],[355,141]],'#3a2c22',2);
+    hachC(340,126,8,'#f2c53d',.9);circ(340,126,8,8,'#c9a463',1.5);
+    ret(520,186,90,94,'#3a2c22',2.2);hach(522,188,86,90,'#8a5a3c',.45,6);ret(540,222,50,58,'#3a2c22',2);
+    for(let k=0;k<3;k++)linha([[550+k*14,278],[556+k*14,244],[562+k*14,278]],k%2?'#ee8a2c':'#d8433b',2.2);
+    chao();ret(170,240,300,36,'#3a2c22',2.2);hach(172,242,296,32,'#d8433b',.4,6);
+    xs=[250,390];texto('z z z',70,220,20,'#3f6fc4');}
+  else if(P.cena==='quadro'){ // a cork board with the suspects pinned to it
+    ret(160,112,320,150,'#3a2c22',2.4);hach(162,114,316,146,'#c9701a',.28,7);
+    const card=(x,y,nome,desenho,risca)=>{c.fillStyle='rgba(255,252,240,.95)';c.fillRect(x,y,70,84);ret(x,y,70,84,'#3a2c22',1.5);circ(x+35,y,3.5,3.5,'#d8433b',2);
+      desenho(x+35,y+42);texto(nome,x+35,y+78,13,'#3a2c22');
+      if(risca){linha([[x+5,y+6],[x+65,y+70]],'#d8433b',3);linha([[x+65,y+6],[x+5,y+70]],'#d8433b',3);}};
+    const rosto=(x,y,cab)=>{circ(x,y-6,11,11,'#3a2c22',1.6);linha([[x-11,y-10],[x,y-19],[x+11,y-10]],cab,2.6);c.fillStyle='#3a2c22';c.fillRect(x-5,y-8,2,2);c.fillRect(x+3,y-8,2,2);linha([[x-9,y+7],[x-12,y+18]],'#3a2c22',1.6);linha([[x+9,y+7],[x+12,y+18]],'#3a2c22',1.6);};
+    card(172,126,'Seu Antônio',(x,y)=>{rosto(x-8,y-6,'#9a9a9a');linha([[x+18,y-28],[x+18,y+10]],'#8a5a3c',2.4);for(let k=0;k<4;k++)linha([[x+13+k*3,y+10],[x+11+k*3.5,y+20]],'#c9a463',1.6,1);},false);
+    card(248,126,'Dona Tati',(x,y)=>{rosto(x-12,y-6,'#3a2c22');ret(x+2,y-4,22,18,'#3a2c22',1.5);hach(x+3,y-3,20,16,'#c9701a',.5,4);texto('?',x+13,y+11,13,'#3a2c22');},false);
+    card(324,126,'Marina',(x,y)=>rosto(x,y-4,'#8a5a3c'),true);
+    card(400,126,'Zeca, Tibúrcio',(x,y)=>{for(const dx of [-13,13]){linha([[x+dx-8,y+12],[x+dx-8,y-8],[x+dx,y-17],[x+dx+8,y-8],[x+dx+8,y+12]],'#8a8fa8',1.8);c.fillStyle='#3a2c22';c.fillRect(x+dx-4,y-8,2,2);c.fillRect(x+dx+2,y-8,2,2);}},true);
+    linha([[207,222],[283,222]],'#d8433b',1.6,1);texto('juntos?',245,246,17,'#d8433b');
+    chao();xs=[80,560];}
+  else if(P.cena==='folha'){ // a crumpled sheet with a riddle in silver ink, and big question marks
+    const fx=262,fy=112;c.fillStyle='rgba(255,252,240,.95)';c.fillRect(fx,fy,116,150);
+    linha([[fx,fy],[fx+50,fy+7],[fx+116,fy],[fx+110,fy+60],[fx+116,fy+150],[fx+58,fy+143],[fx,fy+150],[fx+7,fy+80],[fx,fy]],'#3a2c22',2);
+    for(let k=0;k<6;k++)linha([[fx+14,fy+24+k*20],[fx+102,fy+22+k*20]],'#9aa3c8',1.5,1);
+    texto(trAchou(5)?'"levamos..."':'"...?..."',fx+58,fy+86,17,'#7a7fb0');linha([[fx+24,fy+50],[fx+60,fy+76]],'#3a2c22',1,1);linha([[fx+94,fy+34],[fx+76,fy+110]],'#3a2c22',1,1);
+    texto('?',fx+160,fy+110,80,'#8a5bb8');texto('?',fx-46,fy+120,52,'#3f6fc4');
+    chao();xs=[110,530];}
+  else{ // the plan: the two lab coats left on the hooks, the stairs going down, Malvar's lantern far away
+    linha([[40,124],[150,124]],'#8a5a3c',3);for(const hx of [66,124]){linha([[hx,124],[hx,132]],'#3a2c22',2);
+      linha([[hx-16,138],[hx,130],[hx+16,138],[hx+20,200],[hx-20,200],[hx-16,138]],'#3a2c22',1.8);linha([[hx,134],[hx,198]],'#9aa3c8',1.2,1);}
+    texto('os jalecos ficam aqui',95,222,15,'#8a5a3c');
+    for(let k=0;k<6;k++)linha([[436+k*24,140+k*22],[460+k*24,140+k*22],[460+k*24,162+k*22]],'#3a2c22',2);
+    texto('para o térreo',590,290,15,'#8a5a3c');
+    hachC(526,104,10,'#f2c53d',.8);circ(526,104,10,10,'#c9a463',1.6);texto('Malvar!',526,134,14,'#d8433b');
+    chao();xs=[260,340];}
+  const poses={sala:['',''],quadro:['aponta',''],folha:['','psiu'],plano:['psiu','']}[P.cena];
+  if(P.b[0][0]!=='Você'){xs=[xs[1],xs[0]];poses.reverse();} // who speaks first stands on the left (read from left to right)
+  const dE=xs[0]<xs[1]?1:-1;
+  pessoa(xs[0],Y,eu[0],eu[1],'Você',dE,poses[0]);pessoa(xs[1],Y,am[0],am[1],amigoNome(),-dE,poses[1]);
+  // the speech balloons, top left and top right, each with its tail to the head of who speaks
+  P.b.forEach(([n,t],i)=>{const isEu=n==='Você',hx=isEu?xs[0]:xs[1],w=286,bx=hx<RAB_W/2?14:RAB_W-w-14; // each balloon on its speaker's side
+    balao(bx,8,w,t,hx+(isEu?4:-4),Y-58,isEu?'#3f6fc4':'#8a5bb8');});
+}
+// the screen: a frame like the day screen, one panel at a time with its caption; a key or a touch turns it
+function rondaRabisco(depois){
+  const PN=rabPaineis();
+  const T0=$('diaTela');T0.textContent='';diaTelaOn=true;diaTelaPronta=false;const ger=++diaTelaGer;
+  const T_=document.createElement('div');T_.className='tm-quadro lp-quadro dt-quadro dt-rab';
+  T_.innerHTML='<div class="tm-borda"></div>'+['tl','tr','bl','br'].map(k=>'<svg class="tm-canto '+k+'" aria-hidden="true"><use href="#tmCanto"/></svg>').join('');T0.appendChild(T_);
+  const top=document.createElement('p');top.className='dt-n on';top.textContent='SALA COMUNAL · O PLANO';T_.appendChild(top);
+  const cv=document.createElement('canvas');cv.className='dt-noite on';cv.width=RAB_W;cv.height=RAB_H;cv.style.aspectRatio=RAB_W+'/'+RAB_H;T_.appendChild(cv);
+  const leg=document.createElement('p');leg.className='dt-s on';T_.appendChild(leg);
+  const cont=document.createElement('p');cont.className='dt-c on';T_.appendChild(cont);
+  let i=-1,pronto=false;
+  const mostra=k=>{i=k;const P=PN[i];
+    cv.classList.remove('on');setTimeout(()=>{rabDesenha(cv,P);cv.classList.add('on');},i?260:0);
+    leg.textContent=P.leg;try{sfx.pencil();}catch(_){}
+    cont.textContent=(i<PN.length-1?(padOn?'A · próximo quadro':'Toque na tela ou aperte uma tecla para ver o próximo quadro'):(padOn?'A · começar a ronda':'Toque na tela ou aperte uma tecla para começar a ronda'))+'  ('+(i+1)+' de '+PN.length+')';};
+  // the screen stays black: only the frame fades, and the next screen (the round's title) comes in its place
+  const fecha=()=>{if(diaTelaFim!==fecha)return;diaTelaFim=null;diaTelaPronta=false;diaPular=null;T_.style.transition='opacity .6s ease';T_.style.opacity='0';
+    setTimeout(()=>{if(ger!==diaTelaGer)return;diaTelaOn=false;if(depois)depois();},650);};
+  // each key turns a panel; on the last one it closes (diaTelaKey: diaPular first, then the close once ready)
+  diaPular=()=>{if(i<PN.length-1){mostra(i+1);if(i===PN.length-1){diaTelaPronta=true;}return true;}return false;};
+  diaTelaFim=fecha;
+  T0.hidden=false;void T0.offsetWidth;T0.classList.add('on');
+  try{document.fonts.load('17px "Patrick Hand"').then(()=>{if(i>=0&&ger===diaTelaGer)rabDesenha(cv,PN[i]);});}catch(_){}
+  setTimeout(()=>{if(ger===diaTelaGer)mostra(0);},700);
+}
 const NOITE_MS=6500;
 function noiteCena(cv){
   const c=cv.getContext('2d'),Wn=640,Hn=280,GR=240,mk=()=>{const k=document.createElement('canvas');k.width=Wn;k.height=Hn;return k;};
@@ -17061,7 +17295,7 @@ const objAntesMarina=()=>!!flags&&diaN()===1&&!flags.marina&&!flags.cracha&&!duo
 {const uo=updateObjective;updateObjective=function(){uo.apply(this,arguments);if(objAntesMarina()){curObj='';try{diaryCheck();}catch(_){}}};}
 {const nm=needsMarker;needsMarker=function(o){
   try{if(adCafe())return !!o&&(o.id==='professores'||o.id==='pc_heloisa'||o.id==='pc_aldair');}catch(_){}
-  try{if(adObj()){const A=AD_DIA[diaN()];if(scene===A.porta[0]&&o&&o.id===A.porta[1])return true;}}catch(_){}
+  try{if(adObj()&&diaN()<3){const A=AD_DIA[diaN()];if(scene===A.porta[0]&&o&&o.id===A.porta[1])return true;}}catch(_){} // (v4.44) Wednesday and Thursday start inside the class: no "!" for it
   return nm(o);};}
 {const dm=diaMarcas;diaMarcas=function(){const L=dm();
   try{if(adOn()&&diaN()===2&&!adFeita(2)&&gameMinutes()<14*60&&!L.some(x=>x[0]===14*60)){L.push([14*60,'14h00: a aula de Poções e Fisiologia, no auditório']);L.sort((a,b)=>a[0]-b[0]);}}catch(_){}
@@ -17163,8 +17397,10 @@ function noiteRestaura(){
 function noiteIni(n,depois){
   state='tdcut';tdCut=true;keys.clear();tGo=null;player.moving=false;music.duck(.3);
   const T=n===2?['SALÃO PRINCIPAL','O jantar','Segunda-feira · '+NOITE_HORA[2]]:['CORREDORES','A ronda','Quarta-feira · '+NOITE_HORA[4]];
-  diaTela({titulo:T,atras:()=>{try{(n===2?noite1Monta:noite2Monta)(depois);}catch(e){console.error(e);try{if(NOITE){NOITE.n=-1;noiteRestaura();}}catch(_){}NOITE=null;}},
+  const tela=()=>diaTela({titulo:T,atras:()=>{try{(n===2?noite1Monta:noite2Monta)(depois);}catch(e){console.error(e);try{if(NOITE){NOITE.n=-1;noiteRestaura();}}catch(_){}NOITE=null;}},
     depois:()=>{if(!NOITE)return depois();state='tdcut';tdCut=true;noiteCpSalva(n===2?'jantar':noiteEtapa||'a2');if(n===4&&noiteEtapa)return noite2Retoma(noiteEtapa);(n===2?noite1:noite2)();}});
+  if(n===4&&!noiteEtapa)return rondaRabisco(tela); // (v4.43) first the plan in scribbles (not when a saved round starts again)
+  tela();
 }
 /* (v4.26) saving during the night: a checkpoint (the dinner from its start; the round at the 2nd floor, the 1st floor
    or the ground floor). The save is the day's own data plus flags.noiteCp; loading it starts the night again there. */
@@ -17750,7 +17986,8 @@ function noite2Monta(depois){
   NOITE={n:4,depois,cenas:['andar2'],kP,bP,banP,fase:'ini',segue:true,ultSc:'andar2',cast:null,gato:null,malvar:null,malSc:null};
   noiteGuarda(['andar2','andar1','terreo','salaBanMandar1','salaBanFandar1','salaBanMterreo','salaBanFterreo','salaDiretor']);NOITE.visitados=new Set(['andar2']);NOITE.hora='22h30';
   const from=scene;scene='andar2';objects=SCENES.andar2;try{alostScene(from,scene);tdScene(from,scene);}catch(_){}
-  try{music.special('dun');music.duck(.35);}catch(_){}
+  flags.jaleco=false;try{$('slot-jaleco').classList.remove('got');}catch(_){} // (v4.43) the round: both without the lab coats (left in the common room, as planned)
+  try{music.scene('andar2');music.duck(.35);}catch(_){} // (v4.46) the round's own playlist (Whispers in the Dark → Spectral Apparition)
   player.x=40;player.y=116;player.dir='right';player.moving=false;
   buddy.sc='andar2';buddy.x=12;buddy.y=116;buddy.dir='right';buddy.trail=[];buddy.wait=null;amLast.sc='andar2';amLast.x=player.x;amLast.y=player.y;
   NOITE.porta=[386,bP.y+36];
@@ -18020,7 +18257,7 @@ function n2TCena(o,sc){
     {f:[{t:'Grrrooonc. A barriga de '+amigoNome()+' ronca, bem alto.'},{who:MW,t:'...O que foi isso?'}]},
     {m:[[o.cx+6,131]],v:9},{fn:()=>{M.dir='up';}},{w:.4},
     {f:[{t:'A luz das velas para bem em frente à porta da cabine. A sombra de uma mão encosta no trinco.'},{who:MW,t:'Tem alguém aí dentro?'}]},
-    {w:.9},{fn:()=>{try{tone(2200,.05,'square',.012);tone(1900,.07,'square',.012,.06);}catch(_){}}},
+    {w:.9},{fn:()=>{try{sfx.fita();}catch(_){}}}, // (v4.43) a long tape sound
     {f:[{t:'Lá fora, perto dos armários, um barulho rápido: fita adesiva sendo puxada.'},{who:MW,t:'Ahá! Agora eu te pego!'}]},
     {m:[[w-40,132],[w-14,126]],v:46},{fn:()=>{n2MalTira();try{tone(150,.1,'triangle',.02);}catch(_){}}},{w:1.4},
     {f:[{who:A,t:'(baixinho) Essa foi por pouco...'},
