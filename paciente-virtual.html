@@ -456,7 +456,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   <footer class="site-footer">
     <div class="site-footer-linha">
       <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-      <span class="site-footer-verso">Versão 0.28 &middot; Última atualização: 27 de novembro de 2026</span>
+      <span class="site-footer-verso">Versão 0.29 &middot; Última atualização: 27 de novembro de 2026</span>
     </div>
   </footer>
 </div>
@@ -553,7 +553,7 @@ const CATS = [
       ["P", "Cansaço, sim. Subir a ladeira da igreja ficou difícil. Mas é a idade, não é?", "triste"],
       ["A", "Mãe, até o ano passado a senhora subia a ladeira sem parar. Acho bom contar isso."]] },
     { id: "s8", t: "A senhora consegue levantar os dois braços e apertar a minha mão com a mesma força?", f: [
-      ["P", "O esquerdo eu consigo, mas não como o direito."],
+      ["P", "Consigo levantar os dois, mas o esquerdo sobe menos. E a mão esquerda aperta bem mais fraco que a direita."],
       ["N", "Ela levanta os dois braços: o esquerdo sobe menos que o direito e treme um pouco.", "bracos"]] },
     { id: "s9", t: "A senhora consegue andar ou levantar-se sem ajuda?", f: [
       ["P", "Consigo andar devagar, mas estou com medo de cair.", "triste"],
@@ -2314,16 +2314,76 @@ function bracoErguido(c, x0, y0, s, ang, o) {
   const x1 = x0 + s * Math.sin(a1) * 30, y1 = y0 + Math.cos(a1) * 30;
   const x2 = x1 + s * Math.sin(a2) * 27, y2 = y1 + Math.cos(a2) * 27;
   c.lineCap = "round"; c.lineJoin = "round";
+  /* a mão vem antes da manga: o punho nasce de dentro do punho do casaco */
+  mao(c, x2, y2, s * Math.sin(a2), Math.cos(a2), o);
   [[o.linha, 12.5, 10.5], [o.c2, 10.5, 8.5]].forEach(([cor, l1, l2]) => {
     c.strokeStyle = cor; c.lineWidth = l1; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
     c.lineWidth = l2; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
   });
   linha(c, [x0 - s * 2, y0 + 2, x1 - s * 2, y1 + 1], "rgba(255,255,255,.12)", 2);   /* luz na manga */
-  /* punho e mão (simples, de lado) */
-  const hx = x2 + s * Math.sin(a2) * 5, hy = y2 + Math.cos(a2) * 5;
-  linha(c, [x2 - Math.cos(a2) * 4.5, y2 + s * Math.sin(a2) * 4.5, x2 + Math.cos(a2) * 4.5, y2 - s * Math.sin(a2) * 4.5], o.linha, 1.2);
-  elip(c, hx, hy, 4.2, 3.4, o.mao || "#d3a07b", a2 * s);
-  elip(c, hx - 0.8, hy - 0.8, 2.6, 1.8, "rgba(255,230,200,.5)", a2 * s);
+  /* barra da manga (punho do casaco) */
+  const nx = -Math.cos(a2), ny = s * Math.sin(a2);
+  linha(c, [x2 - nx * 4.6, y2 - ny * 4.6, x2 + nx * 4.6, y2 + ny * 4.6], o.linha, 1.1);
+}
+/* mão aberta e relaxada, palma voltada para quem olha e polegar para cima.
+   Coordenadas locais: u ao longo do antebraço (punho → dedos), v perpendicular (v < 0 = lado do polegar).
+   Proporções de uma mão adulta: comprimento ≈ 2/3 do antebraço, dedo médio ≈ palma, polegar curto e baixo. */
+function mao(c, x, y, dx, dy, o) {
+  const pele = o.mao || "#d3a07b", sombra = o.maoSombra || "#a86e50", luz = o.maoLuz || "#efc9a6", cont = o.maoLinha || "#5a3424";
+  c.save();
+  c.translate(x, y); c.rotate(Math.atan2(dy, dx));
+  if (Math.cos(Math.atan2(dy, dx)) < 0) c.scale(1, -1);   /* mantém o polegar sempre para cima */
+  c.lineCap = "round"; c.lineJoin = "round";
+  /* dedos: [base u, base v, ângulo, comprimento, largura] — indicador, médio, anelar, mínimo */
+  const DEDOS = [[11.2, -2.7, -0.13, 6.0, 1.85], [11.7, -0.85, -0.03, 6.7, 1.9], [11.5, 0.95, 0.07, 6.2, 1.8], [10.7, 2.6, 0.2, 4.8, 1.55]];
+  const dedo = (d, extra, cor) => {
+    const [u, v, an, L, w] = d, cu = Math.cos(an), sv = Math.sin(an);
+    const mx = u + cu * L * 0.55, my = v + sv * L * 0.55 + 0.35;      /* leve flexão natural dos dedos */
+    c.beginPath(); c.moveTo(u - cu * 1.2, v - sv * 1.2); c.quadraticCurveTo(mx, my, u + cu * L, v + sv * L + 0.5);
+    c.strokeStyle = cor; c.lineWidth = w + extra; c.stroke();
+  };
+  const polegar = (extra, cor) => {
+    c.beginPath(); c.moveTo(5.2, -1.6); c.quadraticCurveTo(8.2, -5.4, 11.3, -5.6);
+    c.strokeStyle = cor; c.lineWidth = 2.3 + extra; c.stroke();
+  };
+  const palma = () => {
+    c.beginPath();
+    c.moveTo(0, -2.4);                                   /* punho, lado do polegar */
+    c.quadraticCurveTo(4.5, -2.7, 7.5, -3.9);            /* eminência tenar (base do polegar) */
+    c.quadraticCurveTo(10.6, -3.9, 11.6, -2.9);          /* articulação do indicador */
+    c.quadraticCurveTo(12.4, 0, 11.3, 3.2);              /* linha dos nós dos dedos */
+    c.quadraticCurveTo(7.5, 4, 4, 3.2);                  /* borda do mínimo (eminência hipotenar) */
+    c.quadraticCurveTo(1.5, 2.7, 0, 2.5);                /* punho, lado do mínimo */
+    c.closePath();
+  };
+  /* 1) contorno de tudo, 2) preenchimento de tudo: as partes se fundem como numa mão de verdade */
+  polegar(1.1, cont); DEDOS.forEach((d) => dedo(d, 1.1, cont));
+  palma(); c.strokeStyle = cont; c.lineWidth = 1.1; c.stroke();
+  palma(); c.fillStyle = lg(c, 0, -4, 0, 4, [[0, luz], [0.45, pele], [1, sombra]]); c.fill();
+  DEDOS.forEach((d, i) => dedo(d, 0, i === 3 ? sombra : pele));
+  DEDOS.forEach((d) => dedo(d, -1.1, "rgba(255,240,220,.35)"));          /* volume: luz no meio de cada dedo */
+  polegar(0, pele);
+  /* separação entre os dedos */
+  for (let i = 0; i < 3; i++) {
+    const [u1, v1, a1] = DEDOS[i], [u2, v2, a2] = DEDOS[i + 1];
+    const u = (u1 + u2) / 2, v = (v1 + v2) / 2, an = (a1 + a2) / 2;
+    linha(c, [u + 0.6, v, u + Math.cos(an) * 4.6, v + Math.sin(an) * 4.6 + 0.3], "rgba(90,52,36,.75)", 0.5);
+  }
+  /* pregas: falanges (duas por dedo), palma e base do polegar */
+  DEDOS.forEach(([u, v, an, L, w]) => [0.62].forEach((f) => {
+    const px = u + Math.cos(an) * L * f, py = v + Math.sin(an) * L * f + 0.3, hx = -Math.sin(an) * w * 0.42, hy = Math.cos(an) * w * 0.42;
+    linha(c, [px - hx, py - hy, px + hx, py + hy], "rgba(150,95,65,.55)", 0.4);
+  }));
+  curva(c, 9.6, -2.4, 9.2, 0.4, 10.2, 2.6, "rgba(150,95,65,.6)", 0.45);                   /* prega palmar distal */
+  curva(c, 8.2, -3, 6.6, -0.6, 7.2, 1.8, "rgba(120,70,50,.45)", 0.45);     /* prega palmar proximal */
+  curva(c, 7.4, -3.2, 4.6, -1.4, 2.6, -1.6, "rgba(150,95,65,.6)", 0.45);                  /* prega da base do polegar */
+  /* pele fina da idade: punho com tendões e leve mancha senil */
+  linha(c, [-1, 0.2, 2.2, 0.1], "rgba(120,70,50,.35)", 0.45);
+  elip(c, 5.2, 1.6, 0.7, 0.5, "rgba(140,85,55,.35)");
+  /* ponta dos dedos um pouco mais clara */
+  DEDOS.forEach(([u, v, an, L]) => elip(c, u + Math.cos(an) * (L - 0.6), v + Math.sin(an) * (L - 0.6) + 0.45, 0.6, 0.5, "rgba(255,225,200,.55)"));
+  elip(c, 10.7, -5.5, 0.65, 0.55, "rgba(255,225,200,.55)");
+  c.restore();
 }
 
 /* ---------- Dona Lourdes, 81 anos (sentada, um pouco curvada) ---------- */
