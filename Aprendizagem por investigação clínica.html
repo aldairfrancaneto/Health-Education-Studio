@@ -95,6 +95,9 @@ html.fit #stage { position: absolute; transform-origin: 0 0; width: 1600px; heig
    para dar lugar a ele (fit() desconta a altura), em vez de a página rolar. */
 .site-footer { flex: none; padding: 7px 14px; border-top: 1px solid rgba(255,255,255,.15); background: var(--tape); color: var(--tape-ink); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 12.5px; letter-spacing: .02em; text-align: left; line-height: 1.5; margin: 2rem calc(-1 * max(16px, env(safe-area-inset-left, 0px))) -2rem; }
 html.fit .site-footer { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; }
+/* celular e janelas pequenas: rodapé preso na parte de baixo da tela; o corpo ganha espaço para ele não cobrir o conteúdo */
+html:not(.fit) .site-footer { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; z-index: 50; padding-bottom: max(5px, env(safe-area-inset-bottom, 0px)); }
+html:not(.fit) body { padding-bottom: calc(3.4rem + env(safe-area-inset-bottom, 0px)); }
 .site-footer-linha { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2px 14px; color: rgba(232,240,239,.6); }
 .site-footer strong { color: rgba(232,240,239,.85); }
 .site-footer-verso { margin-left: auto; color: rgba(232,240,239,.5); }
@@ -221,6 +224,11 @@ html.fit .front { overflow: hidden; }
   .back:has(.hint) .q { font-size: 2.4rem; }
 }
 .front .cat { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.card-amp { position: absolute; top: .3rem; right: .35rem; z-index: 2; width: 1.55rem; height: 1.55rem; padding: 0; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--muted); font-size: .72rem; line-height: 1; opacity: .7; }
+.card-amp:hover, .card-amp:focus-visible { opacity: 1; color: var(--accent); border-color: var(--accent); }
+.front:has(.card-amp) > .cat { padding-inline: 1.7rem; }
+.cav { flex: 1; min-height: 0; overflow: hidden; width: 100%; max-width: 74rem; margin-inline: auto; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.6rem; display: flex; flex-direction: column; gap: .8rem; font-size: 1.12rem; line-height: 1.45; --ct-h: 440px; }
+.cav > .cat { font-family: var(--mono); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
 .flipback { margin-top: auto; align-self: flex-end; flex: none; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: .1rem .7rem; font-size: .72rem; color: var(--muted); }
 .val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
 .val.high { color: var(--bad); }
@@ -599,6 +607,12 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .rod-nv { display: inline-block; margin-left: .4rem; background: #ef6c1a; color: #fff; border-radius: 999px; padding: 0 .5rem; font-size: .75rem; font-weight: 900; }
 .rod-cat .rod-nv { position: absolute; top: 4px; right: 4px; margin: 0; }
 .rod-ler { border: 3px solid #ef6c1a; border-radius: 14px; background: #fff; padding: .9rem; text-align: center; font-weight: 800; }
+/* os cartões de votação têm fundo claro fixo: o texto também é fixo e escuro, mesmo com o celular no modo escuro */
+.rod-f.minha, .rod-cat, .rod-q, .rod-ler { color: #14232b; }
+.rod-cat, .rod-q { border-color: #e08a4f; }
+.rod-f.minha h3 { color: #14232b; }
+.rod-f.minha .rod-ult { color: #3a4a52; border-top-color: #e3c9b5; }
+.rod-f.minha .prog { color: #9a3d05; }
 .rod-ler b { display: block; margin: .5rem 0; font-size: 1.2rem; color: #b44a08; }
 .rod-ult { font-size: .9rem; color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: .5rem; }
 .grp-escriba { background: var(--paper); border: 2px dashed var(--line); border-radius: var(--radius); padding: 1rem; text-align: center; font-weight: 700; display: grid; gap: .4rem; }
@@ -746,7 +760,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.2 &middot; Última atualização: 27 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.3 &middot; Última atualização: 27 de novembro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -1579,6 +1593,7 @@ function cardHTML(c, n) {
         <span class="lock">Abre com a pergunta certa do banco</span>
       </button>
       <div class="face front" ${open ? "" : 'aria-hidden="true"'}>
+        ${open ? `<button class="card-amp" data-amp="${c.id}" title="Ampliar o cartão" aria-label="Ampliar o cartão ${n}">⛶</button>` : ""}
         <span class="cat">${c.cat}</span>
         <h3>${c.titulo}</h3>
         ${open ? c.html() : ""}
@@ -1897,6 +1912,7 @@ const PAUSAS = {
 };
 
 let overlay = null, ovPage = 0, zoom = null;
+let ampCard = null;   /* cartão mostrado ampliado (overlay "cartao") */
 function openZoom(img) {
   const fig = img.closest("figure"), cap = fig && fig.querySelector("figcaption");
   zoom = { src: img.src, alt: img.alt, cap: cap ? cap.textContent : img.alt, ct: !!img.closest(".ct"), back: overlay, page: ovPage };
@@ -1943,6 +1959,10 @@ function renderOverlay() {
         : `<img src="${zoom.src}" alt="${esc(zoom.alt)}">`}
       ${zoom.cap ? `<p>${esc(zoom.cap)}</p>` : ""}
       <p class="note">Clique na imagem ou aperte Esc para voltar.</p></div></div>`;
+  } else if (overlay === "cartao" && ampCard) {
+    const c = Object.values(BLOCOS).flatMap((b) => b.cartoes).find((x) => x.id === ampCard);
+    html = `<div class="ov">${ovTop("Cartão " + CARTAO_N[ampCard] + " ampliado")}<div class="body cav-body" style="display:flex"><div class="cav">
+      <span class="cat">${c.cat}</span><h2>${c.titulo}</h2>${c.html()}</div></div></div>`;
   } else if (overlay === "respostas" && ONL.ativo && ONL.papel === "prof") {
     html = onlRespostasHTML();
   } else if (overlay === "encerrar" && ONL.ativo && ONL.papel === "prof") {
@@ -1960,6 +1980,19 @@ function renderOverlay() {
   initInr(ov);
   fitTitles(ov);
   markZoom(ov);
+  if (overlay === "cartao") encaixaCartao(ov);
+}
+/* cartão ampliado: se o conteúdo não couber, reduz por igual (como nos cartões do slide) */
+function encaixaCartao(ov, depois) {
+  const box = ov.querySelector(".cav"); if (!box) return;
+  if (!depois) requestAnimationFrame(() => requestAnimationFrame(() => encaixaCartao(ov, true)));
+  const kids = [...box.children]; kids.forEach((k) => { k.style.zoom = ""; });
+  let z = 1;
+  for (let n = 0; n < 14 && box.scrollHeight > box.clientHeight + 1 && z > 0.55; n++) {
+    z = Math.max(0.55, z * Math.max(0.9, Math.min(0.99, box.clientHeight / box.scrollHeight)));
+    kids.forEach((k) => { k.style.zoom = z; });
+  }
+  box.querySelectorAll("img").forEach((img) => { if (!img.complete) img.addEventListener("load", () => encaixaCartao(ov, true), { once: true }); });
 }
 
 /* ---------------- Render ---------------- */
@@ -2041,6 +2074,7 @@ document.addEventListener("click", (e) => {
   if (!b) return;
   const d = b.dataset;
   if (d.go !== undefined) { if (d.go) go(d.go); return; }
+  if (d.amp) { ampCard = d.amp; overlay = "cartao"; ovPage = 0; renderOverlay(); return; }
   if (d.open) {
     if (S.abertos[d.open]) return;
     S.abertos[d.open] = true; render(true);
