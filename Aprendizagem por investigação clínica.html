@@ -790,7 +790,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.9 &middot; Última atualização: 27 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.10 &middot; Última atualização: 27 de novembro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -1373,8 +1373,7 @@ function grpRodHTML() {
   const e = ONL.est; if (!e || !BLOCOS[e.tela] || e.pausa || !e.rod) return "";
   const r = e.rod, times = equipes(), meuT = equipeDe(ONL.seat), vezT = times.length ? r.vez % times.length : 0;
   const ab = e.abertos || [], feitas = r.feitas || {};
-  const ult = r.info && BQ[r.info.q] && BQ[r.info.q].b === e.tela ? (() => { const q = BQ[r.info.q];
-    return `<div class="rod-ult">Resposta à pergunta da equipe <b>${esc(r.info.nome)}</b>: ${q.card ? `o cartão ${CARTAO_N[q.card]} foi aberto.` : `<i>${esc(q.r)}</i>`}</div>`; })() : "";
+  const ult = "";   /* a resposta às perguntas aparece SÓ no projetor do professor, nunca nos celulares */
   const disp = rodCatsDisp(e.tela, ab, feitas);
   if (!disp.length && !r.pend) return `<div class="rod-f"><h3>✓ Todas as perguntas deste bloco já foram feitas.</h3>${ult}</div>`;
   if (r.pend && r.pend.tema) {
