@@ -228,6 +228,17 @@ html.fit .front { overflow: hidden; }
 .card-amp:hover, .card-amp:focus-visible { opacity: 1; color: var(--accent); border-color: var(--accent); }
 .front:has(.card-amp) > .cat { padding-inline: 1.7rem; }
 .cav { flex: 1; min-height: 0; overflow: hidden; width: 100%; max-width: 74rem; margin-inline: auto; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.6rem; display: flex; flex-direction: column; gap: .8rem; font-size: 1.12rem; line-height: 1.45; --ct-h: 440px; }
+/* Glasgow no cartão ampliado: botões e textos maiores para ler no projetor */
+.cav .gcs { gap: .7rem; }
+.cav .gcs-desc { font-size: 1.2rem; padding: .6rem 1rem; }
+.cav .gcs-row { display: grid; grid-template-columns: 12.5rem 1fr; gap: .6rem; align-items: center; }
+.cav .gcs-row .lbl { font-size: 1.1rem; }
+.cav .gcs-row .opts { display: flex; flex-wrap: wrap; gap: .5rem .6rem; }
+.cav .opts button { font-size: 1.05rem; padding: .4rem .8rem; border-radius: 8px; }
+.cav .gcs-total .num { font-size: 2.6rem; }
+.cav .gcs-total .of { font-size: 1.1rem; }
+.cav .gcs .btn { font-size: 1.05rem !important; padding: .45rem 1.1rem !important; }
+.cav .gcs .tag, .cav .gcs .sum { font-size: 1rem; }
 .cav > .cat { font-family: var(--mono); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: center; }
 .flipback { margin-top: auto; align-self: flex-end; flex: none; border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: .1rem .7rem; font-size: .72rem; color: var(--muted); }
 .val { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -526,6 +537,12 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .onl-resp b { font-size: 1rem; }
 .onl-resp p { font-size: 1.1rem; white-space: pre-wrap; overflow-wrap: anywhere; text-align: left; hyphens: none; }
 .onl-resp.vazia { opacity: .55; border-left-color: var(--line); }
+/* respostas anônimas em colunas (o número de colunas cresce com a quantidade de respostas) */
+.onl-resp-n { text-align: center; color: var(--muted); font-weight: 700; margin: -.3rem 0 .6rem; }
+.onl-resp-cols { column-gap: .8rem; }
+.onl-resp-cols.c2 { column-count: 2; } .onl-resp-cols.c3 { column-count: 3; } .onl-resp-cols.c4 { column-count: 4; } .onl-resp-cols.c5 { column-count: 5; }
+.onl-resp-cols .onl-resp { break-inside: avoid; margin-bottom: .8rem; padding: .6rem .8rem; }
+.onl-resp-cols.c4 .onl-resp p { font-size: .95rem; } .onl-resp-cols.c5 .onl-resp p { font-size: .85rem; line-height: 1.35; }
 .onl-box { display: grid; gap: .8rem; max-width: 36rem; margin-inline: auto; width: 100%; justify-items: center; }
 .onl-msg { text-align: center; color: var(--warn); font-weight: 700; font-size: .95rem; margin: .4rem 0 0; }
 .onl-cod-in { text-transform: uppercase; letter-spacing: .3em; font-family: var(--mono); font-weight: 800; }
@@ -592,7 +609,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .rod-painel .atalho { color: var(--muted); font-size: .85rem; }
 .rod-info { flex: none; margin: .1rem auto 0; max-width: 62rem; border-left: 5px solid var(--muted); background: var(--paper); border-radius: 0 8px 8px 0; padding: .4rem .9rem; font-size: .98rem; }
 .rod-info b { font-weight: 800; }
-.rod-info .r { display: block; color: var(--ink-2); font-style: italic; }
+.rod-info .r { display: block; color: var(--ink); font-size: 1.12rem; font-weight: 600; margin-top: .15rem; }
 .rod-info.abriu { border-left-color: var(--ok); }
 /* celular: votação da equipe */
 .rod-f { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: .8rem 1rem; display: grid; gap: .6rem; margin-bottom: .8rem; }
@@ -760,7 +777,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.3 &middot; Última atualização: 27 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.6 &middot; Última atualização: 27 de novembro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -1239,7 +1256,7 @@ function telaOnline() {
       <div class="body onl-lobby">
         ${prof ? `<div class="code-big">${esc(v.codigo)}</div><p class="note" style="text-align:center">${esc(location.host + location.pathname)}</p>` : ""}
         <h3 class="onl-cont">${times.length} ${times.length === 1 ? "equipe" : "equipes"} · ${v.equipes.length} de até ${v.max} celulares</h3>
-        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> em cada bloco, a equipe da vez vota no celular uma pergunta do banco; o líder 👑 lê em voz alta e você clica em <strong>▶ Abrir</strong> (ou Enter). Se a pergunta tiver cartão, ele abre sozinho; se não tiver, aparece uma resposta curta. Algumas perguntas não abrem cartão de propósito. Quando quiser, siga para a pausa ou para o rebobinar. Nas telas com pergunta escrita aparece <strong>⏳ Tempo de resposta</strong>; o 👁 mostra as respostas das equipes.</p>` : ""}
+        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> em cada bloco, a equipe da vez vota no celular uma pergunta do banco; só o celular do líder 👑 mostra a pergunta; ele lê em voz alta e você clica em <strong>▶ Mostrar a resposta</strong> (ou Enter). A pergunta não aparece no projetor. Se a pergunta tiver cartão, ele abre sozinho; se não tiver, aparece uma resposta curta. Algumas perguntas não abrem cartão de propósito. Quando quiser, siga para a pausa ou para o rebobinar. Nas telas com pergunta escrita aparece <strong>⏳ Tempo de resposta</strong>; o 👁 mostra as respostas da turma, sem nomes.</p>` : ""}
         ${prof ? `<div class="btn-row c"><button class="btn" data-act="gabarito">📄 Banco de perguntas (PDF)</button></div>` : ""}
         <div class="onl-equipes">${lista}</div>${msg}
       </div>
@@ -1297,21 +1314,14 @@ function grpTopoHTML() {
   const et = grpEtapa(), p = ONL.est && ONL.est.pausa, sc = grpSecAtual();
   const temQ = p && sc && sc.pausa === p.k && sc.pg === p.pg;
   return `${head(et.eyebrow, et.titulo)}
-    ${p ? `<div class="grp-aviso">📘 ${esc(PAUSAS[p.k] ? PAUSAS[p.k].nome : "Pausa didática")} no projetor — ${temQ ? "respondam à pergunta abaixo e cliquem em “Enviar resposta”." : "acompanhem a explicação."}</div>` : ""}
+    ${p ? `<div class="grp-aviso">📘 ${esc(PAUSAS[p.k] ? PAUSAS[p.k].nome : "Pausa didática")} no projetor — ${temQ ? "responda à pergunta abaixo e clique em “Enviar resposta”." : "acompanhe a explicação."}</div>` : ""}
     ${ONL.est && ["sintese", "fontes"].includes(ONL.est.tela) ? `<div class="grp-aviso">🏁 A aula está terminando. Salvem o minirrelatório em PDF pelo botão “📄 Minirrelatório”.</div>` : ""}`;
 }
 function grpFormHTML() {
   const sc = grpSecAtual();
-  if (!sc) return `<div class="grp-espera">✏️ Quando a aula chegar a uma pergunta, o espaço para a resposta da equipe aparece aqui.</div>`;
+  if (!sc) return `<div class="grp-espera">✏️ Quando a aula chegar a uma pergunta, o espaço para a sua resposta aparece aqui.</div>`;
   const [q, txt, fig] = sc.qs[0];
-  /* a equipe responde junta: só o líder (ou quem estiver no lugar dele) escreve e envia */
-  const meuT = equipeDe(ONL.seat), escr = meuT >= 0 ? escriba(meuT) : ONL.seat;
-  if (escr !== ONL.seat && ONL.envio[sc.id] !== "ok") {
-    const T = equipes()[meuT], ja = ((ONL.est && ONL.est.enviadas) || {})[T ? T.nome : ""] || [];
-    return `<div class="grp-escriba" data-grp-sec="${sc.id}" data-grp-ok="${ja.includes(sc.id) ? 1 : ""}">
-      <h3 class="grp-sub">${esc(sc.eyebrow)} · ${esc(sc.titulo)}</h3><p>${txt}</p>
-      ${ja.includes(sc.id) ? `<b>✓ A resposta da equipe já foi enviada.</b>` : `<b>✍️ ${esc(nomeAluno(escr))} escreve a resposta da equipe no celular dele(a). Conversem e ajudem!</b>`}</div>`;
-  }
+  /* cada aluno escreve e envia a própria resposta pelo seu celular (no projetor elas aparecem sem nome) */
   /* resposta já enviada: fica travada e o aparelho espera a próxima pergunta */
   if (ONL.envio[sc.id] === "ok") {
     const ultima = SECOES.indexOf(sc) === SECOES.length - 1;
@@ -1335,8 +1345,8 @@ function grpRelatorioHTML() {
   const qs = SECOES.filter((s) => S.aluno.lib[s.id]).flatMap((s) => s.qs.map((q) => alResp(s.id, q[0]).trim()));
   const feitas = qs.filter(Boolean).length;
   return `<section class="screen">
-    ${head(ONL.encerrada ? "Aula encerrada" : "Aula online", "Minirrelatório da equipe", `${esc(S.aluno.grupo)} · ${feitas} de ${qs.length} respostas das etapas já alcançadas.`)}
-    ${!feitas && qs.length ? `<p class="note" style="text-align:center">As respostas ficam no celular de quem escreveu pela equipe (o líder 👑). O PDF completo sai de lá.</p>` : ""}
+    ${head(ONL.encerrada ? "Aula encerrada" : "Aula online", "Meu minirrelatório", `${esc(S.aluno.grupo)} · ${feitas} de ${qs.length} respostas das etapas já alcançadas.`)}
+    ${!feitas && qs.length ? `<p class="note" style="text-align:center">Cada aluno responde no próprio celular; o PDF traz as suas respostas.</p>` : ""}
     <div class="grp-body"><div class="al-sum">${SECOES.filter((s) => S.aluno.lib[s.id]).map((s) => { const n = s.qs.filter((q) => alResp(s.id, q[0]).trim()).length; return `<div><span>${s.titulo}</span><b class="${n === s.qs.length ? "ok" : ""}">${n} de ${s.qs.length}</b></div>`; }).join("") || `<p class="note">Nenhuma etapa com pergunta foi alcançada ainda.</p>`}</div>
       <div class="btn-row c" style="margin-top:1rem"><button class="btn primary" data-act="al-pdf" style="font-size:1.15rem;padding:.7rem 1.6rem">Salvar em PDF</button></div>
       <p class="note" style="text-align:center">Na janela de impressão que vai abrir, escolham <strong>“Salvar como PDF”</strong> no campo de destino ou impressora.</p>
@@ -1351,7 +1361,7 @@ function grpRodHTML() {
   const r = e.rod, times = equipes(), meuT = equipeDe(ONL.seat), vezT = times.length ? r.vez % times.length : 0;
   const ab = e.abertos || [], feitas = r.feitas || {};
   const ult = r.info && BQ[r.info.q] && BQ[r.info.q].b === e.tela ? (() => { const q = BQ[r.info.q];
-    return `<div class="rod-ult"><b>${esc(r.info.nome)}</b> perguntou: “${esc(q.t)}” ${q.card ? `→ abriu o cartão ${CARTAO_N[q.card]}.` : `<i>${esc(q.r)}</i>`}</div>`; })() : "";
+    return `<div class="rod-ult">Resposta à pergunta da equipe <b>${esc(r.info.nome)}</b>: ${q.card ? `o cartão ${CARTAO_N[q.card]} foi aberto.` : `<i>${esc(q.r)}</i>`}</div>`; })() : "";
   const disp = rodCatsDisp(e.tela, ab, feitas);
   if (!disp.length && !r.pend) return `<div class="rod-f"><h3>✓ Todas as perguntas deste bloco já foram feitas.</h3>${ult}</div>`;
   if (r.pend) {
@@ -1423,9 +1433,9 @@ function grpEnviar(sid) {
 function grpStatusTxt(sid) {
   const st = ONL.envio[sid];
   return st === "enviando" ? "Enviando…"
-    : st === "pendente" ? "Ainda não enviada — cliquem em “Enviar resposta”."
+    : st === "pendente" ? "Ainda não enviada — clique em “Enviar resposta”."
     : st === "falhou" ? "Sem conexão — a resposta será enviada quando a internet voltar."
-    : st === "vazio" ? "Escrevam a resposta antes de enviar." : "";
+    : st === "vazio" ? "Escreva a resposta antes de enviar." : "";
 }
 function grpStatus(sid) {
   const el = $("#grp-st"); if (!el || !$(`#grp-form [data-grp-sec="${sid}"]`)) return;
@@ -1554,15 +1564,16 @@ function rodPainelHTML(b) {
   const times = equipes(); if (!times.length) return "";
   const info = S.rod.info && BQ[S.rod.info.q] && BQ[S.rod.info.q].b === b ? (() => {
     const q = BQ[S.rod.info.q];
-    return `<div class="rod-info ${q.card ? "abriu" : ""}"><b style="color:${corEq(S.rod.info.t)}">${esc(S.rod.info.nome)}</b> perguntou: “${esc(q.t)}”<span class="r">${q.card ? `→ abriu o cartão ${CARTAO_N[q.card]}.` : esc(q.r)}</span></div>`;
+    /* a pergunta NÃO aparece no projetor: o representante a leu em voz alta; aqui fica só a resposta */
+    return `<div class="rod-info ${q.card ? "abriu" : ""}">Resposta à pergunta da equipe <b style="color:${corEq(S.rod.info.t)}">${esc(S.rod.info.nome)}</b>:<span class="r">${q.card ? `O cartão ${CARTAO_N[q.card]} foi aberto.` : esc(q.r)}</span></div>`;
   })() : "";
   const disp = rodCatsDisp(b, rodAbertos(), S.rod.feitas);
   if (!disp.length && !S.rod.pend) return `<div class="rod-painel">✓ Todas as perguntas deste bloco já foram feitas.</div>${info}`;
   const t = rodVezT(), T = times[t];
   if (S.rod.pend) {
     const le = escriba(S.rod.pend.t), nl = nomeAluno(le);
-    return `<div class="rod-painel pend"><span>🗣️ ${nl ? `<b>${esc(nl)}</b>, da equipe ` : "A equipe "}<span class="eq" style="background:${corEq(S.rod.pend.t)}">${esc(S.rod.pend.nome)}</span>, vai fazer a pergunta em voz alta.</span>
-      <button class="btn primary" data-act="rod-abrir">▶ Abrir</button><span class="atalho">ou Enter</span>${S.rod.empate ? `<span class="n">🎲 empate sorteado</span>` : ""}</div>${info}`;
+    return `<div class="rod-painel pend"><span>🗣️ ${nl ? `<b>${esc(nl)}</b>, da equipe ` : "A equipe "}<span class="eq" style="background:${corEq(S.rod.pend.t)}">${esc(S.rod.pend.nome)}</span>, vai ler a pergunta em voz alta.</span>
+      <button class="btn primary" data-act="rod-abrir">▶ Mostrar a resposta</button><span class="atalho">ou Enter, depois que a pergunta for lida</span>${S.rod.empate ? `<span class="n">🎲 empate sorteado</span>` : ""}</div>${info}`;
   }
   const nv = Object.keys(S.rod.votos).length, tot = T.membros.length, cat = rodCatAtual();
   return `<div class="rod-painel"><span>🗳️ Vez da equipe <span class="eq" style="background:${corEq(t)}">${esc(T.nome)}</span> · votando ${cat ? "na pergunta" : "na categoria"}</span>
@@ -1628,7 +1639,7 @@ function aguardoPanel(m) {
   return `<div class="aguardo">
     <span class="big" aria-hidden="true">⏳</span>
     <h2>Tempo de resposta</h2>
-    <p>Aguardando os grupos escreverem ${m === "m0" ? "o palpite" : "a previsão"} nos seus aparelhos.</p>
+    <p>Aguardando os alunos escreverem ${m === "m0" ? "o palpite" : "a previsão"} nos seus celulares.</p>
     ${sc ? contagemResp(sc.id) : ""}
   </div>`;
 }
@@ -1637,13 +1648,13 @@ function contagemResp(sid) {
   if (!ONL.ativo || ONL.papel !== "prof") return "";
   const eq = (ONL.sala && ONL.sala.equipes) || [];
   const n = eq.filter((e) => onlRespondeu(e.seat, sid)).length;
-  return `<b class="tempo-n" data-sec="${sid}">📝 ${n} de ${eq.length} ${eq.length === 1 ? "grupo enviou" : "grupos enviaram"}</b>`;
+  return `<b class="tempo-n" data-sec="${sid}">📝 ${n} de ${eq.length} ${eq.length === 1 ? "aluno enviou" : "alunos enviaram"}</b>`;
 }
 function onlAtualizarContagem() {
   document.querySelectorAll(".tempo-n[data-sec]").forEach((el) => { const t = document.createElement("i"); t.innerHTML = contagemResp(el.dataset.sec); if (t.firstChild) el.replaceWith(t.firstChild); });
 }
 /* faixa do tempo de resposta (no projetor): mostra que é hora de esperar os grupos e quantos já enviaram */
-const tempoResp = (sid, txt) => `<p class="tempo-resp"><span aria-hidden="true">⏳</span> ${txt || "Tempo de resposta: aguardando os grupos responderem nos seus aparelhos."} ${contagemResp(sid)}</p>`;
+const tempoResp = (sid, txt) => `<p class="tempo-resp"><span aria-hidden="true">⏳</span> ${txt || "Tempo de resposta: aguardando os alunos responderem nos seus celulares."} ${contagemResp(sid)}</p>`;
 /* pergunta de uma página da pausa didática + tempo de resposta */
 const perguntaPausa = (sid, pergunta) => `<div class="reveal-box pausa-q" style="flex:none"><strong>${pergunta}</strong>${tempoResp(sid)}</div>`;
 
@@ -1656,18 +1667,18 @@ function telaFita() {
     ["17 a 20 de novembro de 2000", "E o resto?", "Febre, barriga inchada, pouca urina, respiração rápida, parada do coração. O cérebro explica tudo isso?"]
   ];
   if (!S.fitaAberta) return `<section class="screen">
-    ${head("Fechamento", "Rodar a fita para frente", "Agora que chegamos ao começo, cada grupo reconta a história na ordem certa, no seu aparelho.")}
+    ${head("Fechamento", "Rodar a fita para frente", "Agora que chegamos ao começo, cada aluno reconta a história na ordem certa, no seu celular.")}
     <div class="body" style="display:grid"><div class="aguardo">
       <span class="big" aria-hidden="true">⏳</span>
       <h2>Tempo de resposta</h2>
-      <p>Aguardando os grupos escreverem a história nos seus aparelhos. Depois, a fita é revelada passo a passo para conferir.</p>
+      <p>Aguardando os alunos escreverem a história nos seus celulares. Depois, a fita é revelada passo a passo para conferir.</p>
       ${contagemResp("fita")}
     </div></div>
     ${navRow("Necropsia", `<button class="btn primary" data-act="fita-start">Os grupos terminaram: revelar a história</button>`, "Revele a história antes de seguir para a necropsia.")}
   </section>`;
   const mid = S.fita < passos.length ? `<button class="btn primary" data-act="fita-next">Revelar próximo passo</button>` : `<span class="tag">A última pergunta fica para a necropsia.</span>`;
   return `<section class="screen">
-    ${head("Fechamento", "Rodar a fita para frente", "Agora a turma confere: revele um passo de cada vez e compare com o que cada grupo escreveu.")}
+    ${head("Fechamento", "Rodar a fita para frente", "Agora a turma confere: revele um passo de cada vez e compare com o que a turma escreveu.")}
     <div class="body"><div class="forward">${passos.map((p, i) => `<div class="fstep ${i < S.fita ? "" : "hidden-step"}"><span class="yr">${p[0]}</span><div><h3>${p[1]}</h3><p>${i < S.fita ? p[2] : "…"}</p></div></div>`).join("")}</div></div>
     ${navRow("Necropsia", mid + (S.fita > 0 ? `<button class="btn ghost" data-act="fita-reset">Recomeçar</button>` : ""))}
   </section>`;
@@ -1968,7 +1979,7 @@ function renderOverlay() {
   } else if (overlay === "encerrar" && ONL.ativo && ONL.papel === "prof") {
     html = `<div class="ov">${ovTop("Aula online")}<div class="body" style="display:grid"><div class="panel onl-box" style="max-width:44rem">
       <h2>Encerrar a aula?</h2>
-      <p>A sala é fechada para todos os grupos. Antes, confirme que os grupos já salvaram o minirrelatório em PDF.</p>
+      <p>A sala é fechada para todos os alunos. Antes, confirme que todos já salvaram o minirrelatório em PDF.</p>
       <div class="btn-row c"><button class="btn primary" data-act="onl-fechar">Sim, encerrar a aula</button><button class="btn ghost" data-act="close-ov">Continuar a aula</button></div>
     </div></div></div>`;
   } else {
@@ -2004,12 +2015,12 @@ function render(keep) {
   const t = S.tela;
   const html =
     t === "abertura" ? telaAbertura() :
-    t === "abertura-r" ? telaRewind("m0", "20 de novembro de 2000 · Primeiro palpite", "Qual foi a causa da morte?", "Cada grupo escreve o palpite no seu aparelho.", "Rebobinar para os últimos dias") :
+    t === "abertura-r" ? telaRewind("m0", "20 de novembro de 2000 · Primeiro palpite", "Qual foi a causa da morte?", "Cada aluno escreve o palpite no seu celular.", "Rebobinar para os últimos dias") :
     BLOCOS[t] ? telaBloco(t) :
     t.endsWith("-r") && BLOCOS[base(t)] ? (() => {
       const b = BLOCOS[base(t)];
       const nx = { b1: "Rebobinar para a chegada", b2: "Rebobinar para os meses anteriores", b3: "Rebobinar para o começo", b4: "Rodar a fita para frente" }[base(t)];
-      return telaRewind("m" + b.n, `Bloco ${b.n} · Rebobinar`, b.rebobinar, "Antes de voltar no tempo, cada grupo escreve a previsão no seu aparelho.", nx,
+      return telaRewind("m" + b.n, `Bloco ${b.n} · Rebobinar`, b.rebobinar, "Antes de voltar no tempo, cada aluno escreve a previsão no seu celular.", nx,
         b.guardar ? `<div class="reveal-box" style="flex:none;text-align:center;padding:.4rem 1rem"><strong>${b.guardar}</strong></div>` : "");
     })() :
     t === "fita" ? telaFita() :
@@ -2024,6 +2035,8 @@ function render(keep) {
   const nb = $("#main .body");
   if (keep) { if (nb) nb.scrollTop = y; window.scrollTo(0, wy); } else window.scrollTo(0, 0);
   onlPublicar();
+  /* cartão ampliado aberto: é um clone do cartão do slide, redesenhado junto (ex.: Glasgow marcada em qualquer um dos dois) */
+  if (overlay === "cartao") renderOverlay();
 }
 
 /* Títulos longos: reduz a letra até caber numa linha usando toda a largura (mínimo 1,55rem) */
@@ -2398,24 +2411,31 @@ function onlChipResp() {
   if (!ONL.ativo || ONL.papel !== "prof") return "";
   const sid = onlSecAtual();
   if (!sid) return "";
-  const eq = equipes();
-  const n = eq.filter((T) => onlEquipeRespondeu(T, sid)).length;
+  const al = (ONL.sala && ONL.sala.equipes) || [];
+  const n = al.filter((e) => onlRespondeu(e.seat, sid)).length;
   const ver = overlay === "respostas";
-  return `<span class="chip-btn onl-chip" role="status" title="Equipes que já responderam a esta etapa">📝 ${n} de ${eq.length}</span>
-    <button class="chip-btn onl-olho ${ver ? "on" : ""}" data-act="onl-ver" title="${ver ? "Ocultar" : "Mostrar"} as respostas dos grupos no projetor" aria-pressed="${ver}">${ver ? "🙈" : "👁"}</button>`;
+  return `<span class="chip-btn onl-chip" role="status" title="Alunos que já enviaram a resposta desta etapa">📝 ${n} de ${al.length}</span>
+    <button class="chip-btn onl-olho ${ver ? "on" : ""}" data-act="onl-ver" title="${ver ? "Ocultar" : "Mostrar"} as respostas da turma no projetor (sem nomes)" aria-pressed="${ver}">${ver ? "🙈" : "👁"}</button>`;
 }
+/* respostas da turma no projetor: ANÔNIMAS (sem equipe nem nome), uma por aluno, em colunas.
+   A ordem é embaralhada de forma fixa por etapa, para não seguir a ordem de entrada na sala. */
 function onlRespostasHTML() {
   const sid = ONL.verRespSec, sc = secDe(sid);
-  const topo = `<div class="ov-top"><span class="eyebrow" style="text-align:left">Respostas dos grupos</span><span class="pg"></span><button class="btn x" data-act="onl-ver">🙈 Ocultar respostas e voltar ao caso</button></div>`;
+  const topo = `<div class="ov-top"><span class="eyebrow" style="text-align:left">Respostas da turma · sem nomes</span><span class="pg"></span><button class="btn x" data-act="onl-ver">🙈 Ocultar respostas e voltar ao caso</button></div>`;
   if (!sc) return `<div class="ov">${topo}<div class="body"></div></div>`;
-  const eq = equipes();
+  const al = (ONL.sala && ONL.sala.equipes) || [];
+  const mistura = (seat) => { let h = 2166136261; for (const ch of sid + ":" + seat) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; };
   return `<div class="ov">${topo}
     ${head(sc.eyebrow, sc.titulo)}
-    <div class="body onl-resps">${sc.qs.map(([q, txt]) => `<section class="onl-resp-q"><h3>${txt}</h3>
-      <div class="onl-resp-grade">${eq.map((T) => {
-        const t = onlRespEquipe(T, sid, q);
-        return `<div class="onl-resp ${t.trim() ? "" : "vazia"}"><b>${esc(T.nome)}</b><p>${t.trim() ? esc(t) : "Ainda sem resposta."}</p></div>`;
-      }).join("")}</div></section>`).join("")}</div></div>`;
+    <div class="body onl-resps">${sc.qs.map(([q, txt]) => {
+      const lista = al.map((e) => ({ k: mistura(e.seat), t: ((((ONL.resp[e.seat] || {})[sid]) || {})[q] || "").trim() }))
+        .filter((x) => x.t).sort((x, y) => x.k - y.k).map((x) => x.t);
+      const n = lista.length, cols = n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : n <= 20 ? 4 : 5;
+      return `<section class="onl-resp-q"><h3>${txt}</h3>
+        <p class="onl-resp-n">${n} de ${al.length} ${al.length === 1 ? "aluno respondeu" : "alunos responderam"}</p>
+        ${n ? `<div class="onl-resp-cols c${cols}">${lista.map((t) => `<div class="onl-resp"><p>${esc(t)}</p></div>`).join("")}</div>`
+            : `<p class="note" style="text-align:center">Ainda não chegou nenhuma resposta.</p>`}</section>`;
+    }).join("")}</div></div>`;
 }
 function onlVerRespostas() {
   if (overlay === "respostas") { ONL.verResp = false; ONL.verRespSec = null; overlay = ONL.voltaOv || null; ovPage = ONL.voltaPg || 0; renderOverlay(); renderTape(); return; }
