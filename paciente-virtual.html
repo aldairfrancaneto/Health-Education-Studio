@@ -305,6 +305,16 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #quiz .qz-col.certa .barra{outline:5px solid var(--ok);outline-offset:3px}
 #quiz .qz-legs{display:flex;justify-content:center;gap:60px;margin:10px 60px 0}
 #quiz .qz-legs span{width:150px;text-align:center;font-size:28px;font-weight:900}
+#hud .hb.vol{min-width:46px}
+#painelVolume{position:absolute;top:70px;right:20px;z-index:12;display:none;flex-direction:column;gap:16px;width:330px;padding:14px 16px 16px;background:rgba(15,29,44,.97);border:2px solid #5fb3ae;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.55);color:#e8f1f2}
+#painelVolume.on{display:flex}
+#painelVolume .pv-bloco{display:flex;flex-direction:column;gap:8px}
+#painelVolume .pv-tit{display:flex;justify-content:space-between;font-family:"Press Start 2P",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8fd1cb}
+#painelVolume .pv-linha{display:flex;align-items:center;gap:10px}
+#painelVolume .pv-passo{flex:0 0 auto;width:38px;height:38px;padding:0;font-size:22px;font-weight:800;line-height:1;color:#8fd1cb;background:rgba(95,179,174,.12);border:2px solid #5fb3ae;border-radius:8px;cursor:pointer}
+#painelVolume .pv-passo:hover{background:rgba(95,179,174,.28)}
+#painelVolume .pv-passo[disabled]{opacity:.35;cursor:not-allowed}
+#painelVolume input[type=range]{flex:1 1 auto;min-width:0;accent-color:#5fb3ae;cursor:pointer;height:24px}
 #hud .hb.graf{opacity:.55;font-size:14px}
 #hud .hb.graf.on{opacity:1;background:#2f6f8f}
 /* celular: só as letras, como no Kahoot */
@@ -394,6 +404,12 @@ input,textarea{user-select:text;-webkit-user-select:text}
       <div id="balaoQ" class="balao"></div>
       <div id="quiz" class="oculto"></div>
       <div id="fim" class="oculto"></div>
+      <div id="painelVolume" role="group" aria-label="Volume da música e dos efeitos">
+        <div class="pv-bloco"><div class="pv-tit"><span>🎵 Música</span><span id="pvPct">15%</span></div>
+          <div class="pv-linha"><button class="pv-passo" id="pvMenos" type="button" title="Reduzir o volume da música">−</button><input id="pvBarra" type="range" min="0" max="100" step="5" value="15" aria-label="Volume da música"><button class="pv-passo" id="pvMais" type="button" title="Subir o volume da música">+</button></div></div>
+        <div class="pv-bloco"><div class="pv-tit"><span>🔔 Efeitos e vozes</span><span id="pvPctEf">100%</span></div>
+          <div class="pv-linha"><button class="pv-passo" id="pvMenosEf" type="button" title="Reduzir o volume dos efeitos e das vozes">−</button><input id="pvBarraEf" type="range" min="0" max="100" step="5" value="100" aria-label="Volume dos efeitos e das vozes"><button class="pv-passo" id="pvMaisEf" type="button" title="Subir o volume dos efeitos e das vozes">+</button></div></div>
+      </div>
       <div id="abertura" class="oculto"></div>
       <div id="painelEnsaio" class="oculto"><div class="topo"><span>📱 Celular simulado (equipe da vez)</span><button id="btMinEnsaio">–</button></div><div class="corpo" id="ensaioCorpo"></div></div>
       <div id="modal" class="oculto"></div>
@@ -402,7 +418,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   <footer class="site-footer">
     <div class="site-footer-linha">
       <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-      <span class="site-footer-verso">Versão 0.25 &middot; Última atualização: 27 de novembro de 2026</span>
+      <span class="site-footer-verso">Versão 0.26 &middot; Última atualização: 27 de novembro de 2026</span>
     </div>
   </footer>
 </div>
@@ -1261,6 +1277,7 @@ function desenharHUD() {
     ${on ? "" : `<span style="font-weight:800;color:#ffd27a">⚠️ reconectando…</span>`}
     <span class="esp"></span>
     ${EST.quiz ? `<button class="hb graf ${QUIZ_UI.graf ? "on" : ""}" data-h="graf" title="Mostrar ou esconder o gráfico das respostas">📊</button>` : ""}
+    <button class="hb vol" data-h="vol" title="Volume da música e dos efeitos" aria-expanded="${$("painelVolume").classList.contains("on")}">${volIcone()}</button>
     <button class="hb" data-h="tela" title="Tela cheia">⛶</button>`;
   const contagem = {}; EST.hist.forEach((h) => { contagem[h.t] = (contagem[h.t] || 0) + 1; });
   const sala = ONL.sala && ONL.sala.equipes;
@@ -1300,6 +1317,7 @@ function painelVez() {
 $("hud").addEventListener("click", (e) => {
   const b = e.target.closest("[data-h]"); if (!b) return;
   if (b.dataset.h === "tela") telaCheia();
+  else if (b.dataset.h === "vol") { e.stopPropagation(); vozContexto(); $("painelVolume").classList.toggle("on"); desenharHUD(); }
   else if (b.dataset.h === "graf") { QUIZ_UI.graf = !QUIZ_UI.graf; QUIZ_UI.chave = ""; atualizarTudo(); }
 });
 
@@ -1362,13 +1380,62 @@ function desenharFim() {
   itens.forEach((li, i) => setTimeout(() => { li.classList.add("vis"); if (!ao && i < 24) nota(660 + (i % 6) * 110, 0, 0.12, 0.08, "sine"); }, 700 + i * 260));
   if (!ao) SONS.abrir();
 }
+
+/* ---------- música do quiz e volumes (como no Uninogwarts: música 15%, efeitos 100%) ----------
+   "Clinical Reasoning" toca baixinho, em laço, enquanto há quiz na tela; entra e sai com fade. */
+const MUS = { el: null, vol: 0.15, fx: 1, ligada: false, timer: null, arq: ["Músicas dos jogos/Clinical Reasoning (MP3).mp3", "Clinical Reasoning (MP3).mp3"] };
+try { const v = JSON.parse(localStorage.getItem("paciente-virtual-volume")); if (v) { MUS.vol = v.m; MUS.fx = v.f; } } catch (e) {}
+function musEl() {
+  if (MUS.el) return MUS.el;
+  const a = new Audio(); a.loop = true; a.preload = "auto"; let i = 0;
+  a.addEventListener("error", () => { if (++i < MUS.arq.length) { a.src = encodeURI(MUS.arq[i]); if (MUS.ligada) a.play().catch(() => {}); } });
+  a.src = encodeURI(MUS.arq[0]);
+  return (MUS.el = a);
+}
+function musTocar(on) {
+  const a = musEl(); MUS.ligada = on;
+  if (on && a.paused) { a.volume = 0; a.play().catch(() => {}); }
+  clearInterval(MUS.timer);
+  MUS.timer = setInterval(() => {                 /* fade de ~1 s */
+    const alvo = MUS.ligada ? MUS.vol : 0, d = alvo - a.volume;
+    if (Math.abs(d) < 0.02) { a.volume = alvo; clearInterval(MUS.timer); if (!MUS.ligada) a.pause(); return; }
+    a.volume = Math.max(0, Math.min(1, a.volume + Math.sign(d) * 0.02));
+  }, 60);
+}
+function volIcone() { return MUS.vol === 0 && MUS.fx === 0 ? "🔇" : MUS.vol < 0.5 ? "🔉" : "🔊"; }
+function syncVol() {
+  const p = Math.round(MUS.vol * 100), q = Math.round(MUS.fx * 100);
+  $("pvBarra").value = p; $("pvPct").textContent = p + "%"; $("pvMenos").disabled = p <= 0; $("pvMais").disabled = p >= 100;
+  $("pvBarraEf").value = q; $("pvPctEf").textContent = q + "%"; $("pvMenosEf").disabled = q <= 0; $("pvMaisEf").disabled = q >= 100;
+  const bt = document.querySelector('#hud [data-h="vol"]'); if (bt) bt.textContent = volIcone();
+  try { localStorage.setItem("paciente-virtual-volume", JSON.stringify({ m: MUS.vol, f: MUS.fx })); } catch (e) {}
+}
+function setMusicVol(v) {
+  MUS.vol = Math.max(0, Math.min(1, v)); syncVol();
+  if (MUS.ligada && MUS.el) { clearInterval(MUS.timer); MUS.timer = null; MUS.el.volume = MUS.vol; }
+}
+function setFxVol(v, amostra) {
+  MUS.fx = Math.max(0, Math.min(1, v)); syncVol();
+  if (SOM.saida) SOM.saida.gain.value = SOM.volume * MUS.fx;
+  if (amostra) SONS.voto();                       /* deixa ouvir o nível */
+}
+$("painelVolume").addEventListener("click", (e) => e.stopPropagation());
+$("pvBarra").addEventListener("input", (e) => setMusicVol(e.target.value / 100));
+$("pvMenos").addEventListener("click", () => setMusicVol(Math.round(MUS.vol * 100 - 10) / 100));
+$("pvMais").addEventListener("click", () => setMusicVol(Math.round(MUS.vol * 100 + 10) / 100));
+$("pvBarraEf").addEventListener("input", (e) => setFxVol(e.target.value / 100, false));
+$("pvBarraEf").addEventListener("change", (e) => setFxVol(e.target.value / 100, true));
+$("pvMenosEf").addEventListener("click", () => setFxVol(Math.round(MUS.fx * 100 - 10) / 100, true));
+$("pvMaisEf").addEventListener("click", () => setFxVol(Math.round(MUS.fx * 100 + 10) / 100, true));
+document.addEventListener("click", (e) => { if (!e.target.closest("#painelVolume") && !e.target.closest('[data-h="vol"]') && $("painelVolume").classList.contains("on")) { $("painelVolume").classList.remove("on"); if (EST) desenharHUD(); } });
+syncVol();
 /* ---------- sons do quiz (sintetizados, sem arquivos) ---------- */
 const SOM = { volume: 0.32, loop: null, saida: null };
 function somSaida() {
   const ctx = vozContexto(); if (!ctx) return null;
   if (!SOM.saida || SOM.saida.context !== ctx) {
     const comp = ctx.createDynamicsCompressor(), gan = ctx.createGain();
-    gan.gain.value = SOM.volume; gan.connect(comp); comp.connect(ctx.destination); SOM.saida = gan;
+    gan.gain.value = SOM.volume * MUS.fx; gan.connect(comp); comp.connect(ctx.destination); SOM.saida = gan;
   }
   return SOM.saida;
 }
@@ -1422,9 +1489,9 @@ function sonsDoQuiz() {
   const ant = { ...SOM_QZ };
   Object.assign(SOM_QZ, { id: z ? z.id : null, fase: z ? z.fase : null, n });
   if (ONL.refazendo) return;
-  if (!z) { esperaDesligar(); if (ant.id) SONS.seguir(); return; }
-  if (z.id !== ant.id) { SONS.abrir(); if (z.fase === "aberto") setTimeout(() => { if (EST.quiz && EST.quiz.fase === "aberto") esperaLigar(); }, 900); return; }
-  if (z.fase === "gab" && ant.fase === "aberto") { esperaDesligar(); SONS.revelar(); return; }
+  if (!z) { musTocar(false); if (ant.id) SONS.seguir(); return; }
+  if (z.id !== ant.id) { SONS.abrir(); musTocar(true); return; }        /* a música segue até o fim do gabarito */
+  if (z.fase === "gab" && ant.fase === "aberto") { SONS.revelar(); return; }
   if (n > ant.n) SONS.voto();
 }
 /* ---------- quiz no projetor: questão + alternativas; gráfico anônimo pelo botão 📊; gabarito ao encerrar ---------- */
@@ -1608,7 +1675,7 @@ function falaSimulada(quem, texto) {
   const cfg = VOZ[quem], ctx = cfg && vozContexto();
   const nada = { dur: Math.min(9000, 700 + texto.length * 55), parar() {} };
   if (!ctx) return nada;
-  const saida = ctx.createGain(); saida.gain.value = VOZ.volume * cfg.ganho;
+  const saida = ctx.createGain(); saida.gain.value = VOZ.volume * cfg.ganho * MUS.fx;
   const abafa = ctx.createBiquadFilter(); abafa.type = "lowpass"; abafa.frequency.value = cfg.brilho;
   /* compressor na saída: segura os picos para não estourar */
   const comp = ctx.createDynamicsCompressor();
