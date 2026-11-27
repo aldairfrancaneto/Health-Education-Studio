@@ -611,6 +611,19 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 .rod-info b { font-weight: 800; }
 .rod-info .r { display: block; color: var(--ink); font-size: 1.12rem; font-weight: 600; margin-top: .15rem; }
 .rod-info.abriu { border-left-color: var(--ok); }
+/* painel da vez e resposta lado a lado, com a resposta em destaque */
+.rod-linha { flex: none; display: flex; gap: 1rem; align-items: stretch; justify-content: center; width: 100%; }
+.rod-linha > .rod-painel { margin: 0; flex: 1 1 0; min-width: 0; border-radius: 18px; justify-content: flex-start; align-content: center; padding: .6rem 1.2rem; }
+.rod-linha > .rod-painel:only-child { flex: 0 1 auto; justify-content: center; }
+.rod-linha > .rod-info { margin: 0; flex: 1 1 0; min-width: 0; max-width: none; display: flex; flex-direction: column; justify-content: center; gap: .15rem;
+  border: 2px solid var(--s1); border-left-width: 10px; border-radius: 14px; padding: .55rem 1.3rem;
+  background: color-mix(in srgb, var(--s1) 11%, var(--paper)); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+.rod-linha > .rod-info.abriu { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--paper)); }
+.rod-linha > .rod-info .rot { font-size: .95rem; font-weight: 700; color: var(--ink-2); }
+.rod-linha > .rod-info.rod-tema { border-color: var(--warn); border-style: dashed; background: color-mix(in srgb, var(--warn) 12%, var(--paper)); }
+.rod-linha > .rod-info.novo { animation: rodSurge .55s cubic-bezier(.2,.9,.3,1.3); }
+@keyframes rodSurge { from { opacity: 0; transform: scale(.92) translateY(8px); } to { opacity: 1; transform: none; } }
+.rod-linha > .rod-info .r { font-size: 1.5rem; font-weight: 800; line-height: 1.25; color: var(--ink); margin: 0; }
 /* celular: votação da equipe */
 .rod-f { background: var(--paper); border: 2px solid var(--line); border-radius: var(--radius); padding: .8rem 1rem; display: grid; gap: .6rem; margin-bottom: .8rem; }
 .rod-f.minha { border-color: #ef6c1a; background: #fff6ee; }
@@ -777,7 +790,7 @@ html:not(.fit) .al-members { grid-template-columns: 1fr; }
 <footer class="site-footer" id="rodape">
   <div class="site-footer-linha">
     <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-    <span class="site-footer-verso">Versão 3.6 &middot; Última atualização: 27 de novembro de 2026</span>
+    <span class="site-footer-verso">Versão 3.9 &middot; Última atualização: 27 de novembro de 2026</span>
   </div>
 </footer>
 <div id="print" lang="pt-BR"></div>
@@ -1256,7 +1269,7 @@ function telaOnline() {
       <div class="body onl-lobby">
         ${prof ? `<div class="code-big">${esc(v.codigo)}</div><p class="note" style="text-align:center">${esc(location.host + location.pathname)}</p>` : ""}
         <h3 class="onl-cont">${times.length} ${times.length === 1 ? "equipe" : "equipes"} · ${v.equipes.length} de até ${v.max} celulares</h3>
-        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> em cada bloco, a equipe da vez vota no celular uma pergunta do banco; só o celular do líder 👑 mostra a pergunta; ele lê em voz alta e você clica em <strong>▶ Mostrar a resposta</strong> (ou Enter). A pergunta não aparece no projetor. Se a pergunta tiver cartão, ele abre sozinho; se não tiver, aparece uma resposta curta. Algumas perguntas não abrem cartão de propósito. Quando quiser, siga para a pausa ou para o rebobinar. Nas telas com pergunta escrita aparece <strong>⏳ Tempo de resposta</strong>; o 👁 mostra as respostas da turma, sem nomes.</p>` : ""}
+        ${prof ? `<p class="note onl-dica"><strong>Como conduzir:</strong> em cada bloco, a equipe da vez vota no celular uma pergunta do banco; só o celular do líder 👑 mostra a pergunta; ele lê em voz alta e você aperta Enter duas vezes: a 1ª mostra só o tema da pergunta (bom momento para pedir palpites) e a 2ª mostra a resposta. A pergunta não aparece no projetor. Se a pergunta tiver cartão, ele abre sozinho; se não tiver, aparece uma resposta curta. Algumas perguntas não abrem cartão de propósito. Quando quiser, siga para a pausa ou para o rebobinar. Nas telas com pergunta escrita aparece <strong>⏳ Tempo de resposta</strong>; o 👁 mostra as respostas da turma, sem nomes.</p>` : ""}
         ${prof ? `<div class="btn-row c"><button class="btn" data-act="gabarito">📄 Banco de perguntas (PDF)</button></div>` : ""}
         <div class="onl-equipes">${lista}</div>${msg}
       </div>
@@ -1364,12 +1377,17 @@ function grpRodHTML() {
     return `<div class="rod-ult">Resposta à pergunta da equipe <b>${esc(r.info.nome)}</b>: ${q.card ? `o cartão ${CARTAO_N[q.card]} foi aberto.` : `<i>${esc(q.r)}</i>`}</div>`; })() : "";
   const disp = rodCatsDisp(e.tela, ab, feitas);
   if (!disp.length && !r.pend) return `<div class="rod-f"><h3>✓ Todas as perguntas deste bloco já foram feitas.</h3>${ult}</div>`;
+  if (r.pend && r.pend.tema) {
+    const C = RCATS.find((x) => x.id === BQ[r.pend.q].c) || { ic: "❓", nome: "o caso" };
+    return `<div class="rod-f ${r.pend.t === meuT ? "minha" : ""}"><h3>${C.ic} A equipe ${esc(r.pend.nome)} perguntou sobre ${esc(C.nome.toLowerCase())}. Qual será a resposta? Olhem o projetor!</h3>${ult}</div>`;
+  }
   if (r.pend) {
     const q = BQ[r.pend.q], le = escriba(r.pend.t);
     if (r.pend.t === meuT && le === ONL.seat) return `<div class="rod-f minha"><div class="rod-ler">👑🗣️ ${le === times[meuT].membros[0].seat ? "Você é o líder." : "O líder está desconectado; você lê no lugar dele."} Leia a pergunta <u>em voz alta</u>:<b>“${esc(q.t)}”</b>${r.empate ? "<small>🎲 Houve empate, e a pergunta foi sorteada.</small>" : ""}</div>${ult}</div>`;
     if (r.pend.t === meuT) return `<div class="rod-f minha"><div class="rod-ler">👑 <b style="display:inline;font-size:1rem">${esc(nomeAluno(le))}</b> vai ler a pergunta escolhida em voz alta. Prestem atenção!</div>${ult}</div>`;
     return `<div class="rod-f"><h3>🗣️ A equipe ${esc(r.pend.nome)} vai fazer uma pergunta. Prestem atenção!</h3>${ult}</div>`;
   }
+  if (r.gcsPend) return `<div class="rod-f"><h3>🧠 A turma está preenchendo e conferindo a Escala de Glasgow no projetor. A vez da equipe ${esc(r.vezNome)} começa logo depois.</h3>${ult}</div>`;
   if (meuT !== vezT) return `<div class="rod-f"><h3>Vez da equipe ${esc(r.vezNome)}. Aguardem a vez de vocês.</h3>${ult}</div>`;
   const membros = times[meuT].membros, votos = r.votos || {}, meu = votos[ONL.seat], n = {};
   Object.values(votos).forEach((v) => { n[v] = (n[v] || 0) + 1; });
@@ -1524,8 +1542,16 @@ const rodAtiva = () => ONL.ativo && ONL.papel === "prof" && !!BLOCOS[S.tela] && 
 const rodAbertos = () => Object.keys(S.abertos).filter((k) => S.abertos[k]);
 function rodCatAtual() { if (S.rod.cat) return S.rod.cat; const d = rodCatsDisp(S.tela, rodAbertos(), S.rod.feitas); return d.length === 1 ? d[0].id : null; }
 const rodVezT = () => { const n = equipes().length; return n ? S.rod.vez % n : 0; };
+/* Escala de Glasgow aberta neste bloco e ainda não preenchida (olhos + verbal + motora) E conferida: a vez da próxima equipe espera */
+const GCS_CARTAO = { "b1-gcs": "b", "b2-gcs": "a" };
+function rodGcsPendente() {
+  const b = BLOCOS[S.tela]; if (!b) return null;
+  const c = b.cartoes.find((x) => GCS_CARTAO[x.id] && S.abertos[x.id]); if (!c) return null;
+  const t = GCS_CARTAO[c.id], sel = S.gcs[t] || {};
+  return ["eyes", "verbal", "motor"].every((k) => sel[k]) && S.gcsCheck[t] ? null : c.id;
+}
 function rodVoto(seat, tipo, id) {
-  if (!rodAtiva() || S.rod.pend || seat == null || seat < 0) return false;
+  if (!rodAtiva() || S.rod.pend || rodGcsPendente() || seat == null || seat < 0) return false;
   const t = equipeDe(seat); if (t < 0 || t !== rodVezT()) return false;
   const cat = rodCatAtual();
   if (tipo === "vcat") { if (cat || !rodCatsDisp(S.tela, rodAbertos(), S.rod.feitas).some((c) => c.id === id)) return false; }
@@ -1544,6 +1570,28 @@ function rodResolver() {
   else S.rod.cat = esc1;
 }
 /* o líder leu a pergunta: o professor abre o cartão (ou mostra a resposta curta) */
+/* revelação em dois tempos: 1º Enter = pergunta lida → o projetor mostra só o TEMA; 2º Enter = resposta */
+function rodAvancar() {
+  const p = S.rod.pend; if (!p || !rodAtiva()) return;
+  if (!p.tema) { p.tema = true; somRod("tema"); render(true); return; }
+  somRod("resposta"); rodAbrir();
+}
+/* sons curtos sintetizados (sem arquivos) */
+let rodAc = null;
+function somRod(tipo) {
+  try {
+    const A = window.AudioContext || window.webkitAudioContext; if (!A) return;
+    rodAc = rodAc || new A(); if (rodAc.state === "suspended") rodAc.resume();
+    const notas = tipo === "tema" ? [[392, 0, .18], [523, .12, .25]] : [[523, 0, .14], [659, .1, .14], [784, .2, .14], [1047, .3, .45]];
+    notas.forEach(([f, t0, d]) => {
+      const o = rodAc.createOscillator(), g = rodAc.createGain(), t = rodAc.currentTime + t0;
+      o.type = "triangle"; o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.12, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(g); g.connect(rodAc.destination); o.start(t); o.stop(t + d + 0.03);
+    });
+  } catch (e) { /* sem áudio: segue em silêncio */ }
+}
+let rodInfoVisto = "";   /* anima a resposta só na primeira vez que ela aparece */
 function rodAbrir() {
   const p = S.rod.pend; if (!p || !rodAtiva()) return;
   const q = BQ[p.q];
@@ -1565,15 +1613,26 @@ function rodPainelHTML(b) {
   const info = S.rod.info && BQ[S.rod.info.q] && BQ[S.rod.info.q].b === b ? (() => {
     const q = BQ[S.rod.info.q];
     /* a pergunta NÃO aparece no projetor: o representante a leu em voz alta; aqui fica só a resposta */
-    return `<div class="rod-info ${q.card ? "abriu" : ""}">Resposta à pergunta da equipe <b style="color:${corEq(S.rod.info.t)}">${esc(S.rod.info.nome)}</b>:<span class="r">${q.card ? `O cartão ${CARTAO_N[q.card]} foi aberto.` : esc(q.r)}</span></div>`;
+    const chave = S.rod.info.q + "|" + S.rod.vez, novo = chave !== rodInfoVisto; rodInfoVisto = chave;
+    return `<div class="rod-info ${q.card ? "abriu" : ""} ${novo ? "novo" : ""}"><span class="rot">💬 Resposta à pergunta da equipe <b style="color:${corEq(S.rod.info.t)}">${esc(S.rod.info.nome)}</b></span><span class="r">${q.card ? `O cartão ${CARTAO_N[q.card]} foi aberto.` : esc(q.r)}</span></div>`;
   })() : "";
   const disp = rodCatsDisp(b, rodAbertos(), S.rod.feitas);
   if (!disp.length && !S.rod.pend) return `<div class="rod-painel">✓ Todas as perguntas deste bloco já foram feitas.</div>${info}`;
   const t = rodVezT(), T = times[t];
+  const gp = !S.rod.pend && rodGcsPendente();
+  if (gp) return `<div class="rod-painel pend"><span>🧠 Preencham a <b>Escala de Glasgow</b> do cartão ${CARTAO_N[gp]} (olhos, verbal e motora) e cliquem em <b>Conferir</b> para liberar a vez da equipe <span class="eq" style="background:${corEq(t)}">${esc(T.nome)}</span>.</span>
+      <button class="btn primary" data-amp="${gp}">⛶ Ampliar a escala</button></div>${info}`;
+  if (S.rod.pend && S.rod.pend.tema) {
+    const C = RCATS.find((x) => x.id === BQ[S.rod.pend.q].c) || { ic: "❓", nome: "o caso" };
+    const chave = "tema|" + S.rod.pend.q + "|" + S.rod.vez, novo = chave !== rodInfoVisto; rodInfoVisto = chave;
+    return `<div class="rod-painel pend"><span>🤔 E agora? Peça palpites à turma antes de revelar.</span>
+      <button class="btn primary" data-act="rod-abrir">▶ Mostrar a resposta</button><span class="atalho">ou Enter</span></div>
+      <div class="rod-info rod-tema ${novo ? "novo" : ""}"><span class="rot">🎤 Pergunta feita</span><span class="r">${C.ic} A equipe <b style="color:${corEq(S.rod.pend.t)}">${esc(S.rod.pend.nome)}</b> perguntou sobre <b>${esc(C.nome.toLowerCase())}</b>.</span></div>`;
+  }
   if (S.rod.pend) {
     const le = escriba(S.rod.pend.t), nl = nomeAluno(le);
     return `<div class="rod-painel pend"><span>🗣️ ${nl ? `<b>${esc(nl)}</b>, da equipe ` : "A equipe "}<span class="eq" style="background:${corEq(S.rod.pend.t)}">${esc(S.rod.pend.nome)}</span>, vai ler a pergunta em voz alta.</span>
-      <button class="btn primary" data-act="rod-abrir">▶ Mostrar a resposta</button><span class="atalho">ou Enter, depois que a pergunta for lida</span>${S.rod.empate ? `<span class="n">🎲 empate sorteado</span>` : ""}</div>${info}`;
+      <button class="btn primary" data-act="rod-abrir">▶ Pergunta lida</button><span class="atalho">ou Enter, depois da leitura</span>${S.rod.empate ? `<span class="n">🎲 empate sorteado</span>` : ""}</div>${info}`;
   }
   const nv = Object.keys(S.rod.votos).length, tot = T.membros.length, cat = rodCatAtual();
   return `<div class="rod-painel"><span>🗳️ Vez da equipe <span class="eq" style="background:${corEq(t)}">${esc(T.nome)}</span> · votando ${cat ? "na pergunta" : "na categoria"}</span>
@@ -1585,7 +1644,7 @@ function telaBloco(id) {
   const units = b.cartoes.reduce((a, c) => a + (c.span || (c.wide ? 2 : 1)), 0);
   return `<section class="screen">
     ${head(`Bloco ${b.n} · ${b.quando}`, b.titulo, b.intro)}
-    ${rodPainelHTML(id)}
+    ${(() => { const r = rodPainelHTML(id); return r ? `<div class="rod-linha">${r}</div>` : ""; })()}
     <div class="body"><div class="cards" style="--units:${units};${b.cols ? `--cols:${b.cols}` : ""}">${b.cartoes.map((c) => cardHTML(c, CARTAO_N[c.id])).join("")}</div></div>
     ${b.pausa ? (pausaFeita(b.pausa)
       ? navRow("Rebobinar", `<button class="btn pausa-ok" data-pausa="${b.pausa}">✓ Pausa didática vista · rever</button>`)
@@ -2129,7 +2188,7 @@ document.addEventListener("click", (e) => {
     case "final-rev": S.finalRev = true; S.visto["final-aprendi"] = true; render(true); break;
     case "necro-q2": S.visto["necro-0-q2"] = true; render(true); break;
     case "gabarito": profGabarito(); break;
-    case "rod-abrir": rodAbrir(); break;
+    case "rod-abrir": rodAvancar(); break;
     case "rod-fechar": rodFechar(); break;
     case "p2-rev": S.pausa2Rev = true; renderOverlay(); save(); break;
   }
@@ -2161,7 +2220,7 @@ document.addEventListener("keydown", (e) => {
   }
   if (overlay) return;
   if (S.modo !== "apresentacao" && S.modo !== "professor") return;
-  if (e.key === "Enter" && S.rod.pend && rodAtiva()) { e.preventDefault(); rodAbrir(); return; }
+  if (e.key === "Enter" && S.rod.pend && rodAtiva()) { e.preventDefault(); rodAvancar(); return; }
   if (e.key === "ArrowRight") step(1);
   else if (e.key === "ArrowLeft") step(-1);
   else if (e.key === "g" || e.key === "G") openOverlay("gloss");
@@ -2350,7 +2409,7 @@ function onlEstAtual() {
   return { tela: S.tela, abertos: Object.keys(S.abertos).filter((k) => S.abertos[k]), visto: S.visto,
     gcs: S.gcs, gcsCheck: S.gcsCheck, fita: S.fita, fitaAberta: S.fitaAberta,
     necro: S.necro, finalRev: S.finalRev, pausa2Rev: S.pausa2Rev, pausa: pausa,
-    rod: Object.assign({}, S.rod, { vezNome: (equipes()[rodVezT()] || {}).nome || "", catAtual: BLOCOS[S.tela] ? rodCatAtual() : null }),
+    rod: Object.assign({}, S.rod, { vezNome: (equipes()[rodVezT()] || {}).nome || "", catAtual: BLOCOS[S.tela] ? rodCatAtual() : null, gcsPend: ONL.papel === "prof" ? rodGcsPendente() : null }),
     enviadas: onlEnviadas() };
 }
 function onlPublicar() {
