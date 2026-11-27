@@ -354,7 +354,7 @@ p, li { text-align: justify; hyphens: auto; }
 <!-- Blocos azuis flutuando à frente da figura (um por atividade). O nome e a
      referência bibliográfica de cada atividade ficam em .bloco-dado e aparecem
      numa caixa (#blocoTip) quando o mouse passa sobre o bloco (ou ao tocar).
-     Os blocos ficam em duas fileiras de 7, uma de cada lado do castelo.
+     Os blocos ficam em duas fileiras, uma de cada lado do castelo.
      Para incluir uma atividade nova: copie um <div class="bloco">, cole no fim
      de uma fileira (ou abra uma .fileira nova, com sua posição --x/--y em % da
      figura) e mude o número e o conteúdo de .bloco-dado. A onda se ajusta sozinha.
@@ -426,6 +426,10 @@ p, li { text-align: justify; hyphens: auto; }
       <div class="bloco">
         <button type="button" class="bloco-num" aria-label="Atividade 16: Hallmarks do Câncer" aria-expanded="false">16</button>
         <div class="bloco-dado" hidden><strong class="tip-nome">Hallmarks do Câncer</strong><span class="tip-rot">📚 Referência bibliográfica</span><p>HANAHAN, D. Hallmarks of cancer — then and now, and beyond. <em>Cell</em>, v. 189, p. 2254-2287, 2026.</p></div>
+      </div>
+      <div class="bloco">
+        <button type="button" class="bloco-num" aria-label="Atividade 17: Paciente Virtual: o Primeiro Atendimento" aria-expanded="false">17</button>
+        <div class="bloco-dado" hidden><strong class="tip-nome">Paciente Virtual: o Primeiro Atendimento</strong><span class="tip-rot">📚 Referência bibliográfica</span><p>BASTOS, J. F.; BENVENUTI, L. A. Correlação anatomoclínica. Caso 3/2002: mulher de 82 anos, portadora de hipertensão arterial sistêmica, fibrilação atrial e que apresentou acidente vascular cerebral recorrente e fatal. <em>Arquivos Brasileiros de Cardiologia</em>, v. 80, n. 6, p. 643-648, 2003.</p></div>
       </div>
   </div>
 <div class="bloco-tip" id="blocoTip" role="tooltip" hidden></div>
@@ -642,6 +646,17 @@ Senha incorreta. Confira com o professor e tente novamente.
   <section class="atividade" id="ativ-hallmarks-cancer"></section>
 
   <!-- ============================================================
+       ATIVIDADE 17 — PACIENTE VIRTUAL: O PRIMEIRO ATENDIMENTO
+       senha: acolhimento
+       O jogo está no arquivo paciente-virtual.html, ao lado deste, e
+       abre numa aba nova. É só online: o professor projeta a sala de
+       atendimento e cada aluno entra pelo celular (equipes de até 6).
+       Precisa do servidor de salas com o jogo "paciente" (server.js
+       v2.2); com o servidor antigo, aceita até 12 celulares.
+       ============================================================ -->
+  <section class="atividade" id="ativ-paciente-virtual"></section>
+
+  <!-- ============================================================
        ATIVIDADE OCULTA — SABOTADOR DA ATEROSCLEROSE
        senha: sabotador
        Sem bloco numerado no castelo (de propósito): só abre por
@@ -733,6 +748,7 @@ Senha incorreta. Confira com o professor e tente novamente.
     "investigacao": "ativ-investigacao",
     "investigação": "ativ-investigacao",
     "warburg": "ativ-hallmarks-cancer",
+    "acolhimento": "ativ-paciente-virtual",
     "sabotador": "ativ-sabotador"
   };
 
@@ -759,6 +775,7 @@ Senha incorreta. Confira com o professor e tente novamente.
     "ativ-pielonefrite": "pielonefrite.html",
     "ativ-investigacao": "Aprendizagem por investigação clínica.html",
     "ativ-hallmarks-cancer": "hallmarks-cancer.html",
+    "ativ-paciente-virtual": "paciente-virtual.html",
     "ativ-sabotador": "Sabotador da aterosclerose.html"
   };
 
