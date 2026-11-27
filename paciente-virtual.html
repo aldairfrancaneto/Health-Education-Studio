@@ -198,6 +198,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .cats.mini .cat{padding:5px 2px;font-size:10.5px;border-radius:9px;line-height:1.15}
 .cats.mini .cat .ic{font-size:17px;margin-bottom:1px}
 .cats.mini .cat .n{display:none}
+.perg.trava{filter:grayscale(1);opacity:.5;background:#eee;cursor:not-allowed}
 .prog-voto{font-weight:800;font-size:14px;color:var(--perg3);margin:-4px 0 10px}
 .cat{position:relative}
 .cat.voto,.tema-perg .cat.voto{border-color:var(--perg);box-shadow:0 0 0 3px #ef6c1a55;background:#fff7f0}
@@ -237,7 +238,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   <footer class="site-footer">
     <div class="site-footer-linha">
       <span>Desenvolvido por <strong>Prof. Dr. Aldair de França Neto</strong></span>
-      <span class="site-footer-verso">Versão 0.13 &middot; Última atualização: 26 de novembro de 2026</span>
+      <span class="site-footer-verso">Versão 0.19 &middot; Última atualização: 26 de novembro de 2026</span>
     </div>
   </footer>
 </div>
@@ -262,55 +263,56 @@ const RX_SRC = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEA
    falas: [quem, texto, humor?]  quem: P = paciente, A = acompanhante, N = cena
    humor: "sorri", "triste", "pensa" (muda o rosto de quem fala) */
 const NOMES = { P: "Dona Lourdes", A: "Sônia, a filha", N: "" };
+/* req: perguntas que precisam ter sido feitas antes (a resposta delas dá sentido à pergunta) */
 const CATS = [
   { id: "acolher", ic: "👋", nome: "Acolhimento e identificação", qs: [
     { id: "a1", t: "Bom dia! Somos da equipe que vai atender a senhora hoje. Tudo bem?", f: [
       ["P", "Bom dia, meu bem. Tudo bem, graças a Deus… quer dizer, mais ou menos, senão eu não estaria aqui, não é?", "sorri"],
-      ["N", "Ela sorri. O lado esquerdo da boca quase não acompanha o sorriso."]] },
-    { id: "a2", t: "Qual é o nome da senhora?", f: [
+      ["N", "Ela sorri. O lado esquerdo da boca quase não acompanha o sorriso.", "sorriso"]] },
+    { id: "a2", req: ["a1"], t: "Qual é o nome da senhora?", f: [
       ["P", "Maria de Lourdes Ferreira. Mas todo mundo me chama de Dona Lourdes."]] },
-    { id: "a3", t: "Quantos anos a senhora tem?", f: [
+    { id: "a3", req: ["a1"], t: "Quantos anos a senhora tem?", f: [
       ["P", "Hã? Como?", "pensa"],
       ["A", "Mãe, querem saber a sua idade."],
       ["P", "Ah! Oitenta e um. Fiz em janeiro. Desculpe, meu bem, o meu ouvido já não é o mesmo.", "sorri"]] },
-    { id: "a4", t: "E a senhora, quem é? (para a acompanhante)", f: [
+    { id: "a4", req: ["a1"], t: "E a senhora, quem é? (para a acompanhante)", f: [
       ["A", "Eu sou a Sônia, filha dela. Ela mora sozinha, mas eu moro na mesma rua e passo lá todo dia de manhã."]] },
-    { id: "a5", t: "Como a senhora prefere que nós a chamemos?", f: [
+    { id: "a5", req: ["a2"], t: "Como a senhora prefere que nós a chamemos?", f: [
       ["P", "Podem me chamar de Dona Lourdes. Ou de vó, que eu já estou acostumada!", "sorri"]] },
-    { id: "a6", t: "A senhora está confortável? Quer um pouco de água?", f: [
+    { id: "a6", req: ["a1"], t: "A senhora está confortável? Quer um pouco de água?", f: [
       ["P", "Estou bem, obrigada. Água eu quase não bebo; não sinto sede. É coisa da idade."],
       ["A", "Eu sempre lembro a ela de beber água, mas ela esquece."]] },
-    { id: "a7", t: "A senhora entendeu o motivo de estar aqui hoje?", f: [
+    { id: "a7", req: ["a1"], t: "A senhora entendeu o motivo de estar aqui hoje?", f: [
       ["P", "Entendi, mais ou menos. A Sônia disse que era melhor vir, por causa do braço e da boca.", "pensa"]] },
-    { id: "a8", t: "A senhora prefere que a gente converse só com a senhora ou que explique as coisas também para a sua acompanhante?", f: [
+    { id: "a8", req: ["a4"], t: "A senhora prefere que a gente converse só com a senhora ou que explique as coisas também para a Sônia?", f: [
       ["P", "Pode falar comigo. Se eu não entender, a Sônia me explica.", "sorri"]] }
   ]},
   { id: "queixa", ic: "💬", nome: "História do episódio atual", qs: [
     { id: "q1", t: "O que trouxe a senhora aqui hoje?", f: [
       ["P", "Foi o braço, meu bem. Hoje cedo, o braço esquerdo ficou fraco, mole… e a boca ficou torta.", "triste"],
       ["A", "Quando eu cheguei, a xícara estava caída no chão e as palavras dela saíam embaralhadas. Eu me assustei, mas tentei manter a calma. Pedi para ela não levantar e chamei meu marido para me ajudar a trazê-la."]] },
-    { id: "q2", t: "A que horas isso começou?", f: [
+    { id: "q2", req: ["q1"], t: "A que horas isso começou?", f: [
       ["P", "Eu acordei bem. Foi no café, lá pelas sete horas.", "pensa"],
       ["A", "Eu cheguei às sete e meia, e ela já estava assim."]] },
-    { id: "q3", t: "Começou de repente ou foi aos poucos?", f: [
+    { id: "q3", req: ["q1"], t: "Começou de repente ou foi aos poucos?", f: [
       ["P", "De repente. Fui pegar a xícara e ela escapou da mão. Não tive força."]] },
-    { id: "q4", t: "O que a senhora estava fazendo na hora?", f: [
+    { id: "q4", req: ["q1"], t: "O que a senhora estava fazendo na hora?", f: [
       ["P", "Tomando café com pão, sentada na cozinha, ouvindo o rádio. Nada de mais."]] },
-    { id: "q5", t: "E agora, como a senhora está se sentindo?", f: [
+    { id: "q5", req: ["q1"], t: "E agora, como a senhora está se sentindo?", f: [
       ["P", "Melhor. A fala voltou quase toda. O braço ainda está fraco, mas já mexe."],
-      ["N", "Ela levanta o braço esquerdo devagar. Ele sobe menos que o direito e treme um pouco."]] },
-    { id: "q6", t: "Isso já tinha acontecido antes?", f: [
+      ["N", "Ela levanta o braço esquerdo devagar. Ele sobe pouco e treme.", "bracoE"]] },
+    { id: "q6", req: ["q1"], t: "Isso já tinha acontecido antes?", f: [
       ["P", "Assim, não. Nunca tinha acontecido nada parecido.", "pensa"],
       ["A", "Foi a primeira vez. Por isso eu me assustei tanto."]] },
-    { id: "q7", t: "Quando isso começou, o que a senhora notou primeiro?", f: [
+    { id: "q7", req: ["q1"], t: "Quando isso começou, o que a senhora notou primeiro?", f: [
       ["P", "Primeiro a xícara escapou da mão; o braço ficou mole. Depois a boca entortou e a fala começou a sair errada.", "pensa"]] },
-    { id: "q8", t: "A fraqueza melhorou, piorou ou ficou mais ou menos igual desde que começou?", f: [
+    { id: "q8", req: ["q1"], t: "A fraqueza melhorou, piorou ou ficou mais ou menos igual desde que começou?", f: [
       ["P", "Melhorou um pouco. No começo eu não conseguia levantar o braço; agora consigo, mas com dificuldade."]] },
-    { id: "q9", t: "A senhora estava dormindo, tinha acabado de acordar ou já estava acordada há um tempo?", f: [
+    { id: "q9", req: ["q2"], t: "A senhora estava dormindo, tinha acabado de acordar ou já estava acordada há um tempo?", f: [
       ["P", "Já estava acordada fazia tempo. Acordo cedo, como sempre. Estava tomando café na cozinha."]] },
-    { id: "q10", t: "Alguém viu o momento em que isso começou?", f: [
+    { id: "q10", req: ["q2"], t: "Alguém viu o momento em que isso começou?", f: [
       ["A", "Não. Eu cheguei às sete e meia, quando já estava acontecendo."]] },
-    { id: "q11", t: "A senhora bateu a cabeça, caiu ou se machucou quando isso aconteceu?", f: [
+    { id: "q11", req: ["q1"], t: "A senhora bateu a cabeça, caiu ou se machucou quando isso aconteceu?", f: [
       ["P", "Não. Eu fiquei sentada. Só derrubei a xícara."]] }
   ]},
   { id: "sintomas", ic: "🔎", nome: "Sintomas associados e sinais de alerta", qs: [
@@ -334,19 +336,19 @@ const CATS = [
       ["A", "Mãe, até o ano passado a senhora subia a ladeira sem parar. Acho bom contar isso."]] },
     { id: "s8", t: "A senhora consegue levantar os dois braços e apertar a minha mão com a mesma força?", f: [
       ["P", "O esquerdo eu consigo, mas não como o direito."],
-      ["N", "Ela aperta a mão de quem perguntou: a mão esquerda tem bem menos força que a direita."]] },
+      ["N", "Ela levanta os dois braços: o esquerdo sobe menos que o direito e treme um pouco.", "bracos"]] },
     { id: "s9", t: "A senhora consegue andar ou levantar-se sem ajuda?", f: [
       ["P", "Consigo andar devagar, mas estou com medo de cair.", "triste"],
       ["A", "Eu a ajudei a entrar e sair do carro."]] },
     { id: "s10", t: "A senhora sentiu alguma coisa diferente no rosto, na boca ou ao engolir?", f: [
       ["P", "A boca ficou torta e eu babei um pouquinho. Para engolir, até que consegui, mas com cuidado."]] },
-    { id: "s11", t: "A senhora está sentindo tontura agora?", f: [
-      ["P", "Agora não. Tontura eu só sinto às vezes, em casa, quando me levanto rápido da cama."]] },
+    { id: "s11", req: ["s5"], t: "E essa tontura, a senhora está sentindo agora?", f: [
+      ["P", "Agora não. Só em casa, quando me levanto rápido da cama."]] },
     { id: "s12", t: "A senhora teve enjoo, vômito, dor no peito ou suor frio?", f: [
       ["P", "Não. Só fiquei assustada."],
       ["A", "Ela ficou agitada, mas não vomitou nem reclamou do peito."]] },
-    { id: "s13", t: "Hoje, antes ou depois de o braço ficar fraco, a senhora sentiu o coração bater diferente?", f: [
-      ["P", "Senti uma batedeira um pouquinho antes de a Sônia chegar. Isso me acontece de vez em quando, faz tempo.", "pensa"],
+    { id: "s13", req: ["s6"], t: "E essa batedeira, a senhora sentiu hoje também?", f: [
+      ["P", "Senti, um pouquinho antes de a Sônia chegar. Isso me acontece de vez em quando, faz tempo.", "pensa"],
       ["A", "Ela não tinha me falado disso hoje."]] }
   ]},
   { id: "saude", ic: "💊", nome: "Antecedentes, medicamentos e adesão", qs: [
@@ -355,9 +357,9 @@ const CATS = [
       ["A", "E a pressão nunca fica boa. Às vezes ela mede na farmácia e dá dezoito por dez."]] },
     { id: "d2", t: "Quais remédios a senhora toma?", f: [
       ["A", "Eu trouxe as caixas. Olhe aqui."],
-      ["N", "A filha coloca as caixas sobre a mesa: captopril e verapamil, para a pressão; um diurético; e ácido acetilsalicílico (AAS), 300 mg por dia."],
+      ["N", "A filha coloca as caixas sobre a mesa: captopril e verapamil, para a pressão; um diurético; e ácido acetilsalicílico (AAS), 300 mg por dia.", "caixas"],
       ["P", "O AAS foi o médico que mandou, para afinar o sangue."]] },
-    { id: "d3", t: "A senhora toma os remédios direitinho?", f: [
+    { id: "d3", req: ["d2"], t: "A senhora toma esses remédios direitinho?", f: [
       ["P", "Tomo, sim.", "sorri"],
       ["A", "Toma… quando se lembra. Às vezes esquece o da noite. E o diurético ela pula quando vai sair, por causa do banheiro."]] },
     { id: "d4", t: "A senhora tem alergia a algum remédio?", f: [
@@ -366,16 +368,16 @@ const CATS = [
       ["P", "Tirei o útero com cinquenta anos. E fiquei internada quando quebrei o punho, há uns três anos. Escorreguei no banheiro.", "pensa"]] },
     { id: "d6", t: "A senhora tem diabetes ou colesterol alto?", f: [
       ["P", "Diabetes, não. O colesterol o médico disse que estava alto, mas faz tempo que não faço exame."]] },
-    { id: "d7", t: "A senhora toma os remédios sozinha ou alguém ajuda a organizar?", f: [
+    { id: "d7", req: ["d2"], t: "A senhora toma os remédios sozinha ou alguém ajuda a organizar?", f: [
       ["A", "Eu separo as caixas no domingo, mas ela toma sozinha."],
       ["P", "Eu sei o horário, só às vezes esqueço."]] },
-    { id: "d8", t: "A senhora tomou os remédios de hoje?", f: [
+    { id: "d8", req: ["d2"], t: "A senhora tomou os remédios de hoje?", f: [
       ["P", "Tomei o da pressão logo cedo, antes do café. O diurético não, porque eu ia à feira mais tarde."],
       ["A", "E o AAS ela esqueceu hoje."]] },
     { id: "d9", t: "A senhora usa chá, vitaminas, gotas ou remédios comprados sem receita?", f: [
       ["P", "Chá de ameixa para o intestino. E, às vezes, um comprimidinho para dormir que a vizinha me dá."],
       ["A", "Mãe, isso a senhora não devia tomar sem falar com o médico."]] },
-    { id: "d10", t: "A senhora sabe para que serve cada remédio que toma?", f: [
+    { id: "d10", req: ["d2"], t: "A senhora sabe para que serve cada remédio que toma?", f: [
       ["P", "O da pressão eu sei. O AAS é para afinar o sangue. O diurético é para inchaço, mas me faz urinar muito."]] }
   ]},
   { id: "vida", ic: "🏠", nome: "Funcionalidade, segurança e envelhecimento", qs: [
@@ -402,12 +404,12 @@ const CATS = [
     { id: "v9", t: "Depois do que aconteceu hoje, a senhora acha que consegue voltar a fazer as coisas sozinha em casa?", f: [
       ["P", "Acho que sim, mas hoje fiquei com medo. Não quero dar trabalho para a Sônia.", "triste"],
       ["A", "Eu quero que ela fique comigo por uns dias."]] },
-    { id: "v10", t: "Em casa, há tapete solto, degrau, banheiro escorregadio ou outra coisa que já tenha causado queda?", f: [
+    { id: "v10", req: ["v6"], t: "Em casa, ainda há tapete solto, degrau, banheiro escorregadio ou outra coisa que possa causar uma nova queda?", f: [
       ["P", "Tem um tapete na sala. O banheiro é pequeno, mas eu tomo cuidado."],
       ["A", "Eu já falei para tirar o tapete, mas ela gosta dele."]] },
-    { id: "v11", t: "A senhora usa óculos, aparelho de audição ou algum outro recurso para enxergar, ouvir ou andar?", f: [
+    { id: "v11", req: ["v5"], t: "A senhora usa óculos, aparelho de audição ou algum outro recurso para enxergar, ouvir ou andar?", f: [
       ["P", "Óculos para ler. Aparelho de ouvido não; eu escuto mal, mas me acostumei."]] },
-    { id: "v12", t: "A senhora tem alguém para chamar se precisar de ajuda de noite?", f: [
+    { id: "v12", req: ["v1"], t: "Como a senhora mora sozinha, tem alguém para chamar se precisar de ajuda de noite?", f: [
       ["P", "A Sônia mora perto. Eu tenho o telefone dela na cabeceira."],
       ["A", "Eu passo toda manhã, mas de noite ela fica sozinha."]] }
   ]},
@@ -423,7 +425,7 @@ const CATS = [
     { id: "f5", t: "A senhora já tomou a vacina contra a gripe?", f: [
       ["P", "Ainda não, meu bem. Eu tenho medo de agulha!", "sorri"],
       ["A", "O posto vai começar a vacinar os idosos agora; é a primeira vez que tem campanha. Eu levo a senhora, mãe."]] },
-    { id: "f6", t: "Além da Sônia, alguém mais visita a senhora ou pode ajudá-la em casa?", f: [
+    { id: "f6", req: ["v1"], t: "Além da Sônia, alguém mais visita a senhora ou pode ajudá-la em casa?", f: [
       ["P", "A minha vizinha, Dona Zilda. Ela traz pão às vezes e conversa comigo.", "sorri"],
       ["A", "Tem também meu irmão, mas ele mora longe e aparece pouco."]] },
     { id: "f7", t: "A senhora sente solidão, tristeza ou falta de vontade para fazer as coisas?", f: [
@@ -437,7 +439,7 @@ const CATS = [
     { id: "e2", t: "O que a senhora mais espera que a gente faça hoje?", f: [
       ["P", "Que me digam o que foi. E que me deixem ir para casa."],
       ["A", "Eu quero entender o que aconteceu e saber o que fazer se acontecer de novo."]] },
-    { id: "e3", t: "A senhora concorda que a gente examine o seu coração, a pressão e os movimentos do corpo agora?", f: [
+    { id: "e3", req: ["e1", "e2"], t: "A senhora concorda que a gente examine o seu coração, a pressão e os movimentos do corpo agora?", f: [
       ["P", "Concordo. Só me avisem antes de apertar o braço, que fica dolorido.", "sorri"],
       ["N", "A conversa inicial termina. O professor conduzirá o exame físico na próxima etapa."]] }
   ]}
@@ -499,11 +501,16 @@ function acolherRestante() { return CATS[0].qs.some((q) => EST.feitas[q.id] == n
 function fimLiberado() { return EST.hist.length >= 12 || CATS.filter((c) => c.id !== "fim" && !catEsgotada(c)).length <= 2; }
 function catTravada(catId) {
   if (catId === "fim" && !fimLiberado()) return true;
+  const c = CATS.find((x) => x.id === catId);
+  if (c && !catEsgotada(c) && !c.qs.some(qDisponivel)) return true;   /* sobrou pergunta, mas todas dependem de outras */
   return catId !== "acolher" && acolherRestante();
 }
 /* depois da E3 (consentimento para o exame), a conversa inicial termina */
 function conversaTerminou() { return EST.feitas.e3 != null; }
 function catEsgotada(c) { return c.qs.every((q) => EST.feitas[q.id] != null); }
+/* hierarquia: a pergunta só fica disponível depois das que ela exige */
+function qLiberada(q) { return (q.req || []).every((id) => EST.feitas[id] != null); }
+function qDisponivel(q) { return EST.feitas[q.id] == null && qLiberada(q); }
 function catsDisponiveis() { return CATS.filter((c) => !catEsgotada(c) && !catTravada(c.id)); }
 /* categoria da pergunta desta vez: a votada ou, se só houver uma possível (acolhimento), ela mesma */
 function catAtual() {
@@ -551,7 +558,7 @@ function aplicar(j, aoVivo) {
     if (EST.membros[timeDaVez()].every((s) => EST.votos[s])) resolverVotacao();
   } else if (j.tipo === "vperg") {
     const q = Q[d.q];
-    if (!q || !podeVotar(j.seat) || etapaVoto() !== "perg" || q.cat !== catAtual() || EST.feitas[q.id] != null) return;
+    if (!q || !podeVotar(j.seat) || etapaVoto() !== "perg" || q.cat !== catAtual() || !qDisponivel(q)) return;
     EST.votos[j.seat] = q.id;
     if (EST.membros[timeDaVez()].every((s) => EST.votos[s])) resolverVotacao();
   } else if (j.tipo === "fechar" && prof) {         /* o professor encerra a votação (alguém da equipe não votou) */
@@ -898,9 +905,9 @@ function votacaoHTML(meuSeat) {
     (dec && dec.etapa === "cat" ? `<div class="aviso">Categoria escolhida pela equipe: <b>${esc(nomeCat(dec.escolha))}</b>${dec.empate ? " (🎲 sorteada no empate)" : ""}</div>` : "") +
     `<div class="aviso vez">⭐ Cada um vota na <b>pergunta</b>.</div>` + prog +
     `<div class="f-titulo">${c.ic} ${esc(c.nome)}</div>` +
-    c.qs.map((q) => {
-      const feita = EST.feitas[q.id] != null, v = n[q.id] || 0;
-      return `<button class="perg ${feita ? "feita" : ""} ${meu === q.id ? "sel" : ""}" ${feita ? "disabled" : `data-f="vperg" data-q="${q.id}"`}>${esc(q.t)}${feita ? `<span class="tag">já perguntada</span>` : ""}${v ? `<span class="nv">${v} ${v === 1 ? "voto" : "votos"}</span>` : ""}</button>`;
+    c.qs.filter((q) => EST.feitas[q.id] != null || qLiberada(q)).map((q) => {     /* pergunta com pré-requisito só aparece depois dele */
+      const feita = EST.feitas[q.id] != null, trava = false, v = n[q.id] || 0;
+      return `<button class="perg ${feita ? "feita" : ""} ${trava ? "trava" : ""} ${meu === q.id ? "sel" : ""}" data-q="${q.id}" ${feita || trava ? "disabled" : `data-f="vperg"`}>${esc(q.t)}${feita ? `<span class="tag">já perguntada</span>` : ""}${trava ? `<span class="tag">🔒 depois de outra pergunta</span>` : ""}${v ? `<span class="nv">${v} ${v === 1 ? "voto" : "votos"}</span>` : ""}</button>`;
     }).join("");
 }
 function histHTML(tudo) {
@@ -1035,7 +1042,32 @@ function aoAbrir() {
 
 /* ---------- fila do que acontece na cena (uma coisa por vez) ----------
    Cada fala fica no balão até o professor apertar Enter ou clicar nela. */
-const CENA = { fila: [], ocupada: false, falando: null, humor: { P: null, A: null }, olharA: 0, avancar: null };
+/* gestos que as personagens fazem quando o narrador descreve um movimento */
+const GESTO = { nome: null, t0: 0, fim: 0 };
+function iniciarGesto(nome) {
+  if (!nome) return;
+  if (nome === "caixas") { CENA.caixasT0 = performance.now(); return; }
+  if (nome === "sorriso") CENA.humor.P = "sorri";
+  Object.assign(GESTO, { nome, t0: performance.now(), fim: 0 });
+}
+function terminarGesto() {
+  if (GESTO.nome === "sorriso") CENA.humor.P = null;
+  if (GESTO.nome && !GESTO.fim) GESTO.fim = performance.now();
+}
+function gestoBracos() {
+  if (!GESTO.nome || GESTO.nome === "sorriso") return {};
+  const agora = performance.now();
+  let k = Math.min(1, (agora - GESTO.t0) / 1100);                 /* sobe devagar */
+  if (GESTO.fim) { k *= Math.max(0, 1 - (agora - GESTO.fim) / 800); if (k <= 0) { GESTO.nome = null; return {}; } }
+  k = k * k * (3 - 2 * k);
+  return GESTO.nome === "bracoE" ? { 1: 1.35 * k } : { [-1]: 1.95 * k, 1: 1.4 * k };   /* esquerdo dela (direita da tela) sobe menos */
+}
+/* as caixas de remédio só aparecem na mesa quando a filha as coloca (pergunta D2) */
+function caixasAlfa() {
+  if (CENA.caixasT0) return Math.min(1, (performance.now() - CENA.caixasT0) / 700);
+  return EST && EST.feitas.d2 != null && CENA.respAtual !== "d2" ? 1 : 0;
+}
+const CENA = { fila: [], ocupada: false, falando: null, respAtual: null, caixasT0: 0, humor: { P: null, A: null }, olharA: 0, avancar: null };
 function aoOuvir(item) { CENA.fila.push({ k: "resp", item }); processarFila(); }
 function narrar(texto, fim) { CENA.fila.push({ k: "narr", texto, fim }); processarFila(); }
 /* projetor recarregado no meio da aula: refaz a fala que estava na tela (narração ou resposta) */
@@ -1080,8 +1112,10 @@ async function processarFila() {
   } else {
     /* resposta: uma fala por vez; cada uma espera o professor */
     const q = Q[it.item.q];
+    CENA.respAtual = q.id;
     esconder("balaoQ"); PAINEL_CHAVE = "";
     for (const [quem, texto, humor] of q.f) await falar(quem, texto, humor);
+    CENA.respAtual = null;
     ["balaoP", "balaoA", "balaoN", "balaoQ"].forEach(esconder);
     CENA.humor = { P: null, A: null };
     CENA.olharA = 0;
@@ -1092,6 +1126,100 @@ async function processarFila() {
   if (CENA.fila.length) processarFila(); else atualizarTudo();
 }
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+/* ---------- voz simulada ----------
+   Enquanto a personagem fala, toca uma "língua própria": sílabas sem sentido feitas com
+   síntese de formantes (vogais) e sopros curtos (consoantes), com entonação de frase.
+   Volume baixo e timbre suave, porque é um atendimento. O narrador não tem voz. */
+const VOZ = {
+  ctx: null, volume: 0.6,      /* os formantes deixam passar pouca energia: com 0,6 a fala fica perto de −25 dBFS (baixa, sem cobrir a sala) */
+  /* cada personagem tem timbre próprio: altura, forma de onda, ressonância (formantes), sopro, ritmo e tremor */
+  P: { f0: 150, var: 0.06, sil: [140, 210], tremor: 0.035, tremorHz: 5, brilho: 1700, onda: "triangle", forma: 0.88, sopro: 0.22, ganho: 1.6 },   /* Dona Lourdes: grave, abafada, soprosa, lenta, com tremor */
+  A: { f0: 245, var: 0.10, sil: [85, 130], tremor: 0, tremorHz: 0, brilho: 3600, onda: "sawtooth", forma: 1.12, sopro: 0.03, ganho: 0.95 }       /* Sônia: aguda, clara e firme, mais rápida */
+};
+const FORMANTES = [[800, 1200], [560, 1950], [330, 2500], [500, 880], [370, 900]];   /* a, e, i, o, u */
+function vozContexto() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!VOZ.ctx) VOZ.ctx = new AC();
+  if (VOZ.ctx.state === "suspended") VOZ.ctx.resume();
+  return VOZ.ctx;
+}
+function falaSimulada(quem, texto) {
+  const cfg = VOZ[quem], ctx = cfg && vozContexto();
+  const nada = { dur: Math.min(9000, 700 + texto.length * 55), parar() {} };
+  if (!ctx) return nada;
+  const saida = ctx.createGain(); saida.gain.value = VOZ.volume * cfg.ganho;
+  const abafa = ctx.createBiquadFilter(); abafa.type = "lowpass"; abafa.frequency.value = cfg.brilho;
+  /* compressor na saída: segura os picos para não estourar */
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -18; comp.knee.value = 12; comp.ratio.value = 4; comp.attack.value = 0.005; comp.release.value = 0.15;
+  abafa.connect(saida); saida.connect(comp); comp.connect(ctx.destination);
+  /* ruído curto reaproveitado nas consoantes */
+  const ruido = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.06), ctx.sampleRate);
+  const dadosR = ruido.getChannelData(0); for (let i = 0; i < dadosR.length; i++) dadosR[i] = (Math.random() * 2 - 1) * (1 - i / dadosR.length);
+  let t = ctx.currentTime + 0.08;
+  const t0 = t, fontes = [];
+  /* frases separadas pela pontuação: a entonação cai no fim (ou sobe, se for pergunta) */
+  const frases = texto.split(/(?<=[.!?…;:,])\s+/);
+  frases.forEach((fr) => {
+    const palavras = fr.split(/\s+/).filter(Boolean);
+    const pergunta = /\?\s*$/.test(fr), fimForte = /[.!?…]\s*$/.test(fr);
+    const nSil = Math.max(1, Math.round(fr.replace(/[^\p{L}]/gu, "").length / 3.1));
+    let k = 0;
+    palavras.forEach((p) => {
+      const ns = Math.max(1, Math.round(p.replace(/[^\p{L}]/gu, "").length / 3.1));
+      for (let s = 0; s < ns; s++, k++) {
+        const prog = k / nSil;
+        const dur = (cfg.sil[0] + Math.random() * (cfg.sil[1] - cfg.sil[0])) / 1000;
+        let f = cfg.f0 * (1 + (Math.random() - 0.5) * cfg.var) * (1.06 - 0.12 * prog);
+        if (pergunta && prog > 0.7) f *= 1 + (prog - 0.7) * 0.6;
+        const [F1, F2] = FORMANTES[Math.floor(Math.random() * FORMANTES.length)].map((x) => x * cfg.forma);
+        /* consoante: sopro curto antes da vogal, em parte das sílabas */
+        if (Math.random() < 0.55) {
+          const n = ctx.createBufferSource(); n.buffer = ruido;
+          const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1800 + Math.random() * 2500; bp.Q.value = 1.2;
+          const gn = ctx.createGain(); gn.gain.setValueAtTime(0.0001, t); gn.gain.linearRampToValueAtTime(0.18, t + 0.008); gn.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+          n.connect(bp); bp.connect(gn); gn.connect(abafa); n.start(t); n.stop(t + 0.05); fontes.push(n);
+        }
+        /* vogal: fonte glotal (dente de serra) filtrada por dois formantes */
+        const o = ctx.createOscillator(); o.type = cfg.onda;
+        o.frequency.setValueAtTime(f, t); o.frequency.linearRampToValueAtTime(f * (0.97 + Math.random() * 0.05), t + dur);
+        if (cfg.tremor) {
+          const lfo = ctx.createOscillator(), lg = ctx.createGain();
+          lfo.frequency.value = cfg.tremorHz; lg.gain.value = f * cfg.tremor; lfo.connect(lg); lg.connect(o.frequency);
+          lfo.start(t); lfo.stop(t + dur + 0.05); fontes.push(lfo);
+        }
+        const g1 = ctx.createGain(); g1.gain.setValueAtTime(0.0001, t + 0.02);
+        g1.gain.linearRampToValueAtTime(1, t + 0.045); g1.gain.setValueAtTime(1, t + dur - 0.04); g1.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        [[F1, 7, 1], [F2, 9, 0.45]].forEach(([fq, q, amp]) => {
+          const bp = ctx.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = fq; bp.Q.value = q;
+          const ga = ctx.createGain(); ga.gain.value = amp;
+          o.connect(bp); bp.connect(ga); ga.connect(g1);
+        });
+        g1.connect(abafa);
+        /* sopro: ar passando junto com a vogal (voz de idosa) */
+        if (cfg.sopro > 0.05) {
+          const n2 = ctx.createBufferSource(); n2.buffer = ruido; n2.loop = true;
+          const bp2 = ctx.createBiquadFilter(); bp2.type = "bandpass"; bp2.frequency.value = F2; bp2.Q.value = 2.5;
+          const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.0001, t + 0.02); g2.gain.linearRampToValueAtTime(cfg.sopro, t + 0.05); g2.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          n2.connect(bp2); bp2.connect(g2); g2.connect(abafa); n2.start(t + 0.015); n2.stop(t + dur + 0.02); fontes.push(n2);
+        }
+        o.start(t + 0.015); o.stop(t + dur + 0.02); fontes.push(o);
+        t += dur + 0.012 + Math.random() * 0.03;
+      }
+      t += 0.035;                                   /* pequena pausa entre "palavras" */
+    });
+    t += fimForte ? 0.34 : 0.18;                    /* pausa da vírgula ou do ponto */
+  });
+  const dur = Math.min(14000, Math.round((t - t0) * 1000));
+  return {
+    dur,
+    parar() {
+      try { saida.gain.cancelScheduledValues(ctx.currentTime); saida.gain.setTargetAtTime(0, ctx.currentTime, 0.03); } catch (e) {}
+      setTimeout(() => { fontes.forEach((n) => { try { n.stop(); } catch (e) {} }); try { saida.disconnect(); comp.disconnect(); } catch (e) {} }, 200);
+    }
+  };
+}
 function falar(quem, texto, humor) {
   return new Promise((resolve) => {
     const id = quem === "P" ? "balaoP" : quem === "A" ? "balaoA" : "balaoN";
@@ -1101,16 +1229,20 @@ function falar(quem, texto, humor) {
     t.textContent = texto;                       /* o balão já nasce no tamanho final */
     requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add("vis")));   /* a frase inteira surge aos poucos */
     if (quem !== "N") { CENA.falando = quem; CENA.humor[quem] = humor || null; }
+    else iniciarGesto(humor);                    /* na cena, o 3º campo é o gesto descrito pelo narrador */
     CENA.olharA = quem === "P" ? 1 : 0;          /* a filha olha para a mãe quando ela fala */
     let apareceu = false;
     const mostrar = () => { if (apareceu) return; apareceu = true; b.classList.add("vis", "pronto"); };
     const tFade = setTimeout(mostrar, 1350);
-    /* a boca mexe pelo tempo de leitura em voz alta */
-    const tBoca = setTimeout(() => { if (CENA.falando === quem) CENA.falando = null; }, quem === "N" ? 0 : Math.min(9000, 700 + texto.length * 55));
+    /* voz simulada (língua própria); a boca mexe enquanto ela soa */
+    const voz = quem === "N" ? null : falaSimulada(quem, texto);
+    const tBoca = setTimeout(() => { if (CENA.falando === quem) CENA.falando = null; }, voz ? voz.dur : 0);
     CENA.avancar = () => {
       if (!apareceu) { clearTimeout(tFade); b.classList.add("ja"); mostrar(); return; }   /* 1º toque: mostra a frase toda */
       CENA.avancar = null;
       clearTimeout(tBoca);
+      if (voz) voz.parar();
+      if (quem === "N") terminarGesto();
       CENA.falando = null;
       resolve();
     };
@@ -1564,15 +1696,22 @@ function tronco(c, cx, topo, o) {
      braços finos junto ao corpo e cintura marcada; as mãos ficam sobre as coxas, abaixo da mesa */
   const L = o.larg, by = o.by, sh = o.ombroCaido || 4, q = o.ombroQuadrado ? 0.6 : 1;
   const yo = topo + by;
+  const ergue = o.ergue || {};                 /* braço levantado: sai da silhueta (é desenhado à parte) */
   const sil = () => {
     c.beginPath();
     c.moveTo(cx - 7, yo - 1);
     c.bezierCurveTo(cx - L * 0.3, yo + 0.5, cx - L * 0.58, yo + sh * 0.55, cx - L * 0.78, yo + sh);         /* trapézio */
-    c.bezierCurveTo(cx - L * (0.93 + 0.05 * q), yo + sh + 1, cx - L * 1.02, yo + sh + 7 * q, cx - L * 1.02, yo + sh + 16);  /* ombro redondo */
-    c.bezierCurveTo(cx - L * 1.03, yo + 40, cx - L * 0.97, 188, cx - L * 0.95, 232);                     /* braço afinando */
-    c.lineTo(cx + L * 0.95, 232);
-    c.bezierCurveTo(cx + L * 0.97, 188, cx + L * 1.03, yo + 40, cx + L * 1.02, yo + sh + 16);
-    c.bezierCurveTo(cx + L * 1.02, yo + sh + 7 * q, cx + L * (0.93 + 0.05 * q), yo + sh + 1, cx + L * 0.78, yo + sh);
+    if (ergue[-1] > 0.02) { c.bezierCurveTo(cx - L * 0.88, yo + sh + 2, cx - L * 0.9, yo + sh + 12, cx - L * 0.8, yo + sh + 24); c.bezierCurveTo(cx - L * 0.74, 190, cx - L * 0.76, 210, cx - L * 0.78, 232); }
+    else {
+      c.bezierCurveTo(cx - L * (0.93 + 0.05 * q), yo + sh + 1, cx - L * 1.02, yo + sh + 7 * q, cx - L * 1.02, yo + sh + 16);  /* ombro redondo */
+      c.bezierCurveTo(cx - L * 1.03, yo + 40, cx - L * 0.97, 188, cx - L * 0.95, 232);                     /* braço afinando */
+    }
+    c.lineTo(cx + (ergue[1] > 0.02 ? L * 0.78 : L * 0.95), 232);
+    if (ergue[1] > 0.02) { c.bezierCurveTo(cx + L * 0.76, 210, cx + L * 0.74, 190, cx + L * 0.8, yo + sh + 24); c.bezierCurveTo(cx + L * 0.9, yo + sh + 12, cx + L * 0.88, yo + sh + 2, cx + L * 0.78, yo + sh); }
+    else {
+      c.bezierCurveTo(cx + L * 0.97, 188, cx + L * 1.03, yo + 40, cx + L * 1.02, yo + sh + 16);
+      c.bezierCurveTo(cx + L * 1.02, yo + sh + 7 * q, cx + L * (0.93 + 0.05 * q), yo + sh + 1, cx + L * 0.78, yo + sh);
+    }
     c.bezierCurveTo(cx + L * 0.58, yo + sh * 0.55, cx + L * 0.3, yo + 0.5, cx + 7, yo - 1);
     c.closePath();
   };
@@ -1600,6 +1739,25 @@ function tronco(c, cx, topo, o) {
   elip(c, cx - L * 0.86, yo + sh + 6, L * 0.18, 4.5, "rgba(255,255,255,.13)");
   c.restore();
   sil(); c.strokeStyle = o.linha; c.lineWidth = 1; c.lineJoin = "round"; c.stroke();
+  /* braços levantados (ângulo a partir do braço caído, abrindo para o lado) */
+  [-1, 1].forEach((s) => { if (ergue[s] > 0.02) bracoErguido(c, cx + s * L * 0.86, yo + sh + 9, s, ergue[s], o); });
+}
+function bracoErguido(c, x0, y0, s, ang, o) {
+  const tremor = s === 1 && o.tremeEsq ? Math.sin(performance.now() / 55) * 0.035 : 0;
+  const a1 = ang + tremor, a2 = ang + 0.3 * Math.min(1, ang) + tremor * 1.5;   /* antebraço dobra para cima */
+  const x1 = x0 + s * Math.sin(a1) * 30, y1 = y0 + Math.cos(a1) * 30;
+  const x2 = x1 + s * Math.sin(a2) * 27, y2 = y1 + Math.cos(a2) * 27;
+  c.lineCap = "round"; c.lineJoin = "round";
+  [[o.linha, 12.5, 10.5], [o.c2, 10.5, 8.5]].forEach(([cor, l1, l2]) => {
+    c.strokeStyle = cor; c.lineWidth = l1; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+    c.lineWidth = l2; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
+  });
+  linha(c, [x0 - s * 2, y0 + 2, x1 - s * 2, y1 + 1], "rgba(255,255,255,.12)", 2);   /* luz na manga */
+  /* punho e mão (simples, de lado) */
+  const hx = x2 + s * Math.sin(a2) * 5, hy = y2 + Math.cos(a2) * 5;
+  linha(c, [x2 - Math.cos(a2) * 4.5, y2 + s * Math.sin(a2) * 4.5, x2 + Math.cos(a2) * 4.5, y2 - s * Math.sin(a2) * 4.5], o.linha, 1.2);
+  elip(c, hx, hy, 4.2, 3.4, o.mao || "#d3a07b", a2 * s);
+  elip(c, hx - 0.8, hy - 0.8, 2.6, 1.8, "rgba(255,230,200,.5)", a2 * s);
 }
 
 /* ---------- Dona Lourdes, 81 anos (sentada, um pouco curvada) ---------- */
@@ -1616,7 +1774,7 @@ function desenharPaciente(c, t) {
   cabeca(c, cx, queixo, mv, () => elip(c, cx - 1, fy - 5, 21.5, 21.5, "#b4afa7"));
   c.save(); c.translate(mv.sx, 0);
   /* tronco: casaquinho de tricô lilás, ombros caídos, busto baixo da idade */
-  tronco(c, cx, 133, { larg: 34, ombroCaido: 9, bustoY: 34, bustoCaido: 2, linha: "#3f3156", by, c1: "#a48cbe", c2: "#8b72a8", c3: "#5b4874", textura: (k) => {
+  tronco(c, cx, 133, { ergue: gestoBracos(), tremeEsq: true, mao: "#d3a07b", larg: 34, ombroCaido: 9, bustoY: 34, bustoCaido: 2, linha: "#3f3156", by, c1: "#a48cbe", c2: "#8b72a8", c3: "#5b4874", textura: (k) => {
     for (let x = cx - 50; x < cx + 50; x += 2.5) { k.fillStyle = "rgba(255,255,255,.05)"; k.fillRect(x, 133, 1, 99); }
     /* blusa florida no decote em V */
     k.beginPath(); k.moveTo(cx - 12, 132 + by); k.lineTo(cx + 12, 132 + by); k.lineTo(cx + 3, 182); k.lineTo(cx - 3, 182); k.closePath();
@@ -1727,14 +1885,17 @@ function desenharMesa(c) {
   elip(c, 51, 203, 7, 2.4, "#efeadf"); elip(c, 51, 203, 5.6, 1.7, "#4a2c18");
   c.strokeStyle = "#e9e4d8"; c.lineWidth = 2; c.beginPath(); c.arc(60, 209, 3.4, -1.2, 1.2); c.stroke();
   c.fillStyle = "#c23b3b"; c.fillRect(46, 207, 10, 3);
-  /* caixas de remédio, lado a lado, viradas para quem atende */
-  [["#ffffff", "#c23b3b"], ["#ffffff", "#2f6f8f"], ["#f6f2e6", "#3e8e5e"], ["#ffffff", "#e0982e"]].forEach(([f, f2], i) => {
+  /* caixas de remédio, lado a lado, viradas para quem atende (só depois que a filha as coloca na mesa) */
+  const alfaCx = caixasAlfa();
+  c.save(); c.globalAlpha = alfaCx;
+  if (alfaCx > 0) [["#ffffff", "#c23b3b"], ["#ffffff", "#2f6f8f"], ["#f6f2e6", "#3e8e5e"], ["#ffffff", "#e0982e"]].forEach(([f, f2], i) => {
     const x = 226 + i * 24, y = 201;
     sombra(x, y, 20, 11);
     c.fillStyle = f; c.fillRect(x, y, 20, 11); c.fillStyle = f2; c.fillRect(x, y, 20, 3);
     c.fillStyle = "#ddd"; c.fillRect(x, y + 11, 20, 2);
     c.fillStyle = "rgba(0,0,0,.25)"; c.fillRect(x + 3, y + 6, 11, 1);
   });
+  c.restore();
   /* pote de abaixadores de língua */
   sombra(398, 200, 12, 16);
   c.fillStyle = "rgba(220,235,240,.85)"; c.fillRect(398, 202, 12, 14); elip(c, 404, 216, 6, 2, "#c9d8de");
@@ -1807,6 +1968,7 @@ function iniciarCena() {
 function pararCena() {
   if (rafId) cancelAnimationFrame(rafId); rafId = null;
   CENA.fila = []; CENA.ocupada = false; CENA.falando = null; CENA.avancar = null; ONL.fimPendente = false;
+  CENA.respAtual = null; CENA.caixasT0 = 0; GESTO.nome = null;
   ["balaoP", "balaoA", "balaoN", "balaoQ"].forEach(esconder);
   $("abertura").classList.add("oculto"); $("painelEnsaio").classList.add("oculto"); $("modal").classList.add("oculto");
 }
@@ -1815,6 +1977,7 @@ function pararCena() {
    PORTÃO: espera as fontes e (no computador) liga a tela cheia
    ===================================================================== */
 $("btPortao").addEventListener("click", () => {
+  if (!ehFone()) vozContexto();
   if (!ehFone()) telaCheia();
   $("portao").classList.add("oculto");
   const g0 = onlLerGuardado();
